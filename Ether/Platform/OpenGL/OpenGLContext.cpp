@@ -1,6 +1,8 @@
 //#include "hzpch.h"
 //
 
+#include "Ether.h"
+
 #include "Platform/OpenGL/OpenGLContext.h"
 
 #include <GLFW/glfw3.h>

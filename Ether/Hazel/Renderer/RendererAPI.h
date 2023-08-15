@@ -4,6 +4,19 @@
 
 #include <glm/glm.hpp>
 
+
+
+//me:
+//usecase:
+//abstract class wrap the 3D API commands 
+//to be inherited by the 3D API classes  sth called  "OpenGLRendererAPI" to actually implement the commands
+
+//define enum of API types
+//specify the logic which API is currently used.
+
+
+
+
 namespace Hazel {
 
 	class RendererAPI

@@ -8,6 +8,8 @@
 
 #include "Hazel/Core/Assert.h"
 
+#include "Hazel/Debug/Instrumentor.h"
+
 
 //third party
 //#include <GL/glew.h>  

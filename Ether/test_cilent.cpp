@@ -18,7 +18,7 @@ int main() {
 
 
 
-   // Window::Create();
+    // Window::Create();
 
     //initialize glad.
   
@@ -38,6 +38,9 @@ int main() {
          glfwTerminate();
          return -1;
      }
+     //==Init window
+
+     //====init context
 
      ///* Make the window's context current */
      glfwMakeContextCurrent(window);
@@ -48,7 +51,7 @@ int main() {
          return -1;
      } 
 
-
+     //====init context
 
 
      //draw a triangle
@@ -74,7 +77,11 @@ int main() {
      glEnableVertexAttribArray(0);
      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 
+ 
+ 
+     HZ_CORE_INFO(glGetString(GL_VENDOR));
 
+     //======the loop 
      /* Loop until the user closes the window */
      while (!glfwWindowShouldClose(window))
      {
@@ -94,6 +101,9 @@ int main() {
          /* Poll for and process events */
          glfwPollEvents();
      }
+
+
+     //====shutdown
 
      glfwTerminate();
      return 0;

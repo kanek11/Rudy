@@ -60,6 +60,24 @@
     <ClInclude Include="Hazel\Core\Timestep.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Hazel\Renderer\GraphicsContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hazel\Renderer\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hazel\Renderer\RendererAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\OpenGL\OpenGLContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hazel\Renderer\RenderCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\OpenGL\OpenGLRendererAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test_cilent.cpp">
@@ -72,6 +90,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Platform\Windows\WindowsWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hazel\Renderer\GraphicsContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hazel\Renderer\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hazel\Renderer\RendererAPI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hazel\Renderer\RenderCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

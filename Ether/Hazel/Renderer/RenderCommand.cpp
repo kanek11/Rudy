@@ -1,4 +1,6 @@
-#include "hzpch.h"
+//#include "hzpch.h"
+
+#include "Ether.h"
 #include "Hazel/Renderer/RenderCommand.h"
 
 namespace Hazel {

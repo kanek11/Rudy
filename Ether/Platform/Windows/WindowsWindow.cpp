@@ -11,8 +11,8 @@
 #include "Hazel/Events/MouseEvent.h"
 #include "Hazel/Events/KeyEvent.h"
 
-//#include "Hazel/Renderer/Renderer.h"
-//#include "Platform/OpenGL/OpenGLContext.h"
+#include "Hazel/Renderer/Renderer.h"
+#include "Platform/OpenGL/OpenGLContext.h"
 
 #include "WindowsWindow.h"
 
@@ -68,12 +68,12 @@ namespace Hazel {
 			++s_GLFWWindowCount;
 		}
 
-		//m_Context = GraphicsContext::Create(m_Window);
-		//m_Context->Init();
+		m_Context = GraphicsContext::Create(m_Window);
+		m_Context->Init();
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 
-		//SetVSync(true);
+		SetVSync(true);
 
 		// Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
