@@ -4,7 +4,7 @@
 #include "Hazel/Events/KeyCodes.h"
 
 namespace Hazel {
-
+	
 	class KeyEvent : public Event
 	{
 	public:

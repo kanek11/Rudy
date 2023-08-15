@@ -6,11 +6,12 @@
 
 
 #include "Hazel/Events/Input.h"
+
 #include "Hazel/Events/ApplicationEvent.h"
 #include "Hazel/Events/MouseEvent.h"
 #include "Hazel/Events/KeyEvent.h"
-#include "Hazel/Renderer/Renderer.h"
 
+//#include "Hazel/Renderer/Renderer.h"
 //#include "Platform/OpenGL/OpenGLContext.h"
 
 #include "WindowsWindow.h"
@@ -22,7 +23,7 @@ namespace Hazel {
 
 	static void GLFWErrorCallback(int error, const char* description)
 	{
-		HZ_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
+		HZ_CORE_ERROR("WindowsWindow.cpp: GLFW Error ({0}): {1}", error, description); 
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
@@ -59,10 +60,10 @@ namespace Hazel {
 
 		{
 			HZ_PROFILE_SCOPE("glfwCreateWindow");
-		#if defined(HZ_DEBUG)
-			if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
-				glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-		#endif
+		    #if defined(HZ_DEBUG)
+		    	if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
+		    		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+		    #endif
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 			++s_GLFWWindowCount;
 		}
@@ -71,7 +72,8 @@ namespace Hazel {
 		//m_Context->Init();
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
-		SetVSync(true);
+
+		//SetVSync(true);
 
 		// Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
