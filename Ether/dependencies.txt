@@ -1,0 +1,17 @@
+
+as externel
+
+glfw
+
+spglog 
+
+glew
+opengl32 ,which is driver file
+
+
+included in project
+imgui
+
+
+
+
