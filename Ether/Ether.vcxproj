@@ -129,6 +129,10 @@
   <ItemGroup>
     <Text Include="dependencies.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Shaders\fs.shader" />
+    <None Include="Resources\Shaders\vs.shader" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -138,4 +138,8 @@
   <ItemGroup>
     <Text Include="dependencies.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Shaders\fs.shader" />
+    <None Include="Resources\Shaders\vs.shader" />
+  </ItemGroup>
 </Project>

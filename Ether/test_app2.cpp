@@ -12,7 +12,9 @@
 
 #include "Hazel/Renderer/Renderer.h"
 #include "Hazel/Renderer/Mesh.h"
-#include "Hazel/Renderer/GraphicsContext.h"
+#include "Hazel/Renderer/Shader.h"
+
+#include "Hazel/Renderer/Camera.h"
 
 using namespace Hazel;
 
@@ -37,7 +39,14 @@ int main() {
     sphere.VertexArray = sphereMesh->GetVertexAarry();
 
      
+    auto basicShader = Shader::Create("basic shader", "Resources/Shaders/vs.shader", "Resources/Shaders/fs.shader");
+    basicShader -> Bind();
 
+    //for now
+    Camera camera;
+    basicShader->SetMat4("model", glm::mat4(1.0f));
+    basicShader->SetMat4("view", camera.GetViewMatrix());
+    basicShader->SetMat4("projection", camera.GetProjectionMatrix());
 
 
     //======the loop 
