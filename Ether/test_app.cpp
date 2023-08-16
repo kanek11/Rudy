@@ -77,9 +77,7 @@ int main() {
      glEnableVertexAttribArray(0);
      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 
- 
- 
-     HZ_CORE_INFO(glGetString(GL_VENDOR));
+  
 
      //======the loop 
      /* Loop until the user closes the window */

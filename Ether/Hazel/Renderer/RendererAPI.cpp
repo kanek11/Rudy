@@ -9,7 +9,7 @@ namespace Hazel {
 
 	RendererAPI::API RendererAPI::s_API = RendererAPI::API::OpenGL;
 
-	Scope<RendererAPI> RendererAPI::Create()
+	Ref<RendererAPI> RendererAPI::Create()
 	{
 		switch (s_API)
 		{

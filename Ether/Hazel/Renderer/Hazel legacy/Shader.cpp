@@ -1,4 +1,4 @@
-//#include "hzpch.h"
+#include "hzpch.h"
 #include "Hazel/Renderer/Shader.h"
 
 #include "Hazel/Renderer/Renderer.h"
