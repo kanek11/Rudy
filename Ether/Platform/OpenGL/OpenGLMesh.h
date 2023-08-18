@@ -1,6 +1,10 @@
 #pragma once
-#include "Hazel/Renderer/Mesh.h"
+#include "Hazel/Renderer/Mesh.h" 
 
+//cpp 
+#include <glad/glad.h>
+
+//#include "OpenGLMesh.h" 
 
 namespace Hazel
 {
@@ -15,9 +19,20 @@ namespace Hazel
         //pass data, setup vao that is used by draw command.
         virtual void SetupMesh() override; 
 
-        virtual void DrawMesh() override;
+        virtual void Bind()  override {
+            glBindVertexArray(m_VertexArray);
+            //HZ_CORE_INFO("OpenGLMesh: VAO:{0} is bind", m_VertexArray);
+        }
 
-        virtual unsigned int GetVertexAarry() override {return m_VertexArray;}
+		virtual void Unbind() override { 
+            glBindVertexArray(0); }
+        //virtual void DrawMesh() override;
+
+        virtual unsigned int GetVertexAarry() override 
+		{return m_VertexArray;}
+
+		virtual unsigned int GetIndexCount() override
+		{return m_Indices.size();}
 
     private:
         unsigned int m_VertexBuffer, m_IndexBuffer, m_VertexArray;
@@ -27,6 +42,5 @@ namespace Hazel
 	};
 
 
-}
-
+}  
 

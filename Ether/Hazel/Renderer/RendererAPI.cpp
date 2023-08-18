@@ -1,4 +1,4 @@
-//#include "hzpch.h"
+ 
 
 #include "Ether.h"
 
@@ -13,8 +13,8 @@ namespace Hazel {
 	{
 		switch (s_API)
 		{
-			case RendererAPI::API::None:    HZ_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-			case RendererAPI::API::OpenGL:  return CreateScope<OpenGLRendererAPI>();
+		case RendererAPI::API::None:    HZ_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+		case RendererAPI::API::OpenGL:  return CreateScope<OpenGLRendererAPI>();
 		}
 
 		HZ_CORE_ASSERT(false, "Unknown RendererAPI!");

@@ -1,6 +1,17 @@
 #pragma once
 
+#include "Hazel/Renderer/Camera.h"
 #include "Hazel/Renderer/RendererAPI.h"
+
+//cpp
+#include "Ether.h"
+
+#include "Hazel/Renderer/Renderer.h"
+//#include "Platform/OpenGL/OpenGLRendererAPI.h"
+
+#include <glad/glad.h>
+
+
 
 namespace Hazel {
 
@@ -14,6 +25,9 @@ namespace Hazel {
         virtual void SetClearColor(float r, float g, float b, float a) override;
 		virtual void Clear() override;
 
+		virtual void DrawElements(const Ref<Mesh>& mesh, const Ref<Material>& material, Transform transform) override;
+
+
 	/*	virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) override;
 		virtual void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) override;
 		
@@ -22,5 +36,6 @@ namespace Hazel {
 
 
 }
+
 
 

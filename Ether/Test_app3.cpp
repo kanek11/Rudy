@@ -12,9 +12,12 @@
 
 #include "Hazel/Renderer/Renderer.h"
 #include "Hazel/Renderer/Mesh.h"
+#include "Hazel/Renderer/Material.h"
 #include "Hazel/Renderer/Shader.h"
 
 #include "Hazel/Renderer/Camera.h"
+
+#include "Hazel/Renderer/Object.h"
 
 using namespace Hazel;
 
@@ -22,65 +25,61 @@ using namespace Hazel;
 int main() {
 
     Hazel::Log::Init();
-    HZ_CORE_WARN("test:Initialized Log!"); 
 
-    
-    auto window  = Window::Create();   
+    HZ_CORE_WARN("test:Initialized Log!");
+
+
+    auto window = Window::Create();
+
+
+    Ref<Camera> camera  = CreateRef<Camera>();
 
     Renderer::Init();
-    auto renderAPI = Renderer::s_RendererAPI; 
+    Renderer::BeginScene(camera);
+    auto renderAPI = Renderer::s_RendererAPI;
 
 
-    Sphere sphere;
+    Sphere sphere = Sphere();
     auto sphereMesh = Mesh::Create(sphere.Vertices, sphere.Indices);
-   
-    //sphereMesh->SetupMesh(); 
-    sphere.VertexArray = sphereMesh->GetVertexAarry();
 
-     
-    auto basicShader = Shader::Create("basic shader", "Resources/Shaders/BasicVS.glsl", "Resources/Shaders/BasicFS.glsl");
-    basicShader -> Bind();
+    sphere.VertexArray = sphereMesh->GetVertexAarry();//
 
 
-    //for now
-    Camera camera;
-
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::scale(model, glm::vec3(0.5f)); 
-
-    std::cout << "View:" << camera.GetViewMatrix();
-    std::cout << "Proj:" << camera.GetProjectionMatrix(); 
+    auto basicShader = Shader::Create("basic shader", "Resources/Shaders/BasicVs.glsl", "Resources/Shaders/BasicFs.glsl");
     
-    basicShader->SetMat4("model", model);
+    //basicShader -> Bind(); 
 
-    glm ::mat4 view = camera.GetViewMatrix();
-    basicShader->SetMat4("view", view );
+    auto basicMaterial = Material::Create(basicShader, WorkflowMode::FlatColor);
+    
 
-    glm::mat4 projection = camera.GetProjectionMatrix();
-    basicShader->SetMat4("projection", projection);
+    Transform transform =  Transform();
 
-   
+ 
+
     //======the loop 
     /* Loop until the user closes the window */
 
     float angle = 0.0f;
- 
+
     bool isRunning = true;
 
-    while (isRunning) 
+    while (isRunning)
     {
         /* Render here */
         //glClearColor(0.2f, 0.3f, 0.3f, 1.0f); 
         //glClear(GL_COLOR_BUFFER_BIT);
-        renderAPI->SetClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+        renderAPI->SetClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         renderAPI->Clear();
 
+         
+        renderAPI-> DrawElements(sphereMesh, basicMaterial, transform);
+        //sphere.DrawSphere();
 
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        sphere.DrawSphere( );
 
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        //renderAPI->DrawElements(sphereMesh, basicMaterial, transform); 
         //turn on wireframe mode
-        // 
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         ////set it to be twice larger
         //glm::mat4 model = glm::mat4(1.0f);
         //model = glm::scale(model, glm::vec3(2.0f));
@@ -90,11 +89,11 @@ int main() {
         //sphere.DrawSphere();
 
 
-        window->OnUpdate(); 
+        window->OnUpdate();
         /* Swap front and back buffers */
-       //glfwSwapBuffers(window); 
+       // glfwSwapBuffers(window); 
         /* Poll for and process events */
-       // glfwPollEvents();
+        //glfwPollEvents();
 
     }
 

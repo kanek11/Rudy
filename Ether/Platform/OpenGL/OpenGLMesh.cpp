@@ -1,9 +1,7 @@
 
 
-#include <glad/glad.h>
 
-#include "OpenGLMesh.h"
-
+#include "OpenGLMesh.h" 
 
 
 
@@ -14,11 +12,14 @@ namespace Hazel
 		: m_Vertices(vertices), m_Indices(indices)
 	{
 
+		HZ_CORE_INFO("OpenGLMesh: Mesh created with {0} vertices and {1} indices", m_Vertices.size(), m_Indices.size());
 		SetupMesh();
 	}
 
 	void OpenGLMesh::SetupMesh()
 	{
+
+
 		//fixed routine
 		glCreateVertexArrays(1, &m_VertexArray);
 		glCreateBuffers(1, &m_VertexBuffer);
@@ -36,7 +37,7 @@ namespace Hazel
 		//the interpretation: depend on how we define the vertex data
 		//if any field is empty, the code simply ignore it
 		// 
-	    // vertex Positions
+		// vertex Positions
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 		// vertex normals
@@ -55,18 +56,18 @@ namespace Hazel
 		glBindVertexArray(0);
 
 
+
+		HZ_CORE_INFO("OpenGLMesh: Mesh is setup, vertex data is send to GPU, vao:{0}", m_VertexArray);
+
+
 	}
 
-	void OpenGLMesh::DrawMesh()
-	{
-		glBindVertexArray(m_VertexArray);
-		glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
-	}
-
-
-
-
+	//void OpenGLMesh::DrawMesh()
+	//{
+	//	glBindVertexArray(m_VertexArray);
+	//	glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
+	//	glBindVertexArray(0);
+	//}
 
 
 }

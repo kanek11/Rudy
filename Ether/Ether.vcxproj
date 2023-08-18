@@ -55,7 +55,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\dev\dependencies\GLM;D:\dev\dependencies\spdlog-1.x\include;D:\dev\dependencies\glfw-3.3.8.bin.WIN64\include;D:\dev\dependencies\Glad\include; </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\dev\dependencies\stb_image;D:\dev\dependencies\GLM;D:\dev\dependencies\spdlog-1.x\include;D:\dev\dependencies\glfw-3.3.8.bin.WIN64\include;D:\dev\dependencies\Glad\include; </AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -72,7 +73,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\dev\dependencies\GLM;D:\dev\dependencies\spdlog-1.x\include;D:\dev\dependencies\glfw-3.3.8.bin.WIN64\include;D:\dev\dependencies\Glad\include; </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\dev\dependencies\stb_image;D:\dev\dependencies\GLM;D:\dev\dependencies\spdlog-1.x\include;D:\dev\dependencies\glfw-3.3.8.bin.WIN64\include;D:\dev\dependencies\Glad\include; </AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -84,6 +86,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="C:\Users\10465\Desktop\Hazel src\Hazel\vendor\stb_image\stb_image.h" />
     <ClInclude Include="Hazel\Core\Assert.h" />
     <ClInclude Include="Hazel\Core\Base.h" />
     <ClInclude Include="Hazel\Core\Timestep.h" />
@@ -95,14 +98,19 @@
     <ClInclude Include="Hazel\Events\MouseCodes.h" />
     <ClInclude Include="Hazel\Renderer\Camera.h" />
     <ClInclude Include="Hazel\Renderer\GraphicsContext.h" />
+    <ClInclude Include="Hazel\Renderer\Material.h" />
     <ClInclude Include="Hazel\Renderer\Mesh.h" />
+    <ClInclude Include="Hazel\Renderer\Object.h" />
     <ClInclude Include="Hazel\Renderer\Shader.h" />
     <ClInclude Include="Hazel\Renderer\Renderer.h" />
     <ClInclude Include="Hazel\Renderer\RendererAPI.h" />
+    <ClInclude Include="Hazel\Renderer\Texture.h" />
+    <ClInclude Include="Platform\OpenGL\OpenGLMaterial.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLMesh.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLShader.h" />
+    <ClInclude Include="Platform\OpenGL\OpenGLTexture.h" />
     <ClInclude Include="Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="Hazel\Events\ApplicationEvent.h" />
     <ClInclude Include="Hazel\Events\Event.h" />
@@ -112,26 +120,32 @@
     <ClInclude Include="Sphere.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\dependencies\stb_image\stb_image.cpp" />
     <ClCompile Include="Hazel\Core\Log.cpp" />
-    <ClCompile Include="Hazel\Core\Window.cpp" />
+    <ClCompile Include="Hazel\Core\WIndow.cpp" />
+    <ClCompile Include="Hazel\Renderer\Camera.cpp" />
     <ClCompile Include="Hazel\Renderer\GraphicsContext.cpp" />
+    <ClCompile Include="Hazel\Renderer\Material.cpp" />
     <ClCompile Include="Hazel\Renderer\Mesh.cpp" />
-    <ClCompile Include="Hazel\Renderer\Shader.cpp" />
     <ClCompile Include="Hazel\Renderer\Renderer.cpp" />
     <ClCompile Include="Hazel\Renderer\RendererAPI.cpp" />
-    <ClCompile Include="Platform\OpenGL\OpenGLMesh.cpp" />
+    <ClCompile Include="Hazel\Renderer\Shader.cpp" />
+    <ClCompile Include="Hazel\Renderer\Texture.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="Platform\OpenGL\OpenGLMaterial.cpp" />
+    <ClCompile Include="Platform\OpenGL\OpenGLMesh.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLShader.cpp" />
+    <ClCompile Include="Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="Platform\Windows\WindowsWindow.cpp" />
-    <ClCompile Include="test_app2.cpp" />
+    <ClCompile Include="Test_app3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="dependencies.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\fs.shader" />
-    <None Include="Resources\Shaders\vs.shader" />
+    <None Include="Resources\Shaders\BasicFs.glsl" />
+    <None Include="Resources\Shaders\BasicVs.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

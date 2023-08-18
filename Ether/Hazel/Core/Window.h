@@ -2,8 +2,12 @@
 
 //  Core/
 
-#include "Hazel/Core/Base.h"
+#include "Ether.h"
 #include "Hazel/Events/Event.h"
+
+
+
+ 
 
 
 //me:
@@ -71,3 +75,5 @@ namespace Hazel {
 	};
 
 }
+
+

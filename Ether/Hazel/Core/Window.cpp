@@ -1,24 +1,22 @@
-//#include "hzpch.h"
 
 
-#include "Ether.h"
 #include "Window.h"
- 
+
 
 #ifdef HZ_PLATFORM_WINDOWS
-	#include "Platform/Windows/WindowsWindow.h"
+#include "Platform/Windows/WindowsWindow.h"
 #endif
 
 namespace Hazel
 {
 	Scope<Window> Window::Create(const WindowProps& props)
 	{
-	#ifdef HZ_PLATFORM_WINDOWS
+#ifdef HZ_PLATFORM_WINDOWS
 		return CreateScope<WindowsWindow>(props);
-	#else
+#else
 		HZ_CORE_ASSERT(false, "Unknown platform!");
 		return nullptr;
-	#endif
+#endif
 	}
 
 }

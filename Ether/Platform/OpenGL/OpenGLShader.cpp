@@ -1,17 +1,19 @@
 
+
 #include "OpenGLShader.h"
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 
-namespace Hazel {
+#include <glm/gtc/type_ptr.hpp>
 
+namespace Hazel {
 
 
     OpenGLShader::OpenGLShader(const std::string& filepath)
         : m_FilePath(filepath)
-    { 
+    {
 
     }
 
@@ -102,13 +104,13 @@ namespace Hazel {
 
 
         // output of the creation.
-        m_ShaderID = glCreateProgram(); 
+        m_ShaderID = glCreateProgram();
 
         glAttachShader(m_ShaderID, vertex);
         glAttachShader(m_ShaderID, fragment);
 
-       /* if (geometryPath != nullptr)
-            glAttachShader(ID, geometry);*/
+        /* if (geometryPath != nullptr)
+             glAttachShader(ID, geometry);*/
 
         glLinkProgram(m_ShaderID);
 
@@ -118,9 +120,10 @@ namespace Hazel {
         glDeleteShader(vertex);
         glDeleteShader(fragment);
 
-      /*  if (geometryPath != nullptr)
-            glDeleteShader(geometry);*/
+        /*  if (geometryPath != nullptr)
+              glDeleteShader(geometry);*/
 
+        HZ_CORE_INFO("OpenGLShader: shaderName: {0} is created, id:{1}", m_Name,m_ShaderID);
     }
 
 
@@ -135,12 +138,16 @@ namespace Hazel {
 
 
 
-  
+
     // activate the shader
    // ------------------------------------------------------------------------
     void OpenGLShader::Bind() const
     {
+        HZ_PROFILE_FUNCTION();
+
         glUseProgram(m_ShaderID);
+
+        //HZ_CORE_INFO("OpenGLShader: ShaderID:{0} is bound", m_ShaderID);
     }
 
     void OpenGLShader::Unbind() const
@@ -148,6 +155,7 @@ namespace Hazel {
         HZ_PROFILE_FUNCTION();
 
         glUseProgram(0);
+        //HZ_CORE_INFO("OpenGLShader:Shader is unbound");
     }
 
 
@@ -195,7 +203,7 @@ namespace Hazel {
     {
         glUniform4f(glGetUniformLocation(m_ShaderID, name.c_str()), x, y, z, w);
     }
- 
+
     // ------------------------------------------------------------------------
     void OpenGLShader::SetMat3(const std::string& name, const glm::mat3& mat) const
     {
@@ -204,10 +212,19 @@ namespace Hazel {
     // ------------------------------------------------------------------------
     void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& mat) const
     {
-        glUniformMatrix4fv(glGetUniformLocation(m_ShaderID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+       
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            // Log error or warning
+            return;
+        }
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
+
+        //glUniformMatrix4fv(glGetUniformLocation(m_ShaderID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+
     }
 
-  
+
     //routine utility function for checking shader compilation/linking errors.
    // ------------------------------------------------------------------------
     void OpenGLShader::checkCompileErrors(GLuint shader, std::string type)
@@ -233,13 +250,6 @@ namespace Hazel {
             }
         }
     }
- 
-
- 
-
-
-
-
 
 
 }

@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+#include "Hazel/Renderer/Shader.h"
+#include "Hazel/Renderer/Camera.h"
 
 #include "Hazel/Core/Window.h"
 using namespace Hazel; 
@@ -79,6 +81,42 @@ int main() {
 
   
 
+
+     auto basicShader = Shader::Create("basic shader", "Resources/Shaders/BasicVS.glsl", "Resources/Shaders/BasicFS.glsl");
+     basicShader->Bind();
+
+
+     //for now
+     Camera camera;
+
+     glm::mat4 model = glm::mat4(1.0f);
+     //scale the triangle
+     model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+
+
+     //std::cout << "View:" << camera.GetViewMatrix();
+     //std::cout << "Proj:" << camera.GetProjectionMatrix();
+
+     basicShader->SetMat4("model", model);
+
+
+     glm::mat4 view = camera.GetViewMatrix();
+     //view = glm::mat4(1.0f); 
+     basicShader->SetMat4("view", camera.GetViewMatrix());
+
+
+     glm::mat4 projection = glm::perspective(45.0f,
+         16.0f / 9.0f, 0.1f, 1000.0f);
+     //projection =  glm::mat4(1.0f));
+     projection = camera.GetProjectionMatrix();
+
+     basicShader->SetMat4("projection", projection); 
+
+
+     std::cout << "View:" << view << std::endl;
+     std::cout << "Proj:" << projection <<std::endl; 
+
+
      //======the loop 
      /* Loop until the user closes the window */
      while (!glfwWindowShouldClose(window))
@@ -86,8 +124,9 @@ int main() {
          /* Render here */
          glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
          glClear(GL_COLOR_BUFFER_BIT);
+ 
 
-
+         //basicShader->Unbind();
          glBindVertexArray(VAO);
          glDrawArrays(GL_TRIANGLES, 0, 3);
 

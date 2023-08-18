@@ -1,16 +1,20 @@
+
+//cpp
 //#include "hzpch.h"
 
 #include "Ether.h"
 
 #include "Hazel/Renderer/Renderer.h"
-//#include "Hazel/Renderer/Renderer2D.h"
 
+//#include "Hazel/Renderer/Renderer2D.h" 
 //#include "Hazel/Renderer/Render3D.h"
+
 
 namespace Hazel {
 
-	Scope<Renderer::SceneData> Renderer::s_SceneData = CreateScope<Renderer::SceneData>();
+	//Scope<Renderer::SceneData> Renderer::s_SceneData = CreateScope<Renderer::SceneData>();
 
+	Ref<Camera> Renderer::s_MainCamera;
 	Ref<RendererAPI> Renderer::s_RendererAPI = RendererAPI::Create();
 
 	void Renderer::Init()
@@ -35,9 +39,9 @@ namespace Hazel {
 	}
 
 	//void Renderer::BeginScene(OrthographicCamera& camera)
-	void Renderer::BeginScene(Camera& camera)
+	void Renderer::BeginScene(Ref<Camera> camera)
 	{
-		s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+		s_MainCamera = camera; 
 	}
 
 	void Renderer::EndScene()

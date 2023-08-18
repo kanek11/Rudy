@@ -4,6 +4,7 @@
 #include "Hazel/Renderer/Shader.h"
 #include <glm/glm.hpp>
 
+
 //me: 
 //not Cherno's code, we don't need translate between OpenGL and Vulkan yet.
 
@@ -45,6 +46,7 @@ namespace Hazel {
 
 
 		virtual const std::string& GetName() const override { return m_Name; } 
+		virtual const uint32_t GetShaderID() const override { return m_ShaderID; }
 
  
 
@@ -61,3 +63,5 @@ namespace Hazel {
 
 
 }
+
+

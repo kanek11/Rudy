@@ -4,6 +4,9 @@
 
 #include <glm/glm.hpp>
 
+#include <Hazel/Renderer/Object.h>
+#include <Hazel/Renderer/Mesh.h>
+#include <Hazel/Renderer/Material.h>
 
 
 //me:
@@ -40,8 +43,11 @@ namespace Hazel {
 		virtual void SetClearColor(const glm::vec4& color) = 0;
 		virtual void SetClearColor(float r, float g, float b, float a) = 0;
 		virtual void Clear() = 0;
-
-		//virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) = 0;
+ 
+		//me:
+		virtual void DrawElements(const Ref<Mesh>& mesh, const Ref<Material>& material, Transform transform) = 0;
+		
+		
 		//virtual void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) = 0;
 		
 		//virtual void SetLineWidth(float width) = 0;
@@ -53,3 +59,5 @@ namespace Hazel {
 	};
 
 }
+
+

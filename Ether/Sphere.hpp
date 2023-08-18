@@ -9,10 +9,10 @@ namespace Hazel {
 
 	class Sphere {
 	public:
-		Sphere() { Init(subdivision);}
+		Sphere() { Create(subdivision);}
 		~Sphere() = default;
 
-		void Init(unsigned int);
+		void Create(unsigned int subdivision);
         void DrawSphere();
 
 		std::vector<Vertex> Vertices;
@@ -20,7 +20,7 @@ namespace Hazel {
 
         unsigned int VertexArray;
 
-        unsigned int subdivision = 200;
+        unsigned int subdivision = 20;
 	};
 
 
@@ -36,7 +36,7 @@ namespace Hazel {
 
 	//static Scope<Mesh> Create(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
 
-	void Sphere::Init(unsigned int  subdivision)
+	void Sphere::Create(unsigned int  subdivision)
 	{
     
   
