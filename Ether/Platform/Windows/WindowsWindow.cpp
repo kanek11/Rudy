@@ -1,8 +1,7 @@
 //#include "hzpch.h"
 
 //me£º
-#include "Ether.h"
-#include "Hazel/Debug/Instrumentor.h"
+#include "EtherPCH.h" 
 
 
 #include "Hazel/Events/Input.h"

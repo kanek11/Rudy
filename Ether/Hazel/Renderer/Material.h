@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ether.h"
+#include "EtherPCH.h"
 
 #include "Hazel/Renderer/Shader.h"
 #include "Hazel/Renderer/Texture.h"
@@ -68,12 +68,14 @@ namespace Hazel {
 
 		virtual void Bind() = 0;   //before draw call, bind the material/textures
 		virtual void Unbind() = 0; 
-		virtual void SetupMaterial() = 0;  //set up uniform variables in shader. etc.
-	
+
+	    
+		virtual void SetTexture(TextureType type, Ref<Texture2D> texture) = 0;
 	
 	    virtual Ref<Shader> GetShader() const = 0;
+		virtual WorkflowMode GetWorkflowMode() const = 0;
 
-		static Ref<Material> Create(Ref<Shader> shader, WorkflowMode workflowMode = WorkflowMode::Specular);
+		static Ref<Material> Create(Ref<Shader> shader, WorkflowMode workflowMode = WorkflowMode::FlatColor);
 
 
 	private:
@@ -82,6 +84,9 @@ namespace Hazel {
 
 		//collection of textures
 		std::unordered_map<TextureType, Ref<Texture2D>> m_Textures; 
+
+
+		virtual void SetupMaterial() = 0;  //set up uniform variables in shader. etc.
 
 	};
 

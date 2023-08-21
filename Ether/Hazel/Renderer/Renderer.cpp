@@ -2,7 +2,7 @@
 //cpp
 //#include "hzpch.h"
 
-#include "Ether.h"
+#include "EtherPCH.h"
 
 #include "Hazel/Renderer/Renderer.h"
 

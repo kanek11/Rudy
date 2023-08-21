@@ -12,6 +12,10 @@ namespace Hazel {
 		SetupMaterial();
 	}
 
+
+ 
+
+
 	void OpenGLMaterial::SetupMaterial()
 	{
 		HZ_CORE_INFO("OpenGLMaterial: Material is set up, use shader");

@@ -1,6 +1,6 @@
 //#include "hzpch.h"
 
-#include "Ether.h"
+#include "EtherPCH.h"
 
 #include "Hazel/Renderer/GraphicsContext.h"
 

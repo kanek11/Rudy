@@ -11,23 +11,34 @@
 
 namespace Hazel {
  
+	//warn: use Eigen instead of glm for custom math functions.
+	//glm is technically a math library for graphics, not a general math library.  all its functions are routined and not to be used for general math.
+	//glm somehow handles affine matrix etc differently, eg: the translation part is not the last column but the last row.
 	class MyMath
 	{
 	public:
 		static glm::mat4 lookAt(glm::vec3 eye, glm::vec3 focus, glm::vec3 up) {
 
-			glm::vec3 translate = eye - focus;
+			glm::vec3 offset = eye - focus;
 
-			glm::vec3 forward_Z = glm::normalize(translate);
+			glm::vec3 forward_Z = glm::normalize(offset);
 			glm::vec3 right_X = glm::normalize(glm::cross(up, forward_Z));
 			glm::vec3 up_Y = glm::normalize(glm::cross(forward_Z, right_X));
 
-			glm::mat4 view(
-				right_X.x, right_X.y, right_X.z, -translate.x,
-				up_Y.x, up_Y.y, up_Y.z, -translate.y,
-				forward_Z.x, forward_Z.y, forward_Z.z, -translate.z,
+			glm::mat4 rotate(
+				right_X.x, right_X.y, right_X.z, 0,
+				up_Y.x, up_Y.y, up_Y.z, 0,
+				-forward_Z.x, -forward_Z.y, -forward_Z.z, 0,
 				0, 0, 0, 1);
 
+			glm::mat4 translate(
+                1, 0, 0, -offset.x,
+				0, 1, 0, -offset.y,
+				0, 0, 1, -offset.z,
+				0, 0, 0, 1 );
+
+
+			glm::mat4 view = rotate * translate;
 			return view;
 
 		}
@@ -45,7 +56,7 @@ namespace Hazel {
 			double n = zNear;
 			double f = zFar;
 
-			double rad = eye_fov * 3.1415926 / 180;
+			double rad = eye_fov * 3.14159265358979323846 / 180.0f;
 			double t = tan(rad / 2.0f) * abs(n);
 			double r = aspect_ratio * t;
 
@@ -96,13 +107,19 @@ namespace Hazel {
 
 		const glm::mat4& GetViewMatrix() const {   
 			//set to always look to orignial for now 
-			return glm::lookAt(m_Position, m_FocalPoint, m_Up);
+			//avoid return object directly. it cause undefined behavior.
+			//glm::mat4 view = MyMath::lookAt(m_Position, m_FocalPoint, m_Up);
+			glm::mat4 view = glm::lookAt(m_Position, m_FocalPoint, m_Up);
+			return view;
 		}
 
 		const glm::mat4& GetProjectionMatrix() const { 
-			 return glm::perspective(m_FOV, m_AspectRatio, m_Near, m_Far);
+			 
+			//glm ::mat4 projection = MyMath::perspective(m_FOV, m_AspectRatio, m_Near, m_Far);
+			glm::mat4 projection = glm::perspective(m_FOV, m_AspectRatio, m_Near, m_Far);
+			return  projection;
 
-			 //return glm::perspective(45.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
+			 
 		} 
 
 
@@ -110,7 +127,7 @@ namespace Hazel {
 
 	protected:
 
-		glm::vec3 m_Position = { 0.0f, 1.0f, 3.0f };
+		glm::vec3 m_Position = { 0.0f, 1.0f, 5.0f };
 
 		//view parameters
         glm::vec3 m_Front = { 0.0f, 0.0f, 1.0f };  //z

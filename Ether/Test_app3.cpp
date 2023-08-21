@@ -1,9 +1,8 @@
+#include "EtherPCH.h"
+
 
 #include <glad/glad.h>
-
-#include "Ether.h"
-
-#include <iostream>
+#include <GLFW/glfw3.h>
 
 
 #include "Hazel/Core/Window.h"

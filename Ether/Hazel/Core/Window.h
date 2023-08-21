@@ -2,12 +2,10 @@
 
 //  Core/
 
-#include "Ether.h"
+#include "EtherPCH.h"
+
+
 #include "Hazel/Events/Event.h"
-
-
-
- 
 
 
 //me:

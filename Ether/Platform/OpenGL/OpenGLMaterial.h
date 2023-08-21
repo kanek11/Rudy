@@ -22,6 +22,7 @@ namespace Hazel {
 		}
 
 		virtual Ref<Shader> GetShader() const override { return m_Shader; }
+		virtual WorkflowMode GetWorkflowMode() const override { return m_WorkflowMode; }
 
 	private:
 		Ref<Shader> m_Shader;

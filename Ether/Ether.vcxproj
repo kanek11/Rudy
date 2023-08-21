@@ -55,14 +55,16 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\dev\dependencies\stb_image;D:\dev\dependencies\GLM;D:\dev\dependencies\spdlog-1.x\include;D:\dev\dependencies\glfw-3.3.8.bin.WIN64\include;D:\dev\dependencies\Glad\include; </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\dev\dependencies\assimp\include;D:\dev\dependencies\stb_image;D:\dev\dependencies\GLM;D:\dev\dependencies\spdlog-1.x\include;D:\dev\dependencies\glfw-3.3.8.bin.WIN64\include;D:\dev\dependencies\Glad\include; </AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>EtherPCH.h </PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\dev\dependencies\Glad\lib; D:\dev\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib ;glad.lib;User32.lib;Gdi32.lib;Shell32.lib ;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\dev\dependencies\assimp\lib;  D:\dev\dependencies\Glad\lib; D:\dev\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc141-mtd.lib;glfw3.lib;opengl32.lib ;glad.lib;User32.lib;Gdi32.lib;Shell32.lib ;</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -73,16 +75,18 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\dev\dependencies\stb_image;D:\dev\dependencies\GLM;D:\dev\dependencies\spdlog-1.x\include;D:\dev\dependencies\glfw-3.3.8.bin.WIN64\include;D:\dev\dependencies\Glad\include; </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\dev\dependencies\assimp\include;D:\dev\dependencies\stb_image;D:\dev\dependencies\GLM;D:\dev\dependencies\spdlog-1.x\include;D:\dev\dependencies\glfw-3.3.8.bin.WIN64\include;D:\dev\dependencies\Glad\include; </AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>EtherPCH.h </PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\dev\dependencies\Glad\lib; D:\dev\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib ;glad.lib;User32.lib;Gdi32.lib;Shell32.lib ;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\dev\dependencies\assimp\lib;  D:\dev\dependencies\Glad\lib; D:\dev\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc141-mtd.lib;glfw3.lib;opengl32.lib ;glad.lib;User32.lib;Gdi32.lib;Shell32.lib ;</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -116,11 +120,15 @@
     <ClInclude Include="Hazel\Events\Event.h" />
     <ClInclude Include="Hazel\Events\KeyEvent.h" />
     <ClInclude Include="Hazel\Events\MouseEvent.h" />
-    <ClInclude Include="Ether.h" />
+    <ClInclude Include="EtherPCH.h" />
     <ClInclude Include="Sphere.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\dependencies\stb_image\stb_image.cpp" />
+    <ClCompile Include="EtherPCH.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Hazel\Core\Log.cpp" />
     <ClCompile Include="Hazel\Core\WIndow.cpp" />
     <ClCompile Include="Hazel\Renderer\Camera.cpp" />

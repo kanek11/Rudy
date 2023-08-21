@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ether.h"
+#include "EtherPCH.h"
 
 #include "Hazel/Renderer/Texture.h"
 #include <stb_image.h>

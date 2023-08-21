@@ -1,6 +1,6 @@
 //#include "hzpch.h"
 
-#include "Ether.h"
+#include "EtherPCH.h"
 
 #include "Hazel/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLRendererAPI.h"
@@ -33,11 +33,19 @@ namespace Hazel {
         material->GetShader()->SetMat4("model", model);
 
 		glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix();
+		//view = glm::mat4(1.0f);
+		//std::cout << "view:" << view << std::endl;
+		
 		material->GetShader() ->SetMat4("view", view);
 
 		glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix();
+        //projection = glm::mat4(1.0f);
+		//std::cout << "proj" << projection << std::endl;
+
 		material->GetShader() ->SetMat4("projection", projection);
 
+		//std:: cout << "view projection" << std::endl;
+        //std::cout << projection * view << std::endl;
 
 
 

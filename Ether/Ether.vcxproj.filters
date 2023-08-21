@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Ether.h">
+    <ClInclude Include="EtherPCH.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Hazel\Core\Assert.h">
@@ -168,6 +168,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Test_app3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EtherPCH.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
