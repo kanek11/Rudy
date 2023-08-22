@@ -1,6 +1,6 @@
-
-
-
+﻿
+#include "EtherPCH.h"  
+ 
 #include "Platform/OpenGL/OpenGLTexture.h"
 #include <stb_image.h>
  
@@ -40,18 +40,32 @@ namespace Hazel {
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
 		: m_Path(path)
 	{
-		HZ_PROFILE_FUNCTION();
+		//HZ_PROFILE_FUNCTION();
+ 
 
-		int width, height, channels;
-		stbi_set_flip_vertically_on_load(1);
+		int width=0, height=0, channels=0;
+
+		//in most case, set flip vertically on load for opengl,  
+		//opengl assume uv of bottom left origin and stbi is top left origin
+		stbi_set_flip_vertically_on_load(Texture::s_FlipYOnLoad);
+
+
 		stbi_uc* data = nullptr;
-		{
-			HZ_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexture2D(const std::string&)");
-			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+		{ 
+			HZ_PROFILE_SCOPE("stbi_load - OpenGLTexture2D(const std::string&)");
+       
+			 data = stbi_load(path.c_str(), &width, &height, &channels, 0); 
 		}
 
-		if (data)
+
+		if (!data)
 		{
+			HZ_CORE_WARN("OpenGLTexture: failded to load texture at path: {0}", path.c_str());
+		}
+		else
+		{
+			HZ_CORE_INFO("OpenGLTexture:texture is loaded and setup at path: {0}", path.c_str());
+
 			m_IsLoaded = true;
 
 			m_Width = width;
@@ -86,19 +100,22 @@ namespace Hazel {
 			glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
 
 			stbi_image_free(data);
+
+
+			
 		}
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{
-		HZ_PROFILE_FUNCTION();
+		//HZ_PROFILE_FUNCTION();
 
 		glDeleteTextures(1, &m_TextureID);
 	}
 
 	void OpenGLTexture2D::SetData(void* data, uint32_t size)
 	{
-		HZ_PROFILE_FUNCTION();
+		//HZ_PROFILE_FUNCTION();
 
 		uint32_t bpp = m_DataFormat == GL_RGBA ? 4 : 3;
 		HZ_CORE_ASSERT(size == m_Width * m_Height * bpp, "Data must be entire texture!");
@@ -107,14 +124,14 @@ namespace Hazel {
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
-		HZ_PROFILE_FUNCTION();
+		//HZ_PROFILE_FUNCTION();
 
 		glBindTextureUnit(slot, m_TextureID);
 	}
 
 	void OpenGLTexture2D::Unbind(uint32_t slot) const
 	{
-		HZ_PROFILE_FUNCTION();
+		//HZ_PROFILE_FUNCTION();
 
 		glBindTextureUnit(slot, 0);
 	}

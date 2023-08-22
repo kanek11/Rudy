@@ -10,6 +10,12 @@
 
 namespace Hazel {
 
+	bool Texture::s_FlipYOnLoad = false;
+
+	void Texture::SetFlipYOnLoad(bool flip)
+	{
+		s_FlipYOnLoad = flip;
+	}
 
 	Ref<Texture2D> Texture2D::Create(const std::string& path)
 	{
@@ -22,5 +28,7 @@ namespace Hazel {
 		HZ_CORE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}
+
+	
 
 }

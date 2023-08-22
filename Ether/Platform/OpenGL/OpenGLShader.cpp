@@ -1,4 +1,4 @@
-
+#include "EtherPCH.h"
 
 #include "OpenGLShader.h"
 
@@ -23,7 +23,7 @@ namespace Hazel {
     OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
         : m_Name(name)
     {
-        HZ_PROFILE_FUNCTION();
+        //HZ_PROFILE_FUNCTION();
 
         // 1. retrieve the vertex/fragment source code from filePath
         std::string vertexCode;
@@ -131,7 +131,7 @@ namespace Hazel {
 
     OpenGLShader::~OpenGLShader()
     {
-        HZ_PROFILE_FUNCTION();
+        //HZ_PROFILE_FUNCTION();
 
         glDeleteProgram(m_ShaderID);
     }
@@ -143,7 +143,7 @@ namespace Hazel {
    // ------------------------------------------------------------------------
     void OpenGLShader::Bind() const
     {
-        HZ_PROFILE_FUNCTION();
+        //HZ_PROFILE_FUNCTION();
 
         glUseProgram(m_ShaderID);
 
@@ -152,7 +152,7 @@ namespace Hazel {
 
     void OpenGLShader::Unbind() const
     {
-        HZ_PROFILE_FUNCTION();
+        //HZ_PROFILE_FUNCTION();
 
         glUseProgram(0);
         //HZ_CORE_INFO("OpenGLShader:Shader is unbound");

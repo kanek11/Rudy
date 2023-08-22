@@ -1,4 +1,4 @@
-//#include "hzpch.h"
+// #include "hzpch.h"
 
 #include "EtherPCH.h"
 
@@ -7,58 +7,47 @@
 
 #include <glad/glad.h>
 
+namespace Hazel
+{
 
- 
-
-namespace Hazel {
-
-	void OpenGLRendererAPI::DrawElements(const Ref<Mesh>& mesh, const Ref<Material>& material, Transform transform)
+	void OpenGLRendererAPI::DrawElements(const Ref<Mesh> &mesh, const Ref<Material> &material, Transform transform)
 	{
-		HZ_PROFILE_FUNCTION();
-
-
+		//HZ_PROFILE_FUNCTION();
 
 		mesh->Bind();
 
 		material->Bind();
 
-
-		//set uniforms for transforms
-		//identity matrix for now;
-
+		// set uniforms for transforms
+		// identity matrix for now;
 
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::scale(model, transform.Scale);
 		model = glm::translate(model, transform.Position);
-        material->GetShader()->SetMat4("model", model);
+		material->GetShader()->SetMat4("u_Model", model);
 
 		glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix();
-		//view = glm::mat4(1.0f);
-		//std::cout << "view:" << view << std::endl;
-		
-		material->GetShader() ->SetMat4("view", view);
+		// view = glm::mat4(1.0f);
+		// std::cout << "view:" << view << std::endl;
+
+		material->GetShader()->SetMat4("u_View", view);
 
 		glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix();
-        //projection = glm::mat4(1.0f);
-		//std::cout << "proj" << projection << std::endl;
+		// projection = glm::mat4(1.0f);
+		// std::cout << "proj" << projection << std::endl;
 
-		material->GetShader() ->SetMat4("projection", projection);
+		material->GetShader()->SetMat4("u_Projection", projection);
 
-		//std:: cout << "view projection" << std::endl;
-        //std::cout << projection * view << std::endl;
+		// std:: cout << "view projection" << std::endl;
+		// std::cout << projection * view << std::endl;
 
-
-
-		glDrawElements(GL_TRIANGLE_STRIP, mesh->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
-		//for now!
+		// glDrawElements(GL_TRIANGLE_STRIP, mesh->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
+		glDrawElements(GL_TRIANGLES, mesh->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
+		// for now!
 
 		material->Unbind();
 		mesh->Unbind();
-
-
 	}
-
-
 
 	void OpenGLMessageCallback(
 		unsigned source,
@@ -66,15 +55,23 @@ namespace Hazel {
 		unsigned id,
 		unsigned severity,
 		int length,
-		const char* message,
-		const void* userParam)
+		const char *message,
+		const void *userParam)
 	{
 		switch (severity)
 		{
-		case GL_DEBUG_SEVERITY_HIGH:         HZ_CORE_CRITICAL(message); return;
-		case GL_DEBUG_SEVERITY_MEDIUM:       HZ_CORE_ERROR(message); return;
-		case GL_DEBUG_SEVERITY_LOW:          HZ_CORE_WARN(message); return;
-		case GL_DEBUG_SEVERITY_NOTIFICATION: HZ_CORE_TRACE(message); return;
+		case GL_DEBUG_SEVERITY_HIGH:
+			HZ_CORE_CRITICAL(message);
+			return;
+		case GL_DEBUG_SEVERITY_MEDIUM:
+			HZ_CORE_ERROR(message);
+			return;
+		case GL_DEBUG_SEVERITY_LOW:
+			HZ_CORE_WARN(message);
+			return;
+		case GL_DEBUG_SEVERITY_NOTIFICATION:
+			HZ_CORE_TRACE(message);
+			return;
 		}
 
 		HZ_CORE_ASSERT(false, "Unknown severity level!");
@@ -82,7 +79,7 @@ namespace Hazel {
 
 	void OpenGLRendererAPI::Init()
 	{
-		HZ_PROFILE_FUNCTION();
+		//HZ_PROFILE_FUNCTION();
 
 #ifdef HZ_DEBUG
 		glEnable(GL_DEBUG_OUTPUT);
@@ -104,7 +101,7 @@ namespace Hazel {
 		glViewport(x, y, width, height);
 	}
 
-	void OpenGLRendererAPI::SetClearColor(const glm::vec4& color)
+	void OpenGLRendererAPI::SetClearColor(const glm::vec4 &color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
@@ -114,28 +111,27 @@ namespace Hazel {
 		glClearColor(r, g, b, a);
 	}
 
-
 	void OpenGLRendererAPI::Clear()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	//void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
+	// void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
 	//{
 	//	vertexArray->Bind();
 	//	uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
 	//	glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
-	//}
+	// }
 
-	//void OpenGLRendererAPI::DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
+	// void OpenGLRendererAPI::DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
 	//{
 	//	vertexArray->Bind();
 	//	glDrawArrays(GL_LINES, 0, vertexCount);
-	//}
+	// }
 
-	//void OpenGLRendererAPI::SetLineWidth(float width)
+	// void OpenGLRendererAPI::SetLineWidth(float width)
 	//{
 	//	glLineWidth(width);
-	//}
+	// }
 
 }

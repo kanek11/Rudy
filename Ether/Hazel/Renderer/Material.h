@@ -29,7 +29,7 @@
 namespace Hazel {
 
 	//texture type is outer attribute of texture. so define in material class instead of texture itself.
-	//although tempting, we don't use the enum number as the texture channel number.
+	//although tempting, we don't use the enum number as the texture channel number. it's too rigid.
 	enum class TextureType
 	{
 		None = 0,
@@ -47,17 +47,24 @@ namespace Hazel {
 
 		HeightMap, //displacement
 		MaskMap,
+
+		//LightMap,   
+		//
 	};
 	 
 
 
 	enum class WorkflowMode
 	{
-		Specular = 0,   //blinn-phong
+		BlinnPhong = 0,   //blinn-phong
 		Metallic = 1,   //PBR
 
 		FlatColor = 2,  //no texture, just flat color
 	};
+
+
+
+
 
 
 	class Material

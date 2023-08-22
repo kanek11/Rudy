@@ -38,9 +38,12 @@ namespace Hazel {
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		
 
-		static Ref<RendererAPI> s_RendererAPI;
 
 		static Ref<Camera> GetMainCamera() { return s_MainCamera; }
+
+
+	//static variables
+		static Ref<RendererAPI> s_RendererAPI;
 		 
 
 	private:

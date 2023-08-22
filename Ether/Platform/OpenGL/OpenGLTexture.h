@@ -28,8 +28,8 @@ namespace Hazel {
 
 
 		virtual bool IsLoaded() const override { return m_IsLoaded; } 
-
 		 
+	
 		//gl utils
 		virtual void Bind(uint32_t slot = 0) const override;
 		virtual void Unbind(uint32_t slot = 0) const override;
@@ -57,6 +57,7 @@ namespace Hazel {
 		GLenum m_Wrap, m_Filter;
 
 		bool m_IsLoaded = false;
+ 
 	};
 
 }

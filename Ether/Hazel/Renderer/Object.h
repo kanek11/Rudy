@@ -10,9 +10,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-
-using namespace std;
-
+ 
 
 namespace Hazel {
 
@@ -26,22 +24,40 @@ namespace Hazel {
 
     class Object
     {
-    private:
+    public :
+        Object()
+        {
+            m_Name = "Default Object";
+            m_Shader = Shader::Create("blinn-phong", "Resources/Shaders/BlinnPhong_VS.glsl", "Resources/Shaders/BlinnPhong_FS.glsl");
+        }
+
+    //private:
+     public:
         std::string m_Name;
 
         Transform m_Transform;
 
         std::vector<Ref<Mesh>> m_Meshes;
         std::vector<Ref<Material>> m_Materials;
+        Ref<Shader> m_Shader;
 
         std::string m_Directory;
 
 
 
+    public:
+        std::vector<Ref<Texture2D>> m_Loaded_Textures;  //opt to avoid duplicate textures,  loading is extremely slow
 
+        void loadModel(std::string const& path);
+        void processNode(aiNode* node, const aiScene* scene);
+        Ref<Mesh> processMesh(aiMesh* mesh, const aiScene* scene);
+        Ref<Material> processMaterial(aiMesh* mesh, const aiScene* scene);
+
+
+        //void DrawModel();
 
     };
-
+     
 }
   
 

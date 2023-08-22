@@ -1,9 +1,7 @@
 
-
-
+#include "EtherPCH.h"  
 #include "OpenGLMesh.h" 
-
-
+ 
 
 namespace Hazel
 {
@@ -17,9 +15,7 @@ namespace Hazel
 	}
 
 	void OpenGLMesh::SetupMesh()
-	{
-
-
+	{ 
 		//fixed routine
 		glCreateVertexArrays(1, &m_VertexArray);
 		glCreateBuffers(1, &m_VertexBuffer);
@@ -54,10 +50,9 @@ namespace Hazel
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
 
 		glBindVertexArray(0);
+		 
 
-
-
-		HZ_CORE_INFO("OpenGLMesh: Mesh is setup, vertex data is send to GPU, vao:{0}", m_VertexArray);
+		//HZ_CORE_INFO("OpenGLMesh: Mesh is setup, vertex data is send to GPU, vao:{0}", m_VertexArray);
 
 
 	}

@@ -111,6 +111,12 @@
     <ClInclude Include="C:\Users\10465\Desktop\Hazel src\Hazel\vendor\stb_image\stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Hazel\Core\Timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hazel\Debug\Instrumentor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Hazel\Core\Log.cpp">
@@ -167,10 +173,13 @@
     <ClCompile Include="..\..\dependencies\stb_image\stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Test_app3.cpp">
+    <ClCompile Include="EtherPCH.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EtherPCH.cpp">
+    <ClCompile Include="Hazel\Renderer\Object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test_app4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -178,7 +187,11 @@
     <Text Include="dependencies.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\BasicFs.glsl" />
-    <None Include="Resources\Shaders\BasicVs.glsl" />
+    <None Include="Resources\Shaders\Basic_Fs.glsl" />
+    <None Include="Resources\Shaders\Basic_Vs.glsl" />
+    <None Include="Resources\Shaders\BlinnPhong_VS.glsl" />
+    <None Include="Resources\Shaders\BlinnPhong_FS.glsl">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

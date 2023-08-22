@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "Hazel/Renderer/Material.h"
 
 namespace Hazel {
@@ -19,6 +20,7 @@ namespace Hazel {
 		virtual void SetTexture(TextureType type, Ref<Texture2D> texture) override
 		{
 			m_Textures[type] = texture;
+			//HZ_CORE_INFO("OpenGLMateiral: Texture Added to Material"); 
 		}
 
 		virtual Ref<Shader> GetShader() const override { return m_Shader; }

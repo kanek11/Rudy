@@ -63,8 +63,9 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\dev\dependencies\assimp\lib;  D:\dev\dependencies\Glad\lib; D:\dev\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc141-mtd.lib;glfw3.lib;opengl32.lib ;glad.lib;User32.lib;Gdi32.lib;Shell32.lib ;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\dev\dependencies\assimp\lib;D:\dev\dependencies\Glad\lib; D:\dev\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib ;glad.lib;User32.lib;Gdi32.lib;Shell32.lib ;</AdditionalDependencies>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -85,15 +86,17 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\dev\dependencies\assimp\lib;  D:\dev\dependencies\Glad\lib; D:\dev\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc141-mtd.lib;glfw3.lib;opengl32.lib ;glad.lib;User32.lib;Gdi32.lib;Shell32.lib ;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\dev\dependencies\assimp\lib;D:\dev\dependencies\Glad\lib; D:\dev\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib ;glad.lib;User32.lib;Gdi32.lib;Shell32.lib ;</AdditionalDependencies>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="C:\Users\10465\Desktop\Hazel src\Hazel\vendor\stb_image\stb_image.h" />
+  <ItemGroup> 
     <ClInclude Include="Hazel\Core\Assert.h" />
     <ClInclude Include="Hazel\Core\Base.h" />
+    <ClInclude Include="Hazel\Core\Timer.h" />
     <ClInclude Include="Hazel\Core\Timestep.h" />
+    <ClInclude Include="Hazel\Debug\Instrumentor.h" />
     <ClInclude Include="Hazel\Events\Input.h" />
     <ClInclude Include="Hazel\Core\Log.h" />
     <ClInclude Include="Hazel\Core\PlatformDetection.h" />
@@ -124,7 +127,10 @@
     <ClInclude Include="Sphere.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\dependencies\stb_image\stb_image.cpp" />
+    <ClCompile Include="..\..\dependencies\stb_image\stb_image.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="EtherPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -135,10 +141,17 @@
     <ClCompile Include="Hazel\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="Hazel\Renderer\Material.cpp" />
     <ClCompile Include="Hazel\Renderer\Mesh.cpp" />
+    <ClCompile Include="Hazel\Renderer\Object.cpp" />
     <ClCompile Include="Hazel\Renderer\Renderer.cpp" />
     <ClCompile Include="Hazel\Renderer\RendererAPI.cpp" />
     <ClCompile Include="Hazel\Renderer\Shader.cpp" />
     <ClCompile Include="Hazel\Renderer\Texture.cpp" />
+    <None Include="Resources\Shaders\BlinnPhong_FS.glsl">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <FileType>Document</FileType>
+    </None>
+    <ClCompile Include="test_app4.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLMaterial.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLMesh.cpp" />
@@ -146,14 +159,14 @@
     <ClCompile Include="Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="Platform\Windows\WindowsWindow.cpp" />
-    <ClCompile Include="Test_app3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="dependencies.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\BasicFs.glsl" />
-    <None Include="Resources\Shaders\BasicVs.glsl" />
+    <None Include="Resources\Shaders\Basic_Fs.glsl" />
+    <None Include="Resources\Shaders\Basic_Vs.glsl" />
+    <None Include="Resources\Shaders\BlinnPhong_VS.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

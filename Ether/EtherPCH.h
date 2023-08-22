@@ -27,11 +27,11 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
-#include <unordered_map>
+#include <unordered_map>   
 #include <unordered_set>
  
-#include <functional>
-#include <memory>
+#include <functional>  //event system
+#include <memory>   //smart pointers
 #include <algorithm>
 #include <utility>
 

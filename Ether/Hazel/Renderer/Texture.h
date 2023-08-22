@@ -69,8 +69,13 @@ namespace Hazel {
 		virtual void Unbind(uint32_t slot = 0) const = 0;
 
 		virtual bool IsLoaded() const = 0;
-
+		
+		static void SetFlipYOnLoad(bool flip) ;
 		//virtual bool operator==(const Texture& other) const = 0;
+
+
+	public:
+		static bool s_FlipYOnLoad; 
 	};
 
 

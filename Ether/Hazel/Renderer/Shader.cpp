@@ -1,9 +1,11 @@
-//cpp
+ 
+//#include "hzpch.h"
+
+#include "EtherPCH.h"  
 
 #include "Hazel/Renderer/Renderer.h"
  
-//cpp
-//#include "hzpch.h"
+
 #include "Hazel/Renderer/Shader.h" 
 #include "Platform/OpenGL/OpenGLShader.h"
 

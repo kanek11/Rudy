@@ -4,9 +4,12 @@
 
 #include <glm/glm.hpp>
 
-#include <Hazel/Renderer/Object.h>
+
 #include <Hazel/Renderer/Mesh.h>
 #include <Hazel/Renderer/Material.h>
+
+
+#include <Hazel/Renderer/Object.h>
 
 
 //me:

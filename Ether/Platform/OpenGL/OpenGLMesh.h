@@ -1,11 +1,9 @@
 #pragma once
 #include "Hazel/Renderer/Mesh.h" 
 
-//cpp 
+ 
 #include <glad/glad.h>
-
-//#include "OpenGLMesh.h" 
-
+ 
 namespace Hazel
 {
 	class OpenGLMesh : public Mesh

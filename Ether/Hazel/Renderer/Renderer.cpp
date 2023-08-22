@@ -19,7 +19,7 @@ namespace Hazel {
 
 	void Renderer::Init()
 	{
-		HZ_PROFILE_FUNCTION();
+		//HZ_PROFILE_FUNCTION();
 
 		s_RendererAPI->Init();
 		//RenderCommand::Init();
