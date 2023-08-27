@@ -26,20 +26,13 @@ namespace Hazel
 		model = glm::translate(model, transform.Position);
 		material->GetShader()->SetMat4("u_Model", model);
 
-		glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix();
-		// view = glm::mat4(1.0f);
-		// std::cout << "view:" << view << std::endl;
+		glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix(); 
 
 		material->GetShader()->SetMat4("u_View", view);
 
-		glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix();
-		// projection = glm::mat4(1.0f);
-		// std::cout << "proj" << projection << std::endl;
+		glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix(); 
 
-		material->GetShader()->SetMat4("u_Projection", projection);
-
-		// std:: cout << "view projection" << std::endl;
-		// std::cout << projection * view << std::endl;
+		material->GetShader()->SetMat4("u_Projection", projection); 
 
 		// glDrawElements(GL_TRIANGLE_STRIP, mesh->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
 		glDrawElements(GL_TRIANGLES, mesh->GetIndexCount(), GL_UNSIGNED_INT, nullptr);

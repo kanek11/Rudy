@@ -8,6 +8,7 @@
 #include "Hazel/Core/Window.h"
 
 #include "Sphere.hpp"
+#include "Plane.hpp"
 
 #include "Hazel/Renderer/Renderer.h"
 #include "Hazel/Renderer/Mesh.h"
@@ -18,7 +19,12 @@
 
 #include "Hazel/Renderer/Object.h"
 
+#include "Hazel/Events/input.h"
+
 #include <stb_image.h>
+
+
+
 
 using namespace Hazel;
 
@@ -31,36 +37,32 @@ int main() {
 
 
     auto window = Window::Create();
+    Input::SetWindowContext(window->GetNativeWindow());
 
 
     Ref<Camera> camera = CreateRef<Camera>();
 
     Renderer::Init();
     Renderer::BeginScene(camera);
-    auto renderAPI = Renderer::s_RendererAPI;
+    auto renderAPI = Renderer::s_RendererAPI; 
 
 
-
-    //auto basicShader = Shader::Create("basic shader", "Resources/Shaders/BasicVs.glsl", "Resources/Shaders/BasicFs.glsl");
-    //basicShader -> Bind(); 
-
+     auto basicShader = Shader::Create("basic shader", "Resources/Shaders/Basic_Vs.glsl", "Resources/Shaders/Basic_Fs.glsl");
+   
      
 
-     Object test_model;
-     test_model.loadModel("D:/CG_resources/backpack/backpack.obj");
+      Object test_model;
+      test_model.loadModel("D:/CG_resources/backpack/backpack.obj"); 
 
- 
+     Plane plane1(1);
+     plane1.Material = Material::Create(basicShader);
 
-    {
-    HZ_PROFILE_SCOPE("test");
+     WorldGrid grid(10);
+     grid.Shader = basicShader;
 
-    int sum = 0;
-    for (int i = 0; i < 1000; i++)
-	{
-        sum += i;
-	} 
-    }
-
+    
+     if (plane1.Material !=nullptr )
+         HZ_CORE_INFO("material is not empty");
 
     //======the loop 
     /* Loop until the user closes the window */
@@ -68,48 +70,44 @@ int main() {
     float angle = 0.0f;
 
     bool isRunning = true;
+    float lastFrameTime = 0.0f;
 
-    while (isRunning)
+    while (!glfwWindowShouldClose(static_cast<GLFWwindow*>(window->GetNativeWindow())))
     {
+        //get the time of each frame
+        float time = (float)glfwGetTime();
+        float deltaTime = time - lastFrameTime;
+        lastFrameTime = time;
+
         /* Render here */
         //glClearColor(0.2f, 0.3f, 0.3f, 1.0f); 
         //glClear(GL_COLOR_BUFFER_BIT);
-        renderAPI->SetClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        renderAPI->SetClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         renderAPI->Clear();
 
+        plane1.Draw();
+        grid.Draw();
 
         //draw the model by loop the meshes and materials of the model
-         for (unsigned int i = 0; i < test_model.m_Meshes.size(); i++)
-         {
-             //bind the material of each mesh
-             test_model.m_Meshes[i]->Bind();
-             test_model.m_Materials[i]->Bind();
-             //draw the mesh
-             renderAPI->DrawElements(test_model.m_Meshes[i], test_model.m_Materials[i], test_model.m_Transform);
-         }
+        for (unsigned int i = 0; i < test_model.m_Meshes.size(); i++)  
+            renderAPI->DrawElements(test_model.m_Meshes[i], test_model.m_Materials[i], test_model.m_Transform);
+        
+     
 
         //renderAPI->DrawElements(sphereMesh, basicMaterial, transform);
         //sphere.DrawSphere();
 
+ 
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        //renderAPI->DrawElements(sphereMesh, basicMaterial, transform); 
-        //turn on wireframe mode
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        ////set it to be twice larger
-        //glm::mat4 model = glm::mat4(1.0f);
-        //model = glm::scale(model, glm::vec3(2.0f));
-        //angle += 0.5f;
-        //model = glm::rotate(model, glm::radians(angle), glm::vec3(0.0, 1.0, 0.0));
-        //basicShader->SetMat4("model", model);
-        //sphere.DrawSphere();
-
+        camera->OnUpdate(deltaTime);
 
         window->OnUpdate();
         /* Swap front and back buffers */
        // glfwSwapBuffers(window); 
         /* Poll for and process events */
         //glfwPollEvents();
+
+        
 
     }
 

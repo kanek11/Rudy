@@ -43,7 +43,8 @@ namespace Hazel {
         virtual void Unbind() = 0;
         //virtual void DrawMesh() =0 ;
 
-        virtual unsigned int GetVertexAarry() = 0;
+        //for drawcall.
+        virtual unsigned int GetVertexArray() = 0;
         virtual unsigned int GetIndexCount() = 0;
 
 

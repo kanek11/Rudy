@@ -15,8 +15,10 @@ namespace Hazel
     {
         // read file via ASSIMP
         Assimp::Importer importer;
-        //const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
-        const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
+
+        //important, calculate tangent space for normal mapping
+     const aiScene* scene = importer.ReadFile
+        (path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
 
 
         // check for errors
@@ -116,7 +118,7 @@ namespace Hazel
             //HZ_CORE_INFO("Modelloading: BlinnPhong is used");
             loadTexture(aiTextureType_DIFFUSE, TextureType::DiffuseMap);
             loadTexture(aiTextureType_SPECULAR, TextureType::SpecularMap);
-            loadTexture(aiTextureType_NORMALS, TextureType::NormalMap);
+            loadTexture(aiTextureType_HEIGHT, TextureType::NormalMap);  //in assimp, normal map is height map for historic reason.
 
            
         }
@@ -126,8 +128,8 @@ namespace Hazel
             loadTexture(aiTextureType_DIFFUSE, TextureType::AlbedoMap);
             loadTexture(aiTextureType_SPECULAR, TextureType::MetallicMap);
             loadTexture(aiTextureType_SHININESS, TextureType::RoughnessMap);
-            loadTexture(aiTextureType_AMBIENT, TextureType::AOMap);
-            loadTexture(aiTextureType_HEIGHT, TextureType::HeightMap);
+            loadTexture(aiTextureType_HEIGHT, TextureType::NormalMap);
+            loadTexture(aiTextureType_AMBIENT, TextureType::AOMap); 
         }
 		else if (material->GetWorkflowMode() == WorkflowMode::FlatColor)
 		{
@@ -189,12 +191,21 @@ namespace Hazel
                 vector.x = mesh->mBitangents[i].x;
                 vector.y = mesh->mBitangents[i].y;
                 vector.z = mesh->mBitangents[i].z;
-                vertex.Bitangent = vector;
+                vertex.Bitangent = vector; 
             }
             else
                 vertex.TexCoords = glm::vec2(0.0f, 0.0f);
 
+
+           // if (vertex.Position.length()) HZ_CORE_INFO("vertex Position is null");
+           // if (vertex.Normal.length()) HZ_CORE_INFO("vertex normal is null");
+           // if (vertex.TexCoords.length()) HZ_CORE_INFO("vertex UV is null");
+           // if (vertex.Tangent.length()) HZ_CORE_INFO("vertextangent is null");
+           // if (vertex.Bitangent.length()) HZ_CORE_INFO("vertex Bitangent is null");
+
+
             vertices.push_back(vertex);
+
         }
         // now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
         for (unsigned int i = 0; i < mesh->mNumFaces; i++)

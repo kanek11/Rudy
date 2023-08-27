@@ -65,7 +65,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>D:\dev\dependencies\assimp\lib;D:\dev\dependencies\Glad\lib; D:\dev\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;</AdditionalLibraryDirectories>
       <AdditionalDependencies>assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib ;glad.lib;User32.lib;Gdi32.lib;Shell32.lib ;</AdditionalDependencies>
-      <Profile>true</Profile>
+      <Profile>false</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -88,10 +88,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>D:\dev\dependencies\assimp\lib;D:\dev\dependencies\Glad\lib; D:\dev\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;</AdditionalLibraryDirectories>
       <AdditionalDependencies>assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib ;glad.lib;User32.lib;Gdi32.lib;Shell32.lib ;</AdditionalDependencies>
-      <Profile>true</Profile>
+      <Profile>false</Profile>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup> 
+  <ItemGroup>
     <ClInclude Include="Hazel\Core\Assert.h" />
     <ClInclude Include="Hazel\Core\Base.h" />
     <ClInclude Include="Hazel\Core\Timer.h" />
@@ -104,6 +104,7 @@
     <ClInclude Include="Hazel\Events\KeyCodes.h" />
     <ClInclude Include="Hazel\Events\MouseCodes.h" />
     <ClInclude Include="Hazel\Renderer\Camera.h" />
+    <ClInclude Include="Hazel\Renderer\FrameBuffer.h" />
     <ClInclude Include="Hazel\Renderer\GraphicsContext.h" />
     <ClInclude Include="Hazel\Renderer\Material.h" />
     <ClInclude Include="Hazel\Renderer\Mesh.h" />
@@ -112,6 +113,8 @@
     <ClInclude Include="Hazel\Renderer\Renderer.h" />
     <ClInclude Include="Hazel\Renderer\RendererAPI.h" />
     <ClInclude Include="Hazel\Renderer\Texture.h" />
+    <ClInclude Include="Plane.hpp" />
+    <ClInclude Include="Platform\OpenGL\OpenGLFrameBuffer.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLMaterial.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLMesh.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
@@ -137,7 +140,9 @@
     </ClCompile>
     <ClCompile Include="Hazel\Core\Log.cpp" />
     <ClCompile Include="Hazel\Core\WIndow.cpp" />
+    <ClCompile Include="Hazel\Events\WindowsInput.cpp" />
     <ClCompile Include="Hazel\Renderer\Camera.cpp" />
+    <ClCompile Include="Hazel\Renderer\FrameBuffer.cpp" />
     <ClCompile Include="Hazel\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="Hazel\Renderer\Material.cpp" />
     <ClCompile Include="Hazel\Renderer\Mesh.cpp" />
@@ -151,6 +156,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <FileType>Document</FileType>
     </None>
+    <ClCompile Include="Platform\OpenGL\OpenGLFrameBuffer.cpp" />
     <ClCompile Include="test_app4.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLMaterial.cpp" />

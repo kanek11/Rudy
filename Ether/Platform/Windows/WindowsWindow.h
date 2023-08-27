@@ -1,4 +1,5 @@
 #pragma once
+#include "EtherPCH.h"
 
 #include "Hazel/Core/Window.h"
 #include "Hazel/Renderer/GraphicsContext.h"
@@ -47,11 +48,12 @@ namespace Hazel {
 
 		struct WindowData
 		{
-			std::string Title;
+			std::string Title = "Default";
 			unsigned int Width, Height;
 			bool VSync;
 
-			EventCallbackFn EventCallback;
+			//me: for robustness, when no callback is set, we set it to a dummy function that does nothing.
+			EventCallbackFn EventCallback = [](Event& e) {  HZ_CORE_WARN("windowswindowEventCallBack: no callback of type:{0} is set", e.GetName());  };
 		};
 
 		WindowData m_Data;

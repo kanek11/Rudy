@@ -1,11 +1,6 @@
 #pragma once
+#include "EtherPCH.h"
 
-//#include "../Debug/Instrumentor.h"
-
-#include "Hazel/Core/Base.h"
-
-#include <functional>
-#include <sstream>
 
 namespace Hazel {
 
@@ -33,6 +28,9 @@ namespace Hazel {
 		EventCategoryMouseButton    = BIT(4)
 	};
 
+//GetEventType() is used by Event Base class to get the type of event.
+//GetStaticType() is in derived evet class, the type is determined at compile time.
+//this allows us to get type without cast.
 #define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\
 								virtual EventType GetEventType() const override { return GetStaticType(); }\
 								virtual const char* GetName() const override { return #type; }
@@ -46,12 +44,16 @@ namespace Hazel {
 
 		bool Handled = false;
 
-		virtual EventType GetEventType() const = 0;
-		virtual const char* GetName() const = 0;
-		virtual int GetCategoryFlags() const = 0;
-		virtual std::string ToString() const { return GetName(); }
+		//return types. kinda reflection effect.  eventType is enum , name is string, use macros. #type turns type into string.
+		virtual EventType GetEventType() const = 0;  
+		virtual const char* GetName() const = 0; 
+		
+		virtual std::string ToString() const { return GetName(); }  //name to std::string
 
-		bool IsInCategory(EventCategory category)
+
+		virtual int GetCategoryFlags() const = 0;    //return category.
+
+		bool IsInCategory(EventCategory category)   //check for 
 		{
 			return GetCategoryFlags() & category;
 		}
@@ -71,7 +73,7 @@ namespace Hazel {
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.Handled |= func(static_cast<T&>(m_Event));
+				m_Event.Handled |= func(static_cast<T&>(m_Event));   //true if returned. 
 				return true;
 			}
 			return false;

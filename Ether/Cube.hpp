@@ -1,78 +1,46 @@
 #pragma once
+
 #include "EtherPCH.h"
-#include <glad/glad.h>
-
-
 #include "Hazel/Renderer/Mesh.h"
-#include "Hazel/Renderer/Object.h"
-#include "Hazel/Renderer/Renderer.h"
- 
-//for now, i want the pre-defined model to be self-contained. not relying on object class design.
 
-//all public, free to set;
+#include <glad/glad.h>
+ 
 
 namespace Hazel {
 
 
 	class Sphere {
 	public:
-        Sphere()  { CreateGeometry(subdivision);}
+		Sphere() { Create(subdivision);}
 		~Sphere() = default;
 
-		void CreateGeometry(unsigned int subdivision);
-        void Draw();
-          
+		void Create(unsigned int subdivision);
+        void DrawSphere();
 
-        Transform  Transform; 
-        Ref<Mesh>  Mesh;
-        Ref<Material>  Material;
-        //Ref<Shader>  Shader;  
-		  
+		std::vector<Vertex> Vertices;
+        std::vector<unsigned int> Indices;
+
+        unsigned int VertexArray;
+
         unsigned int subdivision = 20;
 	};
 
 
 
-    void Sphere::Draw ()
+    void Sphere::DrawSphere()
     {
-        //glBindVertexArray(m_Mesh->GetVertexArray());
-        //glBindVertexArray(0); 
-
-         Mesh->Bind(); 
-         Material->Bind();
-
-        // set uniforms for transforms
-        // identity matrix for now;
-
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::scale(model, Transform.Scale);
-        model = glm::translate(model, Transform.Position);
-        glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix();  
-        
-
-        glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix(); 
-
-
-         Material->GetShader()->SetMat4("u_Model", model); 
-         Material->GetShader()->SetMat4("u_View", view);
-         Material->GetShader()->SetMat4("u_Projection", projection);  
-
-        glDrawElements(GL_TRIANGLE_STRIP,  Mesh->GetIndexCount(), GL_UNSIGNED_INT, 0);
-
-        
-         Mesh->Unbind();
-         Material->Unbind();
+        glBindVertexArray(VertexArray);
+        glDrawElements(GL_TRIANGLE_STRIP, Indices.size(), GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
     }
     
 
 
 	//static Scope<Mesh> Create(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
 
-	void Sphere::CreateGeometry(unsigned int subdivision)
+	void Sphere::Create(unsigned int  subdivision)
 	{
-
-         std::vector<Vertex> Vertices;
-         std::vector<unsigned int> Indices; 
+    
   
         //generate using spherical coordinate£»
         //divide the theta and phi step £»the sudivision;
@@ -133,15 +101,10 @@ namespace Hazel {
             }
 
         }
-         
-        //generate mesh
-         Mesh = Mesh::Create(Vertices, Indices);
-
-
  
 	}
 
-      
+
 
 
 

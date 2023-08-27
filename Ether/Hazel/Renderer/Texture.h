@@ -3,20 +3,27 @@
 #include "EtherPCH.h"
 
 
-//me:
-//delete the creator takes specifications;
+//textures has 2 sources:
+//1. load from file,  use lib like stb_image,
+//the info is given as a argument,  eg: width, height, format, etc
+// 
+//2. generate from code,  eg: as a render target 
+//we will specify the info in a struct  to generate the texture
 
   
 namespace Hazel {
 
 	//me: relating high level enums;
-	enum class ImageFormat
+	enum class TextureFormat
 	{
 		None = 0,
 		R8,
 		RGB8,
 		RGBA8,
-		RGBA32F
+		RGBA32F,
+
+		//framebuffer related
+		DEPTH_COMPONENT,
 	};
 
 
@@ -37,12 +44,13 @@ namespace Hazel {
 	};
 
 
-
-	struct TextureProp 
+	//better have default values;  at least width and height must be specified £º
+	//eg:  TextureSpec spec{ 1024, 1024 };  will use default values for other members
+	struct TextureSpec
 	{
 		uint32_t Width = 0;
 		uint32_t Height = 0;
-		ImageFormat imageFormat = ImageFormat::RGBA8;
+		TextureFormat TextureFormat = TextureFormat::RGBA8;
 		bool GenerateMips = true;
 		WrapMode wrapMode = WrapMode::Repeat;
 		FilterMode filterMode = FilterMode::Linear;
@@ -54,7 +62,7 @@ namespace Hazel {
 	public:
 		virtual ~Texture() = default;
 
-		virtual const TextureProp& GetTextureProp() const = 0;
+		virtual const TextureSpec& GetTextureSpec() const = 0;
 
 		virtual uint32_t GetWidth() const = 0;
 		virtual uint32_t GetHeight() const = 0;
@@ -83,6 +91,7 @@ namespace Hazel {
 	{
 	public: 
 		static Ref<Texture2D> Create(const std::string& path);
+		static Ref<Texture2D> Create(const TextureSpec& specfication = TextureSpec());
 	};
 
 

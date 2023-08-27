@@ -33,17 +33,15 @@ namespace Hazel {
 
     //private:
      public:
-        std::string m_Name;
+        std::string m_Name; 
+        std::string m_Directory;
 
         Transform m_Transform;
 
         std::vector<Ref<Mesh>> m_Meshes;
         std::vector<Ref<Material>> m_Materials;
         Ref<Shader> m_Shader;
-
-        std::string m_Directory;
-
-
+         
 
     public:
         std::vector<Ref<Texture2D>> m_Loaded_Textures;  //opt to avoid duplicate textures,  loading is extremely slow

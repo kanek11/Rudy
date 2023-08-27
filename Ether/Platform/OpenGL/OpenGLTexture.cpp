@@ -9,24 +9,52 @@ namespace Hazel {
 
 	namespace Utils {
 
-		static GLenum HazelImageFormatToGLDataFormat(ImageFormat format)
+		static GLenum TextureFormatToGLDataFormat(TextureFormat format)
 		{
 			switch (format)
 			{
-			case ImageFormat::RGB8:  return GL_RGB;
-			case ImageFormat::RGBA8: return GL_RGBA;
+			case TextureFormat::RGB8:  return GL_RGB;
+			case TextureFormat::RGBA8: return GL_RGBA;
+
+			case TextureFormat::DEPTH_COMPONENT: return GL_DEPTH_COMPONENT;
 			}
 
 			HZ_CORE_ASSERT(false);
 			return 0;
 		}
 
-		static GLenum HazelImageFormatToGLInternalFormat(ImageFormat format)
+		static GLenum TextureFormatToGLInternalFormat(TextureFormat format)
 		{
 			switch (format)
 			{
-			case ImageFormat::RGB8:  return GL_RGB8;
-			case ImageFormat::RGBA8: return GL_RGBA8;
+			case TextureFormat::RGB8:  return GL_RGB8;
+			case TextureFormat::RGBA8: return GL_RGBA8;
+
+			 case TextureFormat::DEPTH_COMPONENT : return GL_DEPTH_COMPONENT;
+			}
+
+			HZ_CORE_ASSERT(false);
+			return 0;
+		}
+
+		static GLenum WrapModeToGLWrapMode(WrapMode mode)
+		{
+			switch (mode)
+			{
+			case WrapMode::Repeat: return GL_REPEAT;
+			case WrapMode::Clamp:  return GL_CLAMP_TO_EDGE;
+			}
+
+			HZ_CORE_ASSERT(false);
+			return 0;
+		}
+
+		static GLenum FilterModeToGLFilterMode(FilterMode mode)
+		{
+			switch (mode)
+			{
+			case FilterMode::Linear:  return GL_LINEAR;
+			case FilterMode::Nearest: return GL_NEAREST;
 			}
 
 			HZ_CORE_ASSERT(false);
@@ -105,6 +133,45 @@ namespace Hazel {
 			
 		}
 	}
+
+
+
+
+
+	OpenGLTexture2D::OpenGLTexture2D(const TextureSpec& specification)
+		: m_TextureSpec(specification), m_Width(m_TextureSpec.Width), m_Height(m_TextureSpec.Height)
+	{
+
+		HZ_PROFILE_FUNCTION();
+
+		//deny to create texture with 0 size
+		HZ_CORE_ASSERT(m_Width && m_Height, "Texture width and height must be greater than 0!");
+
+
+		m_InternalFormat = Utils::TextureFormatToGLInternalFormat(specification.TextureFormat);
+		m_DataFormat = Utils::TextureFormatToGLDataFormat(specification.TextureFormat);
+		m_WrapMode = Utils::WrapModeToGLWrapMode(specification.wrapMode);
+		m_FilterMode = Utils::FilterModeToGLFilterMode(specification.filterMode);
+		 
+
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
+		glTextureStorage2D (m_TextureID, 1, m_InternalFormat, m_Width, m_Height);
+		glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, m_FilterMode);
+		glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, m_FilterMode);
+		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, m_WrapMode);
+		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, m_WrapMode);
+
+
+	}
+
+
+
+
+
+
+
+
+
 
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{

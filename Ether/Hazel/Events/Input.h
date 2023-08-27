@@ -16,5 +16,13 @@ namespace Hazel {
 		static glm::vec2 GetMousePosition();
 		static float GetMouseX();
 		static float GetMouseY();
+		//static float GetMouseScroll();  //only support callback. TODO: make it work .
+
+		static void SetWindowContext(void * windowContext) { s_WindowContext = windowContext; }
+
+
+		//me: add a context window to decouple from application.
+		static void * s_WindowContext;
+
 	};
 }

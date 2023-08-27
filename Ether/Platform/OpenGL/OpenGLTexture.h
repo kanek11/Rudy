@@ -13,13 +13,14 @@ namespace Hazel {
 	{
 	public:
 		OpenGLTexture2D(const std::string& path);
+		OpenGLTexture2D(const TextureSpec& specification);
 		virtual ~OpenGLTexture2D();
 
 		//======getters&setters======	
 		virtual void SetData(void* data, uint32_t size) override;
 
-		virtual const TextureProp& GetTextureProp() const override 
-		{ return m_TextureProp; }
+		virtual const TextureSpec& GetTextureSpec() const override
+		{ return m_TextureSpec; }
 
 		virtual uint32_t GetWidth() const override { return m_Width;  }
 		virtual uint32_t GetHeight() const override { return m_Height; }
@@ -42,7 +43,7 @@ namespace Hazel {
 	private:
 
 		//inherited
-		TextureProp m_TextureProp;
+		TextureSpec m_TextureSpec;
 
 		//gl specific
 		//stbi_uc* m_TextureData;  
@@ -53,8 +54,9 @@ namespace Hazel {
 		uint32_t m_TextureID; 
 		std::string m_Path;
 
+        //not to be queried from outside, no getter for now.  
 		GLenum m_InternalFormat, m_DataFormat; 
-		GLenum m_Wrap, m_Filter;
+		GLenum m_WrapMode, m_FilterMode;
 
 		bool m_IsLoaded = false;
  

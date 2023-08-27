@@ -26,7 +26,7 @@ namespace Hazel
             glBindVertexArray(0); }
         //virtual void DrawMesh() override;
 
-        virtual unsigned int GetVertexAarry() override 
+        virtual unsigned int GetVertexArray() override 
 		{return m_VertexArray;}
 
 		virtual unsigned int GetIndexCount() override
