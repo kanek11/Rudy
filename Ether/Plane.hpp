@@ -64,10 +64,10 @@ namespace Hazel {
  
             //wireframe mode  
       
-         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
          glDrawElements(GL_TRIANGLES, Mesh->GetIndexCount(), GL_UNSIGNED_INT, 0);
 
-         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
  
 
          Material->Unbind();
@@ -128,9 +128,9 @@ namespace Hazel {
     
 
 
-    class WorldGrid {
-
-public:
+    class WorldGrid { 
+     
+    public:
 		WorldGrid(int size) { CreateGeometry(size); }
 		~WorldGrid() = default;
 
@@ -140,13 +140,13 @@ public:
 
         GLuint gridVAO, gridVBO;
 
+        //address geometry differently
         std::vector<float> gridVertices; // 10 vertical and 10 horizontal lines, each requiring 4 vertices
-
  
-		//Transform  Transform;
+		 Transform  Transform;
 		//Ref<Mesh>  Mesh;
-		//Ref<Material>  Material;
-		 Ref<Shader>  Shader;    
+		 Ref<Material>  Material;
+		 //Ref<Shader>  Shader;    
 	};
 
 
@@ -163,6 +163,7 @@ public:
 
     void WorldGrid::CreateGeometry(int size)
     {
+        HZ_CORE_INFO("WorldGrid::CreateGeometry");
           
    
         //the grid is centered at origin;  the size is the number of grids in each direction;  i.e.  size = 10,  then the grid is 20x20;
@@ -214,7 +215,7 @@ public:
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
 
-        HZ_CORE_INFO("plane: data passed, size = {0}", gridVertices.size());
+        HZ_CORE_INFO("worldgrid: data passed, size:{0}", gridVertices.size() );
 
         // Unbind
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -227,14 +228,27 @@ public:
     void WorldGrid::Draw()
     {
       
-        Shader->Bind();
+
+        Material->Bind();
         glBindVertexArray(gridVAO);
 
+
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::scale(model, Transform.Scale);
+        model = glm::translate(model, Transform.Position);
+        glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix();
+
+        glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix();
+
+        Material->GetShader()->SetMat4("u_Model", model);
+        Material->GetShader()->SetMat4("u_View", view);
+        Material->GetShader()->SetMat4("u_Projection", projection);
+
         glDrawArrays(GL_LINES, 0, gridVertices.size()/3);  // 3 because each vertex has 3 floats.
-
+     
         glBindVertexArray(0);
-        Shader->Unbind();
 
+        Material->Unbind();
 
     }
 

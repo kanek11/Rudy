@@ -31,7 +31,7 @@ namespace Hazel {
 		case WorkflowMode::BlinnPhong:
 			m_Shader->SetInt("u_DiffuseMap", 0);
 			m_Shader->SetInt("u_SpecularMap", 1);
-			m_Shader->SetInt("u_NormalMap", 2);
+			m_Shader->SetInt("u_NormalMap", 2); 
 			break;
 		}  
 	}

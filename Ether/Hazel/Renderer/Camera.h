@@ -86,7 +86,7 @@ namespace Hazel {
 			{ 
 				if (!m_ButtonPressedLastFrame)
 				{
-					//HZ_CORE_INFO("Alt pressed");
+					HZ_CORE_INFO("Alt pressed");
 					m_ButtonPressedLastFrame = true;  //set for next frame, donothing in this frame
 					return;
 				}

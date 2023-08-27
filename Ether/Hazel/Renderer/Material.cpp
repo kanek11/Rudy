@@ -13,9 +13,6 @@ namespace Hazel
 
 	Ref<Material> Material::Create(Ref<Shader> shader, WorkflowMode workflowMode)
 	{
-
- 
-
 		 
 		switch (Renderer::GetAPI())
 		{

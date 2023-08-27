@@ -48,21 +48,29 @@ int main() {
 
 
      auto basicShader = Shader::Create("basic shader", "Resources/Shaders/Basic_Vs.glsl", "Resources/Shaders/Basic_Fs.glsl");
-   
+     auto blinnPhongShader = Shader::Create("blinn phong", "Resources/Shaders/BlinnPhong_Vs.glsl", "Resources/Shaders/BlinnPhong_Fs.glsl");
      
 
       Object test_model;
       test_model.loadModel("D:/CG_resources/backpack/backpack.obj"); 
+     
+     Plane plane1(10);
+     plane1.Material = Material::Create(blinnPhongShader, WorkflowMode::BlinnPhong);
+     
+     auto DiffuseMap = Texture2D::Create("D:/CG_resources/Floor/Diffuse.jpg");
+     auto NormalMap = Texture2D::Create("D:/CG_resources/Floor/Normal.png");
+     auto SpecularMap = Texture2D::Create("D:/CG_resources/Floor/Specular.jpg");
+      
+     plane1.Material->SetTexture(TextureType::DiffuseMap, DiffuseMap);
+     plane1.Material->SetTexture(TextureType::NormalMap, NormalMap);
+     plane1.Material->SetTexture(TextureType::SpecularMap, SpecularMap);
 
-     Plane plane1(1);
-     plane1.Material = Material::Create(basicShader);
+
 
      WorldGrid grid(10);
-     grid.Shader = basicShader;
+     grid.Material = Material::Create(basicShader);
 
-    
-     if (plane1.Material !=nullptr )
-         HZ_CORE_INFO("material is not empty");
+     
 
     //======the loop 
     /* Loop until the user closes the window */
@@ -82,21 +90,22 @@ int main() {
         /* Render here */
         //glClearColor(0.2f, 0.3f, 0.3f, 1.0f); 
         //glClear(GL_COLOR_BUFFER_BIT);
-        renderAPI->SetClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+        renderAPI->SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         renderAPI->Clear();
+
+  
+       //
+       // //draw the model by loop the meshes and materials of the model
+         for (unsigned int i = 0; i < test_model.m_Meshes.size(); i++)  
+             renderAPI->DrawElements(test_model.m_Meshes[i], test_model.m_Materials[i], test_model.m_Transform);
+         
 
         plane1.Draw();
         grid.Draw();
-
-        //draw the model by loop the meshes and materials of the model
-        for (unsigned int i = 0; i < test_model.m_Meshes.size(); i++)  
-            renderAPI->DrawElements(test_model.m_Meshes[i], test_model.m_Materials[i], test_model.m_Transform);
-        
      
 
         //renderAPI->DrawElements(sphereMesh, basicMaterial, transform);
-        //sphere.DrawSphere();
-
+        //sphere.DrawSphere(); 
  
 
         camera->OnUpdate(deltaTime);

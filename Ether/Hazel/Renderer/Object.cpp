@@ -119,7 +119,7 @@ namespace Hazel
             loadTexture(aiTextureType_DIFFUSE, TextureType::DiffuseMap);
             loadTexture(aiTextureType_SPECULAR, TextureType::SpecularMap);
             loadTexture(aiTextureType_HEIGHT, TextureType::NormalMap);  //in assimp, normal map is height map for historic reason.
-
+             
            
         }
         else if (material->GetWorkflowMode() == WorkflowMode::Metallic)

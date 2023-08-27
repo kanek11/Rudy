@@ -12,7 +12,7 @@ in VS_OUT{
 
 uniform sampler2D u_DiffuseMap;
 uniform sampler2D u_SpecularMap;
-uniform sampler2D u_NormalMap;
+uniform sampler2D u_NormalMap; 
 
 uniform vec3 u_LightPos;
 uniform vec3 u_LightColor;
@@ -21,7 +21,7 @@ uniform vec3 u_ViewPos;
 
 
 //just trivial hack, we should let the host to handle this. but the code is not settled yet.
-vec3 LightColor = vec3(1.0, 1.0, 1.0) *100;
+vec3 LightColor = vec3(1.0, 1.0, 1.0) *50;
 vec3 LightPos = vec3(0.0, 5.0, 5.0);
 vec3 ViewPos = vec3(0.0, 0.0, 5.0);
 
@@ -71,11 +71,9 @@ void main()
     //light attenuation,simply use 1/r^2
     float distance = length(LightPos - fs_in.WorldPos);
     LightColor  = LightColor / (distance * distance);
-
-
-
+     
     // Ambient ka
-    vec3 Light_ambient = vec3(0.7);
+    vec3 Light_ambient = vec3(1);   
     vec3 ambient = Light_ambient * BaseColor; 
   
     // Diffuse kd 
