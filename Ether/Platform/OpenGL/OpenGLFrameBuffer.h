@@ -56,7 +56,7 @@ namespace Hazel {
 		uint32_t m_FrameBufferID = 0;
 		FrameBufferSpec m_Spec;
 
-		std::vector<Ref<Texture2D>> m_TextureBuffers; //colorbuffer
+		std::vector<Ref<Texture2D>> m_TextureBuffers; //readable textures
 		Scope<RenderBuffer> m_RenderBuffer;   //renderbuffer
  
 		 

@@ -54,6 +54,8 @@ namespace Hazel {
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::scale(model, Transform.Scale);
         model = glm::translate(model, Transform.Position);
+
+
         glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix();
 
         glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix();
@@ -99,13 +101,7 @@ namespace Hazel {
         glm::vec3 normal = glm::vec3(0.0f, 1.0f, 0.0f);
         glm::vec3 tangent = glm::vec3(1.0f, 0.0f, 0.0f);
         glm::vec3 bitangent = glm::vec3(0.0f, 0.0f, -1.0f);
-
-
-       //generate indices
-        Indices.push_back(0);
-        Indices.push_back(1);
-        Indices.push_back(2);
-        Indices.push_back(3);  
+ 
 
         //generate vertices 
         Vertex leftBottom{pos1 * size ,normal,uv1,tangent,bitangent};

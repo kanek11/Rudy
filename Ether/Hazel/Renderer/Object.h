@@ -31,6 +31,12 @@ namespace Hazel {
             m_Shader = Shader::Create("blinn-phong", "Resources/Shaders/BlinnPhong_VS.glsl", "Resources/Shaders/BlinnPhong_FS.glsl");
         }
 
+        Object(Ref<Shader> shader)
+        {
+			m_Name = "Object with shader:" + shader->GetName();
+			m_Shader = shader;
+		}
+
     //private:
      public:
         std::string m_Name; 

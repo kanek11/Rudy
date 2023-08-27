@@ -123,6 +123,9 @@
     <ClInclude Include="Plane.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Quad.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Hazel\Core\Log.cpp">
@@ -185,9 +188,6 @@
     <ClCompile Include="Hazel\Renderer\Object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test_app4.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Hazel\Renderer\FrameBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -197,16 +197,23 @@
     <ClCompile Include="Hazel\Events\WindowsInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="test_app5.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="dependencies.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\Basic_Fs.glsl" />
-    <None Include="Resources\Shaders\Basic_Vs.glsl" />
+    <None Include="Resources\Shaders\Basic_FS.glsl" />
+    <None Include="Resources\Shaders\Basic_VS.glsl" />
     <None Include="Resources\Shaders\BlinnPhong_VS.glsl" />
     <None Include="Resources\Shaders\BlinnPhong_FS.glsl">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="Resources\Shaders\DepthMap_FS.glsl" />
+    <None Include="Resources\Shaders\DepthMap_VS.glsl" />
+    <None Include="Resources\Shaders\DepthQuad_FS.glsl" />
+    <None Include="Resources\Shaders\DepthQuad_VS.glsl" />
   </ItemGroup>
 </Project>

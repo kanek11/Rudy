@@ -43,8 +43,10 @@ namespace Hazel {
 	//default constructor
 	OpenGLFrameBuffer::OpenGLFrameBuffer(uint32_t width, uint32_t height, FrameBufferType type) 
 	{
+		
 		if (type == FrameBufferType::Default)
 		{
+			
 			//create and bind framebuffer
 			glCreateFramebuffers(1, &m_FrameBufferID);
 			glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferID);
@@ -52,9 +54,11 @@ namespace Hazel {
 
 			//1 colorbuffer
 			m_TextureBuffers.push_back(Texture2D::Create(TextureSpec{ width,height }));
+ 
 
 			//attach colorbuffer to framebuffer
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TextureBuffers[0]->GetTextureID(), 0);
+			 glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TextureBuffers[0]->GetTextureID(), 0);
+			//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
 
 
 			//depthbuffer
@@ -70,22 +74,29 @@ namespace Hazel {
 			//unbind framebuffer
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+			HZ_CORE_WARN("Default FrameBufferID:{0} is created  ", m_FrameBufferID);
+
 	     }
 		
 		else if (type == FrameBufferType::DepthMap)
 		{
+			
 			//create and bind framebuffer
 			glCreateFramebuffers(1, &m_FrameBufferID);
 			glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferID);
 
 
 			//texture for depth map
-			m_TextureBuffers.push_back(Texture2D::Create(
-				TextureSpec{ width,height, TextureFormat::DEPTH_COMPONENT,
-				 false, WrapMode::Clamp, FilterMode::Linear }));
+			 m_TextureBuffers.push_back(Texture2D::Create(
+			 	TextureSpec{ width,height, TextureFormat::DEPTH_COMPONENT,
+			 	 false, WrapMode::ClampToBorder, FilterMode::Nearest }));
+
+			//m_TextureBuffers.push_back(Texture2D::Create(
+			//	TextureSpec{ width,height, }));
 
 			//special needs for depth map.
-			float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+			//float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+			float borderColor[] = { 0.0f, 1.0f, 0.0f, 1.0f };
 			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
 
@@ -100,6 +111,8 @@ namespace Hazel {
 
 			//unbind framebuffer
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+			HZ_CORE_WARN("DepthMap FrameBufferid:{0} is created", m_FrameBufferID);
 
 
 		}

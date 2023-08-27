@@ -18,6 +18,7 @@ namespace Hazel {
 	{
 		None = 0,
 		R8,
+		RGB,  //without specific bit depth, opengl will have  implementation-dependent behavior, which might work better.
 		RGB8,
 		RGBA8,
 		RGBA32F,
@@ -32,7 +33,8 @@ namespace Hazel {
 	{
 		None = 0,
 		Repeat, 
-		Clamp,
+		ClampToEdge,
+		ClampToBorder,
 		Mirror,
 	};
 
@@ -50,7 +52,7 @@ namespace Hazel {
 	{
 		uint32_t Width = 0;
 		uint32_t Height = 0;
-		TextureFormat TextureFormat = TextureFormat::RGBA8;
+		TextureFormat TextureFormat = TextureFormat::RGB;
 		bool GenerateMips = true;
 		WrapMode wrapMode = WrapMode::Repeat;
 		FilterMode filterMode = FilterMode::Linear;

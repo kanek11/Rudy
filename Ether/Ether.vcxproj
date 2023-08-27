@@ -127,6 +127,7 @@
     <ClInclude Include="Hazel\Events\KeyEvent.h" />
     <ClInclude Include="Hazel\Events\MouseEvent.h" />
     <ClInclude Include="EtherPCH.h" />
+    <ClInclude Include="Quad.hpp" />
     <ClInclude Include="Sphere.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -156,8 +157,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <FileType>Document</FileType>
     </None>
+    <ClCompile Include="test_app5.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLFrameBuffer.cpp" />
-    <ClCompile Include="test_app4.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLMaterial.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLMesh.cpp" />
@@ -165,13 +166,17 @@
     <ClCompile Include="Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="Platform\Windows\WindowsWindow.cpp" />
+    <None Include="Resources\Shaders\DepthMap_VS.glsl" />
+    <None Include="Resources\Shaders\DepthMap_FS.glsl" />
+    <None Include="Resources\Shaders\DepthQuad_FS.glsl" />
+    <None Include="Resources\Shaders\DepthQuad_VS.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="dependencies.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\Basic_Fs.glsl" />
-    <None Include="Resources\Shaders\Basic_Vs.glsl" />
+    <None Include="Resources\Shaders\Basic_FS.glsl" />
+    <None Include="Resources\Shaders\Basic_VS.glsl" />
     <None Include="Resources\Shaders\BlinnPhong_VS.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
