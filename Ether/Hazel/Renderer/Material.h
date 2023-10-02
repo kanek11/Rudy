@@ -77,7 +77,8 @@ namespace Hazel {
 	
 	enum class TextureType
 	{
-		None = 0,
+
+		ScreenQuad = 0,
 		//blinn-phong
 		//DiffuseMap, //as basecolor
 	
@@ -96,11 +97,21 @@ namespace Hazel {
 
 		Skybox,  //cubemap 
 
-
+		DepthMap, //shadowmap
 		//HeightMap, //displacement
 		//MaskMap,
 		//LightMap,   
 		//
+
+		//for gbuffer geometry pass
+		gPosition,   //0
+		gAlbedo,     //1
+		gWorldNormal,  //2
+		gSpecular,   //3
+		gMetallic,   //4
+		gRoughness,  //5
+
+
 	};
 
 	
@@ -108,9 +119,9 @@ namespace Hazel {
 	
 	inline std::unordered_map<TextureType, std::string> TextureTypeName =
 	{
-		{TextureType::None, ""}, 
+		{TextureType::ScreenQuad, "u_ScreenQuad"},
 		//{TextureType::DiffuseMap, "u_DiffuseMap"},
-		
+
 		{TextureType::AlbedoMap, "u_AlbedoMap"},
 
 		{TextureType::SpecularMap, "u_SpecularMap"},
@@ -123,9 +134,16 @@ namespace Hazel {
 		//{TextureType::MaskMap, "u_MaskMap"},
 		{TextureType::Skybox, "u_Skybox"},
 
-	};
 
-	  
+		{TextureType::gPosition,    "gPosition"},
+		{TextureType::gAlbedo,      "gAlbedo"},
+		{TextureType::gWorldNormal, "gWorldNormal"},
+	 	{TextureType::gSpecular,    "gSpecular"},
+		{TextureType::gMetallic,    "gMetallic"},
+		{TextureType::gRoughness,   "gRoughness"},
+		 
+	};
+		
 
 	enum class MaterialType
 	{
@@ -172,6 +190,7 @@ namespace Hazel {
 		{
 			m_Textures[type] = texture;
 		}
+		std::unordered_map<TextureType, Ref<Texture>> GetTextures() const { return m_Textures; }
 
 		 
 		static Ref<Material> Create(MaterialType = MaterialType::Basic);

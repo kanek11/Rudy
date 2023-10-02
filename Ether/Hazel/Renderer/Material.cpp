@@ -20,6 +20,25 @@ namespace Hazel
 
 
 
+	Material::Material(MaterialType type)
+		: m_MaterialType(type)
+	{
+		HZ_CORE_WARN("Material:  Material is Created without Shader");
+		//SetupMaterial();
+	}
+
+	Material::Material(Ref<Shader> shader)
+		: m_Shader(shader)
+	{
+		//m_MaterialType = MaterialType::Custom;
+		HZ_CORE_INFO("Material:  Material is Created using shader: {0}", shader->GetName());
+		//SetupMaterial();
+	}
+
+
+
+
+
 	void Material::CreateMaterialType(Ref<Shader> shader)
 	{
 		// m_MaterialType = MaterialType::Custom;
@@ -42,6 +61,7 @@ namespace Hazel
 	    	//}
 	    	//else
 	    	 shader->SetInt(texture.second, (int)texture.first);
+			 //HZ_CORE_INFO("Material: sampler2D {0} is set to slot {1}", texture.second, (int)texture.first);
 
 	    	//eg: SetInt("u_AlbedoMap", 0);
 	     }
@@ -50,21 +70,6 @@ namespace Hazel
 	}
  
 
-	 
-	Material::Material(MaterialType type)
-		:  m_MaterialType(type)
-	{ 
-		HZ_CORE_INFO("Material: Pre-defined Material is Created");
-		//SetupMaterial();
-	}
-
-	Material::Material(Ref<Shader> shader)
-		: m_Shader(shader)
-	{
-		//m_MaterialType = MaterialType::Custom;
-		HZ_CORE_INFO("Material:  Material is Created using shader: {0}", shader->GetName());
-		//SetupMaterial();
-	}
 
 	 
 
@@ -74,9 +79,12 @@ namespace Hazel
 
 
 	void Material::Bind()
-	{
+	{ 
+		if (m_Shader)
+		m_Shader->Bind(); 
+		else
+		HZ_CORE_ERROR("Material: no shader bound");
 
-		m_Shader->Bind();
 
 		//for unordered map, .first is the key, .second is the value 
 		//texture object -> bind 
@@ -90,9 +98,11 @@ namespace Hazel
 	 
 
 	void Material::Unbind()
-	{
-
-		m_Shader->Unbind();
+	{ 
+		if (m_Shader)
+			m_Shader->Unbind();
+		else
+			HZ_CORE_ERROR("Material: no shader bound");
 
 		//int slot = 0;
 		for (auto& texture : m_Textures)

@@ -18,12 +18,12 @@ namespace Hazel {
 	Scope<Window> Renderer::s_Window;
 	Ref<RendererAPI> Renderer::s_RendererAPI = RendererAPI::Create();
 
-	void Renderer::Init()
+	void Renderer::Init(uint32_t width, uint32_t height)
 	{
 		//HZ_PROFILE_FUNCTION();
 
 
-		s_Window = Window::Create();
+		s_Window = Window::Create( WindowProps{ width, height });
 		Input::SetWindowContext(s_Window->GetNativeWindow());
 
 		s_RendererAPI->Init();

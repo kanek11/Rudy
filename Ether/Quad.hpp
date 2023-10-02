@@ -22,7 +22,7 @@ namespace Hazel {
         void Draw();
 
         uint32_t QuadVAO, QuadVBO, QuadEBO;
-        Ref<Shader> Shader; 
+        Ref<Material> Material;
         std::vector<unsigned int> Indices{ 0,1,2, 1,2,3 };
     };
      
@@ -74,7 +74,11 @@ namespace Hazel {
     void Quad::Draw()
     {
         glBindVertexArray(QuadVAO);
+
+        Material->Bind();
         glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
+        Material-> Unbind();
+
         glBindVertexArray(0);  
     }
 

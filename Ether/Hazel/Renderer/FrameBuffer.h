@@ -2,35 +2,74 @@
 #include "EtherPCH.h"  
 
 #include "Hazel/Renderer/Texture.h"
+#include "Hazel/Renderer/Material.h"
 
-//a framebuffer is specfified by:
-
-//size,
-//attachments:
-//colorbuffer , could be multiple for deferred rendering. MRT etc.
-//depthbuffer  
-//stencilbuffer  
-
-//buffer type:
-//texture , can be sampled in shaders , used by subsequent passes
-
-//renderbuffer ,    can't be sampled , for efficient copy.
+//,  it's a texture,  can be sampled in subsequent passes.
 
 
-//there is a bunch of specifications to create a custom framebuffer,
-//but in most cases, the default framebuffer is enough.
-//colorbuffer as a texture,  
-//depth24+stencil8 as a renderbuffer ;  it's kinda confusing to me that they are usually packed together. 
+//a framebuffer is essentially a collection of buffers;
+//it's the concept of "render target" ;
+// the default framebuffer is the final result of the window output;
+// 
+//only usually many buffers works together;
+//they are called "attachments"  to the framebuffer.
+ 
+//built-in buffers are  
+// 
+//1. colorbuffer, depthbuffer,  and stencilbuffer 
+//colorbuffer is the output of the fragment shader ; 
+// 
+//2. depth is the z-buffer tech;  also product of the pipeline,  used for depth test.
+//3. stencil is is usually packed with depthbuffer.
 
-//the stencil buffer is used for stencil test,  we config it as gl functions, hardly directly access it. 
-//so usually not explicity specified.  maybe include with depthbuffer by default.
+
+
+
+//the workflow includes£º
+//1. create and bind framebuffer
+//2. specify the attachments, 
+//3. check for completeness;
+
+
+
+//specify attachments i.e. how to store the outputs of the pipeline ;
+
+//there are two options:
+//1. texture,  can be sampled in subsequent passes.
+//2. renderbuffer,  can't be sampled,  for efficient copy. 
+ 
+//eg: 
+//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,  TextureID, 0);
+//glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RenderBufferID);
+
+
+//to specify which colorbuffer(s) to draw to;
+// we can specify multiple render targets MRT:
+// glDrawBuffer(int size , unsigned int[] buffer_array);  
+//
+// eg:
+// unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };//
+// glDrawBuffers(3, attachments);
+// 
+// 
+// for depth map,  we don't need colorbuffer,  we can disable it by.
+// glDrawBuffer(GL_NONE);  
+// 
+
+
+
+
+//the purpose of custom framebuffer is the output textures; 
+//the use is basically routined,  so we can just specify as "built-in" framebuffer.
+//without detailed specifications every time.
+
+
+//default:  we need the colorbuffer as a texture to read,  depth_stencil is not to be accessed.
+//colorbuffer as a texture,   
+//depth24+stencil8 as a renderbuffer ;   
+
 
  
-
-//the texture info of colorbuffer is useful,
-//the renderbuffer  is hardly accessed.
-
-
 //usecase: purely by me:
 //shadowmap is not "normal", we only need depthbuffer,  no colorbuffer/disable drawbuffer. 
 //the depthbuffer then is used as a texture in subsequent passes.
@@ -59,13 +98,13 @@
 namespace Hazel {
 
 
-	enum class AttachmentType
-	{
-		None = 0,
-
-		Texture2D,
-		RenderBuffer,
-	};
+	//enum class AttachmentType
+	//{
+	//	None = 0,
+	//
+	//	Texture2D,
+	//	RenderBuffer,
+	//};
 
 
 	enum class RenderBufferFormat
@@ -116,7 +155,7 @@ namespace Hazel {
 	  
 		//PostProcess, //colorbuffer as texture, no depthbuffer;  might not be necessary to create new one£¿
 
-		Deferred, //basically default but with multiple colorbuffers
+		GBuffer, //basically default but with multiple colorbuffers
 	};
 
 
@@ -131,22 +170,29 @@ namespace Hazel {
 
 
 		virtual uint32_t GetFrameBufferID() = 0;
-		virtual uint32_t GetTextureBufferID(uint32_t index) = 0;
-		virtual uint32_t GetRenderBufferID()   = 0;
+		//virtual uint32_t GetTextureBufferID(uint32_t index) = 0;
+
+		virtual void SetTextureBuffers(std::unordered_map<TextureType, Ref<Texture>> TextureBuffers) = 0;
+		virtual Ref<Texture> GetTextureBufferByType(TextureType type) = 0;
+		virtual std::unordered_map<TextureType, Ref<Texture>> GetTextureBuffers() = 0;
+		//virtual uint32_t GetRenderBufferID()   = 0;
 
 
-		static Ref<FrameBuffer> CreateWithSpec(FrameBufferSpec& spec);
-		static Ref<FrameBuffer> CreateWithSize(uint32_t width, uint32_t height, FrameBufferType type = FrameBufferType::Default);
-		//size is the very first thing to be specified, the rest if defualt.
- 
+		//static Ref<FrameBuffer> CreateWithSpec(FrameBufferSpec& spec);
+		static Ref<FrameBuffer> Create(uint32_t width, uint32_t height, FrameBufferType type = FrameBufferType::Default,
+			std::unordered_map<TextureType, Ref<Texture>> TextureBuffers = std::unordered_map<TextureType, Ref<Texture>>());
+	 
+
 
 
 	private:
 
 		uint32_t m_FrameBufferID = 0;
-		FrameBufferSpec m_Spec;
+		//FrameBufferType type = FrameBufferType::Default;
+		//FrameBufferSpec m_Spec;
 
-		std::vector<Ref<Texture2D>> m_TextureBuffers; //colorbuffer
+	 
+		std::unordered_map<TextureType, Ref<Texture>>  m_TextureBuffers;
 		Scope<RenderBuffer> m_RenderBuffer ;   //renderbuffer
 
 

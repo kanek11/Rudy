@@ -12,11 +12,13 @@ namespace Hazel {
 		static GLenum TextureFormatToGLFormat(TextureFormat format)
 		{
 			switch (format)
-			{
-
-			case TextureFormat::RGB:  return GL_RGB; 
-			case TextureFormat::RGB8:  return GL_RGB8;
-			case TextureFormat::RGBA8: return GL_RGBA;
+			{ 
+		    case TextureFormat::R8: return GL_R8; 
+			case TextureFormat::R32F: return GL_R32F;
+			case TextureFormat::RGB8:  return GL_RGB8; 
+			case TextureFormat::RGB32F: return GL_RGB32F;
+			case TextureFormat::RGBA8: return GL_RGBA8;
+			case TextureFormat::RGBA32F: return GL_RGBA32F;
 
 			case TextureFormat::DEPTH_COMPONENT: return GL_DEPTH_COMPONENT;
 			}
@@ -24,6 +26,26 @@ namespace Hazel {
 			HZ_CORE_ASSERT(false);
 			return 0;
 		}
+
+
+		static  GLenum TextureFormatToDataFormat(TextureFormat format)
+		{
+			switch (format)
+			{ 
+			case TextureFormat::R8: return GL_RED; 
+			case TextureFormat::R32F: return GL_RED;
+			case TextureFormat::RGB8:  return GL_RGB;
+			case TextureFormat::RGB32F: return GL_RGB;
+			case TextureFormat::RGBA8: return GL_RGBA;
+		    case TextureFormat::RGBA32F: return GL_RGBA;
+
+			case TextureFormat::DEPTH_COMPONENT: return GL_DEPTH_COMPONENT;
+			}
+
+			HZ_CORE_ASSERT(false);
+			return 0;
+		}
+
  
 
 		static GLenum WrapModeToGLWrapMode(WrapMode mode)
@@ -90,7 +112,7 @@ namespace Hazel {
 			GLenum internalFormat = 0, dataFormat = 0;
 			if (channels == 4)
 			{
-				internalFormat = GL_RGBA8;
+				internalFormat = GL_RGBA;
 				dataFormat = GL_RGBA;
 			}
 			else if (channels == 3)
@@ -98,14 +120,22 @@ namespace Hazel {
 				internalFormat = GL_RGB8;
 				dataFormat = GL_RGB;
 			}
+			else if (channels == 1)
+			{
+				internalFormat = GL_R8;
+				dataFormat = GL_RED;
+			}
 
 			m_InternalFormat = internalFormat;
 			m_DataFormat = dataFormat;
 
-			HZ_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
+			HZ_CORE_ASSERT(internalFormat & dataFormat, "glTexture:Format not supported!");
 
 			glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
-			glTextureStorage2D(m_TextureID, 1, internalFormat, m_Width, m_Height);
+
+			//glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
+
+			 glTextureStorage2D(m_TextureID, 1, internalFormat, m_Width, m_Height);
 
 			glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -113,12 +143,13 @@ namespace Hazel {
 			glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-			glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
+			 glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
 
 			stbi_image_free(data);
 
 
-			HZ_CORE_WARN("OpenGLTexture:textureid:{0} loaded and setup at path:{1}", m_TextureID, path.c_str());
+			HZ_CORE_WARN("glTexture:textureId:{0} loaded and setup at path:{1}", m_TextureID, path.c_str());
+			HZ_CORE_WARN("glTexture:width:{0}, channels:{1}", m_Width, channels);
 
 			
 		}
@@ -138,27 +169,31 @@ namespace Hazel {
 
 
 		m_InternalFormat = Utils::TextureFormatToGLFormat(specification.TextureFormat);
-		m_DataFormat = Utils::TextureFormatToGLFormat(specification.TextureFormat);
-		m_WrapMode = Utils::WrapModeToGLWrapMode(specification.wrapMode);
-		m_FilterMode = Utils::FilterModeToGLFilterMode(specification.filterMode);
-		 
+		m_DataFormat = Utils::TextureFormatToDataFormat(specification.TextureFormat);
 
-		//glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
-		//glTextureStorage2D (m_TextureID, 1, m_InternalFormat, m_Width, m_Height);
+
+		m_WrapMode = Utils::WrapModeToGLWrapMode(specification.wrapMode);
+		m_FilterMode = Utils::FilterModeToGLFilterMode(specification.filterMode); 
+
+
 		glGenTextures(1, &m_TextureID);
 		glBindTexture(GL_TEXTURE_2D, m_TextureID);
-		glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, m_Width, m_Height, 0, m_InternalFormat, GL_FLOAT, NULL);
 
-		 
+
+		 //glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
+		//lTextureStorage2D(m_TextureID, 1, m_InternalFormat, m_Width, m_Height);
+
+	    glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, m_Width, m_Height, 0, m_DataFormat, GL_FLOAT, NULL);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, m_FilterMode);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, m_FilterMode);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, m_WrapMode);
-		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, m_WrapMode); 
-  
- 
+		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, m_WrapMode);
 
-		HZ_CORE_WARN("Debug: OpenGLTexture:textureid:{0} is created ", m_TextureID);
-
+		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		  
+	      HZ_CORE_WARN("glTexture: textureId:{0} is created ", m_TextureID); 
 
 	}
 
@@ -176,6 +211,8 @@ namespace Hazel {
 		//HZ_PROFILE_FUNCTION();
 
 		glBindTextureUnit(slot, m_TextureID);
+
+		//HZ_CORE_INFO("texture2D id:{0} is bound to slot:{1}", m_TextureID, slot);
 	}
 
 	void OpenGLTexture2D::Unbind(uint32_t slot) const

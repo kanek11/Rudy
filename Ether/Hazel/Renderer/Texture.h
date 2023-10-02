@@ -16,9 +16,12 @@ namespace Hazel {
 	enum class TextureFormat
 	{
 		None = 0,
-		R8,
-		RGB,  //without specific bit depth, opengl will have implementation-dependent behaviork better.
+		R8, 
+		R32F,
+		//RGB,  //without specific bit depth, opengl will have implementation-dependent behaviork better.
 		RGB8,
+		//RGBA,
+		RGB32F,
 		RGBA8,
 		RGBA32F,
 
@@ -51,7 +54,7 @@ namespace Hazel {
 	{
 		uint32_t Width = 0;
 		uint32_t Height = 0;
-		TextureFormat TextureFormat = TextureFormat::RGB;
+		TextureFormat TextureFormat = TextureFormat::RGB8;
 		bool GenerateMips = true;
 		WrapMode wrapMode = WrapMode::Repeat;
 		FilterMode filterMode = FilterMode::Linear;

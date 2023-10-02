@@ -91,8 +91,7 @@ namespace Hazel {
         //glBindVertexArray(m_Mesh->GetVertexArray());
         //glBindVertexArray(0); 
 
-        Mesh->Bind();
-
+        Mesh->Bind(); 
         Material->Bind();
 
         // set uniforms for transforms
@@ -103,8 +102,7 @@ namespace Hazel {
         model = glm::translate(model, Transform.Position);
 
 
-        glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix();
-
+        glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix(); 
         glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix();
 
         Material->GetShader()->SetMat4("u_Model", model);
@@ -113,7 +111,7 @@ namespace Hazel {
 
         //wireframe mode  
 
-     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+       //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glDrawElements(GL_TRIANGLES, Mesh->GetIndexCount(), GL_UNSIGNED_INT, 0);
 
         // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 

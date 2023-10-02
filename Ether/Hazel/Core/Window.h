@@ -35,14 +35,14 @@ namespace Hazel {
 
 	struct WindowProps
 	{
-		std::string Title;
 		uint32_t Width;
-		uint32_t Height;
+		uint32_t Height; 
+		std::string Title;
 
-		WindowProps(const std::string& title = "Hazel Engine",
-			        uint32_t width = 1600,
-			        uint32_t height = 900)
-			: Title(title), Width(width), Height(height)
+		WindowProps(uint32_t width = 1600,
+			        uint32_t height = 900,
+			        const std::string& title = "Hazel Engine")
+			:  Width(width), Height(height), Title(title)
 		{
 		}
 	};

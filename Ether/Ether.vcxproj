@@ -66,6 +66,7 @@
       <AdditionalLibraryDirectories>D:\dev\dependencies\assimp\lib;D:\dev\dependencies\Glad\lib; D:\dev\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;</AdditionalLibraryDirectories>
       <AdditionalDependencies>assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib ;glad.lib;User32.lib;Gdi32.lib;Shell32.lib ;</AdditionalDependencies>
       <Profile>false</Profile>
+      <StackReserveSize>5242880</StackReserveSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -154,16 +155,16 @@
     <ClCompile Include="Hazel\Renderer\RendererAPI.cpp" />
     <ClCompile Include="Hazel\Renderer\Shader.cpp" />
     <ClCompile Include="Hazel\Renderer\Texture.cpp" />
+    <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="test_app6.cpp" />
     <None Include="Resources\Shaders\BlinnPhong_FS.glsl">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <FileType>Document</FileType>
     </None>
-    <ClCompile Include="test_app5.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLFrameBuffer.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLMesh.cpp" />
-    <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="Platform\Windows\WindowsWindow.cpp" />
@@ -171,6 +172,10 @@
     <None Include="Resources\Shaders\DepthMap_FS.glsl" />
     <None Include="Resources\Shaders\DepthQuad_FS.glsl" />
     <None Include="Resources\Shaders\DepthQuad_VS.glsl" />
+    <None Include="Resources\Shaders\GBuffer_FS.glsl" />
+    <None Include="Resources\Shaders\GBuffer_VS.glsl" />
+    <None Include="Resources\Shaders\ScreenQuad_FS.glsl" />
+    <None Include="Resources\Shaders\ScreenQuad_VS.glsl" />
     <None Include="Resources\Shaders\Skybox_FS.glsl" />
     <None Include="Resources\Shaders\Skybox_VS.glsl" />
   </ItemGroup>
