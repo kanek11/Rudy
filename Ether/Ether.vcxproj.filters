@@ -102,9 +102,6 @@
     <ClInclude Include="Hazel\Renderer\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Platform\OpenGL\OpenGLMaterial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Hazel\Renderer\Object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -124,6 +121,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Quad.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cube.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hazel\Renderer\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -156,9 +159,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Platform\OpenGL\OpenGLMesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform\OpenGL\OpenGLMaterial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Hazel\Renderer\Mesh.cpp">
@@ -200,6 +200,9 @@
     <ClCompile Include="test_app5.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Hazel\Renderer\Light.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="dependencies.txt" />
@@ -215,5 +218,7 @@
     <None Include="Resources\Shaders\DepthMap_VS.glsl" />
     <None Include="Resources\Shaders\DepthQuad_FS.glsl" />
     <None Include="Resources\Shaders\DepthQuad_VS.glsl" />
+    <None Include="Resources\Shaders\Skybox_VS.glsl" />
+    <None Include="Resources\Shaders\Skybox_FS.glsl" />
   </ItemGroup>
 </Project>

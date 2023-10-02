@@ -212,4 +212,9 @@ namespace Hazel {
 		return m_Data.VSync;
 	}
 
+	bool WindowsWindow::ShouldClose()
+	{
+		return glfwWindowShouldClose(m_Window); 
+	}
+
 }

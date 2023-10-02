@@ -1,23 +1,38 @@
-
 #include "EtherPCH.h"  
 #include "Object.h"  
-
-
-
+ 
 
 namespace Hazel
-{ 
-
-
-
-
-    void Object::loadModel(std::string const& path)
+{   
+    
+    Ref<MeshObject> MeshObject::Create(Ref<Mesh> mesh, Ref<Material> material)
     {
+		return CreateRef<MeshObject>(mesh, material);
+	}
+     
+
+    MeshObject::MeshObject(Ref<Mesh> mesh, Ref<Material> material)
+        : m_Mesh(mesh), m_Material(material)
+    {
+	}
+
+
+
+    Ref<Hierarchy> Hierarchy::CreateFromFile(std::string const& path)
+
+    {
+        return CreateRef<Hierarchy>(path);
+    }
+
+ 
+
+    Hierarchy::Hierarchy(std::string const& path) 
+     { 
         // read file via ASSIMP
         Assimp::Importer importer;
 
         //important, calculate tangent space for normal mapping
-     const aiScene* scene = importer.ReadFile
+        const aiScene* scene = importer.ReadFile
         (path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
 
 
@@ -32,10 +47,14 @@ namespace Hazel
 
         // process ASSIMP's root node recursively
         processNode(scene->mRootNode, scene);
+
+
     }
 
+
+
     // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
-    void Object::processNode(aiNode* node, const aiScene* scene)
+    void  Hierarchy::processNode(aiNode* node, const aiScene* scene)
     {
         //HZ_PROFILE_FUNCTION();
         // process each mesh located at the current node
@@ -45,8 +64,12 @@ namespace Hazel
             // the node object only contains indices to index the actual objects in the scene. 
             // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-            m_Meshes.push_back(processMesh(mesh, scene));
-            m_Materials.push_back(processMaterial(mesh, scene)); 
+
+            //create mesh object
+
+            auto meshObject = MeshObject::Create(processMesh(mesh, scene), processMaterial(mesh, scene));
+
+            m_MeshObjects.push_back(meshObject); 
         }
         // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
         for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -58,7 +81,7 @@ namespace Hazel
     }
      
 
-    Ref<Material> Object::processMaterial(aiMesh* mesh, const aiScene* scene)
+    Ref<Material>  Hierarchy::processMaterial(aiMesh* mesh, const aiScene* scene)
     {
         // process materials
         aiMaterial* ai_material = scene->mMaterials[mesh->mMaterialIndex];
@@ -67,8 +90,7 @@ namespace Hazel
         // we assume a convention for sampler names in the shaders. Each diffuse texture should be named
         // learnopengl use texture_diffuseN , but we hardly use more than one of same type, so we use texture_diffuse
 
-        auto material = Material::Create(m_Shader, WorkflowMode::BlinnPhong);
-
+        auto material = Material::Create();  
         //loop through all the textures of the mesh,   add as dictionary
 
        
@@ -88,12 +110,10 @@ namespace Hazel
                     if (texture->GetPath() == fileDir)
                     {
 						material->SetTexture(textureType, texture); // set reference directly.
-						skip = true;
-
+						skip = true; 
 
                         HZ_CORE_INFO("Modelloading: Texture at: {0} is already loaded ", fileDir);
-						break;
-
+						break; 
 					}
 				}
 
@@ -104,41 +124,31 @@ namespace Hazel
 					material->SetTexture(textureType, texture); // Assuming you have a setter for textures in your Material class
 					m_Loaded_Textures.push_back(texture);  //opt
 
-                    HZ_CORE_INFO("Modelloading: Texture at: {0} is being loaded ", fileDir);
+                    HZ_CORE_INFO("Modelloading: Texture at: {0} is loaded ", fileDir);
 				}
          
              
              }
          };
 
-    
-        // Load textures for different types depending on your workflow mode
-        if (material->GetWorkflowMode() == WorkflowMode::BlinnPhong)
-        {
+
+        //refer to the used version source code of assimp;
+      
             //HZ_CORE_INFO("Modelloading: BlinnPhong is used");
-            loadTexture(aiTextureType_DIFFUSE, TextureType::DiffuseMap);
-            loadTexture(aiTextureType_SPECULAR, TextureType::SpecularMap);
-            loadTexture(aiTextureType_HEIGHT, TextureType::NormalMap);  //in assimp, normal map is height map for historic reason.
-             
-           
-        }
-        else if (material->GetWorkflowMode() == WorkflowMode::Metallic)
-        {
-            //HZ_CORE_INFO("Modelloading: Metallic is used");
-            loadTexture(aiTextureType_DIFFUSE, TextureType::AlbedoMap);
-            loadTexture(aiTextureType_SPECULAR, TextureType::MetallicMap);
-            loadTexture(aiTextureType_SHININESS, TextureType::RoughnessMap);
-            loadTexture(aiTextureType_HEIGHT, TextureType::NormalMap);
-            loadTexture(aiTextureType_AMBIENT, TextureType::AOMap); 
-        }
-		else if (material->GetWorkflowMode() == WorkflowMode::FlatColor)
-		{
-            HZ_CORE_INFO("Modelloading: FlatColor is used");
-		}
-	    else 
-		{
-            HZ_CORE_INFO("Modelloading: unknown workflow");
-		}
+        loadTexture(aiTextureType_DIFFUSE, TextureType::AlbedoMap); 
+        loadTexture(aiTextureType_BASE_COLOR, TextureType::AlbedoMap);
+
+        loadTexture(aiTextureType_SPECULAR, TextureType::SpecularMap);
+
+        //tangent space
+        loadTexture(aiTextureType_NORMALS, TextureType::NormalMap);  
+        
+        loadTexture(aiTextureType_DIFFUSE_ROUGHNESS, TextureType::RoughnessMap);
+ 
+        //HZ_CORE_INFO("Modelloading: Metallic is used");
+        loadTexture(aiTextureType_METALNESS, TextureType::MetallicMap);
+        loadTexture(aiTextureType_AMBIENT_OCCLUSION, TextureType::AOMap);
+     
  
 
         // Load other properties here if needed, like colors, roughness, etc.
@@ -146,7 +156,7 @@ namespace Hazel
         return material;
     }
 
-    Ref<Mesh> Object::processMesh(aiMesh* mesh, const aiScene* scene)
+    Ref<Mesh>  Hierarchy::processMesh(aiMesh* mesh, const aiScene* scene)
     {
         // data to fill
         std::vector<Vertex> vertices;
@@ -222,6 +232,7 @@ namespace Hazel
         //return Mesh(vertices, indices, textures);
         auto _mesh = Mesh::Create(vertices, indices);
         return _mesh; 
+
 
     }
 }

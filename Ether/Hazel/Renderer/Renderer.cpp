@@ -15,13 +15,21 @@ namespace Hazel {
 	//Scope<Renderer::SceneData> Renderer::s_SceneData = CreateScope<Renderer::SceneData>();
 
 	Ref<Camera> Renderer::s_MainCamera;
+	Scope<Window> Renderer::s_Window;
 	Ref<RendererAPI> Renderer::s_RendererAPI = RendererAPI::Create();
 
 	void Renderer::Init()
 	{
 		//HZ_PROFILE_FUNCTION();
 
+
+		s_Window = Window::Create();
+		Input::SetWindowContext(s_Window->GetNativeWindow());
+
 		s_RendererAPI->Init();
+
+
+
 		//RenderCommand::Init();
 		//Renderer2D::Init();
 		//Renderer3D:: Init();
@@ -38,15 +46,36 @@ namespace Hazel {
 		//RenderCommand::SetViewport(0, 0, width, height);
 	}
 
-	//void Renderer::BeginScene(OrthographicCamera& camera)
-	void Renderer::BeginScene(Ref<Camera> camera)
-	{
-		s_MainCamera = camera; 
-	}
 
-	void Renderer::EndScene()
+	void Renderer::Render(const Ref<Scene>& scene)
 	{
-	}
+		//HZ_PROFILE_FUNCTION();
+
+		//s_SceneData->ViewProjectionMatrix = camera->GetViewProjectionMatrix();
+ 
+
+		//loop objects in the scene
+		//auto group = scene->m_Registry.group<TransformComponent>(entt::get<MeshComponent>);
+
+		for (auto obj : scene->Objects) 
+		{
+
+
+		}
+
+
+		//auto view = scene->m_Registry.view<TransformComponent, MeshComponent>();
+		//for (auto entity : view)
+		//{
+		//	auto [transform, mesh] = view.get<TransformComponent, MeshComponent>(entity);
+
+		//	Renderer3D::Submit(mesh.mesh, transform.GetTransform());
+		//}
+
+	 
+	} 
+
+
 
 	//void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
 	//{

@@ -22,45 +22,75 @@ namespace Hazel {
 
     };
 
+
+    //object is the base class for all objects in the scene,
+    //design carefully:   cannot be easily changed.
     class Object
     {
     public :
-        Object()
-        {
-            m_Name = "Default Object";
-            m_Shader = Shader::Create("blinn-phong", "Resources/Shaders/BlinnPhong_VS.glsl", "Resources/Shaders/BlinnPhong_FS.glsl");
-        }
-
-        Object(Ref<Shader> shader)
-        {
-			m_Name = "Object with shader:" + shader->GetName();
-			m_Shader = shader;
-		}
+        ~Object() = default;
+        Object() = default;
 
     //private:
      public:
-        std::string m_Name; 
-        std::string m_Directory;
+        std::string Name; 
+        Transform Transform;
 
-        Transform m_Transform;
-
-        std::vector<Ref<Mesh>> m_Meshes;
-        std::vector<Ref<Material>> m_Materials;
-        Ref<Shader> m_Shader;
-         
-
-    public:
-        std::vector<Ref<Texture2D>> m_Loaded_Textures;  //opt to avoid duplicate textures,  loading is extremely slow
-
-        void loadModel(std::string const& path);
-        void processNode(aiNode* node, const aiScene* scene);
-        Ref<Mesh> processMesh(aiMesh* mesh, const aiScene* scene);
-        Ref<Material> processMaterial(aiMesh* mesh, const aiScene* scene);
-
-
-        //void DrawModel();
 
     };
+ 
+ 
+
+     class MeshObject : public Object
+     {
+     public:
+
+         ~MeshObject() = default;
+         MeshObject() = default;
+         MeshObject(Ref<Mesh> mesh, Ref<Material> material);
+     
+     
+         static Ref<MeshObject> Create(Ref<Mesh> mesh, Ref<Material> material);
+         //static Ref<MeshObject> CreateFromFile(std::string const& path);
+          
+     
+         Ref<Mesh> m_Mesh;
+         Ref<Material> m_Material;
+         //Ref<Shader> m_Shader;
+      
+     
+     };
+
+
+
+     class Hierarchy : public Object
+     {
+     public:
+
+         ~Hierarchy() = default;
+         Hierarchy() = default;
+
+         Hierarchy(std::string const& path);
+     
+     
+         static Ref<Hierarchy> CreateFromFile(std::string const& path);
+     
+         std::vector< Ref<MeshObject> >  m_MeshObjects;
+         std::string m_Directory;
+
+     private: 
+         std::vector<Ref<Texture2D>> m_Loaded_Textures;  
+         //opt to avoid duplicate textures,  loading is extremely slow
+
+
+         void processNode(aiNode* node, const aiScene* scene);
+         Ref<Mesh> processMesh(aiMesh* mesh, const aiScene* scene);
+         Ref<Material> processMaterial(aiMesh* mesh, const aiScene* scene);
+     };
+     
+ 
+
+
      
 }
   

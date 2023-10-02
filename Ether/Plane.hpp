@@ -33,50 +33,11 @@ namespace Hazel {
         Transform  Transform;
         Ref<Mesh>  Mesh;
         Ref<Material>  Material;
-        //Ref<Shader>  Shader;   
          
     };
 
 
 
-    void Plane::Draw()
-    {
-        //glBindVertexArray(m_Mesh->GetVertexArray());
-        //glBindVertexArray(0); 
-
-        Mesh->Bind();
- 
-        Material->Bind(); 
-
-        // set uniforms for transforms
-        // identity matrix for now;
-
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::scale(model, Transform.Scale);
-        model = glm::translate(model, Transform.Position);
-
-
-        glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix();
-
-        glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix();
-
-        Material->GetShader()->SetMat4("u_Model", model);
-        Material->GetShader()->SetMat4("u_View", view);
-        Material->GetShader()->SetMat4("u_Projection", projection);
- 
-            //wireframe mode  
-      
-         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-         glDrawElements(GL_TRIANGLES, Mesh->GetIndexCount(), GL_UNSIGNED_INT, 0);
-
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
- 
-
-         Material->Unbind();
-        Mesh->Unbind();
-  
-        
-    }
 
 
 
@@ -118,6 +79,49 @@ namespace Hazel {
 
         //generate mesh
         Mesh = Mesh::Create(Vertices, Indices);  
+
+    }
+    
+    
+    
+    
+    
+    void Plane::Draw()
+    {
+        //glBindVertexArray(m_Mesh->GetVertexArray());
+        //glBindVertexArray(0); 
+
+        Mesh->Bind();
+
+        Material->Bind();
+
+        // set uniforms for transforms
+        // identity matrix for now;
+
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::scale(model, Transform.Scale);
+        model = glm::translate(model, Transform.Position);
+
+
+        glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix();
+
+        glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix();
+
+        Material->GetShader()->SetMat4("u_Model", model);
+        Material->GetShader()->SetMat4("u_View", view);
+        Material->GetShader()->SetMat4("u_Projection", projection);
+
+        //wireframe mode  
+
+     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glDrawElements(GL_TRIANGLES, Mesh->GetIndexCount(), GL_UNSIGNED_INT, 0);
+
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
+
+
+        Material->Unbind();
+        Mesh->Unbind();
+
 
     }
 

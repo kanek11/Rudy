@@ -92,6 +92,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Cube.hpp" />
     <ClInclude Include="Hazel\Core\Assert.h" />
     <ClInclude Include="Hazel\Core\Base.h" />
     <ClInclude Include="Hazel\Core\Timer.h" />
@@ -109,13 +110,13 @@
     <ClInclude Include="Hazel\Renderer\Material.h" />
     <ClInclude Include="Hazel\Renderer\Mesh.h" />
     <ClInclude Include="Hazel\Renderer\Object.h" />
+    <ClInclude Include="Hazel\Renderer\Scene.h" />
     <ClInclude Include="Hazel\Renderer\Shader.h" />
     <ClInclude Include="Hazel\Renderer\Renderer.h" />
     <ClInclude Include="Hazel\Renderer\RendererAPI.h" />
     <ClInclude Include="Hazel\Renderer\Texture.h" />
     <ClInclude Include="Plane.hpp" />
     <ClInclude Include="Platform\OpenGL\OpenGLFrameBuffer.h" />
-    <ClInclude Include="Platform\OpenGL\OpenGLMaterial.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLMesh.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLRendererAPI.h" />
@@ -145,6 +146,7 @@
     <ClCompile Include="Hazel\Renderer\Camera.cpp" />
     <ClCompile Include="Hazel\Renderer\FrameBuffer.cpp" />
     <ClCompile Include="Hazel\Renderer\GraphicsContext.cpp" />
+    <ClCompile Include="Hazel\Renderer\Light.h" />
     <ClCompile Include="Hazel\Renderer\Material.cpp" />
     <ClCompile Include="Hazel\Renderer\Mesh.cpp" />
     <ClCompile Include="Hazel\Renderer\Object.cpp" />
@@ -160,7 +162,6 @@
     <ClCompile Include="test_app5.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLFrameBuffer.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
-    <ClCompile Include="Platform\OpenGL\OpenGLMaterial.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLMesh.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLShader.cpp" />
@@ -170,6 +171,8 @@
     <None Include="Resources\Shaders\DepthMap_FS.glsl" />
     <None Include="Resources\Shaders\DepthQuad_FS.glsl" />
     <None Include="Resources\Shaders\DepthQuad_VS.glsl" />
+    <None Include="Resources\Shaders\Skybox_FS.glsl" />
+    <None Include="Resources\Shaders\Skybox_VS.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="dependencies.txt" />

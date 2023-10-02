@@ -10,6 +10,7 @@
 #include "Sphere.hpp"
 #include "Plane.hpp"
 #include "Quad.hpp"
+#include "Cube.hpp"
 
 #include "Hazel/Renderer/Renderer.h"
 #include "Hazel/Renderer/Mesh.h"
@@ -44,14 +45,15 @@ int main() {
     HZ_CORE_WARN("test:Initialized Log!");
 
 
-    auto window = Window::Create();
-    Input::SetWindowContext(window->GetNativeWindow());
+    //auto window = Window::Create();
+    //Input::SetWindowContext(window->GetNativeWindow());
 
 
     Ref<Camera> camera = CreateRef<Camera>();
 
     Renderer::Init();
-    Renderer::BeginScene(camera);
+    Renderer::SetMainCamera(camera); 
+
     auto renderAPI = Renderer::s_RendererAPI;
 
 
@@ -80,14 +82,20 @@ int main() {
 
       
     auto basicShader = Shader::Create("basic shader", "Resources/Shaders/Basic_VS.glsl", "Resources/Shaders/Basic_FS.glsl");
+    
+    
     auto blinnPhongShader = Shader::Create("blinn phong", "Resources/Shaders/BlinnPhong_VS.glsl", "Resources/Shaders/BlinnPhong_FS.glsl");
-    auto blinnPhongMaterial = Material::Create(blinnPhongShader, WorkflowMode::BlinnPhong);
+    Material::CreateMaterialType(blinnPhongShader);
 
     auto depthMapShader = Shader::Create("depth map", "Resources/Shaders/DepthMap_VS.glsl", "Resources/Shaders/DepthMap_FS.glsl");
+    Material::CreateMaterialType(depthMapShader);  
+    auto depthMapMaterial = Material::Create(depthMapShader);
+    
     depthMapShader->Bind();
     depthMapShader->SetMat4("u_Model", glm::mat4(1.0));
     depthMapShader->SetMat4("u_LightViewMat", LightViewMatrix);
-    auto depthMapMaterial = Material::Create(depthMapShader);
+
+ 
     
     auto depthQuadShader = Shader::Create("depth quad", "Resources/Shaders/DepthQuad_VS.glsl", "Resources/Shaders/DepthQuad_FS.glsl");
     depthQuadShader->Bind();
@@ -96,23 +104,53 @@ int main() {
     depthQuadShader->SetFloat("u_Far_plane", light_Far);
 
 
-     Object test_model(blinnPhongShader);
-     test_model.loadModel("D:/CG_resources/backpack/backpack.obj");
+    auto skyboxShader = Shader::Create("skybox", "Resources/Shaders/Skybox_VS.glsl", "Resources/Shaders/Skybox_FS.glsl");
+    Material::CreateMaterialType(skyboxShader);
+    auto skyboxMaterial = Material::Create(skyboxShader); 
+
+    std::string cubeMapPath = "D:/CG_resources/skybox/";
+    std::vector<std::string> paths =
+    {
+       cubeMapPath + "right.jpg",
+       cubeMapPath + "left.jpg",
+       cubeMapPath + "top.jpg",
+       cubeMapPath + "bottom.jpg",
+       cubeMapPath + "front.jpg",
+       cubeMapPath + "back.jpg" 
+    };
+
+    skyboxMaterial->SetTexture(TextureType::Skybox, TextureCube::CreateFromImages(paths));
+
+     
+
+    auto test_model = Hierarchy::CreateFromFile( "D:/CG_resources/backpack/backpack.obj"); 
+    for (auto meshObj :test_model->m_MeshObjects)
+    { 
+        meshObj->m_Material->SetShader(blinnPhongShader); 
+    }
+     
 
     Plane plane1(10);
-    plane1.Transform.Position = glm::vec3(0.0f, -1.5f, 0.0f);
-    plane1.Material = blinnPhongMaterial;
+    plane1.Transform.Position = glm::vec3(0.0f, -1.5f, 0.0f); 
+    auto plane_Material = Material::Create(blinnPhongShader); 
+    plane1.Material = plane_Material;
 
-    auto DiffuseMap = Texture2D::Create("D:/CG_resources/Floor/Diffuse.jpg");
-    auto NormalMap = Texture2D::Create("D:/CG_resources/Floor/Normal.png");
-    auto SpecularMap = Texture2D::Create("D:/CG_resources/Floor/Specular.jpg");
+    auto AlbedoMap =   Texture2D::Create("D:/CG_resources/Floor/Albedo.jpg"); 
+    //auto AlbedoMap = Texture2D::Create("D:/CG_resources/backpack/diffuse.jpg");
+    auto NormalMap =   Texture2D::Create("D:/CG_resources/Floor/Normal.png");
+    //auto SpecularMap = Texture2D::Create("D:/CG_resources/Floor/Specular.jpg");
+    //auto SpecularMap = Texture2D::Create("D:/CG_resources/backpack/specular.jpg");
+    auto RoughnessMap = Texture2D::Create("D:/CG_resources/Floor/Roughness.jpg"); 
 
-    plane1.Material->SetTexture(TextureType::DiffuseMap, DiffuseMap);
-    plane1.Material->SetTexture(TextureType::NormalMap, NormalMap);
-    plane1.Material->SetTexture(TextureType::SpecularMap, SpecularMap);
+    plane_Material->SetTexture(TextureType::AlbedoMap, AlbedoMap); 
+    //plane_Material->SetTexture(TextureType::SpecularMap, SpecularMap);
+    plane_Material->SetTexture(TextureType::NormalMap, NormalMap);
+    plane_Material->SetTexture(TextureType::RoughnessMap, RoughnessMap);
+
+     
 
 
-    auto testTexture = Texture2D::Create("C:/Users/10465/Desktop/tsuki4.jpg");
+    //auto testTexture = Texture2D::Create("C:/Users/10465/Desktop/tsuki4.jpg");
 
 
 
@@ -121,6 +159,9 @@ int main() {
 
     Quad depthQuad = Quad();
     depthQuad.Shader = depthQuadShader;
+
+    Cube skybox = Cube(); 
+    skybox.Material = skyboxMaterial;
    
 
 
@@ -136,7 +177,7 @@ int main() {
 
 
     HZ_CORE_WARN("App: Entering the loop");
-    while (!glfwWindowShouldClose(static_cast<GLFWwindow*>(window->GetNativeWindow())))
+    while (! Renderer::ShouldClose()  )
     {
         //get the time of each frame
         float time = (float)glfwGetTime();
@@ -148,8 +189,7 @@ int main() {
         //glClear(GL_COLOR_BUFFER_BIT);
         //renderAPI->SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         //renderAPI->Clear();
-         
-
+          
 
         //=========first light pass: render the scene to the depth map
 
@@ -161,29 +201,28 @@ int main() {
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // make sure clear the framebuffer's content 
-
+        
         
         ////render scene
-        for (unsigned int i = 0; i < test_model.m_Meshes.size(); i++)
-            renderAPI->DrawElements(test_model.m_Meshes[i], depthMapMaterial, test_model.m_Transform);
-       
+        for (auto meshObj :  test_model->m_MeshObjects )
+            renderAPI->DrawElements(meshObj->m_Mesh, depthMapMaterial, test_model->Transform);
+        
+
         plane1.Material = depthMapMaterial;
         plane1.Draw();  
         
         depthMapShader->Unbind();
         depthMapFBO->Unbind();  
-
-
-   
-
+         
+        
         //=====second camera pass: render the scene as normal using the generated depth map
         //get the depth map texture from the framebuffer 
         auto depthMapID = depthMapFBO->GetTextureBufferID(0); 
         glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-
-
-
-       //
+        
+        
+        
+         
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // make sure clear the framebuffer's content 
         
@@ -194,15 +233,21 @@ int main() {
         blinnPhongShader->SetInt("u_DepthMap", 4);
         glBindTextureUnit(4, depthMapID);
         
-        for (unsigned int i = 0; i < test_model.m_Meshes.size(); i++)
-            renderAPI->DrawElements(test_model.m_Meshes[i], test_model.m_Materials[i], test_model.m_Transform); 
-        
-        plane1.Material = blinnPhongMaterial;
+
+        for (auto meshObj : test_model->m_MeshObjects)
+            renderAPI->DrawElements(meshObj->m_Mesh, meshObj->m_Material, test_model->Transform);
+       
+        plane1.Material = plane_Material;
         plane1.Draw();  
         
         //grid.Draw();
         
         blinnPhongShader->Unbind();
+
+
+        //===skybox
+
+        skybox.DrawSkybox(); 
 
        
        //glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -214,12 +259,10 @@ int main() {
        //depthQuad.Draw(); 
        //depthQuadShader->Unbind(); 
 
-    
-
-
+     
         camera->OnUpdate(deltaTime);
 
-        window->OnUpdate();
+        Renderer::WindowOnUpdate();  
         /* Swap front and back buffers */
        // glfwSwapBuffers(window); 
         /* Poll for and process events */

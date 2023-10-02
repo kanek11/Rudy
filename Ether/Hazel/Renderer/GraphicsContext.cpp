@@ -1,5 +1,3 @@
-//#include "hzpch.h"
-
 #include "EtherPCH.h"
 
 #include "Hazel/Renderer/GraphicsContext.h"
@@ -8,6 +6,7 @@
 #include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Hazel {
+
 
 	Scope<GraphicsContext> GraphicsContext::Create(void* window)
 	{
@@ -20,5 +19,6 @@ namespace Hazel {
 		HZ_CORE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}
+
 
 }

@@ -81,8 +81,7 @@ namespace Hazel {
 			HZ_CORE_WARN("OpenGLTexture: failded to load texture at path: {0}", path.c_str());
 		}
 		else
-		{
-	
+		{ 
 			m_IsLoaded = true;
 
 			m_Width = width;
@@ -125,8 +124,7 @@ namespace Hazel {
 		}
 	}
 
-
-
+	 
 
 
 	OpenGLTexture2D::OpenGLTexture2D(const TextureSpec& specification)
@@ -164,15 +162,7 @@ namespace Hazel {
 
 	}
 
-
-
-
-
-
-
-
-
-
+	 
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{
 		//HZ_PROFILE_FUNCTION();
@@ -180,14 +170,6 @@ namespace Hazel {
 		glDeleteTextures(1, &m_TextureID);
 	}
 
-	void OpenGLTexture2D::SetData(void* data, uint32_t size)
-	{
-		//HZ_PROFILE_FUNCTION();
-
-		uint32_t bpp = m_DataFormat == GL_RGBA ? 4 : 3;
-		HZ_CORE_ASSERT(size == m_Width * m_Height * bpp, "Data must be entire texture!");
-		glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
-	}
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
@@ -202,5 +184,128 @@ namespace Hazel {
 
 		glBindTextureUnit(slot, 0);
 	}
+
+
+	//void OpenGLTexture2D::SetData(void* data, uint32_t size)
+	//{
+	//	//HZ_PROFILE_FUNCTION();
+	//
+	//	uint32_t bpp = m_DataFormat == GL_RGBA ? 4 : 3;
+	//	HZ_CORE_ASSERT(size == m_Width * m_Height * bpp, "Data must be entire texture!");
+	//	glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
+	//}
+
+
+	//===========Cube
+
+
+
+	//OpenGLTextureCube(const std::string& path);
+	//OpenGLTextureCube(const std::vector<std::string>& paths);
+	//OpenGLTextureCube(const TextureSpec& specification);
+
+
+
+	OpenGLTextureCube::OpenGLTextureCube(const std::vector<std::string>& paths)
+	{
+		//HZ_PROFILE_FUNCTION();
+
+		
+        //opengl assume uv of bottom left origin and stbi is top left origin
+		stbi_set_flip_vertically_on_load(Texture::s_FlipYOnLoad); 
+
+		//initial check
+		HZ_CORE_ASSERT(paths.size() == 6, "TextureCube must have 6 paths!");
+
+		 
+		glGenTextures(1, &m_TextureID);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID);
+
+
+		int width, height, channels;
+
+		//load for 6 times.
+		for (unsigned int i = 0; i < paths.size(); i++)
+		{
+
+			stbi_uc* data = nullptr;
+			{
+				//HZ_PROFILE_SCOPE("stbi_load - OpenGLTexture2D(const std::string&)");
+				data = stbi_load(paths[i].c_str(), &width, &height, &channels, 0);
+			}
+            if (!data)
+		    {
+		      HZ_CORE_WARN("OpenGLTexture: failded to load texture at path: {0}", paths[i].c_str());
+		    }
+			else
+			{
+				HZ_CORE_WARN("OpenGLTexture: load texture at path: {0}", paths[i].c_str());
+
+				GLenum internalFormat = 0, dataFormat = 0;
+				if (channels == 4)
+				{
+					internalFormat = GL_RGBA8;
+					dataFormat = GL_RGBA;
+				}
+				else if (channels == 3)
+				{
+					internalFormat = GL_RGB8;
+					dataFormat = GL_RGB;
+				} 
+			 
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
+				   
+				stbi_image_free(data);
+ 
+			} 
+
+		}
+
+
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		 
+		 
+		HZ_CORE_WARN("CubeMapID:{0} is created " , m_TextureID);
+	}
+
+
+
+
+
+
+	OpenGLTextureCube::~OpenGLTextureCube()
+	{
+		//HZ_PROFILE_FUNCTION();
+
+		glDeleteTextures(1, &m_TextureID);
+	}
+ 
+
+	void OpenGLTextureCube::Bind(uint32_t slot) const
+	{
+		//HZ_PROFILE_FUNCTION();
+
+		glBindTextureUnit(slot, m_TextureID);
+	}
+
+	void OpenGLTextureCube::Unbind(uint32_t slot) const
+	{
+		//HZ_PROFILE_FUNCTION();
+
+		glBindTextureUnit(slot, 0);
+	}
+
+
+ 
+ 
+
+
+
+
+
 
 }

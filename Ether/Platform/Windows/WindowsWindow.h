@@ -34,6 +34,8 @@ namespace Hazel {
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
 
+		bool ShouldClose() override;
+
 		virtual void* GetNativeWindow() const { return m_Window; }
 
 		//=====me: inherited from Window

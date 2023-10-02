@@ -61,15 +61,13 @@ namespace Hazel {
 			//set to always look to orignial for now 
 			//avoid return object directly. it cause undefined behavior.
 			//glm::mat4 view = MyMath::lookAt(m_Position, m_FocalPoint, m_Up);
-			glm::mat4 view = glm::lookAt(m_Position, m_FocalPoint, m_Up);
-			return view;
+			return m_ViewMatrix;
 		}
 
 		const glm::mat4& GetProjectionMatrix() const { 
 			 
-			//glm ::mat4 projection = MyMath::perspective(m_FOV, m_AspectRatio, m_Near, m_Far);
-			glm::mat4 projection = glm::perspective(m_FOV, m_AspectRatio, m_Near, m_Far);
-			return  projection; 
+			//glm ::mat4 projection = MyMath::perspective(m_FOV, m_AspectRatio, m_Near, m_Far); 
+			return  m_ProjectionMatrix;
 			 
 		} 
 
@@ -78,6 +76,10 @@ namespace Hazel {
 		//navigation onupdate;
 		//here the event functions update the paramters, and reflect when call getview/getprojectionmatrix.
 		void OnUpdate(float ts) {
+
+
+			m_ViewMatrix = glm::lookAt(m_Position, m_FocalPoint, m_Up);
+			m_ProjectionMatrix = glm::perspective(m_FOV, m_AspectRatio, m_Near, m_Far);
 
 			glm::vec2 CurrentMousePos =  Input::GetMousePosition();
 			//HZ_CORE_INFO("camera: the mouse cursor is {0}, {1}", m_LastMousePos.x, m_LastMousePos.y);
@@ -164,7 +166,7 @@ namespace Hazel {
 
 			//only use y axis,  positive delta.y means zoom in 
 
-			float zoom =  0.1* delta.y;   
+			float zoom =  (float)0.1* delta.y;   
 			m_Distance -= zoom;
 
 			//stop zooming in if too close

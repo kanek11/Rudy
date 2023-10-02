@@ -1,5 +1,4 @@
-#pragma once
-
+#pragma once 
 #include "EtherPCH.h"
 
 
@@ -18,7 +17,7 @@ namespace Hazel {
 	{
 		None = 0,
 		R8,
-		RGB,  //without specific bit depth, opengl will have  implementation-dependent behavior, which might work better.
+		RGB,  //without specific bit depth, opengl will have implementation-dependent behaviork better.
 		RGB8,
 		RGBA8,
 		RGBA32F,
@@ -62,26 +61,28 @@ namespace Hazel {
 	class Texture
 	{
 	public:
-		virtual ~Texture() = default;
+	    ~Texture() = default;
 
+
+		//=====setters and getters
+		//virtual void SetData(void* data, uint32_t size) = 0;
 		virtual const TextureSpec& GetTextureSpec() const = 0;
-
 		virtual uint32_t GetWidth() const = 0;
 		virtual uint32_t GetHeight() const = 0;
-		virtual uint32_t GetTextureID() const = 0;
-
+		virtual uint32_t GetTextureID() const = 0; 
 		virtual const std::string& GetPath() const = 0;
+		//=====setters and getters
 
-
-		virtual void SetData(void* data, uint32_t size) = 0;
 
 		virtual void Bind(uint32_t slot = 0) const = 0;
 		virtual void Unbind(uint32_t slot = 0) const = 0;
 
-		virtual bool IsLoaded() const = 0;
-		
-		static void SetFlipYOnLoad(bool flip) ;
+		virtual bool IsLoaded() const = 0; 
+
 		//virtual bool operator==(const Texture& other) const = 0;
+	 
+		//====static state.
+		static void SetFlipYOnLoad(bool flip) ;  //for image loader.
 
 
 	public:
@@ -96,6 +97,13 @@ namespace Hazel {
 		static Ref<Texture2D> Create(const TextureSpec& specfication = TextureSpec());
 	};
 
+	class TextureCube : public Texture
+	{
+	public:
+		static Ref<TextureCube> CreateFromImages(const std::vector<std::string>& paths); 
+		static Ref<TextureCube> CreateFromHDRI(const std::string& path);
+		static Ref<TextureCube> CreateEmpty(const TextureSpec& specfication = TextureSpec());
+	};
 
 }
 

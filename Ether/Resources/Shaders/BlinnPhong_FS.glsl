@@ -12,27 +12,33 @@ in VS_OUT{
  
  
 
-uniform sampler2D u_DiffuseMap;
 uniform sampler2D u_SpecularMap;
+uniform sampler2D u_AlbedoMap;
+uniform sampler2D u_RoughnessMap;
 uniform sampler2D u_NormalMap; 
 
 uniform sampler2D u_DepthMap;  //shadow map
 
+
+
 uniform vec3 u_LightPos;
 uniform vec3 u_LightColor;
+uniform vec3 u_LightDir;
 
 uniform vec3 u_CameraPos;
 
 
 //just trivial hack, we should let the host to handle this. but the code is not settled yet.
-vec3 LightColor = vec3(1.0, 1.0, 1.0) * 1000;
+vec3 LightColor = vec3(1.0, 1.0, 1.0) ;
 vec3 LightPos = vec3(0.0, 10.0, 10.0);
+vec3 LightDir = vec3(0.0, -0.5, -1);
+
 vec3 CameraPos = vec3(0.0, 0.0, 5.0);
 
 
 
 //formula:
-//ambient = ka * Ia  ,  ka is basically basecolor,  Ia is light intensity of environment/ambient light
+//ambient = ka * Ia  ,  ka is basically baseColor,  Ia is light intensity of environment/ambient light
 //diffuse = kd * I   * cos(theta) ,   
 //specular = ks * I  * cos(alpha)^shininess
 
@@ -52,8 +58,14 @@ float ShadowCalculation(vec4 lightSpaceFragPos)
 
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
+
+    //tolerate some bias 
+    //float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005); 
     // check whether current frag pos is in shadow
-    float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
+
+    float bias = 0.00005;
+    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+
 
     return shadow;
 }
@@ -73,53 +85,70 @@ void main()
     if (u_CameraPos != vec3(0.0))
         CameraPos = u_CameraPos;
 
+    if ( u_LightDir != vec3(0.0))
+         LightDir = u_LightDir;
+   
     //======textures
     //normal mapping , read normal from texture 
-    vec3 normal = texture(u_NormalMap, fs_in.TexCoords).rgb;
-    normal = normal * 2.0 - 1.0;   //from [0,1] to [-1,1]
-    normal = normalize(fs_in.TBN * normal);  //from tangent space to world space
-
-    //in case we donot use normal mapping
-    if(normal == vec3(0.0))  normal = normalize(fs_in.Normal);
+    //vec3 normal = texture(u_NormalMap, fs_in.TexCoords).rgb;
+    //normal = normal * 2.0 - 1.0;   //from [0,1] to [-1,1]
+    //normal = normalize(fs_in.TBN * normal);  //from tangent space to world space
+    //
+    ////in case we donot use normal mapping
+    //if(normal == vec3(0.0)) 
+      vec3  normal = normalize(fs_in.Normal);
 
      
     float gamma = 2.2;
-    vec3 BaseColor = pow(texture(u_DiffuseMap, fs_in.TexCoords).rgb, vec3(gamma));  //element wise function;
+    vec3 baseColor = pow(texture(u_AlbedoMap, fs_in.TexCoords).rgb, vec3(gamma));  //element wise function;
 
-    vec3 SpecularColor = texture(u_SpecularMap, fs_in.TexCoords).rgb;  //non-color data. 
+    float specular_coeff = texture(u_SpecularMap, fs_in.TexCoords).r;   //gray for blinnphong
+    if (specular_coeff == 0.0) specular_coeff = 1.0;
 
-   
+    float glossiness = texture(u_RoughnessMap, fs_in.TexCoords).r;  //gray
+    //if no glossiness set to 1;
+    if (glossiness == 0.0) glossiness = 1.0;
+
+
     //3basic directions: l,v,h
-    vec3 lightDir = normalize(LightPos - fs_in.WorldFragPos);
-    vec3 viewDir = normalize(CameraPos - fs_in.WorldFragPos);
+    //vec3 lightDir = normalize(LightPos - fs_in.WorldFragPos);
+    vec3 lightDir =  - normalize(LightDir);   //minus, from shading point
+    vec3 viewDir = normalize(CameraPos - fs_in.WorldFragPos );
     vec3 halfwayDir = normalize(lightDir + viewDir); 
 
-    //light attenuation,simply use 1/r^2
-    float distance = length(LightPos - fs_in.WorldFragPos);
-    LightColor  = LightColor / (distance * distance);
+    //light attenuation,simply use 1/r^2 , i found it's too much, so i use 1/r
+    //float distance = length(LightPos - fs_in.WorldFragPos);
+    //LightColor  = LightColor / (distance);
      
     // Ambient ka
-    vec3 Light_ambient = vec3(1);   
-    vec3 ambient = Light_ambient * BaseColor; 
+    vec3 Light_ambient = vec3(0.3f);   
+    vec3 ambient = Light_ambient * baseColor; 
   
     // Diffuse kd 
     float cos_d = max(dot(normal, lightDir), 0.0);
 
-    vec3 diffuse = cos_d * BaseColor * LightColor;
-
+    vec3 diffuse = cos_d * baseColor * LightColor; 
     
     // Specular ks 
-    int shininess = 32;
-    float cos_s = pow(max(dot(normal, halfwayDir), 0.0), shininess); 
-    vec3 specular = cos_s * SpecularColor * LightColor; 
+    float shininess = 8 * glossiness  ;  //shininess scaled;
+    float cos_s = max(dot(normal, halfwayDir), 0.0);
+    float highlight = pow(cos_s, shininess);
+    vec3 specular = highlight * specular_coeff * LightColor; 
 
 
     float shadow = ShadowCalculation(fs_in.LightSpaceFragPos);
 
-     vec3 result_color = ambient + (1-shadow)* (diffuse + specular);
-    //vec3 result_color = vec3(1-shadow);
+    //vec3 result_color = ambient + (1-shadow)* (diffuse + specular);
+    //result_color =  (1 - shadow) * (diffuse + specular);
+    //result_color = ambient;
+    // result_color = vec3(1-shadow);
     //for test: only show shadow value
+    vec3 result_color = ambient + diffuse + specular ;
 
-    FragColor = vec4(result_color, 1.0) ;
-    //FragColor = vec4(1.0,0.0,0.0, 1.0);
+    //FragColor = vec4(result_color, 1.0) ;
+     FragColor = vec4(result_color, 1.0);
+    // FragColor = vec4(ambient ,1.0) ;
+    //FragColor = vec4(specular,1.0) ;
+     //FragColor = vec4(vec3(glossiness), 1.0);
+    // FragColor = vec4(vec3(specular_coeff), 1.0);
 }
