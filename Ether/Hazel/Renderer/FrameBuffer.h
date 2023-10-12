@@ -97,20 +97,28 @@
 
 namespace Hazel {
 
-
+	//temp disregard. 
 	//enum class AttachmentType
 	//{
-	//	None = 0,
-	//
+	//	None = 0, 
 	//	Texture2D,
 	//	RenderBuffer,
 	//};
 
 
+    //temp disregard
+	//struct FrameBufferSpec {
+	//
+	//	uint32_t Width = 0, Height = 0;  
+	//	//TODO:
+	//	//colorbuffer , type and spec
+	//	//depthbuffer , type and spec  
+	//};
+
+
 	enum class RenderBufferFormat
 	{
-		None = 0,
- 
+		None = 0, 
 		// Depth/stencil, default support. 
 		DEPTH24STENCIL8, 
 	};
@@ -125,31 +133,23 @@ namespace Hazel {
 
 		virtual uint32_t GetRenderBufferID() = 0;
 
-		static Scope<RenderBuffer> Create(RenderBufferFormat format, uint32_t width, uint32_t height);
+		static Scope<RenderBuffer> Create(uint32_t width, uint32_t height, RenderBufferFormat format = RenderBufferFormat::DEPTH24STENCIL8);
 	
 	private:
 		uint32_t m_Width = 0, m_Height = 0;
-		RenderBufferFormat m_Format = RenderBufferFormat::DEPTH24STENCIL8;
+		RenderBufferFormat m_Format ;
 
 		uint32_t m_RenderBufferID = 0;
 	
 	};
 	 
 
-	struct FrameBufferSpec {
 
-		uint32_t Width = 0, Height = 0; 
-		
-		//TODO:
-		//colorbuffer , type and spec
-		//depthbuffer , type and spec 
-
-	};
 
 	//my idea, might be wrong.
 	enum class FrameBufferType
 	{
-		Default = 0, //colorbuffer as texture, depth24+stencil8 as renderbuffer
+		Default = 0, //colorbuffer as texture, depth24+stencil8 as renderbuffer; 
 
 		DepthMap,   //depth as texture, no colorbuffer 
 	  

@@ -18,18 +18,20 @@ namespace Hazel {
 		None = 0,
 		R8, 
 		R32F,
-		//RGB,  //without specific bit depth, opengl will have implementation-dependent behaviork better.
-		RGB8,
-		//RGBA,
+
+		RG8,
+		RG32F,
+
+		RGB8, 
 		RGB32F,
+
 		RGBA8,
 		RGBA32F,
 
-		//framebuffer related
+		//system built-in implementation:
 		DEPTH_COMPONENT,
 	};
-
-
+	 
 
 	enum class WrapMode
 	{
@@ -55,6 +57,7 @@ namespace Hazel {
 		uint32_t Width = 0;
 		uint32_t Height = 0;
 		TextureFormat TextureFormat = TextureFormat::RGB8;
+		//data format in GPU is deduced from TextureFormat here;
 		bool GenerateMips = true;
 		WrapMode wrapMode = WrapMode::Repeat;
 		FilterMode filterMode = FilterMode::Linear;
@@ -84,7 +87,7 @@ namespace Hazel {
 
 		//virtual bool operator==(const Texture& other) const = 0;
 	 
-		//====static state.
+		//====static method for state.
 		static void SetFlipYOnLoad(bool flip) ;  //for image loader.
 
 
@@ -96,9 +99,10 @@ namespace Hazel {
 	class Texture2D : public Texture
 	{
 	public: 
-		static Ref<Texture2D> Create(const std::string& path);
-		static Ref<Texture2D> Create(const TextureSpec& specfication = TextureSpec());
+		static Ref<Texture2D> CreateFromFile(const std::string& path);
+		static Ref<Texture2D> CreateEmpty(const TextureSpec& specfication = TextureSpec());
 	};
+
 
 	class TextureCube : public Texture
 	{
@@ -106,6 +110,9 @@ namespace Hazel {
 		static Ref<TextureCube> CreateFromImages(const std::vector<std::string>& paths); 
 		static Ref<TextureCube> CreateFromHDRI(const std::string& path);
 		static Ref<TextureCube> CreateEmpty(const TextureSpec& specfication = TextureSpec());
+
+		static Ref<TextureCube> CreatePrefilteredEnvMap(const std::string& path, uint32_t mipLevels = 5);
+
 	};
 
 }

@@ -10,36 +10,15 @@
 namespace Hazel
 {
 
-	void OpenGLRendererAPI::DrawElements(const Ref<Mesh> &mesh, const Ref<Material> &material, Transform transform)
-	{
-		//HZ_PROFILE_FUNCTION();
-
-		mesh->Bind();
-
-		material->Bind();
-
-		// set uniforms for transforms
-		// identity matrix for now;
-
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::scale(model, transform.Scale);
-		model = glm::translate(model, transform.Position);
-		material->GetShader()->SetMat4("u_Model", model);
-
-		glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix(); 
-
-		material->GetShader()->SetMat4("u_View", view);
-
-		glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix(); 
-
-		material->GetShader()->SetMat4("u_Projection", projection); 
-
+	//void OpenGLRendererAPI::DrawElements(const Ref<Mesh> &mesh, const Ref<Material> &material, Transform transform)
+	void OpenGLRendererAPI::DrawElements(uint32_t indexCount)
+	{ 
+		//HZ_PROFILE_FUNCTION(); 
+		// 
 		// glDrawElements(GL_TRIANGLE_STRIP, mesh->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
-		glDrawElements(GL_TRIANGLES, mesh->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
+		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
 		// for now!
-
-		material->Unbind();
-		mesh->Unbind();
+ 
 	}
 
 

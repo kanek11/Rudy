@@ -2,15 +2,7 @@
 
 //#include "Hazel/Renderer/VertexArray.h"
 
-#include <glm/glm.hpp>
-
-
-#include <Hazel/Renderer/Mesh.h>
-#include <Hazel/Renderer/Material.h>
-
-
-#include <Hazel/Renderer/Object.h>
-
+#include <glm/glm.hpp> 
 
 //me:
 //usecase:
@@ -36,26 +28,24 @@ namespace Hazel {
 	public:
 		enum class API
 		{
-			None = 0, OpenGL = 1
+			None = 0, OpenGL = 1 , DirectX = 2, Vulkan = 3
 		};
 	public:
 		virtual ~RendererAPI() = default;
 
-		virtual void Init() = 0;
-		virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
-		virtual void SetClearColor(const glm::vec4& color) = 0;
-		virtual void SetClearColor(float r, float g, float b, float a) = 0;
-		virtual void Clear() = 0;
- 
-		//me:
-		virtual void DrawElements(const Ref<Mesh>& mesh, const Ref<Material>& material, Transform transform) = 0;
-		
+		 virtual void Init() = 0;
+		 virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
+		 virtual void SetClearColor(const glm::vec4& color) = 0;
+		 virtual void SetClearColor(float r, float g, float b, float a) = 0;
+		 virtual void Clear() = 0;  
+		 virtual void DrawElements(uint32_t indexCount) = 0;
 		
 		//virtual void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) = 0;
 		
 		//virtual void SetLineWidth(float width) = 0;
 
 		static API GetAPI() { return s_API; }
+		static void SetAPI(API api) { s_API = api; }
 		static Ref<RendererAPI> Create();
 	private:
 		static API s_API;

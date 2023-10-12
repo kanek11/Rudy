@@ -96,6 +96,7 @@ namespace Hazel {
 		AOMap,  //ambient occlusion 
 
 		Skybox,  //cubemap 
+		EnvironmentMap,  //cubemap
 
 		DepthMap, //shadowmap
 		//HeightMap, //displacement
@@ -114,9 +115,7 @@ namespace Hazel {
 
 	};
 
-	
-	
-	
+	 
 	inline std::unordered_map<TextureType, std::string> TextureTypeName =
 	{
 		{TextureType::ScreenQuad, "u_ScreenQuad"},
@@ -133,6 +132,7 @@ namespace Hazel {
 		//{TextureType::HeightMap, "u_HeightMap"},
 		//{TextureType::MaskMap, "u_MaskMap"},
 		{TextureType::Skybox, "u_Skybox"},
+		{TextureType::EnvironmentMap, "u_EnvironmentMap"},
 
 
 		{TextureType::gPosition,    "gPosition"},
@@ -145,17 +145,17 @@ namespace Hazel {
 	};
 		
 
-	enum class MaterialType
-	{
-		Basic = 0,   //flat color
-		BlinnPhong = 1,   //blinn-phong
-		Metallic = 2,   //PBR
-
-		ScreenQuad = 3,  //only slot 0; 
-
-		Custom = 4,  //user defined shader and textures.
-
-	};
+	//enum class MaterialType
+	//{
+	//	Basic = 0,   //flat color
+	//	BlinnPhong = 1,   //blinn-phong
+	//	Metallic = 2,   //PBR
+	//
+	//	ScreenQuad = 3,  //only slot 0; 
+	//
+	//	Custom = 4,  //user defined shader and textures.
+	//
+	//};
 
 	//TODO: specify the workflow for model loading, and error checking.
 	//no fixed workflow,for now.
@@ -172,7 +172,7 @@ namespace Hazel {
 	public : 
 		~Material() = default;
 		Material() = default; 
-		Material(MaterialType type);
+		//Material(MaterialType type);
 		Material(Ref<Shader> shader);
 
 		void Bind();   //before draw call, bind the material/textures
@@ -183,27 +183,29 @@ namespace Hazel {
 	    Ref<Shader> GetShader() const { return m_Shader; }
 		void SetShader(Ref<Shader> shader) { m_Shader = shader; } 
 
-		MaterialType GetMaterialType() const { return m_MaterialType; }
-		void SetMaterialType(MaterialType type) { m_MaterialType = type; }
+		//MaterialType GetMaterialType() const { return m_MaterialType; }
+		//void SetMaterialType(MaterialType type) { m_MaterialType = type; }
 		 
-		void SetTexture(TextureType type, Ref<Texture> texture)
-		{
-			m_Textures[type] = texture;
-		}
+		void SetTexture(TextureType type, Ref<Texture> texture)  { m_Textures[type] = texture;}
 		std::unordered_map<TextureType, Ref<Texture>> GetTextures() const { return m_Textures; }
 
 		 
-		static Ref<Material> Create(MaterialType = MaterialType::Basic);
-		static Ref<Material> Create(Ref<Shader> shader);
+		//static Ref<Material> Create(MaterialType = MaterialType::Basic);
 
-		static void CreateMaterialType(Ref<Shader> shader); 
-
-
+		 
 		//static void SetupMaterial();  //set up uniform variables in shader. etc.
+
+
+
+		static Ref<Material> Create(Ref<Shader> shader = 
+			Shader::Create("Basic Shader", "Resources/Shaders/Basic_VS.glsl", "Resources/Shaders/Basic_FS.glsl"));
+
+		static void SetMaterialSlots(Ref<Shader> shader);
+
 
 	private:
 		Ref<Shader> m_Shader;
-		MaterialType m_MaterialType;
+		//MaterialType m_MaterialType;
 
 		//collection of textures
 		std::unordered_map<TextureType, Ref<Texture>> m_Textures; 

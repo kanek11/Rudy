@@ -53,7 +53,7 @@ namespace Hazel {
 		//void OnEvent(Event& e);
 
 
-		const glm::mat4 GetViewProjectionMatrix() const{
+		const glm::mat4 GetProjectionViewMatrix() const{
 			return GetProjectionMatrix() * GetViewMatrix();
 		} 
 

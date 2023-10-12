@@ -1,13 +1,11 @@
- 
-
-#include "EtherPCH.h"
+ #include "EtherPCH.h"
 
 #include "Hazel/Renderer/RendererAPI.h"
 #include "Platform/OpenGL/OpenGLRendererAPI.h"
 
 namespace Hazel {
 
-	RendererAPI::API RendererAPI::s_API = RendererAPI::API::OpenGL;
+	RendererAPI::API RendererAPI::s_API;
 
 	Ref<RendererAPI> RendererAPI::Create()
 	{

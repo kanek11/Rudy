@@ -9,7 +9,7 @@
 namespace Hazel {
 
 
-	Scope<RenderBuffer> RenderBuffer::Create(RenderBufferFormat format, uint32_t width, uint32_t height)
+	Scope<RenderBuffer> RenderBuffer::Create(uint32_t width, uint32_t height, RenderBufferFormat format)
 
 	{
 		switch (Renderer::GetAPI())

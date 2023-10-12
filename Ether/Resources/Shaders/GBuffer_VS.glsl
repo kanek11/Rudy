@@ -13,8 +13,7 @@ out vec3 WorldTangent;
 
 
 uniform mat4 u_Model;
-uniform mat4 u_View;
-uniform mat4 u_Projection;
+uniform mat4 u_ProjectionView;
 
 
 void main()
@@ -26,6 +25,6 @@ void main()
     WorldNormal = mat3(transpose(inverse(u_Model))) * aNormal;
     WorldTangent = mat3(transpose(inverse(u_Model))) * aTangent; 
 
-    gl_Position = u_Projection * u_View * vec4(WorldFragPos, 1.0);
+    gl_Position = u_ProjectionView * vec4(WorldFragPos, 1.0);
 
 }

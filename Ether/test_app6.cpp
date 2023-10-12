@@ -5,12 +5,13 @@
 #include <GLFW/glfw3.h>
 
 
-#include "Hazel/Core/Window.h"
 
-#include "Sphere.hpp"
-#include "Plane.hpp"
-#include "Quad.hpp"
-#include "Cube.hpp"
+#include <stb_image.h>
+
+
+
+
+#include "Hazel/Core/Window.h"
 
 #include "Hazel/Renderer/Renderer.h"
 #include "Hazel/Renderer/Mesh.h"
@@ -25,7 +26,12 @@
 
 #include "Hazel/Events/input.h"
 
-#include <stb_image.h>
+ 
+
+#include "Sphere.hpp"
+#include "Plane.hpp"
+#include "Quad.hpp"
+#include "Cube.h"
 
 
 
@@ -60,24 +66,21 @@ int main() {
     //Input::SetWindowContext(window->GetNativeWindow());
 
 
-    Ref<Camera> camera = CreateRef<Camera>();
+    Ref<Camera> main_camera = CreateRef<Camera>();
 
     Renderer::Init(SCR_WIDTH,SCR_HEIGHT);
-    Renderer::SetMainCamera(camera);
+    Renderer::SetMainCamera(main_camera);
 
     auto renderAPI = Renderer::s_RendererAPI;
 
 
-    GLint maxDrawBuffers;
-    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
-    std::cout << "Max supported draw buffers: " << maxDrawBuffers << std::endl;
-
-    if (maxDrawBuffers >= 2) {
-          HZ_CORE_INFO("MRT is supported");
-    }
-    else {
-        HZ_CORE_INFO("MRT is not supported");
-    }
+    //auto captureFBO = FrameBuffer::Create(512,512);
+    //captureFBO->Bind();
+    //auto brdfLUT = Texture2D::CreateEmpty(TextureSpec{512,512, TextureFormat::RG32F});
+    //glViewport(0, 0, 512, 512);
+    //brdfLUTShader.use();
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //renderQuad();
 
 
 
@@ -96,22 +99,23 @@ int main() {
    // // organize as a dictionary ,  key is the enum,  value is the texture object 
 
 
-   auto gBufferPassShader = Shader::Create("GBufferShader", "Resources/Shaders/GBuffer_VS.glsl", "Resources/Shaders/GBuffer_FS.glsl");
-   Material::CreateMaterialType(gBufferPassShader);  
-     
+   auto gBufferPassShader = Shader::Create("gBuffer Shader", "Resources/Shaders/GBuffer_VS.glsl", "Resources/Shaders/GBuffer_FS.glsl");
+   Material::SetMaterialSlots(gBufferPassShader);   
 
 
-   auto blinnPhongShader = Shader::Create("blinn phong shader", "Resources/Shaders/BlinnPhong_VS.glsl", "Resources/Shaders/BlinnPhong_FS.glsl");
-   Material::CreateMaterialType(blinnPhongShader);  
+   auto blinnPhongShader = Shader::Create("blinnPhong Shader", "Resources/Shaders/BlinnPhong_VS.glsl", "Resources/Shaders/BlinnPhong_FS.glsl");
+   Material::SetMaterialSlots(blinnPhongShader);
 
 
    auto lightingPassMaterial = Material::Create(blinnPhongShader);
-   lightingPassMaterial->SetTexture(TextureType::gPosition,    Texture2D::Create(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F}));
-   lightingPassMaterial->SetTexture(TextureType::gAlbedo,      Texture2D::Create(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F})); 
-   lightingPassMaterial->SetTexture(TextureType::gWorldNormal, Texture2D::Create(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F}));
-   lightingPassMaterial->SetTexture(TextureType::gSpecular,    Texture2D::Create(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R8}));
-   lightingPassMaterial->SetTexture(TextureType::gMetallic,    Texture2D::Create(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R8}));
-   lightingPassMaterial->SetTexture(TextureType::gRoughness,   Texture2D::Create(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R8}));
+   //lightingPassMaterial->SetTexture(TextureType::gPosition, Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F }));
+   lightingPassMaterial->SetTexture(TextureType::gPosition,    Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F}));
+   lightingPassMaterial->SetTexture(TextureType::gAlbedo,      Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F})); 
+   lightingPassMaterial->SetTexture(TextureType::gWorldNormal, Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F}));
+   lightingPassMaterial->SetTexture(TextureType::gSpecular,    Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R8}));
+   lightingPassMaterial->SetTexture(TextureType::gMetallic,    Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R8}));
+   lightingPassMaterial->SetTexture(TextureType::gRoughness,   Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R8})); 
+   //lightingPassMaterial->SetTexture(TextureType::DepthMap,     Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::DEPTH_COMPONENT }));
     
 
    ////HZ_CORE_ERROR("size of lightingpass material textures: {0}", lightingPassMaterial->GetTextures().size());
@@ -130,11 +134,11 @@ int main() {
   
     auto plane_Material = Material::Create(gBufferPassShader); 
    
-    auto AlbedoMap = Texture2D::Create("D:/CG_resources/Floor/Albedo.jpg"); 
-    auto NormalMap = Texture2D::Create("D:/CG_resources/Floor/Normal.png");
+    auto AlbedoMap = Texture2D::CreateFromFile("D:/CG_resources/Floor/Albedo.jpg"); 
+    auto NormalMap = Texture2D::CreateFromFile("D:/CG_resources/Floor/Normal.png");
     //auto SpecularMap = Texture2D::Create("D:/CG_resources/Floor/Specular.jpg");
     //auto SpecularMap = Texture2D::Create("D:/CG_resources/backpack/roughness.jpg");
-     auto RoughnessMap = Texture2D::Create("D:/CG_resources/Floor/Roughness.jpg");
+     auto RoughnessMap = Texture2D::CreateFromFile("D:/CG_resources/Floor/Roughness.jpg");
     //auto RoughnessMap = Texture2D::Create("D:/CG_resources/backpack/roughness.jpg");
 
 
@@ -146,9 +150,7 @@ int main() {
 
     Plane floor(10);
     floor.Transform.Position = glm::vec3(0.0f, -1.5f, 0.0f);
-    floor.Material = plane_Material;
-
-
+    floor.SetMaterial(plane_Material);
  
 
 
@@ -173,18 +175,17 @@ int main() {
 
 
     Quad lightingPassQuad = Quad();
-    lightingPassQuad.Material = lightingPassMaterial;
+    lightingPassQuad.SetMaterial(lightingPassMaterial);
 
     Quad screenQuad = Quad();
-    screenQuad.Material = Material::Create(Shader::Create("screen quad shader", "Resources/Shaders/ScreenQuad_VS.glsl", "Resources/Shaders/ScreenQuad_FS.glsl"));
-  
+    auto screenQuadMaterial = Material::Create(Shader::Create("screen quad shader", "Resources/Shaders/ScreenQuad_VS.glsl", "Resources/Shaders/ScreenQuad_FS.glsl"));
+    screenQuad.SetMaterial(screenQuadMaterial);
 
     //======the loop 
     /* Loop until the user closes the window */
 
-    float angle = 0.0f;
 
-    bool isRunning = true;
+
     float lastFrameTime = 0.0f;
 
 
@@ -210,14 +211,13 @@ int main() {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // make sure clear the framebuffer's content 
         glEnable(GL_DEPTH_TEST);
+
         glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
         //for (auto meshObj : test_model->m_MeshObjects)
         //   renderAPI->DrawElements(meshObj->m_Mesh, meshObj->m_Material, test_model->Transform);
         //HZ_CORE_INFO("GbufferPass");
 
         floor.Draw();
-
-      
          
         
         GBufferFBO->Unbind();
@@ -232,30 +232,30 @@ int main() {
        glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
        //HZ_CORE_INFO("screenQuadPass");
        lightingPassQuad.Draw();
+        
 
-
-
-        //render the buffers to the screen, for debugging
-       //glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-      // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-       glDisable(GL_DEPTH_TEST);
-
-       auto bufferTextures = lightingPassMaterial->GetTextures();
-       auto bufferNum = (int)TextureType::gPosition;
-
-       for (int j = 0; j < 3; j++)
-           for (int i = 0; i < 3; i++)
-           { 
-               //if larger than buffer size, then break
-               if (i == 1 && j == 1) continue;
-               if ( (3 * j + i+1-1 ) > bufferTextures.size()) break;
-
-
-			   glViewport(i * BUFFER_WIDTH, j * BUFFER_HEIGHT, BUFFER_WIDTH, BUFFER_HEIGHT);  
-			   glBindTextureUnit(0, bufferTextures[(TextureType)bufferNum]->GetTextureID());
-               bufferNum++;
-			   screenQuad.Draw();
-		   }
+     //render the buffers to the screen, for debugging
+    // glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+       //WARN: don't clear the buffer if you want overlay;
+     glDisable(GL_DEPTH_TEST);
+     
+     auto bufferTextures = lightingPassMaterial->GetTextures();
+     auto bufferNum = (int)TextureType::gPosition;
+     
+     for (int j = 0; j < 3; j++)
+         for (int i = 0; i < 3; i++)
+         { 
+             //if larger than buffer size, then break
+             if (i == 1 && j == 1) continue;
+             if ( (3 * j + i+ 1-1 ) > bufferTextures.size()) break;
+     
+     
+	    glViewport(i * BUFFER_WIDTH, j * BUFFER_HEIGHT, BUFFER_WIDTH, BUFFER_HEIGHT);  
+	    glBindTextureUnit(0, bufferTextures[(TextureType)bufferNum]->GetTextureID());
+             bufferNum++;
+	    screenQuad.Draw();
+	   }
 
  
 
@@ -306,7 +306,7 @@ int main() {
         //depthQuadShader->Unbind(); 
 
 
-        camera->OnUpdate(deltaTime);
+        main_camera->OnUpdate(deltaTime);
 
         Renderer::WindowOnUpdate();
         /* Swap front and back buffers */

@@ -123,7 +123,7 @@
     <ClInclude Include="Quad.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Cube.hpp">
+    <ClInclude Include="Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Hazel\Renderer\Scene.h">
@@ -203,6 +203,12 @@
     <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Hazel\Renderer\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cube.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="dependencies.txt" />
@@ -224,5 +230,7 @@
     <None Include="Resources\Shaders\GBuffer_FS.glsl" />
     <None Include="Resources\Shaders\ScreenQuad_VS.glsl" />
     <None Include="Resources\Shaders\ScreenQuad_FS.glsl" />
+    <None Include="Resources\Shaders\PrefilterEnvMap_FS.glsl" />
+    <None Include="Resources\Shaders\PrefilterEnvMap_VS.glsl" />
   </ItemGroup>
 </Project>

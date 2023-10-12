@@ -1,29 +1,38 @@
 #pragma once
 
 #include "EtherPCH.h"
-#include "Hazel/Renderer/Mesh.h"
-#include "Hazel/Renderer/Material.h"
-#include "Hazel/Renderer/Object.h"
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
 #include "Hazel/Renderer/Renderer.h"
+#include "Hazel/Renderer/Mesh.h"
+#include "Hazel/Renderer/Material.h"
+#include "Hazel/Renderer/Object.h"
+
+
 
 namespace Hazel {
 
 
-    class Quad {
+    class Quad : Object {
     public:
         Quad() { CreateGeometry(); }
         ~Quad() = default;
 
-        void CreateGeometry();
-        void Draw();
+
+        void Draw() override;
+
+        void SetMaterial(Ref<Material> material) { m_Material = material; }
+        Ref<Material> GetMaterial() { return m_Material; }
+
+        void CreateGeometry(); 
 
         uint32_t QuadVAO, QuadVBO, QuadEBO;
-        Ref<Material> Material;
         std::vector<unsigned int> Indices{ 0,1,2, 1,2,3 };
+
+
+        Ref<Material> m_Material;
     };
      
 
@@ -75,9 +84,11 @@ namespace Hazel {
     {
         glBindVertexArray(QuadVAO);
 
-        Material->Bind();
-        glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
-        Material-> Unbind();
+        m_Material->Bind();
+
+        glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, nullptr);
+
+        m_Material-> Unbind();
 
         glBindVertexArray(0);  
     }

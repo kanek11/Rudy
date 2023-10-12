@@ -17,7 +17,7 @@ namespace Hazel {
 		s_FlipYOnLoad = flip;
 	}
 
-	Ref<Texture2D> Texture2D::Create(const std::string& path)
+	Ref<Texture2D> Texture2D::CreateFromFile(const std::string& path)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -30,7 +30,7 @@ namespace Hazel {
 	}
 
 	
-	Ref<Texture2D> Texture2D::Create(const TextureSpec& specfication)
+	Ref<Texture2D> Texture2D::CreateEmpty(const TextureSpec& specfication)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -79,6 +79,28 @@ namespace Hazel {
 		 HZ_CORE_ASSERT(false, "Unknown RendererAPI!");
 		 return nullptr;
 	 }
+
+
+	 Ref<TextureCube> CreatePrefilteredEnvMap(const std::string& path, uint32_t mipLevels)
+
+	 {
+		 switch (Renderer::GetAPI())
+		 {
+		 case RendererAPI::API::None:    HZ_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+		 case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTextureCube>(path,mipLevels);
+		 }
+
+		 HZ_CORE_ASSERT(false, "Unknown RendererAPI!");
+		 return nullptr;
+
+	 }
+
+
+
+
+
+
+
 
 
 

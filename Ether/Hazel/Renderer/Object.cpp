@@ -1,6 +1,11 @@
 #include "EtherPCH.h"  
+
 #include "Object.h"  
  
+
+#include <Hazel/Renderer/Renderer.h>
+
+
 
 namespace Hazel
 {   
@@ -17,14 +22,49 @@ namespace Hazel
 	}
 
 
+    void MeshObject::Draw()
+    {
+         
 
+         m_Mesh->Bind();
+         m_Material->Bind();
+
+         // set uniforms for transforms
+         // identity matrix for now;
+
+         glm::mat4 model = glm::mat4(1.0f);
+         model = glm::scale(model, Transform.Scale);
+         model = glm::translate(model, Transform.Position);
+         m_Material->GetShader()->SetMat4("u_Model", model);
+
+
+         glm::mat4 projection_view = Renderer::GetMainCamera()->GetProjectionViewMatrix();
+         m_Material->GetShader()->SetMat4("u_ProjectionView", projection_view);
+
+
+         Renderer::GetRendererAPI()->DrawElements(m_Mesh->GetIndexCount());
+
+         m_Material->Unbind();
+         m_Mesh->Unbind();
+
+	}
+
+
+    void Hierarchy::Draw()
+    {
+       for (auto meshObj : m_MeshObjects)
+            meshObj->Draw();
+        
+	}
+
+
+     
     Ref<Hierarchy> Hierarchy::CreateFromFile(std::string const& path)
 
     {
         return CreateRef<Hierarchy>(path);
     }
-
- 
+     
 
     Hierarchy::Hierarchy(std::string const& path) 
      { 
@@ -46,13 +86,10 @@ namespace Hazel
         m_Directory = path.substr(0, path.find_last_of('/'));
 
         // process ASSIMP's root node recursively
-        processNode(scene->mRootNode, scene);
-
+        processNode(scene->mRootNode, scene); 
 
     }
-
-
-
+     
     // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
     void  Hierarchy::processNode(aiNode* node, const aiScene* scene)
     {
@@ -120,7 +157,7 @@ namespace Hazel
                 if (!skip)
                 {
                     // Load your texture here using directory, and set it to your material
-					Ref<Texture2D> texture = Texture2D::Create(fileDir);
+					Ref<Texture2D> texture = Texture2D::CreateFromFile(fileDir);
 					material->SetTexture(textureType, texture); // Assuming you have a setter for textures in your Material class
 					m_Loaded_Textures.push_back(texture);  //opt
 
@@ -235,4 +272,17 @@ namespace Hazel
 
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

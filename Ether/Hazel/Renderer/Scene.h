@@ -1,5 +1,4 @@
- 
-#pragma once
+ #pragma once
 
 #include "EtherPCH.h"
 
@@ -25,21 +24,13 @@ namespace Hazel {
         // 
         //BVHAccel* Bvh = nullptr;  //scene organization if needed
 
-        void Add(Ref<Object> object)
-        {
-            Objects.push_back(object);
-            std::cout << "Scene: add object, current size: " << Objects.size() << std::endl;
-        }
-
-
-
-
+        void Add(Ref<Object> object);
+         
         //const std::vector<Ref<Object>>>& get_objects() const { return Objects; }
 
 
         //void SampleLight(Intersection& pos, float& pdf) const; 
-
-         //void BuildBVH();
+        //void BuildBVH();
 
 
 

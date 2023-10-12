@@ -27,8 +27,7 @@ uniform sampler2D gRoughness;
 //uniform sampler2D u_NormalMap;  
 //uniform sampler2D u_DepthMap;  //shadow map
 
- 
-
+  
 
 uniform vec3 u_LightPos;
 uniform vec3 u_LightColor;
@@ -162,6 +161,6 @@ void main()
      //FragColor = vec4(vec3(glossiness), 1.0);
      //FragColor = vec4(baseColor, 1.0);
 
-     //FragColor = vec4(baseColor, 1.0);
+    //FragColor = vec4(vec3(0.0,1.0,0.0), 1.0);
 
 }

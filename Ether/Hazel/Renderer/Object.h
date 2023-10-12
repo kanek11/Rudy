@@ -2,14 +2,17 @@
 
 #include "EtherPCH.h"
 
-#include <Hazel/Renderer/Mesh.h>
-#include <Hazel/Renderer/Material.h>
-
 #include <glm/glm.hpp>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+
+
+
+#include <Hazel/Renderer/Mesh.h>
+#include <Hazel/Renderer/Material.h> 
+
  
 
 namespace Hazel {
@@ -36,6 +39,9 @@ namespace Hazel {
         std::string Name; 
         Transform Transform;
 
+        //assume renderable;  offer drawing function;
+        virtual void Draw() = 0;
+
 
     };
  
@@ -57,6 +63,10 @@ namespace Hazel {
          Ref<Mesh> m_Mesh;
          Ref<Material> m_Material;
          //Ref<Shader> m_Shader;
+
+         void Draw() override;
+
+         void SetMaterial(Ref<Material> material) { m_Material = material; }
       
      
      };
@@ -77,6 +87,10 @@ namespace Hazel {
      
          std::vector< Ref<MeshObject> >  m_MeshObjects;
          std::string m_Directory;
+
+
+
+         void Draw() override;
 
      private: 
          std::vector<Ref<Texture2D>> m_Loaded_Textures;  

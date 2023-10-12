@@ -55,9 +55,9 @@ namespace Hazel {
 			//1 colorbuffer
 			if (m_TextureBuffers.size() == 0)
 			{
-				HZ_CORE_INFO("glframebuffer default£º No colorbuffer is attached to framebuffer,create itself ");
+				HZ_CORE_ERROR("glframebuffer default£º No colorbuffer is attached to framebuffer,create itself ");
 
-				m_TextureBuffers[(TextureType)(0)] = Texture2D::Create(TextureSpec{width,height});
+				//m_TextureBuffers[(TextureType)(0)] = Texture2D::CreateEmpty(TextureSpec{width,height});
 			}
 
 
@@ -70,7 +70,7 @@ namespace Hazel {
 		 
 
 			//depthbuffer
-			m_RenderBuffer = RenderBuffer::Create(RenderBufferFormat::DEPTH24STENCIL8, width, height); 
+			m_RenderBuffer = RenderBuffer::Create( width, height, RenderBufferFormat::DEPTH24STENCIL8);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_RenderBuffer->GetRenderBufferID());
 
 
@@ -100,10 +100,10 @@ namespace Hazel {
 			//texture for depth map
 			if (m_TextureBuffers.size() == 0)
 			{
-				HZ_CORE_INFO("glframebuffer depth£º No texture is attached to framebuffer, create itself ");
-				m_TextureBuffers[TextureType::DepthMap] =
-					Texture2D::Create(TextureSpec{ width, height,TextureFormat::DEPTH_COMPONENT,
-					 false, WrapMode::ClampToBorder, FilterMode::Nearest });
+				HZ_CORE_ERROR("glframebuffer depth£º No texture is attached to framebuffer, create itself ");
+				//m_TextureBuffers[TextureType::DepthMap] =
+				//	Texture2D::CreateEmpty(TextureSpec{ width, height,TextureFormat::DEPTH_COMPONENT,
+				//	 false, WrapMode::ClampToBorder, FilterMode::Nearest });
 
 			}
 
@@ -142,8 +142,8 @@ namespace Hazel {
 			glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferID);
 
 
-			unsigned int slot = 0;
-			std::vector<unsigned int> attachments;
+			uint32_t slot = 0;
+			std::vector<uint32_t> attachments;
 
 			if (m_TextureBuffers.size() == 0)
 			{
@@ -152,14 +152,23 @@ namespace Hazel {
 
 			for (auto g_texture : m_TextureBuffers)
 			{
-				//attach texture to colorbuffers
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, g_texture.second->GetTextureID(), 0);
-				attachments.push_back(GL_COLOR_ATTACHMENT0 + slot);
-				HZ_CORE_INFO("GBuffer: textureType:{0} with id:{1} is attached", (int)g_texture.first, g_texture.second->GetTextureID() );
-				HZ_CORE_INFO("to colorbuffer slot:{0}", slot);
-				slot++;
-			}
+				//for depth map;
+				if (g_texture.first == TextureType::DepthMap)
+				{
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, g_texture.second->GetTextureID(), 0);
 
+				}
+				else 
+				{
+					//attach texture to colorbuffers
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, g_texture.second->GetTextureID(), 0);
+					attachments.push_back(GL_COLOR_ATTACHMENT0 + slot);
+					HZ_CORE_INFO("GBuffer: textureId:{0} is attached to colorbuffer{1}", g_texture.second->GetTextureID(), slot);
+					slot++;
+				}
+
+				
+			} 
 
 			glDrawBuffers(attachments.size(), attachments.data()); 
 			
@@ -171,7 +180,7 @@ namespace Hazel {
 		
 
 			//depthbuffer
-			m_RenderBuffer = RenderBuffer::Create(RenderBufferFormat::DEPTH24STENCIL8, width, height);
+			m_RenderBuffer = RenderBuffer::Create( width, height, RenderBufferFormat::DEPTH24STENCIL8);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_RenderBuffer->GetRenderBufferID());
 
 			 

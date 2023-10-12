@@ -4,7 +4,7 @@
 
 #include "EtherPCH.h"
 
-#include "Hazel/Renderer/Renderer.h"
+#include "Hazel/Renderer/Renderer.h" 
 
 //#include "Hazel/Renderer/Renderer2D.h" 
 //#include "Hazel/Renderer/Render3D.h"
@@ -14,19 +14,24 @@ namespace Hazel {
 
 	//Scope<Renderer::SceneData> Renderer::s_SceneData = CreateScope<Renderer::SceneData>();
 
-	Ref<Camera> Renderer::s_MainCamera;
-	Scope<Window> Renderer::s_Window;
-	Ref<RendererAPI> Renderer::s_RendererAPI = RendererAPI::Create();
+	Ref<Camera> Renderer::s_MainCamera = CreateRef<Camera>();
+	Scope<Window> Renderer::s_Window ;
+	Ref<RendererAPI> Renderer::s_RendererAPI;   
 
 	void Renderer::Init(uint32_t width, uint32_t height)
 	{
 		//HZ_PROFILE_FUNCTION();
+ 
+		//DONOT touch;
+	    RendererAPI::SetAPI( RendererAPI::API::OpenGL );
+		s_RendererAPI = RendererAPI::Create();
 
 
 		s_Window = Window::Create( WindowProps{ width, height });
 		Input::SetWindowContext(s_Window->GetNativeWindow());
 
 		s_RendererAPI->Init();
+
 
 
 
@@ -60,6 +65,7 @@ namespace Hazel {
 		for (auto obj : scene->Objects) 
 		{
 
+			obj->Draw();
 
 		}
 

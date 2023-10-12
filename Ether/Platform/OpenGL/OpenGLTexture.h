@@ -9,12 +9,7 @@
 
 namespace Hazel {
 
-
-
-
-
-
-
+	 
 
 
 	class OpenGLTexture2D : public Texture2D
@@ -74,11 +69,15 @@ namespace Hazel {
 	class OpenGLTextureCube : public TextureCube
 	{
 	public:
-		OpenGLTextureCube(const std::string& path) {};  //TODO: implement
-		OpenGLTextureCube(const std::vector<std::string>& paths);
-		OpenGLTextureCube(const TextureSpec& specification) {};   //TODO: implement
-	    ~OpenGLTextureCube();
 
+		~OpenGLTextureCube();
+
+		OpenGLTextureCube(const std::string& path) {};  //TODO: implement
+		OpenGLTextureCube(const TextureSpec& specification);   
+
+
+		OpenGLTextureCube(const std::vector<std::string>& paths);
+		OpenGLTextureCube(const std::string& path, uint32_t mipLevels);
 
 		//gl utils
 		virtual void Bind(uint32_t slot = 0) const override;

@@ -48,6 +48,7 @@ namespace Hazel {
 		m_Data.Height = props.Height;
 
 		HZ_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
+ 
 
 		if (s_GLFWWindowCount == 0)
 		{
@@ -55,6 +56,7 @@ namespace Hazel {
 			int success = glfwInit();
 			HZ_CORE_ASSERT(success, "Could not initialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
+
 		}
 
 		{

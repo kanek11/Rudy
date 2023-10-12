@@ -93,7 +93,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Cube.hpp" />
+    <ClInclude Include="Cube.h" />
     <ClInclude Include="Hazel\Core\Assert.h" />
     <ClInclude Include="Hazel\Core\Base.h" />
     <ClInclude Include="Hazel\Core\Timer.h" />
@@ -153,9 +153,11 @@
     <ClCompile Include="Hazel\Renderer\Object.cpp" />
     <ClCompile Include="Hazel\Renderer\Renderer.cpp" />
     <ClCompile Include="Hazel\Renderer\RendererAPI.cpp" />
+    <ClCompile Include="Hazel\Renderer\Scene.cpp" />
     <ClCompile Include="Hazel\Renderer\Shader.cpp" />
     <ClCompile Include="Hazel\Renderer\Texture.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="test_app6.cpp" />
     <None Include="Resources\Shaders\BlinnPhong_FS.glsl">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -174,6 +176,8 @@
     <None Include="Resources\Shaders\DepthQuad_VS.glsl" />
     <None Include="Resources\Shaders\GBuffer_FS.glsl" />
     <None Include="Resources\Shaders\GBuffer_VS.glsl" />
+    <None Include="Resources\Shaders\PrefilterEnvMap_FS.glsl" />
+    <None Include="Resources\Shaders\PrefilterEnvMap_VS.glsl" />
     <None Include="Resources\Shaders\ScreenQuad_FS.glsl" />
     <None Include="Resources\Shaders\ScreenQuad_VS.glsl" />
     <None Include="Resources\Shaders\Skybox_FS.glsl" />
