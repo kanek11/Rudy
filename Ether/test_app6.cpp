@@ -3,13 +3,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
-
-
-#include <stb_image.h>
-
-
-
+ 
 
 #include "Hazel/Core/Window.h"
 
@@ -24,9 +18,7 @@
 
 #include "Hazel/Renderer/Object.h"
 
-#include "Hazel/Events/input.h"
 
- 
 
 #include "Sphere.hpp"
 #include "Plane.hpp"
@@ -36,13 +28,11 @@
 
 
 
-uint32_t SCR_WIDTH = 2560;
-uint32_t SCR_HEIGHT = 1440;
-
-uint32_t BUFFER_WIDTH = SCR_WIDTH/3;
-uint32_t BUFFER_HEIGHT = SCR_HEIGHT/3;
-
-const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+const uint32_t SCR_WIDTH = 2560;
+const uint32_t SCR_HEIGHT = 1440; 
+const uint32_t BUFFER_WIDTH = SCR_WIDTH/3;
+const uint32_t BUFFER_HEIGHT = SCR_HEIGHT/3; 
+const uint32_t SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
 
 //g_buffer spec:
@@ -57,8 +47,7 @@ using namespace Hazel;
 
 int main() {
 
-    Hazel::Log::Init();
-
+    Hazel::Log::Init(); 
     HZ_CORE_WARN("test:Initialized Log!");
 
 
@@ -100,11 +89,11 @@ int main() {
 
 
    auto gBufferPassShader = Shader::Create("gBuffer Shader", "Resources/Shaders/GBuffer_VS.glsl", "Resources/Shaders/GBuffer_FS.glsl");
-   Material::SetMaterialSlots(gBufferPassShader);   
+   Material::SetMaterialProperties(gBufferPassShader);   
 
 
    auto blinnPhongShader = Shader::Create("blinnPhong Shader", "Resources/Shaders/BlinnPhong_VS.glsl", "Resources/Shaders/BlinnPhong_FS.glsl");
-   Material::SetMaterialSlots(blinnPhongShader);
+   Material::SetMaterialProperties(blinnPhongShader);
 
 
    auto lightingPassMaterial = Material::Create(blinnPhongShader);

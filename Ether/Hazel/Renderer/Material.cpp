@@ -28,17 +28,13 @@ namespace Hazel
 
 	Material::Material(Ref<Shader> shader)
 		: m_Shader(shader)
-	{
-		//m_MaterialType = MaterialType::Custom;
+	{ 
 		HZ_CORE_INFO("Material:  Material is Created using shader: {0}", shader->GetName());
-		//SetupMaterial();
+ 
 	}
+	 
 
-
-
-
-
-	void Material::SetMaterialSlots(Ref<Shader> shader)
+	void Material::SetMaterialProperties(Ref<Shader> shader)
 	{
 		// m_MaterialType = MaterialType::Custom;
 		//m_Shader = shader;
@@ -55,7 +51,7 @@ namespace Hazel
 			//eg: SetInt("u_AlbedoMap", 0);
 			 shader->SetInt(texture.second, (int)texture.first);
 	    	
-	     }
+	    }
 		 
 	}
  
@@ -91,6 +87,7 @@ namespace Hazel
 		for (auto& texture : m_Textures)
 		{
 			texture.second->Bind((int)texture.first);
+			//HZ_CORE_INFO("Material: textureid: {0} is bound to shader slot {1}", texture.second->GetTextureID(), (int)texture.first);
 		} 
 
 	}

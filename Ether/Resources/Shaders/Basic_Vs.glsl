@@ -2,7 +2,7 @@
 layout(location = 0) in vec3 aPos;
 
  
-uniform mat4 u_ProjectionViewP;
+uniform mat4 u_ProjectionView;
 uniform mat4 u_Model;
 
 

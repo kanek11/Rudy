@@ -47,6 +47,7 @@ namespace Hazel {
 		None = 0,
 		Nearest,
 		Linear, 
+		LinearMipmapLinear,
 	};
 
 
@@ -60,7 +61,8 @@ namespace Hazel {
 		//data format in GPU is deduced from TextureFormat here;
 		bool GenerateMips = true;
 		WrapMode wrapMode = WrapMode::Repeat;
-		FilterMode filterMode = FilterMode::Linear;
+		FilterMode minfilterMode = FilterMode::Linear;
+		FilterMode magfilterMode = FilterMode::Linear;
 	};
 
 
@@ -99,20 +101,32 @@ namespace Hazel {
 	class Texture2D : public Texture
 	{
 	public: 
-		static Ref<Texture2D> CreateFromFile(const std::string& path);
+		static Ref<Texture2D> LoadFile(const std::string& path, bool isHDRI = false);
 		static Ref<Texture2D> CreateEmpty(const TextureSpec& specfication = TextureSpec());
 	};
 
 
+
+	enum class ConvolutionType
+	{
+		None = 0,
+		Specular, 
+		Diffuse,
+	};
+
 	class TextureCube : public Texture
 	{
 	public:
-		static Ref<TextureCube> CreateFromImages(const std::vector<std::string>& paths); 
-		static Ref<TextureCube> CreateFromHDRI(const std::string& path);
+		static Ref<TextureCube> LoadHDRI(const std::string& path); 
+		static Ref<TextureCube> LoadImages(const std::vector<std::string>& paths); 
+
+
 		static Ref<TextureCube> CreateEmpty(const TextureSpec& specfication = TextureSpec());
 
-		static Ref<TextureCube> CreatePrefilteredEnvMap(const std::string& path, uint32_t mipLevels = 5);
 
+		virtual Ref<TextureCube> CreatePrefilteredEnvMap(Ref<TextureCube> envMap,
+			ConvolutionType type = ConvolutionType::Specular,
+			uint32_t mipLevels = 5) = 0;
 	};
 
 }

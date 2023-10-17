@@ -21,6 +21,13 @@ namespace Hazel
  
 	}
 
+	void OpenGLRendererAPI::DrawArrays(uint32_t vertexCount)
+	{
+		//HZ_PROFILE_FUNCTION();
+
+		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+	}
+
 
 
 	void OpenGLMessageCallback(

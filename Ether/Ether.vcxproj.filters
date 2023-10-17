@@ -191,13 +191,10 @@
     <ClCompile Include="Platform\OpenGL\OpenGLFrameBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hazel\Events\WindowsInput.cpp">
+    <ClCompile Include="Platform\Windows\WindowsInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Hazel\Renderer\Light.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test_app6.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp">
@@ -207,6 +204,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Cube.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test_app7.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -230,7 +230,15 @@
     <None Include="Resources\Shaders\GBuffer_FS.glsl" />
     <None Include="Resources\Shaders\ScreenQuad_VS.glsl" />
     <None Include="Resources\Shaders\ScreenQuad_FS.glsl" />
-    <None Include="Resources\Shaders\PrefilterEnvMap_FS.glsl" />
-    <None Include="Resources\Shaders\PrefilterEnvMap_VS.glsl" />
+    <None Include="Resources\Shaders\SpecularEnvMap_FS.glsl" />
+    <None Include="Resources\Shaders\SpecularEnvMap_VS.glsl" />
+    <None Include="Resources\Shaders\PBR_FS.glsl" />
+    <None Include="Resources\Shaders\PBR_VS.glsl" />
+    <None Include="Resources\Shaders\BrdfLUT_VS.glsl" />
+    <None Include="Resources\Shaders\BrdfLUT_FS.glsl" />
+    <None Include="Resources\Shaders\DiffuseEnvMap_FS.glsl" />
+    <None Include="Resources\Shaders\DiffuseEnvMap_VS.glsl" />
+    <None Include="Resources\Shaders\RectToCube_VS.glsl" />
+    <None Include="Resources\Shaders\RectToCube_FS.glsl" />
   </ItemGroup>
 </Project>

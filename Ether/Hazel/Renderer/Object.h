@@ -34,13 +34,15 @@ namespace Hazel {
         ~Object() = default;
         Object() = default;
 
-    //private:
-     public:
-        std::string Name; 
         Transform Transform;
 
         //assume renderable;  offer drawing function;
         virtual void Draw() = 0;
+
+    //private:
+     public:
+        std::string Name; 
+   
 
 
     };
@@ -61,13 +63,12 @@ namespace Hazel {
           
      
          Ref<Mesh> m_Mesh;
-         Ref<Material> m_Material;
-         //Ref<Shader> m_Shader;
+         Ref<Material> m_Material; 
 
          void Draw() override;
 
-         void SetMaterial(Ref<Material> material) { m_Material = material; }
-      
+         void SetMaterial(Ref<Material> material) { m_Material = material; } 
+         Ref<Material> GetMaterial() { return m_Material; }
      
      };
 
@@ -83,7 +84,7 @@ namespace Hazel {
          Hierarchy(std::string const& path);
      
      
-         static Ref<Hierarchy> CreateFromFile(std::string const& path);
+         static Ref<Hierarchy> LoadModel(std::string const& path);
      
          std::vector< Ref<MeshObject> >  m_MeshObjects;
          std::string m_Directory;

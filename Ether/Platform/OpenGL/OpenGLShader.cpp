@@ -163,7 +163,7 @@ namespace Hazel {
     // ------------------------------------------------------------------------
     void OpenGLShader::SetBool(const std::string& name, bool value) const
     {
-        glUniform1i(glGetUniformLocation(m_ShaderID, name.c_str()), (int)value);
+        glUniform1i(glGetUniformLocation(m_ShaderID, name.c_str()), value);
     }
     // ------------------------------------------------------------------------
     void OpenGLShader::SetInt(const std::string& name, int value) const

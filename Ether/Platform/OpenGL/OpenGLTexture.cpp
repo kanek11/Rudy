@@ -11,6 +11,38 @@
 
 namespace Hazel {
 
+
+
+	glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
+	//glm::mat4 captureViews[] = {
+	//	// Right face (Positive X)
+	//	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
+	//	// Left face (Negative X)
+	//	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
+	//	// Top face (Positive Y)
+	//	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)),
+	//	// Bottom face (Negative Y)
+	//	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)),
+	//	// Front face (Positive Z)
+	//	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
+	//	// Back face (Negative Z)
+	//	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f))
+	//};
+
+
+	glm::mat4 captureViews[] =
+	{
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+	};
+
+
+
+
 	namespace Utils {
 
 		static GLenum TextureFormatToGLFormat(TextureFormat format)
@@ -75,6 +107,7 @@ namespace Hazel {
 			{
 			case FilterMode::Linear:  return GL_LINEAR;
 			case FilterMode::Nearest: return GL_NEAREST;
+			case FilterMode::LinearMipmapLinear: return GL_LINEAR_MIPMAP_LINEAR;
 			}
 
 			HZ_CORE_ASSERT(false);
@@ -85,7 +118,7 @@ namespace Hazel {
 
 
 
-	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
+	OpenGLTexture2D::OpenGLTexture2D(const std::string& path, bool isHDRI)
 		: m_Path(path)
 	{
 		//HZ_PROFILE_FUNCTION();
@@ -108,7 +141,7 @@ namespace Hazel {
 
 		if (!data)
 		{
-			HZ_CORE_WARN("OpenGLTexture: failded to load texture at path: {0}", path.c_str());
+			HZ_CORE_WARN("glTexture2D: failded to load texture at path: {0}", path.c_str());
 		}
 		else
 		{ 
@@ -118,9 +151,16 @@ namespace Hazel {
 			m_Height = height;
 
 			GLenum internalFormat = 0, dataFormat = 0;
+
+			if (isHDRI)
+			{ 
+				internalFormat = GL_RGB16F;
+				dataFormat = GL_RGB;
+			}
+		    else
 			if (channels == 4)
 			{
-				internalFormat = GL_RGBA;
+				internalFormat = GL_RGBA8;
 				dataFormat = GL_RGBA;
 			}
 			else if (channels == 3)
@@ -134,8 +174,8 @@ namespace Hazel {
 				dataFormat = GL_RED;
 			}
 
-			m_InternalFormat = internalFormat;
-			m_DataFormat = dataFormat;
+			auto m_InternalFormat = internalFormat;
+			auto m_DataFormat = dataFormat;
 
 			HZ_CORE_ASSERT(internalFormat & dataFormat, "glTexture:Format not supported!");
 
@@ -156,8 +196,8 @@ namespace Hazel {
 			stbi_image_free(data);
 
 
-			HZ_CORE_WARN("glTexture:textureId:{0} loaded and setup at path:{1}", m_TextureID, path.c_str());
-			HZ_CORE_WARN("glTexture:width:{0}, channels:{1}", m_Width, channels);
+			HZ_CORE_WARN("glTexture2D:texture2DId:{0} loaded at path:{1}", m_TextureID, path.c_str());
+			HZ_CORE_WARN("glTexture2D:width:{0},height:{1}, channels:{2}", m_Width,m_Height, channels);
 
 			
 		}
@@ -176,11 +216,11 @@ namespace Hazel {
 		HZ_CORE_ASSERT(m_Width && m_Height, "Texture width and height must be greater than 0!");
 
 
-		m_InternalFormat = Utils::TextureFormatToGLFormat(specification.TextureFormat);
-		m_DataFormat = Utils::TextureFormatToDataFormat(specification.TextureFormat);
-
-		m_WrapMode = Utils::WrapModeToGLWrapMode(specification.wrapMode);
-		m_FilterMode = Utils::FilterModeToGLFilterMode(specification.filterMode); 
+		auto m_InternalFormat = Utils::TextureFormatToGLFormat(specification.TextureFormat);
+		auto m_DataFormat = Utils::TextureFormatToDataFormat(specification.TextureFormat); 
+		auto m_WrapMode = Utils::WrapModeToGLWrapMode(specification.wrapMode);
+		auto m_MinFilterMode = Utils::FilterModeToGLFilterMode(specification.minfilterMode); 
+		auto m_MagFilterMode = Utils::FilterModeToGLFilterMode(specification.magfilterMode);
 
 
 		glGenTextures(1, &m_TextureID);
@@ -191,8 +231,8 @@ namespace Hazel {
 		//lTextureStorage2D(m_TextureID, 1, m_InternalFormat, m_Width, m_Height);
 
 	    glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, m_Width, m_Height, 0, m_DataFormat, GL_FLOAT, NULL);
-		glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, m_FilterMode);
-		glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, m_FilterMode);
+		glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, m_MinFilterMode);
+		glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, m_MagFilterMode);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, m_WrapMode);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, m_WrapMode);
 
@@ -200,7 +240,7 @@ namespace Hazel {
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		  
-	      HZ_CORE_WARN("glTexture: textureId:{0} is created ", m_TextureID); 
+	      HZ_CORE_WARN("glTexture2D: texture2DId:{0} is created ", m_TextureID); 
 
 	}
 
@@ -208,27 +248,12 @@ namespace Hazel {
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{
 		//HZ_PROFILE_FUNCTION();
-
+		HZ_CORE_WARN("texture2D: texture2DID:{0} is deleted ", m_TextureID);
 		glDeleteTextures(1, &m_TextureID);
 	}
 
 
-	void OpenGLTexture2D::Bind(uint32_t slot) const
-	{
-		//HZ_PROFILE_FUNCTION();
-
-		glBindTextureUnit(slot, m_TextureID);
-
-		//HZ_CORE_INFO("texture2D id:{0} is bound to slot:{1}", m_TextureID, slot);
-	}
-
-	void OpenGLTexture2D::Unbind(uint32_t slot) const
-	{
-		//HZ_PROFILE_FUNCTION();
-
-		glBindTextureUnit(slot, 0);
-	}
-
+ 
 
 	//void OpenGLTexture2D::SetData(void* data, uint32_t size)
 	//{
@@ -260,11 +285,12 @@ namespace Hazel {
 		HZ_CORE_ASSERT(m_Width && m_Height, "Texture width and height must be greater than 0!");
 
 		 
-		m_InternalFormat = Utils::TextureFormatToGLFormat(specification.TextureFormat);
-		m_DataFormat = Utils::TextureFormatToDataFormat(specification.TextureFormat);
+		auto m_InternalFormat = Utils::TextureFormatToGLFormat(specification.TextureFormat);
+		auto m_DataFormat = Utils::TextureFormatToDataFormat(specification.TextureFormat); 
+		auto m_WrapMode = Utils::WrapModeToGLWrapMode(specification.wrapMode);
+		auto m_MinFilterMode = Utils::FilterModeToGLFilterMode(specification.minfilterMode);
+		auto m_MagFilterMode = Utils::FilterModeToGLFilterMode(specification.magfilterMode);
 
-		m_WrapMode = Utils::WrapModeToGLWrapMode(specification.wrapMode);
-		m_FilterMode = Utils::FilterModeToGLFilterMode(specification.filterMode);
 
 
 		glGenTextures(1, &m_TextureID);
@@ -275,8 +301,8 @@ namespace Hazel {
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_InternalFormat, m_Width, m_Height, 0, m_DataFormat, GL_FLOAT, NULL);
 		}
 
-		glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, m_FilterMode);
-		glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, m_FilterMode);
+		glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, m_MinFilterMode);
+		glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, m_MagFilterMode);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, m_WrapMode);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, m_WrapMode);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_R, m_WrapMode);
@@ -288,7 +314,7 @@ namespace Hazel {
 		}
 		 
 
-		HZ_CORE_WARN("glTexture: textureId:{0} is created ", m_TextureID);
+		HZ_CORE_WARN("textureCube: CubeMapId:{0} is created ", m_TextureID);
 
 		 
 
@@ -304,7 +330,7 @@ namespace Hazel {
 		stbi_set_flip_vertically_on_load(Texture::s_FlipYOnLoad); 
 
 		//initial check
-		HZ_CORE_ASSERT(paths.size() == 6, "TextureCube must have 6 paths!");
+		HZ_CORE_ASSERT(paths.size() == 6, "TextureCube must have 6 paths");
 
 		 
 		glGenTextures(1, &m_TextureID);
@@ -324,7 +350,7 @@ namespace Hazel {
 			}
             if (!data)
 		    {
-		      HZ_CORE_WARN("OpenGLTexture: failded to load texture at path: {0}", paths[i].c_str());
+		        HZ_CORE_WARN("OpenGLTexture: failded to load texture at path: {0}", paths[i].c_str());
 		    }
 			else
 			{
@@ -358,118 +384,258 @@ namespace Hazel {
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 		 
 		 
-		HZ_CORE_WARN("CubeMapID:{0} is created " , m_TextureID);
+		HZ_CORE_WARN("textureCube: CubeMapID:{0} is created " , m_TextureID);
 	}
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-	OpenGLTextureCube::OpenGLTextureCube(const std::string& path, uint32_t maxMipLevels)
+	//convert hdri image to cubemap
+	OpenGLTextureCube::OpenGLTextureCube(const std::string& path)
 	{
 		//HZ_PROFILE_FUNCTION();
 
 		//opengl assume uv of bottom left origin and stbi is top left origin
 		stbi_set_flip_vertically_on_load(Texture::s_FlipYOnLoad);
 
-		//initial check
-		HZ_CORE_ASSERT(maxMipLevels > 0, "TextureCube mipLevels must be greater than 0!");
+		  
+		//input hdri image
+		auto hdrTexture = Texture2D::LoadFile(path);
 
+
+		//output  
 		glGenTextures(1, &m_TextureID);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID);
-
-
-		//the data
-		auto envMap = TextureCube::CreateFromHDRI(path); 
-		//the output
-		auto prefilterEnvMap = TextureCube::CreateEmpty(TextureSpec{ 128,128,TextureFormat::RGBA32F, true, WrapMode::ClampToEdge,FilterMode::Linear });
-
-
-		auto prefilterShader = Shader::Create("Prefilter Shader", "Resources/Shaders/PrefilterEnvMap_VS.glsl", "Resources/Shaders/PrefilterEnvMap_FS.glsl");
-		Material::SetMaterialSlots(prefilterShader); 
 		
-		
-		auto prefilterMaterial = Material::Create(prefilterShader);
-		prefilterMaterial->SetTexture(TextureType::EnvironmentMap, envMap);
+		HZ_CORE_WARN("textureCube: CubeMapID:{0} is created ", m_TextureID);
+
+		for (unsigned int i = 0; i < 6; ++i)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
+		}
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // enable pre-filter mipmap sampling (combatting visible dots artifact)
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		 
+
+		//shader
+		auto rectToCubeShader = Shader::Create("equirectangular to cubemap Shader", "Resources/Shaders/RectToCube_VS.glsl", "Resources/Shaders/RectToCube_FS.glsl");
+		Material::SetMaterialProperties(rectToCubeShader); 
+	    
+		//material 
+		auto rectToCubeMaterial = Material::Create(rectToCubeShader);
+		rectToCubeMaterial->SetTexture(TextureType::EnvironmentMap, hdrTexture);
 
 
-
-		//the background cube;
 		Cube cube;
-		cube.SetMaterial(prefilterMaterial); 
-
-
+		cube.SetMaterial(rectToCubeMaterial); 
 
 
 		unsigned int captureFBO;
-		unsigned int captureRBO;
 		glGenFramebuffers(1, &captureFBO);
-		glGenRenderbuffers(1, &captureRBO);
-
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 
+
+		unsigned int captureRBO;
+		glGenRenderbuffers(1, &captureRBO);
+		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
- 
-
-		// pbr: run a quasi monte-carlo simulation on the environment lighting to create a prefilter (cube)map.
-		// ----------------------------------------------------------------------------------------------------
-		glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
-		glm::mat4 captureViews[] =
-		{
-			glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-			glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-			glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
-			glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
-			glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-			glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
-		};
-
 		 
+ 
+		glViewport(0, 0, 512, 512); 
+		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO); 
-
-		//unsigned int maxMipLevels = 5;
-		for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
+		for (unsigned int i = 0; i < 6; ++i)
 		{
-			// reisze framebuffer according to mip-level size.
-			unsigned int mipWidth = static_cast<unsigned int>(128 * std::pow(0.5, mip));
-			unsigned int mipHeight = static_cast<unsigned int>(128 * std::pow(0.5, mip));
-			glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
-			glViewport(0, 0, mipWidth, mipHeight);
+			rectToCubeShader->Bind();
+			rectToCubeShader->SetMat4("u_ProjectionView", captureProjection * captureViews[i]);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, m_TextureID, 0); 
 
-			float roughness = (float)mip / (float)(maxMipLevels - 1);
-			prefilterShader->SetFloat("u_Roughness", roughness);
+			glClearColor(0.0f, 0.5f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glEnable(GL_DEPTH_TEST);
 
-			for (unsigned int i = 0; i < 6; ++i)
-			{
-				prefilterShader->SetMat4("u_ProjectionView", captureProjection * captureViews[i]);
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterEnvMap->GetTextureID(), mip);
 
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-				cube.Draw();
-			}
+			cube.Draw();
 		}
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		 
+		glBindFramebuffer(GL_FRAMEBUFFER, 0); 
+ 
 
 	}
 
 
+	//create a identity matrix
+
+		//rectToCubeShader->SetMat4("u_ProjectionView", identity);
+
+
+	Ref<TextureCube> OpenGLTextureCube::CreatePrefilteredEnvMap(Ref<TextureCube> envMap, ConvolutionType type, uint32_t mipLevels)
+	{
+		//HZ_PROFILE_FUNCTION(); 
+
+		switch (type)
+		{
+		case ConvolutionType::Specular:
+		{
+
+			//initial check
+			HZ_CORE_ASSERT(maxMipLevels > 0, "TextureCube: mipLevels must be greater than 0");
+
+			//glGenTextures(1, &m_TextureID);
+			//glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID);
+			//
+			//HZ_CORE_WARN("textureCube: CubeMapID:{0} is created ", m_TextureID);
+
+
+			//shader
+			auto prefilterShader = Shader::Create("Prefilter specular Shader", "Resources/Shaders/SpecularEnvMap_VS.glsl", "Resources/Shaders/SpecularEnvMap_FS.glsl");
+			Material::SetMaterialProperties(prefilterShader);
+
+			//the output prefilter cube map;
+			auto prefilterEnvMap = TextureCube::CreateEmpty(TextureSpec{ 128,128,TextureFormat::RGB32F,
+			 	  true, WrapMode::ClampToEdge,FilterMode::LinearMipmapLinear, FilterMode::Linear });
+
+
+			//auto prefilterEnvMap = TextureCube::CreateEmpty(TextureSpec{ 128,128,TextureFormat::RGBA32F,
+			//	  false, WrapMode::ClampToEdge,FilterMode::Linear, FilterMode::Linear });
+
+
+			auto cubeMaterial = Material::Create(prefilterShader);
+			cubeMaterial->SetTexture(TextureType::EnvironmentMap, envMap);
+
+
+			//the background cube;
+			Cube cube;
+			cube.SetMaterial(cubeMaterial); 
+
+
+			//framebuffer
+			unsigned int captureFBO;
+			glGenFramebuffers(1, &captureFBO);
+			glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+
+
+			unsigned int captureRBO;
+			glGenRenderbuffers(1, &captureRBO);
+			glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 128, 128);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
+
+
+
+			// pbr: run a quasi monte-carlo simulation on the environment lighting to create a prefilter (cube)map.
+			// ----------------------------------------------------------------------------------------------------
+		 
+
+
+			glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+
+			//unsigned int maxMipLevels = 5;
+			for (unsigned int mip = 0; mip < mipLevels; ++mip)
+			{
+				// reisze framebuffer according to mip-level size.
+				unsigned int mipWidth = static_cast<unsigned int>(128 * std::pow(0.5, mip));
+				unsigned int mipHeight = static_cast<unsigned int>(128 * std::pow(0.5, mip));
+				glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
+				glViewport(0, 0, mipWidth, mipHeight);
+
+				float roughness = (float)mip / ((float)mipLevels - 1);
+				prefilterShader->SetFloat("u_Roughness", roughness);
+
+				for (unsigned int i = 0; i < 6; ++i)
+				{
+					prefilterShader->Bind();
+					prefilterShader->SetMat4("u_ProjectionView", captureProjection * captureViews[i]);
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterEnvMap->GetTextureID(), mip);
+
+					glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+					cube.Draw();
+				}
+			}
+
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+			return prefilterEnvMap;
+
+		}
+
+
+
+
+		case ConvolutionType::Diffuse:
+		{
+
+			auto prefilterShader = Shader::Create("Prefilter diffuse Shader", "Resources/Shaders/DiffuseEnvMap_VS.glsl", "Resources/Shaders/DiffuseEnvMap_FS.glsl");
+			Material::SetMaterialProperties(prefilterShader);
+
+
+			//the output prefilter cube map;
+			auto prefilterEnvMap = TextureCube::CreateEmpty(TextureSpec{ 32,32,TextureFormat::RGB32F,
+				  false, WrapMode::ClampToEdge, FilterMode::Linear, FilterMode::Linear });
+
+
+			auto cubeMaterial = Material::Create(prefilterShader);
+			cubeMaterial->SetTexture(TextureType::EnvironmentMap, envMap);
+
+
+			//the background cube;
+			Cube cube;
+			cube.SetMaterial(cubeMaterial);
+
+			//framebuffer
+			unsigned int captureFBO;
+			glGenFramebuffers(1, &captureFBO);
+			glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+
+
+			unsigned int captureRBO;
+			glGenRenderbuffers(1, &captureRBO);
+			glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
+
+
+
+			// pbr: run a quasi monte-carlo simulation on the environment lighting to create a prefilter (cube)map.
+			// ----------------------------------------------------------------------------------------------------
+ 
+
+
+			glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+
+			glViewport(0, 0, 32, 32); 
+			for (unsigned int i = 0; i < 6; ++i)
+			{
+				prefilterShader->Bind();
+				prefilterShader->SetMat4("u_ProjectionView", captureProjection * captureViews[i]);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterEnvMap->GetTextureID(), 0);
+
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				cube.Draw();
+			}
+
+
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+			return prefilterEnvMap;
+
+
+		}
+
+
+
+		}
+
+
+
+
+	}
 
 
 
@@ -478,31 +644,18 @@ namespace Hazel {
 	{
 		//HZ_PROFILE_FUNCTION();
 
+		HZ_CORE_WARN("textureCube: CubeMapID:{0} is deleted ", m_TextureID);
 		glDeleteTextures(1, &m_TextureID);
+
+
 	}
  
 
-	void OpenGLTextureCube::Bind(uint32_t slot) const
-	{
-		//HZ_PROFILE_FUNCTION();
-
-		glBindTextureUnit(slot, m_TextureID);
-	}
-
-	void OpenGLTextureCube::Unbind(uint32_t slot) const
-	{
-		//HZ_PROFILE_FUNCTION();
-
-		glBindTextureUnit(slot, 0);
-	}
-
+ 
 
  
  
-
-
-
-
+	 
 
 
 }

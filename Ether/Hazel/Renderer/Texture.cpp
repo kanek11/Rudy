@@ -17,12 +17,12 @@ namespace Hazel {
 		s_FlipYOnLoad = flip;
 	}
 
-	Ref<Texture2D> Texture2D::CreateFromFile(const std::string& path)
+	Ref<Texture2D> Texture2D::LoadFile(const std::string& path, bool isHDRI)
 	{
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::None:    HZ_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTexture2D>(path);
+		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTexture2D>(path, isHDRI);
 		}
 
 		HZ_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -44,7 +44,7 @@ namespace Hazel {
 
 
 
-	Ref<TextureCube> TextureCube::CreateFromImages(const std::vector<std::string>& paths)
+	Ref<TextureCube> TextureCube::LoadImages(const std::vector<std::string>& paths)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -56,7 +56,24 @@ namespace Hazel {
 		return nullptr;
 	}
 
-	 Ref<TextureCube> TextureCube::CreateFromHDRI(const std::string& path)
+
+
+
+	Ref<TextureCube> TextureCube::CreateEmpty(const TextureSpec& specfication)
+	{
+		switch (Renderer::GetAPI())
+		{
+		case RendererAPI::API::None:    HZ_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTextureCube>(specfication);
+		}
+
+		HZ_CORE_ASSERT(false, "Unknown RendererAPI!");
+		return nullptr;
+	}
+
+
+
+	 Ref<TextureCube> TextureCube::LoadHDRI(const std::string& path)
 	 {
 		 switch (Renderer::GetAPI())
 		 {
@@ -68,40 +85,8 @@ namespace Hazel {
 		 return nullptr;
 	 }
 
-	 Ref<TextureCube> TextureCube::CreateEmpty(const TextureSpec& specfication)
-	 {
-		 switch (Renderer::GetAPI())
-		 {
-		 case RendererAPI::API::None:    HZ_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		 case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTextureCube>(specfication);
-		 }
 
-		 HZ_CORE_ASSERT(false, "Unknown RendererAPI!");
-		 return nullptr;
-	 }
-
-
-	 Ref<TextureCube> CreatePrefilteredEnvMap(const std::string& path, uint32_t mipLevels)
-
-	 {
-		 switch (Renderer::GetAPI())
-		 {
-		 case RendererAPI::API::None:    HZ_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		 case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTextureCube>(path,mipLevels);
-		 }
-
-		 HZ_CORE_ASSERT(false, "Unknown RendererAPI!");
-		 return nullptr;
-
-	 }
-
-
-
-
-
-
-
-
+	  
 
 
 }

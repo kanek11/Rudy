@@ -105,21 +105,23 @@ void main()
     ////in case we donot use normal mapping
     //if(normal == vec3(0.0)) 
    //vec3  normal = normalize(fs_in.Normal);
-    vec3  normal = normalize(texture(gWorldNormal, TexCoords).rgb);
-     
-    float gamma = 2.2;
-    vec3 baseColor = pow(texture(gAlbedo, TexCoords).rgb, vec3(gamma));  //element wise function;
 
-    float specular_coeff = texture(gSpecular,  TexCoords).r;   //gray for blinnphong
-    if (specular_coeff == 0.0) specular_coeff = 1.0;
-
-    float glossiness = texture(gRoughness, TexCoords).r;  //gray
-    //if no glossiness set to 1;
-    if (glossiness == 0.0) glossiness = 1.0;
 
     vec3 WorldFragPos = texture(gPosition, TexCoords).rgb;
 
 
+    vec3  normal = normalize(texture(gWorldNormal, TexCoords).rgb *2.0 - 1.0); 
+
+    vec3 baseColor = texture(gAlbedo, TexCoords).rgb;
+
+    float specular_coeff = texture(gSpecular, TexCoords).r;   //gray for blinnphong
+    if (specular_coeff == 0.0) specular_coeff = 0.4;
+
+    float glossiness = texture(gRoughness, TexCoords).r;  //gray
+    if (glossiness == 0.0) glossiness = 1.0;
+    //if no glossiness set to 1;
+
+     
     //3basic directions: l,v,h
     //vec3 lightDir = normalize(LightPos - fs_in.WorldFragPos);
     vec3 lightDir =  - normalize(LightDir);   //minus, from shading point
@@ -140,7 +142,7 @@ void main()
     vec3 diffuse = cos_d * baseColor * LightColor; 
     
     // Specular ks 
-    float shininess = 8 * glossiness  ;  //shininess scaled;
+    float shininess = 32 * glossiness  ;  //shininess scaled;
     float cos_s = max(dot(normal, halfwayDir), 0.0);
     float highlight = pow(cos_s, shininess);
     vec3 specular = highlight * specular_coeff * LightColor; 
@@ -155,12 +157,12 @@ void main()
     //for test: only show shadow value
     vec3 result_color = ambient + diffuse + specular ;
 
-     FragColor = vec4(result_color, 1.0) ;
+    FragColor = vec4(result_color, 1.0) ;
     // FragColor = vec4(ambient ,1.0) ;
     //FragColor = vec4(specular,1.0) ;
      //FragColor = vec4(vec3(glossiness), 1.0);
      //FragColor = vec4(baseColor, 1.0);
 
-    //FragColor = vec4(vec3(0.0,1.0,0.0), 1.0);
+    // FragColor = vec4(vec3(0.0,1.0,0.0), 1.0);
 
 }

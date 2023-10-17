@@ -1,7 +1,7 @@
 #version 330 core
 out vec4 FragColor;
 
-in vec3 WorldFragPos;
+in vec3 WorldPos;
 
 uniform samplerCube u_EnvironmentMap;
 uniform float u_Roughness;
@@ -65,7 +65,7 @@ vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness)
 // ----------------------------------------------------------------------------
 void main()
 {
-    vec3 N = normalize(WorldFragPos);
+    vec3 N = normalize(WorldPos);
 
     // make the simplyfying assumption that V equals R equals the normal 
     vec3 R = N;
@@ -105,4 +105,6 @@ void main()
     prefilteredColor = prefilteredColor / totalWeight;
 
     FragColor = vec4(prefilteredColor, 1.0);
+
+    //FragColor = vec4(0.0,1.0,0.0, 1.0);
 }

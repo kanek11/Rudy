@@ -98,12 +98,6 @@
 namespace Hazel {
 
 	//temp disregard. 
-	//enum class AttachmentType
-	//{
-	//	None = 0, 
-	//	Texture2D,
-	//	RenderBuffer,
-	//};
 
 
     //temp disregard
@@ -149,14 +143,27 @@ namespace Hazel {
 	//my idea, might be wrong.
 	enum class FrameBufferType
 	{
-		Default = 0, //colorbuffer as texture, depth24+stencil8 as renderbuffer; 
+		None = 0, 
+		
+		Screen,  //colorbuffer as texture2D, depth24+stencil8 as renderbuffer; 
 
 		DepthMap,   //depth as texture, no colorbuffer 
-	  
-		//PostProcess, //colorbuffer as texture, no depthbuffer;  might not be necessary to create new one£¿
 
 		GBuffer, //basically default but with multiple colorbuffers
+		 
+
+		//PostProcess, //colorbuffer as texture, no depthbuffer;  might not be necessary to create new one£¿
 	};
+
+
+	 //enum class AttachmentType
+     //{
+     //	None = 0, 
+	//	ColorAttachment = 1,
+	//	DepthStencilAttachment = 2,
+	//	DepthAttachment = 3,
+     //	 
+     //};
 
 
 
@@ -165,34 +172,50 @@ namespace Hazel {
 	public:
 		~FrameBuffer() = default;
 
+
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 
 
 		virtual uint32_t GetFrameBufferID() = 0;
+		virtual uint32_t GetColorBufferNum() = 0;
+
+
 		//virtual uint32_t GetTextureBufferID(uint32_t index) = 0;
 
-		virtual void SetTextureBuffers(std::unordered_map<TextureType, Ref<Texture>> TextureBuffers) = 0;
-		virtual Ref<Texture> GetTextureBufferByType(TextureType type) = 0;
-		virtual std::unordered_map<TextureType, Ref<Texture>> GetTextureBuffers() = 0;
+		//virtual void SetTextureBuffers(std::unordered_map<TextureType, Ref<Texture>> TextureBuffers) = 0;
+		//virtual Ref<Texture> GetTextureBufferByType(TextureType type) = 0;
+		//virtual std::unordered_map<TextureType, Ref<Texture>> GetTextureBuffers() = 0;
 		//virtual uint32_t GetRenderBufferID()   = 0;
 
 
 		//static Ref<FrameBuffer> CreateWithSpec(FrameBufferSpec& spec);
-		static Ref<FrameBuffer> Create(uint32_t width, uint32_t height, FrameBufferType type = FrameBufferType::Default,
-			std::unordered_map<TextureType, Ref<Texture>> TextureBuffers = std::unordered_map<TextureType, Ref<Texture>>());
+		//static Ref<FrameBuffer> Create(uint32_t width, uint32_t height, FrameBufferType type = FrameBufferType::Default,
+		//	std::unordered_map<TextureType, Ref<Texture>> TextureBuffers = std::unordered_map<TextureType, Ref<Texture>>());
 	 
+
+		static Ref<FrameBuffer> Create(uint32_t width, uint32_t height, FrameBufferType type = FrameBufferType::Screen,
+			uint32_t colorBufferNum = 0 );
+
+
+		virtual void SetColorAttachmentTexture(Ref<Texture> texture, uint32_t slot) = 0;
+		virtual void SetDepthAttachmentTexture(Ref<Texture> texture) = 0;
+
+
+		virtual void CheckCompleteness() = 0;
 
 
 
 	private:
 
-		uint32_t m_FrameBufferID = 0;
+		uint32_t m_FrameBufferID = 0; 
+		uint32_t m_ColorBufferNum = 0;
+
 		//FrameBufferType type = FrameBufferType::Default;
 		//FrameBufferSpec m_Spec;
 
 	 
-		std::unordered_map<TextureType, Ref<Texture>>  m_TextureBuffers;
+		//std::unordered_map<TextureType, Ref<Texture>>  m_TextureBuffers;
 		Scope<RenderBuffer> m_RenderBuffer ;   //renderbuffer
 
 

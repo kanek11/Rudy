@@ -39,8 +39,7 @@ namespace Hazel
 
 
          glm::mat4 projection_view = Renderer::GetMainCamera()->GetProjectionViewMatrix();
-         m_Material->GetShader()->SetMat4("u_ProjectionView", projection_view);
-
+         m_Material->GetShader()->SetMat4("u_ProjectionView", projection_view); 
 
          Renderer::GetRendererAPI()->DrawElements(m_Mesh->GetIndexCount());
 
@@ -59,7 +58,7 @@ namespace Hazel
 
 
      
-    Ref<Hierarchy> Hierarchy::CreateFromFile(std::string const& path)
+    Ref<Hierarchy> Hierarchy::LoadModel(std::string const& path)
 
     {
         return CreateRef<Hierarchy>(path);
@@ -157,7 +156,7 @@ namespace Hazel
                 if (!skip)
                 {
                     // Load your texture here using directory, and set it to your material
-					Ref<Texture2D> texture = Texture2D::CreateFromFile(fileDir);
+					Ref<Texture2D> texture = Texture2D::LoadFile(fileDir);
 					material->SetTexture(textureType, texture); // Assuming you have a setter for textures in your Material class
 					m_Loaded_Textures.push_back(texture);  //opt
 
@@ -181,8 +180,7 @@ namespace Hazel
         loadTexture(aiTextureType_NORMALS, TextureType::NormalMap);  
         
         loadTexture(aiTextureType_DIFFUSE_ROUGHNESS, TextureType::RoughnessMap);
- 
-        //HZ_CORE_INFO("Modelloading: Metallic is used");
+  
         loadTexture(aiTextureType_METALNESS, TextureType::MetallicMap);
         loadTexture(aiTextureType_AMBIENT_OCCLUSION, TextureType::AOMap);
      

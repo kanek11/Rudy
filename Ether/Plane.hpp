@@ -43,6 +43,7 @@ namespace Hazel {
         std::vector<Vertex> Vertices;
         std::vector<unsigned int> Indices = {0,1,2, 0,2,3};
 
+        
         glm::vec3 pos1(-1.0, 0.0, 1.0);  //left bottom 
         glm::vec3 pos2(-1.0, 0.0,-1.0);  //left top
         glm::vec3 pos3( 1.0, 0.0,-1.0);  //right top
@@ -53,9 +54,11 @@ namespace Hazel {
         glm::vec2 uv3(1.0, 1.0);
         glm::vec2 uv4(1.0, 0.0);
 
-        glm::vec3 normal = glm::vec3(0.0f, 1.0f, 0.0f);
-        glm::vec3 tangent = glm::vec3(1.0f, 0.0f, 0.0f);
-        glm::vec3 bitangent = glm::vec3(0.0f, 0.0f, -1.0f);
+
+        //defined in local tangent space ;  TBN is right handed, xyz respectivelyf
+        glm::vec3 normal = glm::vec3(0.0, 1.0, 0.0);  //y axis  world up
+        glm::vec3 tangent = glm::vec3(1.0, 0.0, 0.0);  //x axis
+        glm::vec3 bitangent = glm::vec3(0.0, 0.0, 1.0); //z axis
  
 
         //generate vertices 

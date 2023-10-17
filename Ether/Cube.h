@@ -13,7 +13,7 @@
 namespace Hazel {
 
 
-    class Cube:public MeshObject {
+    class Cube : public MeshObject {
     public:
         Cube() { CreateGeometry(); }
         ~Cube() = default;
@@ -21,9 +21,8 @@ namespace Hazel {
         void CreateGeometry();
 
         void Draw() override;
-        void DrawSkybox();
- 
-
+        void DrawSkybox();  //need to set special view matrix, and gldepthfunc;
+  
         unsigned int CubeVAO, CubeVBO, CubeEBO;
         //Ref<Shader>  Shader;   
 

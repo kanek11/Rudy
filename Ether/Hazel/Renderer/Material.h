@@ -105,13 +105,20 @@ namespace Hazel {
 		//
 
 		//for gbuffer geometry pass
-		gPosition,   //0
-		gAlbedo,     //1
-		gWorldNormal,  //2
-		gSpecular,   //3
-		gMetallic,   //4
-		gRoughness,  //5
+		gPosition,   
+		gAlbedo,     
+		gWorldNormal,  
+		gWorldTangent,
+		gSpecular,   
+		gMetallic,   
+		gRoughness,  
+		gScreenDepth,
 
+
+		//IBL
+		diffuseEnvMap,  //cubemap
+		specularEnvMap,  //cubemap
+		brdfLUT,  //2D
 
 	};
 
@@ -138,11 +145,20 @@ namespace Hazel {
 		{TextureType::gPosition,    "gPosition"},
 		{TextureType::gAlbedo,      "gAlbedo"},
 		{TextureType::gWorldNormal, "gWorldNormal"},
+		{TextureType::gWorldTangent,"gWorldTangent"},
 	 	{TextureType::gSpecular,    "gSpecular"},
 		{TextureType::gMetallic,    "gMetallic"},
 		{TextureType::gRoughness,   "gRoughness"},
+		{TextureType::gScreenDepth, "gScreenDepth"},
+
+		{TextureType::diffuseEnvMap, "u_DiffuseEnvMap"},
+		{TextureType::specularEnvMap, "u_SpecularEnvMap"},
+		{TextureType::brdfLUT, "u_BrdfLUT"},
 		 
 	};
+
+
+
 		
 
 	//enum class MaterialType
@@ -189,27 +205,28 @@ namespace Hazel {
 		void SetTexture(TextureType type, Ref<Texture> texture)  { m_Textures[type] = texture;}
 		std::unordered_map<TextureType, Ref<Texture>> GetTextures() const { return m_Textures; }
 
-		 
-		//static Ref<Material> Create(MaterialType = MaterialType::Basic);
+	 
 
-		 
-		//static void SetupMaterial();  //set up uniform variables in shader. etc.
+		//material and shader works so closely here;
+		static void SetMaterialProperties(Ref<Shader> shader);
 
-
-
-		static Ref<Material> Create(Ref<Shader> shader = 
+		static Ref<Material> Create(Ref<Shader> shader =
 			Shader::Create("Basic Shader", "Resources/Shaders/Basic_VS.glsl", "Resources/Shaders/Basic_FS.glsl"));
 
-		static void SetMaterialSlots(Ref<Shader> shader);
+	
 
+		//static Ref<Material> Create(MaterialType = MaterialType::Basic);
+		//static void SetupMaterial();  //set up uniform variables in shader. etc.
+
+		 
 
 	private:
 		Ref<Shader> m_Shader;
-		//MaterialType m_MaterialType;
-
 		//collection of textures
 		std::unordered_map<TextureType, Ref<Texture>> m_Textures; 
 
+
+		//MaterialType m_MaterialType;
 
 
 	};

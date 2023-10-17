@@ -71,62 +71,69 @@ namespace Hazel
     }
 
 
-    void Cube::Draw()
-
-    {
-
-
-        if (m_Material == nullptr)
-            HZ_CORE_WARN("Cube::no bound material");
-        else
+    void Cube::Draw() 
+    { 
+        if (m_Material) 
             m_Material->Bind();
+        else
+            HZ_CORE_WARN("Cube::no bound material");  
 
         glBindVertexArray(CubeVAO);
 
+
+        //glm::mat4 projection_view = Renderer::GetMainCamera()->GetProjectionViewMatrix();
+        //m_Material->GetShader()->SetMat4("u_ProjectionView", projection_view);
+
+
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
 
         glBindVertexArray(0);
 
-        if (m_Material == nullptr)
-            HZ_CORE_WARN("Cube::no bound material");
-        else
+        if (m_Material) 
             m_Material->Unbind();
+        else
+            HZ_CORE_WARN("Cube::no bound material");
+       
     }
+
+
+
 
 
     void Cube::DrawSkybox()
     {
-        if (m_Material == nullptr)
-            HZ_CORE_WARN("Cube::no bound material");
-        else
+        if (m_Material) 
             m_Material->Bind();
-
+        else
+            HZ_CORE_WARN("Cube: no bound material");
+      
         glBindVertexArray(CubeVAO);
+ 
 
-        ////auto view = glm::mat4(glm::mat3(Renderer::GetMainCamera()->GetViewMatrix())) ;  //error: undefined behaviour.
-        //auto view = Renderer::GetMainCamera()->GetViewMatrix();
-        //view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
-        //auto projection = Renderer::GetMainCamera()->GetProjectionMatrix();
-        //skyboxShader->SetMat4("u_View", view ); // remove translation from the view matrix
-        //skyboxShader->SetMat4("u_Projection", projection);
+        glm::mat4  view = Renderer::GetMainCamera()->GetViewMatrix();
+        view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
+        glm::mat4  projection = Renderer::GetMainCamera()->GetProjectionMatrix();
 
+        m_Material->GetShader()->SetMat4("u_ProjectionView", projection* view);
 
+         
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
-
-
+  
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-
+        glDepthFunc(GL_LESS); // set depth function back to default 
 
         glBindVertexArray(0);
-        if (m_Material == nullptr)
-            HZ_CORE_WARN("Cube::no bound material");
-        else
+
+        if (m_Material)
             m_Material->Unbind();
+        else
+            HZ_CORE_WARN("Cube: no bound material");
 
 
-        glDepthFunc(GL_LESS); // set depth function back to default
-
+ 
     }
 
 

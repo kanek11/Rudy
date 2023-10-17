@@ -88,7 +88,7 @@ namespace Hazel {
 
         glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, nullptr);
 
-        m_Material-> Unbind();
+        m_Material->Unbind();
 
         glBindVertexArray(0);  
     }

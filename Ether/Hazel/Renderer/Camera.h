@@ -47,7 +47,7 @@ namespace Hazel {
 	public:
 
 		~Camera() = default;
-		Camera() = default;
+		Camera() = default; 
 
 	 
 		//void OnEvent(Event& e);
@@ -190,9 +190,10 @@ namespace Hazel {
 
 
 
+		glm::vec3 GetPosition() const { return m_Position; }
 
 
-	protected:
+		 
 
 		//make sure initial values are compatible
 		//align with opengl default values,  from +z position look to -z direction; 
@@ -214,9 +215,7 @@ namespace Hazel {
 		glm::mat4 m_ProjectionMatrix = glm::mat4(1.0f);  
 
 
-		//navigation related
-		
-
+		//navigation related  
 
 		glm::vec2 m_LastMousePos = { 0.0f, 0.0f };   //update every frame
 
