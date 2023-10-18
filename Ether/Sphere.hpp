@@ -17,7 +17,10 @@ namespace Hazel {
 	class Sphere: public MeshObject {
 
 	public:
-        Sphere()  { CreateGeometry(subdivision);}
+        Sphere(unsigned int subdivision)  
+            :m_subdivision(subdivision)
+        { CreateGeometry(subdivision);}
+
 		~Sphere() = default;
 
 		void CreateGeometry(unsigned int subdivision);
@@ -28,7 +31,7 @@ namespace Hazel {
         //Ref<Mesh>  Mesh;
         //Ref<Material>  Material; 
 		  
-        uint32_t subdivision = 30;
+        uint32_t m_subdivision = 20;
 	};
 
 
@@ -65,15 +68,19 @@ namespace Hazel {
 
 	//static Scope<Mesh> Create(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
 
+    //based on spherical coordinate
+    //opengl y is up,  elevation or theta,  vary from 0 to pi
+    //xz plane is azimuth or phi, vary from 0 to 2pi
+
+    //subdivision say 4 , means 4 facets; 
+    //say theta varys   [0,..4]* pi/4
 	void Sphere::CreateGeometry(unsigned int subdivision)
 	{
 
          std::vector<Vertex> Vertices;
          std::vector<unsigned int> Indices; 
-  
-        //generate using spherical coordinate£»
-        //divide the theta and phi step £»the sudivision;
-        //const unsigned int subdivision = 200;
+
+
         const unsigned int X_SEGMENTS = subdivision;
         const unsigned int Y_SEGMENTS = subdivision;
         const float PI = 3.14159265359f;
@@ -82,17 +89,19 @@ namespace Hazel {
         for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
         {
             for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
-            {
-
+            { 
 
                 //normalized
                 float xSegment = (float)x / (float)X_SEGMENTS;
                 float ySegment = (float)y / (float)Y_SEGMENTS;
+                float xPhi = xSegment * 2.0f * PI;
+                float yTheta = ySegment * PI ;
 
                 //y being up
-                float yPos = std::cos(ySegment * PI);
-                float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
-                float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI); 
+                float yPos = std::cos(yTheta);
+                float xPos = std::cos(xPhi) * std::sin(yTheta);
+                float zPos = std::sin(xPhi) * std::sin(yTheta);
+
 
                 Vertex vertex;
 
@@ -100,23 +109,41 @@ namespace Hazel {
                 vertex.Normal = glm::vec3(xPos, yPos, zPos);
                 vertex.TexCoords = glm::vec2(xSegment, ySegment);
 
-                glm::vec3 Tangent = 
-                glm::vec3(-2.0f * PI * std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI),
-                0,
-                           2.0f * PI * std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI));
-                
-                vertex.Tangent = glm::normalize(Tangent); 
-                vertex.Bitangent = glm::normalize(glm::cross(glm::vec3(xPos, yPos, zPos), Tangent));
+  
+                //tangent ,always on xz plane
+                //as derivative to normal , dN/dphi = (-sin(phi), 0, cos(phi)) * sin(theta)
 
+                //note at poles, sintheta = 0, tangent is undefined;
+                if (yTheta  == 0)
+                {
+					vertex.Tangent = glm::vec3(1.0f, 0.0f, 0.0f);
+					//vertex.Bitangent = glm::vec3(0.0f, 0.0f, 1.0f); 
+				}
+                else if (yTheta == PI)
+                {
+                    vertex.Tangent = glm::vec3(-1.0f, 0.0f, 0.0f);
+                }
+                else
+                {
+                    glm::vec3 Tangent =
+                        glm::vec3(-std::sin(xPhi) * std::sin(yTheta),
+                            0,
+                            std::cos(xPhi) * std::sin(yTheta));
+
+                    vertex.Tangent = glm::normalize(Tangent);
+
+                    //optional bitangent
+                    //vertex.Bitangent = glm::normalize(glm::cross(glm::vec3(xPos, yPos, zPos), Tangent));
+                }
+               
                  
                 Vertices.push_back(vertex); 
 
             }
         }
 
-        //generate indices ; the pos was generated in order of columns; 
-        //displace SEGMENTS+1 each time  ; generate 2 indices at a time
-        //make opengl draw "strip"
+        //generate indices ; 
+        // draw "strip" mode ; +2 indices for each new triangle
 
         for (unsigned int y = 0; y < Y_SEGMENTS; ++y)
         { 

@@ -240,9 +240,58 @@ namespace Hazel {
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		  
-	      HZ_CORE_WARN("glTexture2D: texture2DId:{0} is created ", m_TextureID); 
+	      HZ_CORE_WARN("glTexture2D: empty texture2DId:{0} is created ", m_TextureID); 
 
 	}
+
+
+
+
+	OpenGLTexture2D::OpenGLTexture2D(const TextureSpec& specification, void* data)
+		: m_TextureSpec(specification), m_Width(m_TextureSpec.Width), m_Height(m_TextureSpec.Height)
+	{
+
+		//HZ_PROFILE_FUNCTION();
+
+		//deny to create texture with 0 size
+		HZ_CORE_ASSERT(m_Width && m_Height, "Texture width and height must be greater than 0!");
+
+
+		auto m_InternalFormat = Utils::TextureFormatToGLFormat(specification.TextureFormat);
+		auto m_DataFormat = Utils::TextureFormatToDataFormat(specification.TextureFormat);
+		auto m_WrapMode = Utils::WrapModeToGLWrapMode(specification.wrapMode);
+		auto m_MinFilterMode = Utils::FilterModeToGLFilterMode(specification.minfilterMode);
+		auto m_MagFilterMode = Utils::FilterModeToGLFilterMode(specification.magfilterMode);
+
+
+		glGenTextures(1, &m_TextureID);
+		glBindTexture(GL_TEXTURE_2D, m_TextureID);
+
+
+		//glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
+	   //lTextureStorage2D(m_TextureID, 1, m_InternalFormat, m_Width, m_Height);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, m_Width, m_Height, 0, m_DataFormat, GL_FLOAT, data);
+		glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, m_MinFilterMode);
+		glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, m_MagFilterMode);
+		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, m_WrapMode);
+		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, m_WrapMode);
+
+		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		HZ_CORE_WARN("glTexture2D: custom texture2DId:{0} is created ", m_TextureID);
+
+	}
+
+
+
+
+
+
+
+
 
 	 
 	OpenGLTexture2D::~OpenGLTexture2D()

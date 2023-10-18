@@ -25,7 +25,6 @@ namespace Hazel
     void MeshObject::Draw()
     {
          
-
          m_Mesh->Bind();
          m_Material->Bind();
 
@@ -52,10 +51,8 @@ namespace Hazel
     void Hierarchy::Draw()
     {
        for (auto meshObj : m_MeshObjects)
-            meshObj->Draw();
-        
-	}
-
+            meshObj->Draw(); 
+	} 
 
      
     Ref<Hierarchy> Hierarchy::LoadModel(std::string const& path)

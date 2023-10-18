@@ -79,7 +79,10 @@ namespace Hazel {
 		virtual uint32_t GetHeight() const = 0;
 		virtual uint32_t GetTextureID() const = 0; 
 		virtual const std::string& GetPath() const = 0;
-		//=====setters and getters
+
+
+
+
 
 
 		virtual void Bind(uint32_t slot = 0) const = 0;
@@ -103,6 +106,7 @@ namespace Hazel {
 	public: 
 		static Ref<Texture2D> LoadFile(const std::string& path, bool isHDRI = false);
 		static Ref<Texture2D> CreateEmpty(const TextureSpec& specfication = TextureSpec());
+		static Ref<Texture2D> CreateUsingData(const TextureSpec& specfication = TextureSpec(), void* data = nullptr);
 	};
 
 

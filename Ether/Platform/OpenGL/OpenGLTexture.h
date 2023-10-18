@@ -17,6 +17,7 @@ namespace Hazel {
 	public:
 		OpenGLTexture2D(const std::string& path, bool isHDRI);
 		OpenGLTexture2D(const TextureSpec& specification);
+		OpenGLTexture2D(const TextureSpec& specification, void* data);
 	    ~OpenGLTexture2D();
 
 

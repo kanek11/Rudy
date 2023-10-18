@@ -115,10 +115,17 @@ namespace Hazel {
 		gScreenDepth,
 
 
+		//lightingPass output 
+		lightingPassTexture,
+
+
 		//IBL
 		diffuseEnvMap,  //cubemap
 		specularEnvMap,  //cubemap
 		brdfLUT,  //2D
+
+		//SSAO
+		NoiseTexture,  //2D
 
 	};
 
@@ -151,9 +158,13 @@ namespace Hazel {
 		{TextureType::gRoughness,   "gRoughness"},
 		{TextureType::gScreenDepth, "gScreenDepth"},
 
+		{TextureType::lightingPassTexture, "u_LightingPassTexture"},
+
 		{TextureType::diffuseEnvMap, "u_DiffuseEnvMap"},
 		{TextureType::specularEnvMap, "u_SpecularEnvMap"},
 		{TextureType::brdfLUT, "u_BrdfLUT"},
+
+		{TextureType::NoiseTexture, "u_NoiseTexture"},
 		 
 	};
 

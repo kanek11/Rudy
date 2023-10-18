@@ -190,6 +190,10 @@
     <None Include="Resources\Shaders\ScreenQuad_VS.glsl" />
     <None Include="Resources\Shaders\Skybox_FS.glsl" />
     <None Include="Resources\Shaders\Skybox_VS.glsl" />
+    <None Include="Resources\Shaders\SSAO_FS.glsl" />
+    <None Include="Resources\Shaders\SSAO_VS.glsl" />
+    <None Include="Resources\Shaders\SSR_FS.glsl" />
+    <None Include="Resources\Shaders\SSR_VS.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="dependencies.txt" />

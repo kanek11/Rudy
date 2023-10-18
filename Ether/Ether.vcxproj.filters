@@ -240,5 +240,9 @@
     <None Include="Resources\Shaders\DiffuseEnvMap_VS.glsl" />
     <None Include="Resources\Shaders\RectToCube_VS.glsl" />
     <None Include="Resources\Shaders\RectToCube_FS.glsl" />
+    <None Include="Resources\Shaders\SSAO_VS.glsl" />
+    <None Include="Resources\Shaders\SSAO_FS.glsl" />
+    <None Include="Resources\Shaders\SSR_FS.glsl" />
+    <None Include="Resources\Shaders\SSR_VS.glsl" />
   </ItemGroup>
 </Project>

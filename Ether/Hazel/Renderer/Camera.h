@@ -46,15 +46,22 @@ namespace Hazel {
 	{
 	public:
 
-		~Camera() = default;
-		Camera() = default; 
+		~Camera() = default; 
+		Camera( glm::vec3 position = glm::vec3(0.0f, 0.0f, 5.0f) )  
+			:m_Position(position)  
+		{
+			//initialize matrices;
+			m_ViewMatrix = glm::lookAt(m_Position, m_FocalPoint, m_Up);
+			m_ProjectionMatrix = glm::perspective(m_FOV, m_AspectRatio, m_Near, m_Far);
+
+		}
 
 	 
 		//void OnEvent(Event& e);
 
 
 		const glm::mat4 GetProjectionViewMatrix() const{
-			return GetProjectionMatrix() * GetViewMatrix();
+			return m_ProjectionMatrix * m_ViewMatrix;
 		} 
 
 		const glm::mat4& GetViewMatrix() const {   
@@ -77,9 +84,10 @@ namespace Hazel {
 		//here the event functions update the paramters, and reflect when call getview/getprojectionmatrix.
 		void OnUpdate(float ts) {
 
-
+			//first update matrices
 			m_ViewMatrix = glm::lookAt(m_Position, m_FocalPoint, m_Up);
 			m_ProjectionMatrix = glm::perspective(m_FOV, m_AspectRatio, m_Near, m_Far);
+
 
 			glm::vec2 CurrentMousePos =  Input::GetMousePosition();
 			//HZ_CORE_INFO("camera: the mouse cursor is {0}, {1}", m_LastMousePos.x, m_LastMousePos.y);
@@ -133,9 +141,9 @@ namespace Hazel {
 			glm::mat4 pitchMat = glm::mat4(1.0f);
 			//if (delta.x > delta.y)
 			//{//yaw
-				float yaw = -delta.x;
-				glm::vec3 yawAxis = m_Up;
-				 yawMat = glm::rotate(yawMat, glm::radians(yaw), yawAxis); 
+			float yaw = -delta.x;
+			glm::vec3 yawAxis = m_Up;
+			yawMat = glm::rotate(yawMat, glm::radians(yaw), yawAxis); 
 			//}
 			//else
 			//{//pitch
@@ -191,8 +199,6 @@ namespace Hazel {
 
 
 		glm::vec3 GetPosition() const { return m_Position; }
-
-
 		 
 
 		//make sure initial values are compatible
@@ -209,7 +215,8 @@ namespace Hazel {
 		float m_Pitch = 0.0f, m_Yaw = 0.0f;
 		
 		//perspective parameters
-		float m_FOV = 45.0f, m_AspectRatio = 16.0f / 9.0f, m_Near = 0.1f, m_Far = 1000.0f;
+		float m_FOV = 45.0f, m_AspectRatio = 16.0f / 9.0f, m_Near = 0.1f, m_Far = 100.0f;
+
 
 		glm::mat4 m_ViewMatrix = glm::mat4(1.0f);
 		glm::mat4 m_ProjectionMatrix = glm::mat4(1.0f);  
@@ -222,11 +229,8 @@ namespace Hazel {
 		bool m_ButtonPressedLastFrame = false;
 		float m_Sensitivity = 0.3f;    //scale the mouse movement. on screen space.
 
-		float m_Distance;   //= length(position - focalpoint)
-
-
-
-
+		float m_Distance = 0;   //= length(position - focalpoint)
+		 
 	};
 
 

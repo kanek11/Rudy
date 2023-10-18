@@ -4,6 +4,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <random>
+
 
 #include "Hazel/Core/Window.h"
 
@@ -27,7 +29,7 @@
 
 
 
-bool  visualize_buffer = true;
+bool  visualize_buffer = false;
 
 
 const uint32_t SCR_WIDTH = 2560;
@@ -35,6 +37,9 @@ const uint32_t SCR_HEIGHT = 1440;
 const uint32_t BUFFER_WIDTH = SCR_WIDTH / 4;
 const uint32_t BUFFER_HEIGHT = SCR_HEIGHT / 4;
 const uint32_t SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+
+
+const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 0.0f, 5.0f);
 
 //const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 0.0f, 3.0f);
 
@@ -61,7 +66,7 @@ int main() {
     //Input::SetWindowContext(window->GetNativeWindow());
 
 
-    Ref<Camera> main_camera = CreateRef<Camera>();
+    Ref<Camera> main_camera = CreateRef<Camera>(MAIN_CAMERA_POS);
 
     Renderer::Init(SCR_WIDTH, SCR_HEIGHT);
     Renderer::SetMainCamera(main_camera);
@@ -77,7 +82,7 @@ int main() {
     //=======environment map precomputing pass
     Texture2D::SetFlipYOnLoad(true);
     //auto testHDRI =     Texture2D::LoadFile("D:/CG_resources/HDRI/GrandCanyon_C_YumaPoint/GCanyon_C_YumaPoint_3k.hdr"); 
-    auto testHDRI = Texture2D::LoadFile("D:/CG_resources/HDRI/GrandCanyon_C_YumaPoint/GCanyon_C_YumaPoint_Env.hdr");
+    auto testHDRI = Texture2D::LoadFile("D:/CG_resources/HDRI/GrandCanyon_C_YumaPoint/GCanyon_C_YumaPoint_3k.hdr");
 
     auto envMap = TextureCube::LoadHDRI("D:/CG_resources/HDRI/GrandCanyon_C_YumaPoint/GCanyon_C_YumaPoint_3k.hdr");
      
@@ -154,9 +159,9 @@ int main() {
     auto gAlbedo       = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F });
     auto gWorldNormal  = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F });
     auto gWorldTangent = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F });
-    auto gSpecular     = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R8 });
-    auto gMetallic     = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R8 });
-    auto gRoughness    = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R8 });
+    auto gSpecular     = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R32F });
+    auto gMetallic     = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R32F });
+    auto gRoughness    = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R32F });
     auto gScreenDepth  = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::DEPTH_COMPONENT,
                              false, WrapMode::ClampToBorder, FilterMode::Nearest  });
 
@@ -173,9 +178,7 @@ int main() {
 
     GBufferFBO->SetDepthAttachmentTexture( gScreenDepth);
 
-    GBufferFBO->CheckCompleteness();
-  
-
+    GBufferFBO->CheckCompleteness(); 
     GBufferFBO->Unbind();
 
 
@@ -202,8 +205,7 @@ int main() {
     floor.Transform.Position = glm::vec3(0.0f, -1.0f, 0.0f);
     floor.SetMaterial(plane_Material); 
 
-
-
+     
 
 
     auto sphere_Material = Material::Create(gBufferPassShader); 
@@ -219,8 +221,7 @@ int main() {
     sphere_Material->SetTexture(TextureType::MetallicMap,  sphere_metallicMap);
 
 
-    Sphere sphere = Sphere();
-    sphere.Transform.Position = glm::vec3(0.0f, 0.5f, 0.0f);
+    Sphere sphere = Sphere(20); 
     sphere.SetMaterial(sphere_Material);
 
 
@@ -307,6 +308,126 @@ int main() {
     skybox.SetMaterial(skyboxMaterial);
      
 
+     
+
+
+
+    //========postprocess: SSAO pass;
+    auto ssaoShader = Shader::Create("ssao Shader", "Resources/Shaders/SSAO_VS.glsl", "Resources/Shaders/SSAO_FS.glsl");
+    Material::SetMaterialProperties(ssaoShader);
+
+    //material: ssao takes worldpos, worldnormal, 
+    //make sure use a consistent space for the depth;  
+    // custom sampling kernel, rotation noise texture
+     
+     
+
+    //refer to https://learnopengl.com/Advanced-Lighting/SSAO
+
+    auto m_Lerp = [](float a, float b, float f) -> float {
+        return a + f * (b - a);   };
+
+    std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0); // generates random floats between 0.0 and 1.0
+    std::default_random_engine generator;
+    std::vector<glm::vec3> ssaoKernel;
+    for (unsigned int i = 0; i < 64; ++i)
+    {
+        glm::vec3 sample(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, randomFloats(generator));
+        sample = glm::normalize(sample);
+        sample *= randomFloats(generator);
+        float scale = float(i) / 64.0f;
+
+        // scale samples s.t. they're more aligned to center of kernel
+        scale = m_Lerp(0.1f, 1.0f, scale * scale);
+        sample *= scale;
+        ssaoKernel.push_back(sample);
+    }
+
+
+    //used by all fragments;
+    ssaoShader->Bind();
+    for (unsigned int i = 0; i < 64; ++i)
+        ssaoShader->SetVec3("samples[" + std::to_string(i) + "]", ssaoKernel[i]);
+     
+
+    // generate noise texture
+    // ----------------------
+    std::vector<glm::vec3> ssaoNoise;
+    for (unsigned int i = 0; i < 16; i++)
+    {
+        glm::vec3 noise(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0f); // rotate around z-axis (in tangent space)
+        ssaoNoise.push_back(noise);
+    }
+
+    auto ssaoNoiseTexture = Texture2D::CreateUsingData(TextureSpec{
+            4, 4, TextureFormat::RGB32F, false, WrapMode::Repeat, FilterMode::Nearest }, 
+            ssaoNoise.data()); 
+
+
+
+    auto ssaoMaterial = Material::Create(ssaoShader);
+    ssaoMaterial->SetTexture(TextureType::gPosition, gPosition);
+    ssaoMaterial->SetTexture(TextureType::gWorldNormal, gWorldNormal); 
+    ssaoMaterial->SetTexture(TextureType::gWorldTangent, gWorldTangent);
+    ssaoMaterial->SetTexture(TextureType::gScreenDepth, gScreenDepth);
+    ssaoMaterial->SetTexture(TextureType::NoiseTexture, ssaoNoiseTexture);
+
+
+    //-------the quad for ssao pass;
+    Quad ssaoQuad = Quad();
+    ssaoQuad.SetMaterial(ssaoMaterial);
+
+
+    //FBO, one-channel;
+    auto ssaoFBO = FrameBuffer::Create(
+		SCR_WIDTH, SCR_WIDTH, FrameBufferType::Screen);
+
+    auto ssaoScreenTexture = Texture2D::CreateEmpty(
+        TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R32F,
+                     false, WrapMode::ClampToBorder, FilterMode::Nearest });
+
+    ssaoFBO->Bind();
+    ssaoFBO->SetColorAttachmentTexture(ssaoScreenTexture, 0);
+    ssaoFBO->CheckCompleteness();
+    ssaoFBO->Unbind();
+
+
+
+
+
+
+
+    //==========SSR; 
+
+    auto ssrShader = Shader::Create("ssr Shader", "Resources/Shaders/SSR_VS.glsl", "Resources/Shaders/SSR_FS.glsl");
+    Material::SetMaterialProperties(ssrShader);
+
+    ssrShader->Bind();
+    ssrShader->SetMat4("u_ProjectionView", main_camera->GetProjectionViewMatrix());
+    ssrShader->SetVec3("u_CameraPos", main_camera->GetPosition());
+
+    auto ssrMaterial = Material::Create(ssrShader);
+    ssrMaterial->SetTexture(TextureType::gPosition, gPosition);
+    ssrMaterial->SetTexture(TextureType::gWorldNormal, gWorldNormal);
+    ssrMaterial->SetTexture(TextureType::gScreenDepth, gScreenDepth);
+    ssrMaterial->SetTexture(TextureType::lightingPassTexture, lightingPassScreenTexture);
+
+     
+    auto ssrQuad = Quad();
+    ssrQuad.SetMaterial(ssrMaterial);   
+
+ 
+    auto ssrFBO = FrameBuffer::Create(
+        SCR_WIDTH, SCR_WIDTH, FrameBufferType::Screen);
+
+    auto ssrScreenTexture = Texture2D::CreateEmpty(
+        TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F,
+                     false, WrapMode::ClampToBorder, FilterMode::Linear });
+
+    ssrFBO->Bind();
+    ssrFBO->SetColorAttachmentTexture(ssrScreenTexture, 0);
+    ssrFBO->CheckCompleteness();
+    ssrFBO->Unbind();
 
 
 
@@ -336,9 +457,7 @@ int main() {
     /* Loop until the user closes the window */
 
      
-    float lastFrameTime = 0.0f;
-
-
+    float lastFrameTime = 0.0f; 
     HZ_CORE_WARN("App: Entering the loop");
     while (!Renderer::ShouldClose())
     {
@@ -375,12 +494,11 @@ int main() {
 
 
         //======= lighting pass: render the quad;
-        //lightingPassFBO->Bind();
+        lightingPassFBO->Bind();
 
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
        // glDepthMask(GL_FALSE);
         glDisable(GL_DEPTH_TEST);
@@ -390,26 +508,91 @@ int main() {
 
         lightingPassShader->Bind();
         lightingPassShader->SetVec3("u_CameraPos", main_camera->GetPosition());
+       // HZ_CORE_INFO("camera pos{0}", main_camera->GetPosition());
 
         lightingPassQuad.Draw();
 
 
-        //lightingPassFBO->Unbind();
-       // glDepthMask(GL_TRUE);
+        lightingPassFBO->Unbind();
+
+
+       // glDepthMask(GL_TRUE); 
         glEnable(GL_DEPTH_TEST);
 
 
 
 
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, GBufferFBO->GetFrameBufferID());
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+
+
+
 
         //=======skybox as part of the scene; 
-        skybox.DrawSkybox();
 
+        //glBindFramebuffer(GL_READ_FRAMEBUFFER, GBufferFBO->GetFrameBufferID());
+        //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        //glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+        //skybox.DrawSkybox();
+
+
+
+
+
+
+        //=======postprocessing
+
+        //=====SSAO
+        //ssaoFBO->Bind();
+        //glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+        //glDisable(GL_DEPTH_TEST); 
+        //glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+        //
+        //ssaoShader->Bind();
+        //ssaoShader->SetMat4("u_ProjectionView", main_camera->GetProjectionViewMatrix()); 
+        //ssaoShader->SetMat4("u_View", main_camera->GetViewMatrix());
+        //ssaoShader->SetMat4("u_Projection", main_camera->GetProjectionMatrix());
+        //
+        //ssaoQuad.Draw(); 
+        //
+        //ssaoFBO->Unbind();
 
          
+
+        //=====SSR
+        ssrFBO->Bind();
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+        glDisable(GL_DEPTH_TEST); 
+        glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+        
+        ssrShader->Bind();
+        ssrShader->SetMat4("u_ProjectionView", main_camera->GetProjectionViewMatrix()); 
+        ssrShader->SetMat4("u_View", main_camera->GetViewMatrix());
+        ssrShader->SetMat4("u_Projection", main_camera->GetProjectionMatrix());
+        ssrShader->SetVec3("u_CameraPos", main_camera->GetPosition()); 
+        //HZ_CORE_INFO("cameraPos: {0}", main_camera->GetPosition());
+        ssrQuad.Draw();  
+        ssrFBO->Unbind();
+
+
+
+        //===========debug: visualize any texture;
+        //===screen pass  
+         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+         glDisable(GL_DEPTH_TEST);
+         
+         glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+         screenQuadShader->Bind();
+         //screenQuadShader->SetBool("u_IsGrayScale", true);
+         glBindTextureUnit(0, ssrScreenTexture->GetTextureID());  //replace the texture2D here;
+         
+         screenQuad.Draw();
+
+
+
+
 
 
         //=======optional : visualize the buffers£»
@@ -448,12 +631,12 @@ int main() {
                 glBindTextureUnit(0, g_texture.second->GetTextureID());
                 if (g_texture.first == TextureType::gMetallic || g_texture.first == TextureType::gRoughness || g_texture.first == TextureType::gSpecular)
                 {
-                    screenQuadShader->SetInt("u_IsGrayScale", 1);
+                    screenQuadShader->SetBool("u_IsGrayScale", true);
                     // HZ_CORE_WARN("gray scale");
                 }
                 else
                 {
-                    screenQuadShader->SetInt("u_IsGrayScale", 0);
+                    screenQuadShader->SetBool("u_IsGrayScale", false);
                 }
                 screenQuad.Draw();
                 index++;
@@ -464,18 +647,6 @@ int main() {
      
 
          
-
-
-        //===screen pass for debugging;
-       //glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-       //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-       //glDisable(GL_DEPTH_TEST);
-       //
-       //glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-       //screenQuadShader->Bind();
-       //glBindTextureUnit(0, testHDRI->GetTextureID());  //replace the texture2D here;
-       //
-       //screenQuad.Draw();
 
 
 
