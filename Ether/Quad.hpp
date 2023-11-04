@@ -79,7 +79,7 @@ namespace Hazel {
 
 
 
-
+    //we donot assume screen quad here; without turn the depth test off/on;
     void Quad::Draw()
     {
         glBindVertexArray(QuadVAO);

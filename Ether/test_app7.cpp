@@ -30,6 +30,7 @@
 
 
 bool  visualize_buffer = false;
+bool  showSkyBox = true;
 
 
 const uint32_t SCR_WIDTH = 2560;
@@ -301,15 +302,12 @@ int main() {
 
     //material 
     auto skyboxMaterial = Material::Create(skyboxShader);
-    skyboxMaterial->SetTexture(TextureType::Skybox, envMap);
-
+    skyboxMaterial->SetTexture(TextureType::Skybox, envMap); 
 
     Cube skybox;
     skybox.SetMaterial(skyboxMaterial);
      
-
      
-
 
 
     //========postprocess: SSAO pass;
@@ -473,70 +471,64 @@ int main() {
         //renderAPI->Clear();
 
 
-        //====== buffer pass: render the scene to the gbuffer
+        //====== buffer pass: render the scene to the gbuffer 
+        {
+            GBufferFBO->Bind();
 
-        GBufferFBO->Bind();
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // make sure clear the framebuffer's content 
 
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // make sure clear the framebuffer's content 
-        glEnable(GL_DEPTH_TEST);
+            glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
-        glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-   
-
-        floor.Draw(); 
-        sphere.Draw();
-        //test_model->Draw(); 
+            glEnable(GL_DEPTH_TEST);
 
 
-        GBufferFBO->Unbind();
+            floor.Draw();
+            sphere.Draw();
+            //test_model->Draw(); 
+
+
+            GBufferFBO->Unbind();
+        }
+        
 
 
 
         //======= lighting pass: render the quad;
-        lightingPassFBO->Bind();
+        {
+
+            lightingPassFBO->Bind();
 
 
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-       // glDepthMask(GL_FALSE);
-        glDisable(GL_DEPTH_TEST);
+            glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
-        glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-        //HZ_CORE_INFO("screenQuadPass");
-
-        lightingPassShader->Bind();
-        lightingPassShader->SetVec3("u_CameraPos", main_camera->GetPosition());
-       // HZ_CORE_INFO("camera pos{0}", main_camera->GetPosition());
-
-        lightingPassQuad.Draw();
+            // glDepthMask(GL_FALSE);
+            glDisable(GL_DEPTH_TEST);
 
 
-        lightingPassFBO->Unbind();
+            lightingPassShader->Bind();
+            lightingPassShader->SetVec3("u_CameraPos", main_camera->GetPosition());
+            // HZ_CORE_INFO("camera pos{0}", main_camera->GetPosition());
+
+            lightingPassQuad.Draw();
 
 
-       // glDepthMask(GL_TRUE); 
-        glEnable(GL_DEPTH_TEST);
+            // glDepthMask(GL_TRUE); 
+            glEnable(GL_DEPTH_TEST);
+             
+
+            lightingPassFBO->Unbind();
 
 
+        }
+        
 
-
-
-
-
-
-
-        //=======skybox as part of the scene; 
-
-        //glBindFramebuffer(GL_READ_FRAMEBUFFER, GBufferFBO->GetFrameBufferID());
-        //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        //glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-        //skybox.DrawSkybox();
-
-
-
-
+         
+      
+         
 
 
         //=======postprocessing
@@ -560,40 +552,57 @@ int main() {
          
 
         //=====SSR
-        ssrFBO->Bind();
+        //ssrFBO->Bind();
+        //glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+        //glDisable(GL_DEPTH_TEST); 
+        //glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+        //
+        //ssrShader->Bind();
+        //ssrShader->SetMat4("u_ProjectionView", main_camera->GetProjectionViewMatrix()); 
+        //ssrShader->SetMat4("u_View", main_camera->GetViewMatrix());
+        //ssrShader->SetMat4("u_Projection", main_camera->GetProjectionMatrix());
+        //ssrShader->SetVec3("u_CameraPos", main_camera->GetPosition()); 
+        ////HZ_CORE_INFO("cameraPos: {0}", main_camera->GetPosition());
+        //ssrQuad.Draw();  
+        //ssrFBO->Unbind();
+
+
+
+        //==========on default framebuffer;
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        //===========debug: visualize any texture; 
+
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
-        glDisable(GL_DEPTH_TEST); 
-        glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glDisable(GL_DEPTH_TEST);
         
-        ssrShader->Bind();
-        ssrShader->SetMat4("u_ProjectionView", main_camera->GetProjectionViewMatrix()); 
-        ssrShader->SetMat4("u_View", main_camera->GetViewMatrix());
-        ssrShader->SetMat4("u_Projection", main_camera->GetProjectionMatrix());
-        ssrShader->SetVec3("u_CameraPos", main_camera->GetPosition()); 
-        //HZ_CORE_INFO("cameraPos: {0}", main_camera->GetPosition());
-        ssrQuad.Draw();  
-        ssrFBO->Unbind();
+        glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+        screenQuadShader->Bind();
+        //screenQuadShader->SetBool("u_IsGrayScale", true);
+        glBindTextureUnit(0, lightingPassScreenTexture->GetTextureID());  //replace the texture2D here;
+        
+        screenQuad.Draw();
 
+        glEnable(GL_DEPTH_TEST);
 
-
-        //===========debug: visualize any texture;
-        //===screen pass  
-         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-         glDisable(GL_DEPTH_TEST);
          
-         glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-         screenQuadShader->Bind();
-         //screenQuadShader->SetBool("u_IsGrayScale", true);
-         glBindTextureUnit(0, ssrScreenTexture->GetTextureID());  //replace the texture2D here;
+        //=======skybox overlay; on final default framebuffer; 
+        //compare the depth with gbuffer;  make sure enable the depth test;
+
+        if (showSkyBox)
+        {
+            glEnable(GL_DEPTH_TEST);
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, GBufferFBO->GetFrameBufferID());
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+            glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+            skybox.DrawSkybox();
+        }
+
+
          
-         screenQuad.Draw();
-
-
-
-
-
 
         //=======optional : visualize the buffers£»
 
@@ -642,6 +651,8 @@ int main() {
                 index++;
 
             }
+
+            glDisable(GL_DEPTH_TEST);
         }
 
      
