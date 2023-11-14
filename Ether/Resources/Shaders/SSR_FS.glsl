@@ -30,16 +30,16 @@ uniform vec3 u_CameraPos;
 
 void main()
 { 
-    vec3 worldFragPos = texture(gPosition, TexCoords).rgb;
+    vec3 WorldPos = texture(gPosition, TexCoords).rgb;
     //vec3 screenColor = texture(u_LightingPassTexture, TexCoords).rgb;
     vec3 normal = texture(gWorldNormal, TexCoords).rgb * 2.0 - 1.0;
     float screenDepth = texture(gScreenDepth, TexCoords).r;
      
      
-    vec3 viewDir = normalize(u_CameraPos - worldFragPos); 
+    vec3 viewDir = normalize(u_CameraPos - WorldPos); 
     vec3 indirColor = vec3(0.0);
     vec2 sampleUV = vec2(0.0); 
-     vec3 currentPos = worldFragPos;
+     vec3 currentPos = WorldPos;
 
     vec3 reflectedRay = vec3(0.0); // Compute the reflected ray
     //vec3 reflectedRay = 2.0 * dot(viewDir, normal) * normal - viewDir; // Compute the reflected ray

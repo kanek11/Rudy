@@ -4,12 +4,25 @@
 
 #include "Hazel/Events/Input.h"
 
-//convention for now:
-//use Unity convention for camera
-//right handed,  y up, looking at -z of world: important,  this is the default for glm::lookAt
-//be careful with convention when using third-party,
+//be careful with convention when using a kinda black-box system;
+//
+//matrix is stored in row-major , 
+// so the math is transpose as in book,  A*x is actually x' *A' ;  
+// 
+// 
+//convention for camera
+//right handed,  y up, looking at local -z  : 
+//this means the depth in viewspace is negative,  
+//the perspective matrix will flip the z value to positive,  
+// 
+//opengl expect xyzw,   w = depth to be positive;  so here w = -z ;
 
- //recommend using Euler angle to avoid mess with axes.
+
+//the convention can be messy,  so use the library if possible;
+//for example, use glm::lookAt, not a custom matrix; 
+
+//n, f as positive,  without concern with viewspace;  
+
 
 
 //navigation:  use the same convention similar to Unreal5
@@ -47,8 +60,9 @@ namespace Hazel {
 	public:
 
 		~Camera() = default; 
-		Camera( glm::vec3 position = glm::vec3(0.0f, 0.0f, 5.0f) )  
-			:m_Position(position)  
+		Camera( glm::vec3 position = glm::vec3(0.0f, 0.0f, 5.0f) ,
+			 glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f))
+			:m_Position(position) , m_Up(up)
 		{
 			//initialize matrices;
 			m_ViewMatrix = glm::lookAt(m_Position, m_FocalPoint, m_Up);
@@ -207,15 +221,15 @@ namespace Hazel {
 
 		//view parameters
         glm::vec3 m_Front = { 0.0f, 0.0f, -1.0f };  //-z
-        glm::vec3 m_Up = { 0.0f, 1.0f, 0.0f };   //y
-        glm::vec3 m_Right = { -1.0f, 0.0f, 0.0f };  //-x 
+        glm::vec3 m_Up = { 0.0f, 1.0f, 0.0f };   //+y
+        glm::vec3 m_Right = { 1.0f, 0.0f, 0.0f };  //+x 
 
 	    glm::vec3 m_FocalPoint = { 0.0f, 0.0f, 0.0f };  //look at origin. 
 
 		float m_Pitch = 0.0f, m_Yaw = 0.0f;
 		
 		//perspective parameters
-		float m_FOV = 45.0f, m_AspectRatio = 16.0f / 9.0f, m_Near = 0.1f, m_Far = 100.0f;
+		float m_FOV = 45.0f, m_AspectRatio = 16.0f / 9.0f, m_Near = 0.1f, m_Far = 1000.0f;
 
 
 		glm::mat4 m_ViewMatrix = glm::mat4(1.0f);

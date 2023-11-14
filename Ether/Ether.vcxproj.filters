@@ -129,6 +129,15 @@
     <ClInclude Include="Hazel\Renderer\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Hazel\Renderer\Skeleton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hazel\Renderer\Transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hazel\Renderer\Animation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Hazel\Core\Log.cpp">
@@ -206,7 +215,13 @@
     <ClCompile Include="Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test_app7.cpp">
+    <ClCompile Include="Hazel\Renderer\Transform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hazel\Renderer\Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test_pipeline2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -244,5 +259,8 @@
     <None Include="Resources\Shaders\SSAO_FS.glsl" />
     <None Include="Resources\Shaders\SSR_FS.glsl" />
     <None Include="Resources\Shaders\SSR_VS.glsl" />
+    <None Include="Resources\Shaders\GBufferSkinned_VS.glsl" />
+    <None Include="Resources\Shaders\TextureOnly_FS.glsl" />
+    <None Include="Resources\Shaders\TextureOnly_VS.glsl" />
   </ItemGroup>
 </Project>

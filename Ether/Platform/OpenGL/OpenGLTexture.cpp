@@ -345,7 +345,7 @@ namespace Hazel {
 		glGenTextures(1, &m_TextureID);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID);
 
-		for (unsigned int i = 0; i < 6; ++i)
+		for (uint32_t i = 0; i < 6; ++i)
 		{
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_InternalFormat, m_Width, m_Height, 0, m_DataFormat, GL_FLOAT, NULL);
 		}
@@ -389,7 +389,7 @@ namespace Hazel {
 		int width, height, channels;
 
 		//load for 6 times.
-		for (unsigned int i = 0; i < paths.size(); i++)
+		for (uint32_t i = 0; i < paths.size(); i++)
 		{
 
 			stbi_uc* data = nullptr;
@@ -457,7 +457,7 @@ namespace Hazel {
 		
 		HZ_CORE_WARN("textureCube: CubeMapID:{0} is created ", m_TextureID);
 
-		for (unsigned int i = 0; i < 6; ++i)
+		for (uint32_t i = 0; i < 6; ++i)
 		{
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
 		}
@@ -482,12 +482,12 @@ namespace Hazel {
 		cube.SetMaterial(rectToCubeMaterial); 
 
 
-		unsigned int captureFBO;
+		uint32_t captureFBO;
 		glGenFramebuffers(1, &captureFBO);
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 
 
-		unsigned int captureRBO;
+		uint32_t captureRBO;
 		glGenRenderbuffers(1, &captureRBO);
 		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
@@ -498,7 +498,7 @@ namespace Hazel {
 		glViewport(0, 0, 512, 512); 
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 
-		for (unsigned int i = 0; i < 6; ++i)
+		for (uint32_t i = 0; i < 6; ++i)
 		{
 			rectToCubeShader->Bind();
 			rectToCubeShader->SetMat4("u_ProjectionView", captureProjection * captureViews[i]);
@@ -564,12 +564,12 @@ namespace Hazel {
 
 
 			//framebuffer
-			unsigned int captureFBO;
+			uint32_t captureFBO;
 			glGenFramebuffers(1, &captureFBO);
 			glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 
 
-			unsigned int captureRBO;
+			uint32_t captureRBO;
 			glGenRenderbuffers(1, &captureRBO);
 			glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 128, 128);
@@ -584,12 +584,12 @@ namespace Hazel {
 
 			glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 
-			//unsigned int maxMipLevels = 5;
-			for (unsigned int mip = 0; mip < mipLevels; ++mip)
+			//uint32_t maxMipLevels = 5;
+			for (uint32_t mip = 0; mip < mipLevels; ++mip)
 			{
 				// reisze framebuffer according to mip-level size.
-				unsigned int mipWidth = static_cast<unsigned int>(128 * std::pow(0.5, mip));
-				unsigned int mipHeight = static_cast<unsigned int>(128 * std::pow(0.5, mip));
+				uint32_t mipWidth = static_cast<uint32_t>(128 * std::pow(0.5, mip));
+				uint32_t mipHeight = static_cast<uint32_t>(128 * std::pow(0.5, mip));
 				glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
 				glViewport(0, 0, mipWidth, mipHeight);
@@ -597,7 +597,7 @@ namespace Hazel {
 				float roughness = (float)mip / ((float)mipLevels - 1);
 				prefilterShader->SetFloat("u_Roughness", roughness);
 
-				for (unsigned int i = 0; i < 6; ++i)
+				for (uint32_t i = 0; i < 6; ++i)
 				{
 					prefilterShader->Bind();
 					prefilterShader->SetMat4("u_ProjectionView", captureProjection * captureViews[i]);
@@ -638,12 +638,12 @@ namespace Hazel {
 			cube.SetMaterial(cubeMaterial);
 
 			//framebuffer
-			unsigned int captureFBO;
+			uint32_t captureFBO;
 			glGenFramebuffers(1, &captureFBO);
 			glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 
 
-			unsigned int captureRBO;
+			uint32_t captureRBO;
 			glGenRenderbuffers(1, &captureRBO);
 			glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
@@ -659,7 +659,7 @@ namespace Hazel {
 			glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 
 			glViewport(0, 0, 32, 32); 
-			for (unsigned int i = 0; i < 6; ++i)
+			for (uint32_t i = 0; i < 6; ++i)
 			{
 				prefilterShader->Bind();
 				prefilterShader->SetMat4("u_ProjectionView", captureProjection * captureViews[i]);

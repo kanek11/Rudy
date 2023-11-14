@@ -64,8 +64,8 @@ namespace Hazel {
 
 		for (auto obj : scene->Objects) 
 		{
-
-			obj->Draw();
+			//todo:  only for renderable objects
+			//obj->Draw();
 
 		}
 

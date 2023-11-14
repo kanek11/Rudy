@@ -3,7 +3,7 @@
 out vec4 FragColor;
 
 //in VS_OUT{
-//     vec3 WorldFragPos;
+//     vec3 WorldPos;
 //     vec2 TexCoords;
 //     mat3 TBN;
 //     vec3 Normal; //in-case  donot use bump mapping
@@ -51,6 +51,10 @@ vec3 CameraPos = vec3(0.0, 0.0, 5.0);
 //specular = ks * I  * cos(alpha)^shininess
 
 
+//
+//    //return 0 if no depth value could be sampled
+//    // if (closestDepth == 0.0)  return 0;
+
 //return 1 if in shadow, 0 otherwise;
 //float ShadowCalculation(vec4 lightSpaceFragPos)
 //{ 
@@ -60,9 +64,7 @@ vec3 CameraPos = vec3(0.0, 0.0, 5.0);
 //      projCoords = projCoords * 0.5 + 0.5;
 //    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
 //    float closestDepth = texture(u_DepthMap, projCoords.xy).r;
-//
-//    //return 0 if no depth value could be sampled
-//    // if (closestDepth == 0.0)  return 0;
+
 //
 //    // get depth of current fragment from light's perspective
 //    float currentDepth = projCoords.z;
@@ -107,7 +109,7 @@ void main()
    //vec3  normal = normalize(fs_in.Normal);
 
 
-    vec3 WorldFragPos = texture(gPosition, TexCoords).rgb;
+    vec3 WorldPos = texture(gPosition, TexCoords).rgb;
 
 
     vec3  normal = normalize(texture(gWorldNormal, TexCoords).rgb *2.0 - 1.0); 
@@ -123,13 +125,13 @@ void main()
 
      
     //3basic directions: l,v,h
-    //vec3 lightDir = normalize(LightPos - fs_in.WorldFragPos);
+    //vec3 lightDir = normalize(LightPos - fs_in.WorldPos);
     vec3 lightDir =  - normalize(LightDir);   //minus, from shading point
-    vec3 viewDir = normalize(CameraPos - WorldFragPos);
+    vec3 viewDir = normalize(CameraPos - WorldPos);
     vec3 halfwayDir = normalize(lightDir + viewDir); 
 
     //light attenuation,simply use 1/r^2 , i found it's too much, so i use 1/r
-    //float distance = length(LightPos - fs_in.WorldFragPos);
+    //float distance = length(LightPos - fs_in.WorldPos);
     //LightColor  = LightColor / (distance);
      
     // Ambient ka

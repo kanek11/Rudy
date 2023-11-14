@@ -20,7 +20,7 @@ namespace Hazel
 
 	 
 	//Material::Material(MaterialType type)
-	//	: m_MaterialType(type)
+	//	: materialType(type)
 	//{
 	//	HZ_CORE_WARN("Material:  Material is Created without Shader");
 	//	//SetupMaterial();
@@ -36,7 +36,7 @@ namespace Hazel
 
 	void Material::SetMaterialProperties(Ref<Shader> shader)
 	{
-		// m_MaterialType = MaterialType::Custom;
+		// materialType = MaterialType::Custom;
 		//m_Shader = shader;
 		//HZ_CORE_INFO("Material: Material setup is called, use shader id: {0}", m_Shader->GetShaderID());
   

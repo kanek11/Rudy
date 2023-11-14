@@ -8,13 +8,15 @@ layout(location = 5) out float gMetallic;
 layout(location = 6) out float gRoughness; 
  
 
-in vec3 WorldFragPos;
+in vec3 WorldPos;
 in vec2 TexCoords;
 in vec3 WorldNormal;   //in-case  donot use bump mapping 
 in vec3 WorldTangent;
 
-in mat3 WorldTBN;
+in mat3 WorldTBN; 
 
+
+in float test_flag;
  
 
 uniform sampler2D u_AlbedoMap;
@@ -27,10 +29,12 @@ uniform sampler2D u_RoughnessMap;
 void main()
 {
    
-    gPosition = WorldFragPos;
+    gPosition = WorldPos;
 
+    //if(test_flag!=0)
     gAlbedo = texture(u_AlbedoMap, TexCoords).rgb;
-    //gAlbedo = vec3(1.0, 0.0, 0.0);   
+    //else
+    //gAlbedo = vec3(0.0, 1.0, 0.0);   
 
     gSpecular = texture(u_SpecularMap, TexCoords).r;
     gMetallic = texture(u_MetallicMap, TexCoords).r; 

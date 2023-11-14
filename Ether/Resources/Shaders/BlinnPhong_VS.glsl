@@ -1,6 +1,6 @@
 #version 330 core
 layout(location = 0) in vec3 aPos;
-layout(location = 1) in vec2 aTexCoords;
+layout(location = 3) in vec2 aTexCoords;
 
 out vec2 TexCoords;
 
@@ -21,7 +21,7 @@ void main()
 //
 //
 //out VS_OUT{
-//     vec3 WorldFragPos; 
+//     vec3 WorldPos; 
 //     vec2 TexCoords;
 //     mat3 TBN;
 //     vec3 Normal; //in-case  donot use bump mapping
@@ -37,7 +37,7 @@ void main()
 //
 //void main()
 //{
-//    vs_out.WorldFragPos = vec3(u_Model * vec4(aPos, 1.0));
+//    vs_out.WorldPos = vec3(u_Model * vec4(aPos, 1.0));
 //    vs_out.TexCoords = aTexCoords;
 //
 //    vs_out.Normal = mat3(transpose(inverse(u_Model))) * aNormal;
@@ -48,7 +48,7 @@ void main()
 //
 //    vs_out.TBN = mat3(T, B, N); 
 //
-//    vs_out.LightSpaceFragPos= u_LightViewMat * vec4(vs_out.WorldFragPos, 1.0);
+//    vs_out.LightSpaceFragPos= u_LightViewMat * vec4(vs_out.WorldPos, 1.0);
 //
-//    gl_Position = u_Projection * u_View * vec4(vs_out.WorldFragPos, 1.0);
+//    gl_Position = u_Projection * u_View * vec4(vs_out.WorldPos, 1.0);
 //}

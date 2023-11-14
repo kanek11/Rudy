@@ -45,10 +45,10 @@
 
 //to specify which colorbuffer(s) to draw to;
 // we can specify multiple render targets MRT:
-// glDrawBuffer(int size , unsigned int[] buffer_array);  
+// glDrawBuffer(int size , uint32_t[] buffer_array);  
 //
 // eg:
-// unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };//
+// uint32_t attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };//
 // glDrawBuffers(3, attachments);
 // 
 // 

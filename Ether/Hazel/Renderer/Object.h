@@ -7,88 +7,129 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-
-
+ 
 
 #include <Hazel/Renderer/Mesh.h>
 #include <Hazel/Renderer/Material.h> 
 
- 
+#include <Hazel/Renderer/Animation.h>
+
+#include <Hazel/Renderer/Transform.h>
+
 
 namespace Hazel {
 
-    struct Transform
-    {
-        glm::vec3 Position = glm::vec3(0.0f, 0.0f, 0.0f);
-        glm::vec3 Rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-        glm::vec3 Scale = glm::vec3(1.0f, 1.0f, 1.0f);
-
-    };
 
 
-    //object is the base class for all objects in the scene,
-    //design carefully:   cannot be easily changed.
+    //object is the base class for all objects in the scene,  
+    //we will have ECS and reflection system later,  but for now,  we just use this simple inheritance;
+
     class Object
     {
     public :
         ~Object() = default;
-        Object() = default;
+        Object() = default; 
+      
+        //assume renderable obj;  offer drawing function;
+        //as a container, object is not abstract; we donot impose virtual draw here;
 
-        Transform Transform;
 
-        //assume renderable;  offer drawing function;
-        virtual void Draw() = 0;
-
-    //private:
      public:
-        std::string Name; 
-   
-
+        Ref<Transform> transform  = CreateRef<Transform>();
+        std::string name;  
 
     };
- 
+
+    
+    //Å¢§Œ design ; todo: ECS;
+    class RenderableObject : public Object
+    {
+        virtual void Draw() = 0;
+    };
  
 
-     class MeshObject : public Object
+    //<MeshRederer> equivalent;
+    //takes a mesh and material; 
+     class MeshObject : public RenderableObject
      {
-     public:
+    //========user:
 
+     public:
+         static Ref<MeshObject> Create(); 
+
+
+     public:
+     
+         Ref<Mesh> mesh;
+         Ref<Material> material; 
+
+         void SetMesh(Ref<Mesh> m) { mesh = m; }
+         Ref<Mesh> GetMesh() { return mesh; }
+
+         void SetMaterial(Ref<Material> mat ) { material = mat ; }
+         Ref<Material> GetMaterial() { return material; }
+
+         bool hasMaterial() { return material != nullptr; }
+         bool hasMesh() { return mesh != nullptr; }
+
+
+      //=======system; 
          ~MeshObject() = default;
          MeshObject() = default;
-         MeshObject(Ref<Mesh> mesh, Ref<Material> material);
-     
-     
-         static Ref<MeshObject> Create(Ref<Mesh> mesh, Ref<Material> material);
-         //static Ref<MeshObject> CreateFromFile(std::string const& path);
-          
-     
-         Ref<Mesh> m_Mesh;
-         Ref<Material> m_Material; 
 
-         void Draw() override;
 
-         void SetMaterial(Ref<Material> material) { m_Material = material; } 
-         Ref<Material> GetMaterial() { return m_Material; }
-     
+         void Draw() override; 
      };
 
 
 
-     class Hierarchy : public Object
+
+
+
+  
+
+     //a model contains... whatever the model contains;  
+     //expect multiple mesh objects;
+     class Model  : public RenderableObject
      {
+     //========user:
      public:
 
-         ~Hierarchy() = default;
-         Hierarchy() = default;
+         static float ScaleFactor;  //todo:  make it a parameter;
+     
+         static Ref<Model> LoadModel(std::string const& path);
 
-         Hierarchy(std::string const& path);
-     
-     
-         static Ref<Hierarchy> LoadModel(std::string const& path);
-     
-         std::vector< Ref<MeshObject> >  m_MeshObjects;
-         std::string m_Directory;
+ 
+        public:
+         std::vector< Ref<MeshObject> >  meshObjects;
+         std::string directory;
 
+
+         //animation and bound bones are could-be-separate;
+         //might need retarget;
+         Ref<AnimationClip> animationClip;
+
+         //retrieved in the hierarchy of the animation file;
+         Ref<Object> rootNode = CreateRef<Object>();
+         Ref<Object> findNode(std::string const& name);
+         Ref<Object> findNodeRecursive(Ref<Transform> node, std::string const& name);
+
+         
+         //retreive the bound bones in the mesh; 
+         //ordered map,  key = name to facilate searching by name; in animation keyframe;
+         //aiBone->mName;  //aiBone->mOffsetMatrix 
+         std::map<std::string, Bone> bindPoseBoneMap;
+
+
+
+     //========system 
+
+	 public: 
+
+         ~Model() = default;
+         Model() = default;
+
+         Model(std::string const& path);
 
 
          void Draw() override;
@@ -98,12 +139,20 @@ namespace Hazel {
          //opt to avoid duplicate textures,  loading is extremely slow
 
 
-         void processNode(aiNode* node, const aiScene* scene);
+         void  processNode(const aiScene* scene, aiNode* ai_node, Ref<Object> scene_node);
+
          Ref<Mesh> processMesh(aiMesh* mesh, const aiScene* scene);
          Ref<Material> processMaterial(aiMesh* mesh, const aiScene* scene);
+          
+         void processBones(const aiScene* scene, aiMesh* mesh, std::vector<Vertex>& vertices);
+         void processAnimation(const aiScene* scene);
+
+
      };
      
  
+
+       
 
 
      

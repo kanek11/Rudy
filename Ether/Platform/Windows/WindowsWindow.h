@@ -26,8 +26,8 @@ namespace Hazel {
 		//===me: inherited from Window
 		void OnUpdate() override;
 
-		unsigned int GetWidth() const override { return m_Data.Width; }
-		unsigned int GetHeight() const override { return m_Data.Height; }
+		uint32_t GetWidth() const override { return m_Data.Width; }
+		uint32_t GetHeight() const override { return m_Data.Height; }
 
 		// Window attributes
 		void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
@@ -51,7 +51,7 @@ namespace Hazel {
 		struct WindowData
 		{
 			std::string Title = "Default";
-			unsigned int Width, Height;
+			uint32_t Width, Height;
 			bool VSync;
 
 			//me: for robustness, when no callback is set, we set it to a dummy function that does nothing.

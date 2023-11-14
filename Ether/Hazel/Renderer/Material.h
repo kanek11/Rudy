@@ -210,8 +210,8 @@ namespace Hazel {
 	    Ref<Shader> GetShader() const { return m_Shader; }
 		void SetShader(Ref<Shader> shader) { m_Shader = shader; } 
 
-		//MaterialType GetMaterialType() const { return m_MaterialType; }
-		//void SetMaterialType(MaterialType type) { m_MaterialType = type; }
+		//MaterialType GetMaterialType() const { return materialType; }
+		//void SetMaterialType(MaterialType type) { materialType = type; }
 		 
 		void SetTexture(TextureType type, Ref<Texture> texture)  { m_Textures[type] = texture;}
 		std::unordered_map<TextureType, Ref<Texture>> GetTextures() const { return m_Textures; }
@@ -221,6 +221,7 @@ namespace Hazel {
 		//material and shader works so closely here;
 		static void SetMaterialProperties(Ref<Shader> shader);
 
+		//default shader
 		static Ref<Material> Create(Ref<Shader> shader =
 			Shader::Create("Basic Shader", "Resources/Shaders/Basic_VS.glsl", "Resources/Shaders/Basic_FS.glsl"));
 
@@ -237,7 +238,7 @@ namespace Hazel {
 		std::unordered_map<TextureType, Ref<Texture>> m_Textures; 
 
 
-		//MaterialType m_MaterialType;
+		//MaterialType materialType;
 
 
 	};

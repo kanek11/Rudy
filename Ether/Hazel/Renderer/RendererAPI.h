@@ -2,6 +2,7 @@
 
 //#include "Hazel/Renderer/VertexArray.h"
 
+#include "Hazel/Renderer/Mesh.h"
 #include <glm/glm.hpp> 
 
 //me:
@@ -38,12 +39,11 @@ namespace Hazel {
 		 virtual void SetClearColor(const glm::vec4& color) = 0;
 		 virtual void SetClearColor(float r, float g, float b, float a) = 0;
 		 virtual void Clear() = 0;  
-		 virtual void DrawElements(uint32_t indexCount) = 0;
-		 virtual void DrawArrays(uint32_t vertexCount) = 0;
+
+		 virtual void DrawElement(uint32_t indexCount , MeshTopology topo ) = 0;
+		 virtual void DrawArray(uint32_t vertexCount, MeshTopology topo) = 0;
 		
-		//virtual void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) = 0;
-		
-		//virtual void SetLineWidth(float width) = 0;
+		 //virtual void SetLineWidth(float width) = 0;
 
 		static API GetAPI() { return s_API; }
 		static void SetAPI(API api) { s_API = api; }

@@ -2,8 +2,7 @@
 #include "EtherPCH.h"
 #include <glad/glad.h>
 
-
-#include "Hazel/Renderer/Mesh.h"
+ 
 #include "Hazel/Renderer/Object.h"
 #include "Hazel/Renderer/Renderer.h"
  
@@ -17,13 +16,17 @@ namespace Hazel {
 	class Sphere: public MeshObject {
 
 	public:
-        Sphere(unsigned int subdivision)  
+        ~Sphere() = default;
+        Sphere(uint32_t subdivision)
             :m_subdivision(subdivision)
-        { CreateGeometry(subdivision);}
+        {
+            CreateGeometry(subdivision);
+            //mesh->SetupVertices();
+            mesh->LoadToGPU();
+        }
 
-		~Sphere() = default;
 
-		void CreateGeometry(unsigned int subdivision);
+		void CreateGeometry(uint32_t subdivision);
 
         void Draw() override;
           
@@ -38,35 +41,39 @@ namespace Hazel {
 
     void Sphere::Draw ()
     {
-        //glBindVertexArray(m_Mesh->GetVertexArray());
+        //glBindVertexArray(mesh->GetVertexArray());
         //glBindVertexArray(0); 
 
-        m_Mesh->Bind(); 
-        m_Material->Bind();
+        if(hasMesh())
+        mesh->Bind(); 
+        else
+            HZ_CORE_INFO("no mesh attached to sphere");
+
+      if(hasMaterial())
+        material->Bind();
+       else
+	    HZ_CORE_INFO("no material attached to sphere");
 
         // set uniforms for transforms
         // identity matrix for now;
 
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::scale(model, Transform.Scale);
-        model = glm::translate(model, Transform.Position); 
+        glm::mat4 model = this->transform->GetWorldTransform();
 
         glm::mat4 projection_view = Renderer::GetMainCamera()->GetProjectionViewMatrix(); 
 
+        material->GetShader()->SetMat4("u_Model", model);  
+        material->GetShader()->SetMat4("u_ProjectionView", projection_view);
 
-        m_Material->GetShader()->SetMat4("u_Model", model);  
-        m_Material->GetShader()->SetMat4("u_ProjectionView", projection_view);
-
-        glDrawElements(GL_TRIANGLE_STRIP,  m_Mesh->GetIndexCount(),  GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLE_STRIP,  mesh->GetIndexCount(),  GL_UNSIGNED_INT, 0);
 
         
-        m_Mesh->Unbind();
-        m_Material->Unbind();
+        mesh->Unbind();
+        material->Unbind();
     }
     
 
 
-	//static Scope<Mesh> Create(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
+	//static Scope<Mesh> Create(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
 
     //based on spherical coordinate
     //opengl y is up,  elevation or theta,  vary from 0 to pi
@@ -74,21 +81,21 @@ namespace Hazel {
 
     //subdivision say 4 , means 4 facets; 
     //say theta varys   [0,..4]* pi/4
-	void Sphere::CreateGeometry(unsigned int subdivision)
+	void Sphere::CreateGeometry(uint32_t subdivision)
 	{
 
          std::vector<Vertex> Vertices;
-         std::vector<unsigned int> Indices; 
+         std::vector<uint32_t> Indices; 
 
 
-        const unsigned int X_SEGMENTS = subdivision;
-        const unsigned int Y_SEGMENTS = subdivision;
+        const uint32_t X_SEGMENTS = subdivision;
+        const uint32_t Y_SEGMENTS = subdivision;
         const float PI = 3.14159265359f;
 
         //x =azimuth ;y=¦È elevation
-        for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
+        for (uint32_t x = 0; x <= X_SEGMENTS; ++x)
         {
-            for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
+            for (uint32_t y = 0; y <= Y_SEGMENTS; ++y)
             { 
 
                 //normalized
@@ -107,7 +114,7 @@ namespace Hazel {
 
                 vertex.Position = glm::vec3(xPos, yPos, zPos);
                 vertex.Normal = glm::vec3(xPos, yPos, zPos);
-                vertex.TexCoords = glm::vec2(xSegment, ySegment);
+                vertex.UV = glm::vec2(xSegment, ySegment);
 
   
                 //tangent ,always on xz plane
@@ -145,9 +152,9 @@ namespace Hazel {
         //generate indices ; 
         // draw "strip" mode ; +2 indices for each new triangle
 
-        for (unsigned int y = 0; y < Y_SEGMENTS; ++y)
+        for (uint32_t y = 0; y < Y_SEGMENTS; ++y)
         { 
-            for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
+            for (uint32_t x = 0; x <= X_SEGMENTS; ++x)
             {
                 Indices.push_back(y * (X_SEGMENTS + 1) + x);
                 Indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
@@ -156,8 +163,11 @@ namespace Hazel {
         }
          
         //generate mesh
-         m_Mesh = Mesh::Create(Vertices, Indices);
+         auto _mesh = Mesh::Create();
+         _mesh->vertices = Vertices;
+         _mesh->indices = Indices;
 
+         mesh = _mesh;
 
  
 	}

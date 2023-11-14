@@ -52,49 +52,52 @@ namespace Hazel
                1.0f, -1.0f,  1.0f
         };
 
+        std::vector<glm::vec3>  _positions;
+        // HZ_CORE_INFO("size of vertices {0}", sizeof(CubeVertices) / sizeof(float));
+        // Assuming that the length of your array is a multiple of 3
+        for (int i = 0; i <  sizeof(CubeVertices) / sizeof(float) - 2 ; i += 3) {
+            //HZ_CORE_INFO("index {0}", i+2); 
+            _positions.push_back(glm::vec3(CubeVertices[i], CubeVertices[i + 1], CubeVertices[i + 2]));
+        }
 
 
-        glGenVertexArrays(1, &CubeVAO);
-        glGenBuffers(1, &CubeVBO);
+        auto _mesh = Mesh::Create();
+        _mesh->positions = _positions;  
+        mesh = _mesh;
 
-        glBindVertexArray(CubeVAO);
-
-        glBindBuffer(GL_ARRAY_BUFFER, CubeVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(CubeVertices), &CubeVertices, GL_STATIC_DRAW);
-
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-
-        HZ_CORE_INFO("cube: CubeVAO: {0} is created", CubeVAO);
 
     }
 
 
     void Cube::Draw() 
     { 
-        if (m_Material) 
-            m_Material->Bind();
+        if (hasMaterial() )
+            material->Bind();
         else
-            HZ_CORE_WARN("Cube::no bound material");  
+            HZ_CORE_WARN("Cube::no bound material");   
 
-        glBindVertexArray(CubeVAO);
-
+        if (hasMesh())
+            mesh->Bind();
+        else
+            HZ_CORE_WARN("Cube::no bound mesh");
 
         //glm::mat4 projection_view = Renderer::GetMainCamera()->GetProjectionViewMatrix();
-        //m_Material->GetShader()->SetMat4("u_ProjectionView", projection_view);
+        //material->GetShader()->SetMat4("u_ProjectionView", projection_view);
 
 
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        Renderer::GetRendererAPI()->DrawArray(mesh->vertices.size(), MeshTopology::TRIANGLES);
 
-
-
-        glBindVertexArray(0);
-
-        if (m_Material) 
-            m_Material->Unbind();
+          
+        if (hasMaterial())
+            material->Unbind();
         else
             HZ_CORE_WARN("Cube::no bound material");
+
+        if (hasMesh())
+            mesh->Unbind();
+        else
+            HZ_CORE_WARN("Cube::no bound mesh");
+
        
     }
 
@@ -104,37 +107,37 @@ namespace Hazel
 
     void Cube::DrawSkybox()
     {
-        if (m_Material) 
-            m_Material->Bind();
+        if (material) 
+            material->Bind();
         else
             HZ_CORE_WARN("Cube: no bound material");
       
-        glBindVertexArray(CubeVAO);
+        mesh->Bind();
  
 
         glm::mat4  view = Renderer::GetMainCamera()->GetViewMatrix();
         view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
         glm::mat4  projection = Renderer::GetMainCamera()->GetProjectionMatrix();
 
-        m_Material->GetShader()->SetMat4("u_ProjectionView", projection* view);
-
-         
-        glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+       material->GetShader()->SetMat4("u_ProjectionView", projection* view);
   
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+       
+      glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+      
+      Renderer::GetRendererAPI()->DrawArray(mesh->vertices.size(), MeshTopology::TRIANGLES);
 
-        glDepthFunc(GL_LESS); // set depth function back to default 
-
-        glBindVertexArray(0);
-
-        if (m_Material)
-            m_Material->Unbind();
-        else
-            HZ_CORE_WARN("Cube: no bound material");
-
-
- 
-    }
+      
+      glDepthFunc(GL_LESS); // set depth function back to default 
+      
+      
+      mesh->Unbind();
+  
+      if (material)
+          material->Unbind();
+      else
+          HZ_CORE_WARN("Cube: no bound material");  
+  
+  }
 
 
 

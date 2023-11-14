@@ -11,8 +11,9 @@ void main()
       
     vec4 pos = u_ProjectionView * vec4(aPos, 1.0);
     gl_Position = pos.xyww;   
-    //z is always 1;
-    //st the skybox is always behind everything else with z = 1.0;  change the depth test to GL_LEQUAL in the host: glDepthFunc(GL_LEQUAL);
+    //hack to make sure z is always 1;
+    //st the skybox is always behind everything in the scene;
+    //or change the depth test to GL_LEQUAL in the host: glDepthFunc(GL_LEQUAL);
 
 
 }

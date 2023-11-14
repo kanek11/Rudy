@@ -23,9 +23,14 @@ namespace Hazel {
 
 
     class Plane : public MeshObject {
-    public:
-        Plane(float size) { CreateGeometry(size); }
+    public: 
         ~Plane() = default;
+
+        Plane(float size) { 
+            CreateGeometry(size); 
+            mesh->SetupVertices();
+            mesh->LoadToGPU();
+        }
 
         void CreateGeometry(float size);
         //void Draw() override;  
@@ -35,13 +40,13 @@ namespace Hazel {
          
     };
       
-    //static Scope<Mesh> Create(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
+    //static Scope<Mesh> Create(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
 
     void Plane::CreateGeometry(float size)
     {
 
         std::vector<Vertex> Vertices;
-        std::vector<unsigned int> Indices = {0,1,2, 0,2,3};
+        std::vector<uint32_t> Indices = {0,1,2, 0,2,3};
 
         
         glm::vec3 pos1(-1.0, 0.0, 1.0);  //left bottom 
@@ -57,25 +62,27 @@ namespace Hazel {
 
         //defined in local tangent space ;  TBN is right handed, xyz respectivelyf
         glm::vec3 normal = glm::vec3(0.0, 1.0, 0.0);  //y axis  world up
-        glm::vec3 tangent = glm::vec3(1.0, 0.0, 0.0);  //x axis
-        glm::vec3 bitangent = glm::vec3(0.0, 0.0, 1.0); //z axis
- 
+        glm::vec3 tangent = glm::vec3(1.0, 0.0, 0.0);  //x axis 
 
         //generate vertices 
-        Vertex leftBottom{pos1 * size ,normal,uv1,tangent,bitangent};
+        Vertex leftBottom{pos1 * size ,normal,tangent,uv1};
         Vertices.push_back(leftBottom);
          
-        Vertex leftTop{ pos2 * size ,normal,uv2,tangent,bitangent };
+        Vertex leftTop{ pos2 * size ,normal,tangent,uv2};
         Vertices.push_back(leftTop);
 
-        Vertex rightTop{ pos3 * size,normal,uv3, tangent,bitangent };
+        Vertex rightTop{ pos3 * size,normal, tangent, uv3};
         Vertices.push_back(rightTop);
         
-        Vertex rightBottom{ pos4 * size,normal,uv4, tangent,bitangent };
+        Vertex rightBottom{ pos4 * size,normal, tangent, uv4};
         Vertices.push_back(rightBottom); 
 
         //generate mesh
-        m_Mesh = Mesh::Create(Vertices, Indices);  
+        auto _mesh = Mesh::Create();  
+        _mesh->vertices = Vertices;
+        _mesh->indices = Indices;
+
+        mesh = _mesh;
 
     }
     
@@ -85,11 +92,11 @@ namespace Hazel {
     
    // void Plane::Draw()
    // {
-   //     //glBindVertexArray(m_Mesh->GetVertexArray());
+   //     //glBindVertexArray(mesh->GetVertexArray());
    //     //glBindVertexArray(0); 
    //
-   //     m_Mesh->Bind(); 
-   //     m_Material->Bind();
+   //     mesh->Bind(); 
+   //     material->Bind();
    //
    //     // set uniforms for transforms
    //     // identity matrix for now;
@@ -102,19 +109,19 @@ namespace Hazel {
    //     glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix(); 
    //     glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix();
    //
-   //     m_Material->GetShader()->SetMat4("u_Model", model);
-   //     m_Material->GetShader()->SetMat4("u_View", view);
-   //     m_Material->GetShader()->SetMat4("u_Projection", projection);
+   //     material->GetShader()->SetMat4("u_Model", model);
+   //     material->GetShader()->SetMat4("u_View", view);
+   //     material->GetShader()->SetMat4("u_Projection", projection);
    //
    //     //wireframe mode  
    //
    //    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-   //     glDrawElements(GL_TRIANGLES, m_Mesh->GetIndexCount(), GL_UNSIGNED_INT, 0);
+   //     glDrawElements(GL_TRIANGLES, mesh->GetIndexCount(), GL_UNSIGNED_INT, 0);
    //
    //     // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  
    //
-   //     m_Material->Unbind();
-   //     m_Mesh->Unbind(); 
+   //     material->Unbind();
+   //     mesh->Unbind(); 
    //
    // }
 
@@ -218,32 +225,32 @@ namespace Hazel {
     
      
 
-    void WorldGrid::Draw()
-    {
-      
+    //void WorldGrid::Draw()
+    //{
+    //  
 
-        Material->Bind();
-        glBindVertexArray(gridVAO);
+    //    Material->Bind();
+    //    glBindVertexArray(gridVAO);
 
 
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::scale(model, Transform.Scale);
-        model = glm::translate(model, Transform.Position);
-        glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix();
+    //    glm::mat4 model = glm::mat4(1.0f);
+    //    model = glm::scale(model, Transform.Scale);
+    //    model = glm::translate(model, Transform.Position);
+    //    glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix();
 
-        glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix();
+    //    glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix();
 
-        Material->GetShader()->SetMat4("u_Model", model);
-        Material->GetShader()->SetMat4("u_View", view);
-        Material->GetShader()->SetMat4("u_Projection", projection);
+    //    Material->GetShader()->SetMat4("u_Model", model);
+    //    Material->GetShader()->SetMat4("u_View", view);
+    //    Material->GetShader()->SetMat4("u_Projection", projection);
 
-        glDrawArrays(GL_LINES, 0, gridVertices.size()/3);  // 3 because each vertex has 3 floats.
-     
-        glBindVertexArray(0);
+    //    glDrawArrays(GL_LINES, 0, gridVertices.size()/3);  // 3 because each vertex has 3 floats.
+    // 
+    //    glBindVertexArray(0);
 
-        Material->Unbind();
+    //    Material->Unbind();
 
-    }
+    //}
 
 
 

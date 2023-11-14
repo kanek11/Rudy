@@ -102,7 +102,7 @@ void main()
 
 
     //gbuffers;
-    vec3 worldFragPos = texture(gPosition, TexCoords).rgb; 
+    vec3 worldPos = texture(gPosition, TexCoords).rgb; 
 
     vec3 N = normalize(texture(gWorldNormal, TexCoords).rgb * 2.0 - 1.0);
 
@@ -121,13 +121,11 @@ void main()
 
 
     //======Scene lighting
-    vec3 radiance = LightColor; //for now;
-
-     
+    vec3 radiance = LightColor; //for now; 
 
 
     vec3 L = -normalize(LightDir);   //minus, from shading point
-    vec3 V = normalize(u_CameraPos - worldFragPos);
+    vec3 V = normalize(u_CameraPos - worldPos);
     vec3 H = normalize(L + V);
      
 
@@ -191,9 +189,9 @@ void main()
     // color = vec3(1.0) - exp(-color * 1.0);   //in exposure
      
 
-    FragColor = vec4(FragColor_LDR, 1.0);
+    //FragColor = vec4(FragColor_LDR, 1.0);
      
-
+    FragColor = vec4(albedo, 1.0);
 
     //FragColor = vec4(V*0.5 +0.5, 1.0);
     //FragColor = vec4(vec3(dot(N, V)), 1.0);

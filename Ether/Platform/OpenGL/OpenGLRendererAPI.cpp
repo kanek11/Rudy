@@ -11,23 +11,47 @@ namespace Hazel
 {
 
 	//void OpenGLRendererAPI::DrawElements(const Ref<Mesh> &mesh, const Ref<Material> &material, Transform transform)
-	void OpenGLRendererAPI::DrawElements(uint32_t indexCount)
+	void OpenGLRendererAPI::DrawElement(uint32_t indexCount, MeshTopology topo)
 	{ 
 		//HZ_PROFILE_FUNCTION(); 
-		// 
-		// glDrawElements(GL_TRIANGLE_STRIP, mesh->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
-		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
-		// for now!
- 
+
+		switch (topo)
+		{
+		 case  MeshTopology::TRIANGLES: 
+			glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
+			break;
+
+		 case MeshTopology::LINES:
+			glDrawElements(GL_LINES, indexCount, GL_UNSIGNED_INT, nullptr); 
+			break;
+
+		}
+	  
 	}
 
-	void OpenGLRendererAPI::DrawArrays(uint32_t vertexCount)
+
+
+	void OpenGLRendererAPI::DrawArray(uint32_t vertexCount, MeshTopology topo)
 	{
-		//HZ_PROFILE_FUNCTION();
+		//HZ_PROFILE_FUNCTION(); 
 
-		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+		switch (topo)
+		{
+		case  MeshTopology::TRIANGLES:
+			glDrawArrays(GL_TRIANGLES, 0, vertexCount); 
+			break;
+
+		case MeshTopology::LINES:
+			glDrawArrays(GL_LINES, 0, vertexCount); 
+			break;
+
+		}
+
 	}
 
+
+
+	 
 
 
 	void OpenGLMessageCallback(

@@ -15,7 +15,10 @@ namespace Hazel {
 
     class Cube : public MeshObject {
     public:
-        Cube() { CreateGeometry(); }
+        Cube() { CreateGeometry();  
+        mesh->SetupVertices();
+        mesh->LoadToGPU(); 
+        }
         ~Cube() = default;
 
         void CreateGeometry();
@@ -23,13 +26,13 @@ namespace Hazel {
         void Draw() override;
         void DrawSkybox();  //need to set special view matrix, and gldepthfunc;
   
-        unsigned int CubeVAO, CubeVBO, CubeEBO;
+        //uint32_t CubeVAO, CubeVBO, CubeEBO;
         //Ref<Shader>  Shader;   
 
     };
 
 
-    //static Scope<Mesh> Create(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
+    //static Scope<Mesh> Create(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
 
     
 

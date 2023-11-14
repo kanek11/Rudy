@@ -77,7 +77,7 @@ namespace Hazel {
 
 
         // 2. compile shaders
-        unsigned int vertex, fragment;
+        uint32_t vertex, fragment;
         // vertex shader
         vertex = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertex, 1, &vShaderCode, NULL);
@@ -91,7 +91,7 @@ namespace Hazel {
 
 
         // if geometry shader is given, compile geometry shader
-  /*      unsigned int geometry;
+  /*      uint32_t geometry;
         if (geometryPath != nullptr)
         {
             const char* gShaderCode = geometryCode.c_str();
@@ -186,7 +186,7 @@ namespace Hazel {
     }
     // ------------------------------------------------------------------------
     void OpenGLShader::SetVec3(const std::string& name, const glm::vec3& value) const
-    {
+    { 
         glUniform3fv(glGetUniformLocation(m_ShaderID, name.c_str()), 1, &value[0]);
     }
     void OpenGLShader::SetVec3(const std::string& name, float x, float y, float z) const
@@ -211,8 +211,7 @@ namespace Hazel {
     }
     // ------------------------------------------------------------------------
     void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& mat) const
-    {
-       
+    {  
         GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
         if (location == -1) {
             // Log error or warning
