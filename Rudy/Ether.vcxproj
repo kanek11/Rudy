@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{be952e64-8b74-406f-8898-6ad40bcf0da8}</ProjectGuid>
+    <RootNamespace>Ether</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Rudy</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(SolutionDir)/Ether;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(SolutionDir)/Ether;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\dev\dependencies\assimp\include;D:\dev\dependencies\stb_image;D:\dev\dependencies\GLM;D:\dev\dependencies\spdlog-1.x\include;D:\dev\dependencies\glfw-3.3.8.bin.WIN64\include;D:\dev\dependencies\Glad\include; </AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>RudyPCH.h </PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>D:\dev\dependencies\assimp\lib;D:\dev\dependencies\Glad\lib; D:\dev\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib ;glad.lib;User32.lib;Gdi32.lib;Shell32.lib ;</AdditionalDependencies>
+      <Profile>false</Profile>
+      <StackReserveSize>5242880</StackReserveSize>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\dev\dependencies\assimp\include;D:\dev\dependencies\stb_image;D:\dev\dependencies\GLM;D:\dev\dependencies\spdlog-1.x\include;D:\dev\dependencies\glfw-3.3.8.bin.WIN64\include;D:\dev\dependencies\Glad\include; </AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>EtherPCH.h </PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>D:\dev\dependencies\assimp\lib;D:\dev\dependencies\Glad\lib; D:\dev\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib ;glad.lib;User32.lib;Gdi32.lib;Shell32.lib ;</AdditionalDependencies>
+      <Profile>false</Profile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="Cube.h" />
+    <ClInclude Include="Overlay.hpp" />
+    <ClInclude Include="Rudy\Core\Assert.h" />
+    <ClInclude Include="Rudy\Core\Base.h" />
+    <ClInclude Include="Rudy\Core\Timer.h" />
+    <ClInclude Include="Rudy\Core\Timestep.h" />
+    <ClInclude Include="Rudy\Debug\Instrumentor.h" />
+    <ClInclude Include="Rudy\Events\Input.h" />
+    <ClInclude Include="Rudy\Core\Log.h" />
+    <ClInclude Include="Rudy\Core\PlatformDetection.h" />
+    <ClInclude Include="Rudy\Core\Window.h" />
+    <ClInclude Include="Rudy\Events\KeyCodes.h" />
+    <ClInclude Include="Rudy\Events\MouseCodes.h" />
+    <ClInclude Include="Rudy\Renderer\Animation.h" />
+    <ClInclude Include="Rudy\Renderer\Camera.h" />
+    <ClInclude Include="Rudy\Renderer\FrameBuffer.h" />
+    <ClInclude Include="Rudy\Renderer\GraphicsContext.h" />
+    <ClInclude Include="Rudy\Renderer\Material.h" />
+    <ClInclude Include="Rudy\Renderer\Mesh.h" />
+    <ClInclude Include="Rudy\Renderer\Object.h" />
+    <ClInclude Include="Rudy\Renderer\Scene.h" />
+    <ClInclude Include="Rudy\Renderer\Shader.h" />
+    <ClInclude Include="Rudy\Renderer\Renderer.h" />
+    <ClInclude Include="Rudy\Renderer\RendererAPI.h" />
+    <ClInclude Include="Rudy\Renderer\Skeleton.h" />
+    <ClInclude Include="Rudy\Renderer\Texture.h" />
+    <ClInclude Include="Rudy\Renderer\Transform.h" />
+    <ClInclude Include="Plane.hpp" />
+    <ClInclude Include="Platform\OpenGL\OpenGLFrameBuffer.h" />
+    <ClInclude Include="Platform\OpenGL\OpenGLMesh.h" />
+    <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="Platform\OpenGL\OpenGLRendererAPI.h" />
+    <ClInclude Include="Platform\OpenGL\OpenGLShader.h" />
+    <ClInclude Include="Platform\OpenGL\OpenGLTexture.h" />
+    <ClInclude Include="Platform\Windows\WindowsWindow.h" />
+    <ClInclude Include="Rudy\Events\ApplicationEvent.h" />
+    <ClInclude Include="Rudy\Events\Event.h" />
+    <ClInclude Include="Rudy\Events\KeyEvent.h" />
+    <ClInclude Include="Rudy\Events\MouseEvent.h" />
+    <ClInclude Include="RudyPCH.h" />
+    <ClInclude Include="Quad.hpp" />
+    <ClInclude Include="Sphere.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\dependencies\stb_image\stb_image.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="RudyPCH.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Rudy\Core\Log.cpp" />
+    <ClCompile Include="Rudy\Core\WIndow.cpp" />
+    <ClCompile Include="Rudy\Renderer\Animation.cpp" />
+    <ClCompile Include="Rudy\Renderer\Transform.cpp" />
+    <ClCompile Include="Platform\Windows\WindowsInput.cpp" />
+    <ClCompile Include="Rudy\Renderer\Camera.cpp" />
+    <ClCompile Include="Rudy\Renderer\FrameBuffer.cpp" />
+    <ClCompile Include="Rudy\Renderer\GraphicsContext.cpp" />
+    <ClCompile Include="Rudy\Renderer\Light.h" />
+    <ClCompile Include="Rudy\Renderer\Material.cpp" />
+    <ClCompile Include="Rudy\Renderer\Mesh.cpp" />
+    <ClCompile Include="Rudy\Renderer\Object.cpp" />
+    <ClCompile Include="Rudy\Renderer\Renderer.cpp" />
+    <ClCompile Include="Rudy\Renderer\RendererAPI.cpp" />
+    <ClCompile Include="Rudy\Renderer\Scene.cpp" />
+    <ClCompile Include="Rudy\Renderer\Shader.cpp" />
+    <ClCompile Include="Rudy\Renderer\Texture.cpp" />
+    <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="test_pipeline_pbr.cpp" />
+    <None Include="Resources\Shaders\BlinnPhong_FS.glsl">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <FileType>Document</FileType>
+    </None>
+    <ClCompile Include="Platform\OpenGL\OpenGLFrameBuffer.cpp" />
+    <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="Platform\OpenGL\OpenGLMesh.cpp" />
+    <ClCompile Include="Platform\OpenGL\OpenGLShader.cpp" />
+    <ClCompile Include="Platform\OpenGL\OpenGLTexture.cpp" />
+    <ClCompile Include="Platform\Windows\WindowsWindow.cpp" />
+    <None Include="Resources\Shaders\BlinnPhong_Color_FS.glsl" />
+    <None Include="Resources\Shaders\BrdfLUT_FS.glsl" />
+    <None Include="Resources\Shaders\BrdfLUT_VS.glsl" />
+    <None Include="Resources\Shaders\Default_Flat_FS.glsl" />
+    <None Include="Resources\Shaders\DepthMap_VS.glsl" />
+    <None Include="Resources\Shaders\DepthMap_FS.glsl" />
+    <None Include="Resources\Shaders\DepthQuad_FS.glsl" />
+    <None Include="Resources\Shaders\DepthQuad_VS.glsl" />
+    <None Include="Resources\Shaders\DiffuseEnvMap_FS.glsl" />
+    <None Include="Resources\Shaders\DiffuseEnvMap_VS.glsl" />
+    <None Include="Resources\Shaders\GBufferSkinned_VS.glsl" />
+    <None Include="Resources\Shaders\GBuffer_FS.glsl" />
+    <None Include="Resources\Shaders\GBuffer_VS.glsl" />
+    <None Include="Resources\Shaders\TextureOnly_VS.glsl" />
+    <None Include="Resources\Shaders\PBR_FS.glsl" />
+    <None Include="Resources\Shaders\PBR_VS.glsl" />
+    <None Include="Resources\Shaders\RectToCube_VS.glsl" />
+    <None Include="Resources\Shaders\RectToCube_FS.glsl" />
+    <None Include="Resources\Shaders\TextureOnly_FS.glsl" />
+    <None Include="Resources\Shaders\SpecularEnvMap_FS.glsl" />
+    <None Include="Resources\Shaders\SpecularEnvMap_VS.glsl" />
+    <None Include="Resources\Shaders\ScreenQuad_FS.glsl" />
+    <None Include="Resources\Shaders\ScreenQuad_VS.glsl" />
+    <None Include="Resources\Shaders\Skybox_FS.glsl" />
+    <None Include="Resources\Shaders\Skybox_VS.glsl" />
+    <None Include="Resources\Shaders\SSAO_FS.glsl" />
+    <None Include="Resources\Shaders\SSAO_VS.glsl" />
+    <None Include="Resources\Shaders\SSR_FS.glsl" />
+    <None Include="Resources\Shaders\SSR_VS.glsl" />
+    <None Include="Resources\Shaders\Vertex_Color_FS.glsl" />
+    <None Include="Resources\Shaders\Vertex_Color_VS.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="dependencies.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Shaders\Default_FS.glsl" />
+    <None Include="Resources\Shaders\Default_VS.glsl" />
+    <None Include="Resources\Shaders\BlinnPhong_VS.glsl" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

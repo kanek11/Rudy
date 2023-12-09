@@ -1,0 +1,273 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="RudyPCH.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Core\Assert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Core\Base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Core\Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Core\PlatformDetection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Core\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\Windows\WindowsWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Events\ApplicationEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Events\Event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Events\KeyEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Events\MouseEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Events\Input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Events\KeyCodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Events\MouseCodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Core\Timestep.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\GraphicsContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\RendererAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\OpenGL\OpenGLContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\OpenGL\OpenGLRendererAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\OpenGL\OpenGLShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\OpenGL\OpenGLMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\OpenGL\OpenGLTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\Object.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Core\Timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Debug\Instrumentor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\FrameBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\OpenGL\OpenGLFrameBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quad.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\Skeleton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\Transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\Animation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Overlay.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Rudy\Core\Log.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\Windows\WindowsWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\GraphicsContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\OpenGL\OpenGLShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\OpenGL\OpenGLTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\OpenGL\OpenGLMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\RendererAPI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Core\WIndow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dependencies\stb_image\stb_image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RudyPCH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\Object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\FrameBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\OpenGL\OpenGLFrameBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\Windows\WindowsInput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\Light.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cube.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\Transform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test_pipeline_pbr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="dependencies.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Shaders\Default_FS.glsl" />
+    <None Include="Resources\Shaders\Default_VS.glsl" />
+    <None Include="Resources\Shaders\BlinnPhong_VS.glsl" />
+    <None Include="Resources\Shaders\BlinnPhong_FS.glsl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="Resources\Shaders\DepthMap_FS.glsl" />
+    <None Include="Resources\Shaders\DepthMap_VS.glsl" />
+    <None Include="Resources\Shaders\DepthQuad_FS.glsl" />
+    <None Include="Resources\Shaders\DepthQuad_VS.glsl" />
+    <None Include="Resources\Shaders\Skybox_VS.glsl" />
+    <None Include="Resources\Shaders\Skybox_FS.glsl" />
+    <None Include="Resources\Shaders\GBuffer_VS.glsl" />
+    <None Include="Resources\Shaders\GBuffer_FS.glsl" />
+    <None Include="Resources\Shaders\ScreenQuad_VS.glsl" />
+    <None Include="Resources\Shaders\ScreenQuad_FS.glsl" />
+    <None Include="Resources\Shaders\SpecularEnvMap_FS.glsl" />
+    <None Include="Resources\Shaders\SpecularEnvMap_VS.glsl" />
+    <None Include="Resources\Shaders\PBR_FS.glsl" />
+    <None Include="Resources\Shaders\PBR_VS.glsl" />
+    <None Include="Resources\Shaders\BrdfLUT_VS.glsl" />
+    <None Include="Resources\Shaders\BrdfLUT_FS.glsl" />
+    <None Include="Resources\Shaders\DiffuseEnvMap_FS.glsl" />
+    <None Include="Resources\Shaders\DiffuseEnvMap_VS.glsl" />
+    <None Include="Resources\Shaders\RectToCube_VS.glsl" />
+    <None Include="Resources\Shaders\RectToCube_FS.glsl" />
+    <None Include="Resources\Shaders\SSAO_VS.glsl" />
+    <None Include="Resources\Shaders\SSAO_FS.glsl" />
+    <None Include="Resources\Shaders\SSR_FS.glsl" />
+    <None Include="Resources\Shaders\SSR_VS.glsl" />
+    <None Include="Resources\Shaders\GBufferSkinned_VS.glsl" />
+    <None Include="Resources\Shaders\TextureOnly_FS.glsl" />
+    <None Include="Resources\Shaders\TextureOnly_VS.glsl" />
+    <None Include="Resources\Shaders\Default_Flat_FS.glsl" />
+    <None Include="Resources\Shaders\Vertex_Color_VS.glsl" />
+    <None Include="Resources\Shaders\Vertex_Color_FS.glsl" />
+    <None Include="Resources\Shaders\BlinnPhong_Color_FS.glsl" />
+  </ItemGroup>
+</Project>
