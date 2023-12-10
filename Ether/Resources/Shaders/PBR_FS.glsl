@@ -21,6 +21,8 @@ uniform samplerCube u_DiffuseEnvMap;
 uniform samplerCube u_SpecularEnvMap;
 uniform sampler2D u_BrdfLUT;
 
+uniform sampler2D u_DepthMap;  //shadow map
+
 
 //test: config flag
 uniform bool u_EnableSkyBox;
@@ -33,8 +35,39 @@ struct DirLight {
 
 
 uniform DirLight u_DirLight; 
+uniform mat4 u_LightSpaceMatrix;  //for shadow map
+
 uniform vec3 u_CameraPos;
  
+
+//---shadow map
+//return 1 if in shadow, 0 otherwise;
+float ShadowCalculation(vec4 WorldFragPos)
+{ 
+    // transform to [0,1] range
+ 
+   vec4 lightSpaceFragPos = u_LightSpaceMatrix * WorldFragPos;
+
+    vec3 projCoords = lightSpaceFragPos.xyz / lightSpaceFragPos.w;   //perspective division
+      projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(u_DepthMap, projCoords.xy).r;
+
+
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+
+    //tolerate some bias 
+    //float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);   //todo: tune it better;
+    // check whether current frag pos is in shadow
+
+    float bias = 0.0005;
+    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+
+
+    return shadow;
+}
+
 
 
 // ----------------------------------------------------------------------------
@@ -120,6 +153,9 @@ void main()
     vec3 L = - normalize(u_DirLight.direction);   //minus, from shading point
     vec3 V = normalize(u_CameraPos - worldPos);
     vec3 H = normalize(L + V);
+
+    //shadow
+    float shadow = ShadowCalculation(vec4(worldPos, 1.0));
      
 
     float NDF = DistributionGGX(N, H, roughness);
@@ -133,8 +169,9 @@ void main()
     vec3 numerator = NDF * G * F;
 
     float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero ,also eps
-    vec3 specular = numerator / denominator;
-
+    vec3 specular = numerator / denominator; 
+    specular *= (1 - shadow);  //todo: better performance;
+     
 
     vec3 kS = F;
     vec3 kD = vec3(1.0) - kS;
@@ -183,7 +220,7 @@ void main()
 
     FragColor = vec4(FragColor_LDR, 1.0);
      
-    //FragColor = vec4(albedo, 1.0);
+    //FragColor = vec4(vec3(shadow), 1.0);    
 
     //FragColor = vec4(V*0.5 +0.5, 1.0);
     //FragColor = vec4(vec3(dot(N, V)), 1.0);

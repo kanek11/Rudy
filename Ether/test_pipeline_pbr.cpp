@@ -229,7 +229,7 @@ int main() {
     sphere_Material->SetTexture(TextureType::MetallicMap,  sphere_metallicMap);
 
 
-    auto sphere = Sphere::Create(10);
+    auto sphere = Sphere::Create(20);
     sphere->SetMaterial(sphere_Material);
     scene->AddRenderableObject(sphere);
 
@@ -256,15 +256,13 @@ int main() {
 
     //info for shadowmap:
     //the orthographic projection matrix for the light source£º
-    glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f,
-        -10.0f, 20.0f);  //the near and far plane should be large enough to cover the scene
-    glm::mat4 lightView = glm::lookAt(sunlight->direction, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+    glm::mat4 lightProjection = glm::ortho(
+        -10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 20.0f);  //the near and far plane should be large enough to cover the scene
+    glm::mat4 lightView = glm::lookAt( - sunlight->direction, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
     
-    shadowMapShader->Bind();
-    shadowMapShader->SetMat4("u_Model", glm::mat4(1.0));
-    shadowMapShader->SetMat4("u_ProjectionView", lightProjection * lightView);
-
-    shadowMapShader->Unbind();
+    auto lightSpaceCamera = Camera::Create();
+    lightSpaceCamera->m_ProjectionMatrix = lightProjection;
+    lightSpaceCamera->m_ViewMatrix = lightView;
 
 
     //=================================================================================================
@@ -505,11 +503,10 @@ int main() {
 
             //get scene camera info 
             //scene->Render(main_camera);
+            floor->material->SetShader(gBufferPassShader);
+            sphere->material->SetShader(gBufferPassShader);
             floor->Draw(main_camera);
             sphere->Draw(main_camera);
-
-            //test_model->Draw(); 
-
 
             GBufferFBO->Unbind();
         }
@@ -517,25 +514,26 @@ int main() {
 
         //====== shadowMap pass: render the scene to the shadowMap;
         {
-			//shadowMapFBO->Bind();
-            //
-			//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-			//glClear(GL_DEPTH_BUFFER_BIT);  // make sure clear the framebuffer's content 
-            //
-			//glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-            //
-			//glEnable(GL_DEPTH_TEST);
-            //
-            ////render the scene to the shadowMap;
-            ////set the shader as shadowMapShader; 
-           //// floor.material->SetShader(shadowMapShader);
-           //// sphere.material->SetShader(shadowMapShader);
-           ////
-           //// floor.Draw();
-           //// sphere.Draw();
-            //
-            // 
-            //shadowMapFBO->Unbind();
+			shadowMapFBO->Bind();
+            
+			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+			glClear(GL_DEPTH_BUFFER_BIT);  // make sure clear the framebuffer's content 
+            
+			glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+            
+			glEnable(GL_DEPTH_TEST);
+            
+            //render the scene to the shadowMap;
+            //set the shader as shadowMapShader; 
+            floor->material->SetShader(shadowMapShader);
+            sphere->material->SetShader(shadowMapShader);
+            
+            floor->Draw(lightSpaceCamera);
+            sphere->Draw(lightSpaceCamera);
+            
+             
+            shadowMapFBO->Unbind();
+
         }
 
 
@@ -565,8 +563,10 @@ int main() {
             lightingPassShader->SetVec3("u_DirLight.color", sunlight->color);
             lightingPassShader->SetFloat("u_DirLight.intensity", sunlight->intensity); 
 
+            lightingPassShader->SetMat4("u_LightSpaceMatrix", lightSpaceCamera->GetProjectionViewMatrix());
+
             //config:
-            lightingPassShader->SetBool("u_EnableSkyBox", enableSkyBox);
+           lightingPassShader->SetBool("u_EnableSkyBox", enableSkyBox);
 
             lightingPassQuad.Draw(nullptr);
              
@@ -641,13 +641,11 @@ int main() {
         glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
         screenQuadShader->Bind();
         //screenQuadShader->SetBool("u_IsGrayScale", true);
-        glBindTextureUnit(0, lightingPassScreenTexture->GetTextureID());  //replace the texture2D here;
+        glBindTextureUnit(0, lightingPassScreenTexture  ->GetTextureID());  //replace the texture2D here;
         
         screenQuad.Draw(nullptr);
 
-        glEnable(GL_DEPTH_TEST); 
-    
-
+        glEnable(GL_DEPTH_TEST);  
 
         //=======skybox overlay; on final default framebuffer; 
         //compare the depth with gbuffer;  make sure enable the depth test;
