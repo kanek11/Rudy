@@ -1,2 +1,1 @@
-# Ether_dev
- early stage of dev
+# an CG engine 
