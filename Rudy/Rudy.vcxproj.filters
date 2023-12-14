@@ -269,5 +269,8 @@
     <None Include="Resources\Shaders\Vertex_Color_VS.glsl" />
     <None Include="Resources\Shaders\Vertex_Color_FS.glsl" />
     <None Include="Resources\Shaders\BlinnPhong_Color_FS.glsl" />
+    <None Include="Resources\Shaders\DepthMapSkinned_VS.glsl">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

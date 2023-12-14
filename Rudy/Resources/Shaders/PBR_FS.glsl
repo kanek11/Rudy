@@ -61,7 +61,7 @@ float ShadowCalculation(vec4 WorldFragPos)
     //float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);   //todo: tune it better;
     // check whether current frag pos is in shadow
 
-    float bias = 0.0005;
+    float bias = 0.005;
     float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
 
 
@@ -136,7 +136,12 @@ void main()
 
     vec3 albedo = texture(gAlbedo, TexCoords).rgb;  
 
+
+    float specularCoeff = texture(gSpecular, TexCoords).r;   
+
     float roughness = texture(gRoughness, TexCoords).r;  //gray
+    if ( roughness < 0.001)  roughness = 1 - specularCoeff;  //todo: better way to be compatible with blinn-phong model;
+
     float metallic = texture(gMetallic, TexCoords).r;  //gray  
    
 

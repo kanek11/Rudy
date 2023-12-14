@@ -582,4 +582,18 @@ namespace Rudy
 
 
 
+    void Model::SetMaterial(Ref<Material> mat)
+{
+		for (auto meshObj : this->meshObjects)
+			meshObj->material = mat;
+	}
+
+    void Model::SetShader(Ref<Shader> shader)
+{
+		for (auto meshObj : this->meshObjects)
+			meshObj->material->SetShader(shader);
+	}
+
+
+
 }

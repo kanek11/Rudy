@@ -58,6 +58,7 @@ namespace Rudy {
         // set uniforms for transforms
         // identity matrix for now;
 
+        this->transform->UpdateWorldTransform();
         glm::mat4 model = this->transform->GetWorldTransform(); 
         glm::mat4 projection_view = cam->GetProjectionViewMatrix(); 
 

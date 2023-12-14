@@ -249,12 +249,10 @@ int main() {
     auto test_model = Model::LoadModel("D:/CG_resources/animation/vampire/dancing_vampire.dae");
  
     //Model::ScaleFactor = 0.01f;
-   // auto test_model = Model::LoadModel("D:/CG_resources/animation/Catwalk Walk Turn 180 Tight.dae");
-   
+   // auto test_model = Model::LoadModel("D:/CG_resources/animation/Catwalk Walk Turn 180 Tight.dae"); 
  
     //test: update the global transform of the model; according to the transform of bones;
-    //Transform::UpdateWorldTransformRecursive(test_model->rootNode->transform, glm::mat4(1.0f));
-
+    //Transform::UpdateWorldTransformRecursive(test_model->rootNode->transform, glm::mat4(1.0f)); 
 
 
     for (auto meshObj : test_model->meshObjects)

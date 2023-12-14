@@ -136,6 +136,11 @@ namespace Rudy {
 
          void Draw(Ref<Camera> cam) override;
 
+
+         void SetMaterial(Ref<Material> mat) ;
+         void SetShader(Ref<Shader> shader) ;
+
+
      private: 
          std::vector<Ref<Texture2D>> m_Loaded_Textures;  
          //opt to avoid duplicate textures,  loading is extremely slow
