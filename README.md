@@ -8,8 +8,12 @@ I try to keep the code understandable and maintainable, such that it's easy to m
 * Physically based rendering
 * Image-based lighting  
 * Skeletal animation
-* Post-processing 
+* Post-processing
 
+## Roadmap
+* Particle system
+* Cloth simulation
+* Fluid simulation
 
 ## Snapshot
 The buffers in the following snapshot are relatively： <br>
