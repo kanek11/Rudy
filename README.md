@@ -13,7 +13,7 @@ I try to keep the code understandable and maintainable, such that it's easy to m
 
 ## Snapshot
 The buffers in the following snapshot are relatively： <br>
-*gSpecular ,gMetallic ,gRoughness, gScreenDepth,<br>
-*gPosition , gAlbedo ,gWorldNormal, gWorldTangent.<br>
+* gSpecular ,gMetallic ,gRoughness, gScreenDepth,<br>
+* gPosition , gAlbedo ,gWorldNormal, gWorldTangent.<br>
 
 <img src="images/screenshot1215.png" width="800">
