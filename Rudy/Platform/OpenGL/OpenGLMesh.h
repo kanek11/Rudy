@@ -9,7 +9,11 @@ namespace Rudy
 	class OpenGLMesh : public Mesh
 	{
     public:
-         ~OpenGLMesh() = default; 
+        ~OpenGLMesh() {
+            glDeleteBuffers(1, &m_vertexBufferTarget);
+            glDeleteBuffers(1, &m_indexBufferTarget);
+            glDeleteVertexArrays(1, &m_vertexArrayTarget);
+         }
          OpenGLMesh() = default;
 
          virtual void SetupVertices() override;

@@ -131,8 +131,7 @@ namespace Rudy {
 
     OpenGLShader::~OpenGLShader()
     {
-        //RD_PROFILE_FUNCTION();
-
+        //RD_PROFILE_FUNCTION(); 
         glDeleteProgram(m_ShaderID);
     }
 

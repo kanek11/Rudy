@@ -13,7 +13,11 @@ namespace Rudy {
 	{
 	public:
 
-		~OpenGLRenderBuffer() = default;
+		~OpenGLRenderBuffer()
+		{
+			glDeleteRenderbuffers(1, &m_RenderBufferID);
+		}
+
 		OpenGLRenderBuffer(RenderBufferFormat format, uint32_t width, uint32_t height);
 
 		virtual uint32_t GetRenderBufferID() override { return m_RenderBufferID;}
@@ -37,7 +41,10 @@ namespace Rudy {
 	class OpenGLFrameBuffer : public FrameBuffer
 	{
 	public:
-		~OpenGLFrameBuffer() = default;
+		~OpenGLFrameBuffer()
+		{
+			 glDeleteFramebuffers(1, &m_FrameBufferID);
+		}
 
 		//OpenGLFrameBuffer(FrameBufferSpec& spec);
 		OpenGLFrameBuffer(uint32_t width, uint32_t height, FrameBufferType type,

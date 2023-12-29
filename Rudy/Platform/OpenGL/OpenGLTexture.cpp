@@ -450,19 +450,19 @@ namespace Rudy {
 
 		  
 		//input hdri image
-		auto hdrTexture = Texture2D::LoadFile(path);
-
+		auto hdrTexture = Texture2D::LoadFile(path); 
 
 		//output  
 		glGenTextures(1, &m_TextureID);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID);
 		
-		RD_CORE_WARN("textureCube: CubeMapID:{0} is created ", m_TextureID);
+		RD_CORE_INFO("textureCube: CubeMapID:{0} is created ", m_TextureID);
 
 		for (uint32_t i = 0; i < 6; ++i)
 		{
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
 		}
+
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
