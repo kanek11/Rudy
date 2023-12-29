@@ -49,11 +49,12 @@ namespace Rudy
 
 	}
 
+
+
 	 
 
+
 	void OpenGLMessageCallback(
-
-
 		unsigned source,
 		unsigned type,
 		unsigned id,

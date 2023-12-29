@@ -23,6 +23,8 @@ namespace Rudy
 		glBindVertexArray(m_vertexArrayTarget);
 		glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferTarget);
 
+		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferTarget);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW); 
 
