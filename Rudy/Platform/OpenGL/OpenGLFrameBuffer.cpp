@@ -20,8 +20,7 @@ namespace Rudy {
 		}
 
 	};
-
-
+	 
 
 	OpenGLRenderBuffer::OpenGLRenderBuffer(RenderBufferFormat format, uint32_t width, uint32_t height)
 		: m_Format(format), m_Width(width), m_Height(height)
@@ -95,15 +94,6 @@ namespace Rudy {
 			glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferID);
 
 
-			//texture for depth map
-			//if (m_TextureBuffers.size() == 0)
-			//{
-			//	RD_CORE_ERROR("glframebuffer depth£º No texture is attached to framebuffer, create itself ");
-			//	//m_TextureBuffers[TextureType::DepthMap] =
-			//	//	Texture2D::CreateEmpty(TextureSpec{ width, height,TextureFormat::DEPTH_COMPONENT,
-			//	//	 false, WrapMode::ClampToBorder, FilterMode::Nearest });
-			//
-			//}
 
 			//m_TextureBuffers[TextureType::DepthMap]->Bind();
 			//m_TextureBuffers.push_back(Texture2D::Create(

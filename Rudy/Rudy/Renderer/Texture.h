@@ -29,7 +29,8 @@ namespace Rudy {
 		RGBA32F,
 
 		//system built-in implementation:
-		DEPTH_COMPONENT,
+		DEPTH_COMPONENT24,
+		DGL_DEPTH24_STENCIL8,
 	};
 	 
 
@@ -126,7 +127,6 @@ namespace Rudy {
 
 
 		static Ref<TextureCube> CreateEmpty(const TextureSpec& specfication = TextureSpec());
-
 
 		virtual Ref<TextureCube> CreatePrefilteredEnvMap(Ref<TextureCube> envMap,
 			ConvolutionType type = ConvolutionType::Specular,

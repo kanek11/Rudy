@@ -101,8 +101,7 @@ namespace Rudy {
             checkCompileErrors(geometry, "GEOMETRY");
         }*/
 
-
-
+         
         // output of the creation.
         m_ShaderID = glCreateProgram();
 
@@ -144,17 +143,14 @@ namespace Rudy {
     {
         //RD_PROFILE_FUNCTION();
 
-        glUseProgram(m_ShaderID);
-
-        //RD_CORE_INFO("OpenGLShader: ShaderID:{0} is bound", m_ShaderID);
+        glUseProgram(m_ShaderID); 
     }
 
     void OpenGLShader::Unbind() const
     {
         //RD_PROFILE_FUNCTION();
 
-        glUseProgram(0);
-        //RD_CORE_INFO("OpenGLShader:Shader is unbound");
+        glUseProgram(0); 
     }
 
 

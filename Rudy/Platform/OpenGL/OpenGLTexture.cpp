@@ -54,13 +54,13 @@ namespace Rudy {
 		    case TextureFormat::R8: return GL_R8; 
 			case TextureFormat::R32F: return GL_R32F;
 		    case TextureFormat::RG8: return GL_RG8;
-		 case TextureFormat::RG32F: return GL_RG32F;
+		    case TextureFormat::RG32F: return GL_RG32F;
 			case TextureFormat::RGB8:  return GL_RGB8; 
 			case TextureFormat::RGB32F: return GL_RGB32F;
 			case TextureFormat::RGBA8: return GL_RGBA8;
 			case TextureFormat::RGBA32F: return GL_RGBA32F;
 
-			case TextureFormat::DEPTH_COMPONENT: return GL_DEPTH_COMPONENT;
+			case TextureFormat::DEPTH_COMPONENT24: return GL_DEPTH_COMPONENT24;
 			}
 
 			RD_CORE_ASSERT(false);
@@ -81,7 +81,7 @@ namespace Rudy {
 			case TextureFormat::RGBA8: return GL_RGBA;
 		    case TextureFormat::RGBA32F: return GL_RGBA;
 
-			case TextureFormat::DEPTH_COMPONENT: return GL_DEPTH_COMPONENT;
+			case TextureFormat::DEPTH_COMPONENT24: return GL_DEPTH_COMPONENT;
 			}
 
 			RD_CORE_ASSERT(false);
@@ -181,19 +181,17 @@ namespace Rudy {
 
 			RD_CORE_ASSERT(internalFormat & dataFormat, "glTexture:Format not supported!");
 
+
 			glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
 
-			//glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
-
-			 glTextureStorage2D(m_TextureID, 1, internalFormat, m_Width, m_Height);
+		    glTextureStorage2D(m_TextureID, 1, internalFormat, m_Width, m_Height);
 
 			glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
+			glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
 			glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-			 glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
+			glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
 
 			stbi_image_free(data);
 
@@ -207,7 +205,7 @@ namespace Rudy {
 
 	 
 
-
+	//
 	OpenGLTexture2D::OpenGLTexture2D(const TextureSpec& specification)
 		: m_TextureSpec(specification), m_Width(m_TextureSpec.Width), m_Height(m_TextureSpec.Height)
 	{
@@ -225,26 +223,28 @@ namespace Rudy {
 		auto m_MagFilterMode = Utils::FilterModeToGLFilterMode(specification.magfilterMode);
 
 
-		glGenTextures(1, &m_TextureID);
-		glBindTexture(GL_TEXTURE_2D, m_TextureID);
+		//glGenTextures(1, &m_TextureID);
+		//glBindTexture(GL_TEXTURE_2D, m_TextureID);  
+		// glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, m_Width, m_Height, 0, m_DataFormat, GL_FLOAT, NULL);
 
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);  
+	
+	  
+	    glTextureStorage2D(m_TextureID, 1, m_InternalFormat, m_Width, m_Height);
 
-		 //glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
-		//lTextureStorage2D(m_TextureID, 1, m_InternalFormat, m_Width, m_Height);
-
-	    glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, m_Width, m_Height, 0, m_DataFormat, GL_FLOAT, NULL);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, m_MinFilterMode);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, m_MagFilterMode);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, m_WrapMode);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, m_WrapMode);
 
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	    //glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, NULL);
+	 
 		  
-	      RD_CORE_WARN("glTexture2D: empty texture2DId:{0} is created ", m_TextureID); 
+	    RD_CORE_WARN("glTexture2D: empty texture2DId:{0} is created ", m_TextureID); 
 
 	}
+
+
 
 
 
@@ -270,18 +270,16 @@ namespace Rudy {
 		glBindTexture(GL_TEXTURE_2D, m_TextureID);
 
 
-		//glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
-	   //lTextureStorage2D(m_TextureID, 1, m_InternalFormat, m_Width, m_Height);
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
+	    glTextureStorage2D(m_TextureID, 1, m_InternalFormat, m_Width, m_Height);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, m_Width, m_Height, 0, m_DataFormat, GL_FLOAT, data);
-		glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, m_MinFilterMode);
+	 	glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, m_MinFilterMode);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, m_MagFilterMode);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, m_WrapMode);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, m_WrapMode);
 
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
+		 
 
 		RD_CORE_WARN("glTexture2D: custom texture2DId:{0} is created ", m_TextureID);
 
@@ -289,17 +287,13 @@ namespace Rudy {
 
 
 
-
-
-
-
-
+	 
 
 	 
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{
 		//RD_PROFILE_FUNCTION();
-		RD_CORE_WARN("texture2D: texture2DID:{0} is deleted ", m_TextureID);
+		RD_CORE_INFO("texture2D: texture2DID:{0} is deleted ", m_TextureID);
 		glDeleteTextures(1, &m_TextureID);
 	}
 
@@ -344,7 +338,9 @@ namespace Rudy {
 
 
 
-		glGenTextures(1, &m_TextureID);
+		//glGenTextures(1, &m_TextureID);
+		//glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID);
+		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_TextureID);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID);
 
 		for (uint32_t i = 0; i < 6; ++i)
@@ -366,7 +362,6 @@ namespace Rudy {
 		 
 
 		RD_CORE_WARN("textureCube: CubeMapId:{0} is created ", m_TextureID);
-
 		 
 
 	}

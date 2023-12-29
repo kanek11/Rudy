@@ -92,6 +92,7 @@ namespace Rudy {
 			RD_CORE_INFO("GBuffer: textureId:{0} is attached to colorbuffer{1}", texture->GetTextureID(), slot);
 	 
 		}
+
 		virtual void SetDepthAttachmentTexture(Ref<Texture> texture) override
 		{
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture->GetTextureID(), 0);

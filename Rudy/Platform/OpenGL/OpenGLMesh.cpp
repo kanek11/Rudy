@@ -16,13 +16,12 @@ namespace Rudy
 		 
 		//fixed routine
 		glCreateVertexArrays(1, &m_vertexArrayTarget);
+		glBindVertexArray(m_vertexArrayTarget);
 
 		glCreateBuffers(1, &m_vertexBufferTarget);
 		glCreateBuffers(1, &m_indexBufferTarget);
 
-		glBindVertexArray(m_vertexArrayTarget);
-		glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferTarget);
-
+		glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferTarget); 
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferTarget);
@@ -50,7 +49,6 @@ namespace Rudy
 		// vertex tangent
 		glEnableVertexAttribArray(3);
 		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV));
-
 
 		//
 		glEnableVertexAttribArray(4);

@@ -165,7 +165,7 @@ int main() {
     auto gSpecular     = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R32F });
     auto gMetallic     = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R32F });
     auto gRoughness    = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R32F });
-    auto gScreenDepth  = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::DEPTH_COMPONENT,
+    auto gScreenDepth  = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::DEPTH_COMPONENT24,
                              false, WrapMode::ClampToBorder, FilterMode::Nearest  });
 
   
@@ -266,7 +266,7 @@ int main() {
 		SHADOW_WIDTH, SHADOW_HEIGHT, FrameBufferType::DepthMap);
 
     auto shadowMap = Texture2D::CreateEmpty(
-		TextureSpec{ SHADOW_WIDTH, SHADOW_HEIGHT, TextureFormat::DEPTH_COMPONENT,
+		TextureSpec{ SHADOW_WIDTH, SHADOW_HEIGHT, TextureFormat::DEPTH_COMPONENT24,
         					 false, WrapMode::ClampToBorder, FilterMode::Nearest });
 
     shadowMapFBO->Bind();
@@ -274,9 +274,7 @@ int main() {
     shadowMapFBO->CheckCompleteness();
     shadowMapFBO->Unbind();
     
-
-
-
+     
     //     
     //===========new: animated model
 
