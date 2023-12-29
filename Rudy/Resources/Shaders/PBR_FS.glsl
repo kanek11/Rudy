@@ -31,8 +31,7 @@ struct DirLight {
     vec3 color;
     vec3 direction;
     float intensity;
-};
-
+}; 
 
 uniform DirLight u_DirLight; 
 uniform mat4 u_LightSpaceMatrix;  //for shadow map
@@ -126,8 +125,7 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 
 
 void main()
-{
-  
+{ 
 
     //gbuffers;
     vec3 worldPos = texture(gPosition, TexCoords).rgb; 
@@ -214,7 +212,7 @@ void main()
         vec3 specularEnv = specularColor * (F * brdf.x + brdf.y);
 
 
-        FragColor_HDR = Lo + (kD * diffuseEnv + 2* specularEnv);  //todo: add ao; shadow;    
+        FragColor_HDR = Lo + (kD * diffuseEnv + 5* specularEnv);  //todo: add ao; shadow;    
 	}
     
    

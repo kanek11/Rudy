@@ -129,7 +129,7 @@ namespace Rudy {
     public: 
         //lowe-level GPU data;
 
-        uint32_t m_vertexArrayTarget, m_vertexBufferTarget, m_indexBufferTarget;
+        uint32_t m_vertexBufferTarget, m_indexBufferTarget, m_vertexArrayTarget;
         std::vector<Vertex>  vertices;  
         
         //std::vector<uint32_t>  m_indices;  

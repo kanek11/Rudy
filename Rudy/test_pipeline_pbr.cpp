@@ -289,7 +289,7 @@ int main() {
     Texture2D::SetFlipYOnLoad(true); //eg: for .png;
 
     Model::ScaleFactor = 0.01f;
-    auto test_model = Model::LoadModel("D:/CG_resources/animation/vampire/dancing_vampire.dae");
+    auto test_model = Model::LoadModel("D:/CG_resources/dae/vampire/dancing_vampire.dae");
 
     //Model::ScaleFactor = 0.01f;
    // auto test_model = Model::LoadModel("D:/CG_resources/animation/Catwalk Walk Turn 180 Tight.dae"); 
@@ -854,6 +854,7 @@ int main() {
                     screenQuadShader->SetBool("u_IsGrayScale", true);
                     // HZ_CORE_WARN("gray scale");
                 }
+                //else if(g_texture.first == TextureType::gScreenDepth)   //todo: linearize the depth;
                 else
                 {
                     screenQuadShader->SetBool("u_IsGrayScale", false);
