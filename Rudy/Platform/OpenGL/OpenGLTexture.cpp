@@ -7,6 +7,8 @@
 #include "Cube.h"
 
 #include <stb_image.h>
+
+//todo:  kinda messy, need to refactor, duplicate code too much;
  
 
 namespace Rudy {
@@ -520,12 +522,17 @@ namespace Rudy {
 		//rectToCubeShader->SetMat4("u_ProjectionView", identity);
 
 
-	Ref<TextureCube> OpenGLTextureCube::CreatePrefilteredEnvMap(Ref<TextureCube> envMap, ConvolutionType type, uint32_t mipLevels)
+	Ref<TextureCube> OpenGLTextureCube::CreatePrefilteredEnvMap(Ref<TextureCube> envMap, 
+		ConvolutionType type, uint32_t mipLevels)
 	{
 		//RD_PROFILE_FUNCTION(); 
 
 		switch (type)
 		{
+		case ConvolutionType::None:
+		{
+			return nullptr;
+		}
 		case ConvolutionType::Specular:
 		{
 
@@ -543,13 +550,9 @@ namespace Rudy {
 			Material::SetMaterialProperties(prefilterShader);
 
 			//the output prefilter cube map;
-			auto prefilterEnvMap = TextureCube::CreateEmpty(TextureSpec{ 128,128,TextureFormat::RGB32F,
+			auto prefilterEnvMap = TextureCube::CreateEmpty(
+				TextureSpec{ 128,128,TextureFormat::RGB32F,
 			 	  true, WrapMode::ClampToEdge,FilterMode::LinearMipmapLinear, FilterMode::Linear });
-
-
-			//auto prefilterEnvMap = TextureCube::CreateEmpty(TextureSpec{ 128,128,TextureFormat::RGBA32F,
-			//	  false, WrapMode::ClampToEdge,FilterMode::Linear, FilterMode::Linear });
-
 
 			auto cubeMaterial = Material::Create(prefilterShader);
 			cubeMaterial->SetTexture(TextureType::EnvironmentMap, envMap);
@@ -629,7 +632,8 @@ namespace Rudy {
 
 
 			//the output prefilter cube map;
-			auto prefilterEnvMap = TextureCube::CreateEmpty(TextureSpec{ 32,32,TextureFormat::RGB32F,
+			auto prefilterEnvMap = TextureCube::CreateEmpty
+			(TextureSpec{ 32,32,TextureFormat::RGB32F,
 				  false, WrapMode::ClampToEdge, FilterMode::Linear, FilterMode::Linear });
 
 

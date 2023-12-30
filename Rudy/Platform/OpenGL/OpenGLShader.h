@@ -1,30 +1,34 @@
 #pragma once
-
+#include "RudyPCH.h"
 
 #include "Rudy/Renderer/Shader.h"
 #include <glad/glad.h>
 #include <glm/glm.hpp>
-
+#include <glm/gtc/type_ptr.hpp>
 
 //me: 
 //not Cherno's code, we don't need translate between OpenGL and Vulkan yet.
-
-
-// TODO: REMOVE!
-typedef uint32_t GLenum;
-
+ 
 namespace Rudy {
+ 
 
 	class OpenGLShader : public Shader
 	{
 	public:
-		
-		OpenGLShader(const std::string& filepath);
-		OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
-		virtual ~OpenGLShader();
+		~OpenGLShader();
 
-	 
-		//====me: inherit from shader class 
+
+		OpenGLShader(const std::string& filepath);  //load from single file, not used
+
+		OpenGLShader(const std::string& name, const std::string& vertexSrc, 
+			const std::string& fragmentSrc, const std::string& geometrySrc); 
+		//geometry shader is optional, default is empty() in front end 
+
+		OpenGLShader(const std::string& name, const std::string& computeSrc);
+
+
+
+		//====inherit
 		virtual void Bind() const override;
 		virtual void Unbind() const override; 
 
@@ -50,8 +54,7 @@ namespace Rudy {
 		virtual const uint32_t GetShaderID() const override { return m_ShaderID; }
 
  
-
-		//utility function  
+		//========utility   
 		void checkCompileErrors(GLuint shader, std::string type);
 
 
@@ -61,7 +64,7 @@ namespace Rudy {
 		std::string m_Name; 
 
 	};
-
+	  
 
 }
 

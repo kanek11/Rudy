@@ -24,17 +24,36 @@ namespace Rudy {
 		return nullptr;
 	}
 
-	Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+	Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc,
+		const std::string& geometrySrc )
 	{
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLShader>(name, vertexSrc, fragmentSrc);
+		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLShader>(name, vertexSrc, fragmentSrc, geometrySrc);
 		}
 
 		RD_CORE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}
+
+
+
+	Ref<Shader> Shader::CreateComputeShader(const std::string& name, const std::string& computeSrc)
+	{
+		switch (Renderer::GetAPI())
+		{
+		case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLShader>(name, computeSrc);
+		}
+
+		RD_CORE_ASSERT(false, "Unknown RendererAPI!");
+		return nullptr;
+	}
+
+
+
+
 
 	void ShaderLibrary::Add(const std::string& name, const Ref<Shader>& shader)
 	{

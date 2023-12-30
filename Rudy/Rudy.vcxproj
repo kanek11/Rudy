@@ -145,6 +145,7 @@
     <None Include="Resources\Shaders\DepthMapSkinned_VS.glsl">
       <FileType>Document</FileType>
     </None>
+    <ClCompile Include="test_ComputeShader.cpp" />
     <ClCompile Include="RudyPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -168,7 +169,6 @@
     <ClCompile Include="Rudy\Renderer\Texture.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="Cube.cpp" />
-    <ClCompile Include="test_pipeline_pbr.cpp" />
     <None Include="Resources\Shaders\BlinnPhong_FS.glsl">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -193,6 +193,7 @@
     <None Include="Resources\Shaders\GBufferSkinned_VS.glsl" />
     <None Include="Resources\Shaders\GBuffer_FS.glsl" />
     <None Include="Resources\Shaders\GBuffer_VS.glsl" />
+    <None Include="Resources\ComputeShaders\TestImage_CS.glsl" />
     <None Include="Resources\Shaders\TextureOnly_VS.glsl" />
     <None Include="Resources\Shaders\PBR_FS.glsl" />
     <None Include="Resources\Shaders\PBR_VS.glsl" />

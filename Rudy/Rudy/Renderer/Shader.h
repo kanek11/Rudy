@@ -7,11 +7,26 @@
 //me: 
 //modify the Rudy code to be more like learnopengl.com
 
+//todo: more flexible pipeline;  
+//todo :make clear shader object vs shader program object;
 
-
-
+ 
+//todo: material might accept compute shader£¿ see as i go.
 
 namespace Rudy {
+
+
+
+	//new:
+	enum class ShaderProgramType {
+
+		None = 0,
+		//Vertex = 1 << 0,
+		//Fragment = 1 << 1,
+		//Geometry = 1 << 2,
+		//Compute = 1 << 3 
+
+	};
 
 	class Shader
 	{
@@ -42,7 +57,10 @@ namespace Rudy {
 		virtual const uint32_t GetShaderID() const = 0;
 
 		static Ref<Shader> Create(const std::string& filepath);
-		static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
+		static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& geometrySrc = "");
+	
+	    //new:
+		static Ref<Shader> CreateComputeShader(const std::string& name, const std::string& computeSrc);
 	};
 
 

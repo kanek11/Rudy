@@ -70,9 +70,7 @@ namespace Rudy {
 	class Texture
 	{
 	public:
-	    ~Texture() = default;
-
-
+	    ~Texture() = default; 
 		//=====setters and getters
 		//virtual void SetData(void* data, uint32_t size) = 0;
 		virtual const TextureSpec& GetTextureSpec() const = 0;
@@ -80,10 +78,7 @@ namespace Rudy {
 		virtual uint32_t GetHeight() const = 0;
 		virtual uint32_t GetTextureID() const = 0; 
 		virtual const std::string& GetPath() const = 0;
-
-
-
-
+		 
 
 
 		virtual void Bind(uint32_t slot = 0) const = 0;

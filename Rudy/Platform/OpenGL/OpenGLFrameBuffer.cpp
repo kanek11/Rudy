@@ -131,7 +131,7 @@ namespace Rudy {
 			 
 			 
 			std::vector<uint32_t> colorAttachments;
-			for(int slot =0 ; slot< m_ColorBufferNum; slot++)
+			for(unsigned int slot =0 ; slot< m_ColorBufferNum; slot++)
 			{
 				colorAttachments.push_back(GL_COLOR_ATTACHMENT0 + slot);
 			} 

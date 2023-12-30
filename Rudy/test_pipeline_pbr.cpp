@@ -1,3 +1,6 @@
+//ver 2023.12.30
+
+
 #include "RudyPCH.h" 
 
 #include <glad/glad.h>
@@ -6,6 +9,7 @@
 #include <random> 
 
 #include "Rudy/Core/Window.h" 
+
 #include "Rudy/Renderer/Renderer.h"
 #include "Rudy/Renderer/Mesh.h"
 #include "Rudy/Renderer/Material.h"
@@ -88,7 +92,6 @@ int main() {
 
     auto envMap = TextureCube::LoadHDRI("D:/CG_resources/HDRI/GrandCanyon_C_YumaPoint/GCanyon_C_YumaPoint_3k.hdr");
   
-
     auto diffuseEnvMap = TextureCube::LoadHDRI("D:/CG_resources/HDRI/GrandCanyon_C_YumaPoint/GCanyon_C_YumaPoint_Env.hdr");
      
     //lod 5 for specular envmap;

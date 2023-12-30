@@ -224,7 +224,7 @@
     <ClCompile Include="Rudy\Renderer\Animation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test_pipeline_pbr.cpp">
+    <ClCompile Include="test_ComputeShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -272,5 +272,6 @@
     <None Include="Resources\Shaders\DepthMapSkinned_VS.glsl">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="Resources\ComputeShaders\TestImage_CS.glsl" />
   </ItemGroup>
 </Project>

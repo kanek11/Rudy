@@ -1,42 +1,86 @@
 #include "RudyPCH.h"
 
 #include "OpenGLShader.h"
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
-
-#include <glm/gtc/type_ptr.hpp>
+ 
 
 namespace Rudy {
 
 
     OpenGLShader::OpenGLShader(const std::string& filepath)
         : m_FilePath(filepath)
-    {
-
+    { 
     }
 
-    //refering to learnopengl.com
-    //disable geometry shader for now.
 
-    OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+    OpenGLShader::OpenGLShader(const std::string& name, const std::string& computeSrc)
+    {
+
+//RD_PROFILE_FUNCTION();
+         
+		std::string computeCode; 
+		std::ifstream cShaderFile;
+         
+		cShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+        try
+        { 
+            cShaderFile.open(computeSrc);
+            std::stringstream cShaderStream; 
+            cShaderStream << cShaderFile.rdbuf(); 
+            cShaderFile.close(); 
+            computeCode = cShaderStream.str();
+        }
+
+        catch (std::ifstream::failure& e)
+        {
+            std::cout << "ERROR::CUMPUTE SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+            std::cout << "Exception message: " << e.what() << std::endl;
+
+        }
+         
+
+       const char* cShaderCode = computeCode.c_str();
+ 
+		uint32_t compute; 
+		compute = glCreateShader(GL_COMPUTE_SHADER);
+		glShaderSource(compute, 1, &cShaderCode, NULL);
+		glCompileShader(compute);
+		checkCompileErrors(compute, "COMPUTE");
+         
+		m_ShaderID = glCreateProgram(); 
+		glAttachShader(m_ShaderID, compute); 
+		glLinkProgram(m_ShaderID); 
+		checkCompileErrors(m_ShaderID, "PROGRAM");
+ 
+        glDeleteShader(compute);
+
+		RD_CORE_INFO("OpenGLShader: cumpute shaderName: {0} is created, ID:{1}", m_Name, m_ShaderID);
+
+         
+    }
+
+ 
+    OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc,
+        const std::string& fragmentSrc,
+        const std::string& geometrySrc)
         : m_Name(name)
     {
         //RD_PROFILE_FUNCTION();
 
-        // 1. retrieve the vertex/fragment source code from filePath
+        // 1. retrieve the source code from filePath,  just strings.
         std::string vertexCode;
         std::string fragmentCode;
-        //std::string geometryCode;
+        std::string geometryCode;
+
+        //ifstream: input file stream
         std::ifstream vShaderFile;
         std::ifstream fShaderFile;
-        //std::ifstream gShaderFile;
+        std::ifstream gShaderFile;
 
         // ensure ifstream objects can throw exceptions:
         vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
         fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-        //gShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        gShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
         try
         {
@@ -44,6 +88,7 @@ namespace Rudy {
             vShaderFile.open(vertexSrc);
             fShaderFile.open(fragmentSrc);
             std::stringstream vShaderStream, fShaderStream;
+
             // read file's buffer contents into streams
             vShaderStream << vShaderFile.rdbuf();
             fShaderStream << fShaderFile.rdbuf();
@@ -56,22 +101,26 @@ namespace Rudy {
             fragmentCode = fShaderStream.str();
 
             // if geometry shader path is present, also load a geometry shader
-        /*    if (geometryPath != nullptr)
+            if (!geometrySrc.empty())
             {
-                gShaderFile.open(geometryPath);
+                gShaderFile.open(geometrySrc);
                 std::stringstream gShaderStream;
                 gShaderStream << gShaderFile.rdbuf();
                 gShaderFile.close();
                 geometryCode = gShaderStream.str();
             }
-        */
+        
 
         }
 
         catch (std::ifstream::failure& e)
         {
             std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+            std::cout << "Exception message: " << e.what() << std::endl;
+
         }
+
+        //cast into C-string that OpenGL accepts
         const char* vShaderCode = vertexCode.c_str();
         const char* fShaderCode = fragmentCode.c_str();
 
@@ -90,16 +139,17 @@ namespace Rudy {
         checkCompileErrors(fragment, "FRAGMENT");
 
 
-        // if geometry shader is given, compile geometry shader
-  /*      uint32_t geometry;
-        if (geometryPath != nullptr)
+ 
+        uint32_t geometry;
+        if (!geometrySrc.empty())
         {
+            RD_CORE_WARN("OpenGLShader: geometrySrc exist");
             const char* gShaderCode = geometryCode.c_str();
             geometry = glCreateShader(GL_GEOMETRY_SHADER);
             glShaderSource(geometry, 1, &gShaderCode, NULL);
             glCompileShader(geometry);
             checkCompileErrors(geometry, "GEOMETRY");
-        }*/
+        } 
 
          
         // output of the creation.
@@ -108,8 +158,8 @@ namespace Rudy {
         glAttachShader(m_ShaderID, vertex);
         glAttachShader(m_ShaderID, fragment);
 
-        /* if (geometryPath != nullptr)
-             glAttachShader(ID, geometry);*/
+        if (!geometrySrc.empty())
+             glAttachShader(m_ShaderID, geometry);
 
         glLinkProgram(m_ShaderID);
 
@@ -119,10 +169,10 @@ namespace Rudy {
         glDeleteShader(vertex);
         glDeleteShader(fragment);
 
-        /*  if (geometryPath != nullptr)
-              glDeleteShader(geometry);*/
+        if (!geometrySrc.empty())
+              glDeleteShader(geometry);
 
-        RD_CORE_INFO("OpenGLShader: shaderName: {0} is created, id:{1}", m_Name,m_ShaderID);
+        RD_CORE_INFO("OpenGLShader: shaderProgram Name: {0} is created, ID:{1}", m_Name,m_ShaderID);
     }
 
 
@@ -131,6 +181,7 @@ namespace Rudy {
     OpenGLShader::~OpenGLShader()
     {
         //RD_PROFILE_FUNCTION(); 
+        RD_CORE_INFO("OpenGLShader: shaderName: {0} is deleted, ID:{1}", m_Name, m_ShaderID);
         glDeleteProgram(m_ShaderID);
     }
 

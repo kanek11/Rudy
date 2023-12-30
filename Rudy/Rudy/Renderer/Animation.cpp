@@ -30,7 +30,7 @@ namespace Rudy
 		// and since each properties can be keyed in different frame index; need to search for each;
 
 		//time to ticks;
-		int floor_frameIndex = static_cast<int>(time * FPS);
+		uint32_t floor_frameIndex = static_cast<int>(time * FPS);
 		//RD_CORE_INFO("animationclip: the floor frame index is {0}", floor_frameIndex);
 
 		//iterate through each keybone;

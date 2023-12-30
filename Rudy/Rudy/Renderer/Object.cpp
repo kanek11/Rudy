@@ -313,7 +313,7 @@ namespace Rudy
         int boneCounter = bindPoseBoneMap.size();  //the current number of bones in the map;
 
         RD_CORE_INFO("Modelloading: {0} bound bones detected for the mesh", mesh->mNumBones);
-        for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+        for (unsigned int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
         {
             int boneID = -1;
             std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
@@ -510,7 +510,7 @@ namespace Rudy
 
             //retreive properties in the channel
             //RD_CORE_WARN("Modelloading: mNumPositionKeysfound:{0}", channel->mNumPositionKeys);
-            for (int j = 0; j < channel->mNumPositionKeys; j++)
+            for (unsigned int j = 0; j < channel->mNumPositionKeys; j++)
             {
                 aiVectorKey key = channel->mPositionKeys[j];
                 KeyPosition newKeyPosition;
@@ -521,7 +521,7 @@ namespace Rudy
                 newKeyBone->m_KeyPositions.push_back(newKeyPosition); 
             }
 
-            for (int j = 0; j < channel->mNumRotationKeys; j++)
+            for (unsigned int j = 0; j < channel->mNumRotationKeys; j++)
             {
                 auto key = channel->mRotationKeys[j];
                 KeyRotation newKeyRotation;
@@ -530,7 +530,7 @@ namespace Rudy
                 newKeyBone->m_KeyRotations.push_back(newKeyRotation);
             }
 
-            for (int j = 0; j < channel->mNumScalingKeys; j++)
+            for (unsigned int j = 0; j < channel->mNumScalingKeys; j++)
             {
                 auto key = channel->mScalingKeys[j];
                 KeyScale newKeyScale;
