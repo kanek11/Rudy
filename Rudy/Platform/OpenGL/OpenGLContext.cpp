@@ -27,9 +27,11 @@ namespace Rudy {
 
 		RD_CORE_INFO("GLContextInit: OpenGL Info:");
 		RD_CORE_INFO("Vendor: {0}", glGetString(GL_VENDOR));
-		RD_CORE_INFO("Renderer: {0}", glGetString(GL_RENDERER));
-		RD_CORE_INFO("Version: {0}", glGetString(GL_VERSION));
+		RD_CORE_INFO("Renderer(GPU): {0}", glGetString(GL_RENDERER));
+		RD_CORE_INFO("GLVersion: {0}", glGetString(GL_VERSION)); 
+		RD_CORE_INFO("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));	
 
+		  
 
 		GLint maxDrawBuffers;
 		glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
@@ -58,16 +60,35 @@ namespace Rudy {
 	
 	
 	
+
+		//some default settings
+#ifdef RD_DEBUG
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		glDebugMessageCallback(OpenGLMessageCallback, nullptr); 
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+#endif
+
+		//be careful;
+		//glEnable(GL_BLEND);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		
+		//glEnable(GL_CULL_FACE);
+		//glCullFace(GL_BACK);
+
+
+		//not used;
+		//glEnable(GL_MULTISAMPLE); 
+
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LINE_SMOOTH);
+
+		
+
 	
 	
 	
 	}
 
-	void OpenGLContext::SwapBuffers()
-	{
-		//RD_PROFILE_FUNCTION();
-
-		glfwSwapBuffers(m_WindowHandle);
-	}
 
 }

@@ -237,10 +237,9 @@ int main() {
 
         main_camera->OnUpdate(deltaTime);
 
-        Renderer::WindowOnUpdate();
-        /* Swap front and back buffers */
-       // glfwSwapBuffers(window); 
-        /* Poll for and process events */
+
+        Renderer::WindowOnUpdate(); 
+       // glfwSwapBuffers(window);  
         //glfwPollEvents();
 
 
@@ -248,9 +247,9 @@ int main() {
     }
 
 
-    //====shutdown
-
-    glfwTerminate();
+    //====shutdown 
+    Renderer::Shutdown();
+    //glfwTerminate();
     return 0;
 
 

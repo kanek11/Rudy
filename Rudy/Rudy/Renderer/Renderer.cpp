@@ -22,17 +22,16 @@ namespace Rudy {
 	{
 		//RD_PROFILE_FUNCTION();
  
-		//DONOT touch;
+		//fixed dependency of all:
 	    RendererAPI::SetAPI( RendererAPI::API::OpenGL );
-		s_RendererAPI = RendererAPI::Create();
 
+		s_RendererAPI = RendererAPI::Create(); 
 
-		s_Window = Window::Create( WindowProps{ width, height });
+		s_Window = Window::Create( WindowProps{ width, height ,"Rudy Engine"});
 		Input::SetWindowContext(s_Window->GetNativeWindow());
+		 
 
-		s_RendererAPI->Init();
-
-
+		RD_CORE_WARN("Renderer: Init");
 
 
 		//RenderCommand::Init();
