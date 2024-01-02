@@ -110,7 +110,7 @@ int main() {
 
     auto brdfQuadMaterial = Material::Create(brdfLUTShader);
 
-    auto brdfLUTMap = Texture2D::CreateEmpty(TextureSpec{ 512, 512, TextureFormat::RGB32F });
+    auto brdfLUTMap = Texture2D::CreateEmpty(TextureSpec{ 512, 512, TextureInternalFormat::RGB32F });
 
     auto brdfLUTFBO = FrameBuffer::Create(
 		        512, 512, FrameBufferType::Screen); 
@@ -161,14 +161,14 @@ int main() {
     SCR_WIDTH, SCR_WIDTH, FrameBufferType::GBuffer, 8);
      
     //the framebuffer for gbuffer pass: 8;
-    auto gPosition     = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F });
-    auto gAlbedo       = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F });
-    auto gWorldNormal  = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F });
-    auto gWorldTangent = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F });
-    auto gSpecular     = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R32F });
-    auto gMetallic     = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R32F });
-    auto gRoughness    = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R32F });
-    auto gScreenDepth  = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::DEPTH_COMPONENT24,
+    auto gPosition     = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F });
+    auto gAlbedo       = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F });
+    auto gWorldNormal  = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F });
+    auto gWorldTangent = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F });
+    auto gSpecular     = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::R32F });
+    auto gMetallic     = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::R32F });
+    auto gRoughness    = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::R32F });
+    auto gScreenDepth  = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::DEPTH_COMPONENT24,
                              false, WrapMode::ClampToBorder, FilterMode::Nearest  });
 
   
@@ -236,13 +236,14 @@ int main() {
 
     //
     auto sphere_Material = Material::Create(gBufferPassShader); 
-    auto sphere_albedoMap =    Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/albedo.png");
+    //auto sphere_albedoMap =    Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/albedo.png");
+    sphere_Material->SetVec3("u_Albedo", glm::vec3(1.0f, 0.0f, 0.0f));
     auto sphere_normalMap =    Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/normal.png");
     auto sphere_roughnessMap = Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/roughness.png");
     auto sphere_metallicMap =  Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/metallic.png");
 
 
-    sphere_Material->SetTexture(TextureType::AlbedoMap,    sphere_albedoMap);
+    //sphere_Material->SetTexture(TextureType::AlbedoMap,    sphere_albedoMap);
     sphere_Material->SetTexture(TextureType::NormalMap,    sphere_normalMap);
     sphere_Material->SetTexture(TextureType::RoughnessMap, sphere_roughnessMap);
     sphere_Material->SetTexture(TextureType::MetallicMap,  sphere_metallicMap);
@@ -269,7 +270,7 @@ int main() {
 		SHADOW_WIDTH, SHADOW_HEIGHT, FrameBufferType::DepthMap);
 
     auto shadowMap = Texture2D::CreateEmpty(
-		TextureSpec{ SHADOW_WIDTH, SHADOW_HEIGHT, TextureFormat::DEPTH_COMPONENT24,
+		TextureSpec{ SHADOW_WIDTH, SHADOW_HEIGHT, TextureInternalFormat::DEPTH_COMPONENT24,
         					 false, WrapMode::ClampToBorder, FilterMode::Nearest });
 
     shadowMapFBO->Bind();
@@ -353,7 +354,7 @@ int main() {
     auto lightingPassFBO = FrameBuffer::Create(
 		     SCR_WIDTH, SCR_WIDTH, FrameBufferType::Screen);
 
-    auto lightingPassScreenTexture = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F });
+    auto lightingPassScreenTexture = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F });
     
     lightingPassFBO->Bind();
     lightingPassFBO->SetColorAttachmentTexture(lightingPassScreenTexture, 0);
@@ -375,7 +376,7 @@ int main() {
 
     lightingPassMaterial->SetTexture(TextureType::diffuseEnvMap, diffuseEnvMap);
     lightingPassMaterial->SetTexture(TextureType::specularEnvMap, specularEnvMap);
-    lightingPassMaterial->SetTexture(TextureType::brdfLUT, brdfLUTMap);
+    lightingPassMaterial->SetTexture(TextureType::brdfLUTMap, brdfLUTMap);
 
     lightingPassMaterial->SetTexture(TextureType::DepthMap, shadowMap);
 
@@ -396,7 +397,7 @@ int main() {
 
     //material 
     auto skyboxMaterial = Material::Create(skyboxShader);
-    skyboxMaterial->SetTexture(TextureType::Skybox, envMap); 
+    skyboxMaterial->SetTexture(TextureType::SkyboxTexture, envMap); 
 
     Cube skybox;
     skybox.SetMaterial(skyboxMaterial);
@@ -415,7 +416,7 @@ int main() {
     Quad ssaoQuad = Quad();
 
      auto ssaoScreenTexture = Texture2D::CreateEmpty(
-       TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R32F,
+       TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::R32F,
                     false, WrapMode::ClampToBorder, FilterMode::Nearest });
 
     if (enableSSAO)
@@ -463,10 +464,11 @@ int main() {
             ssaoNoise.push_back(noise);
         }
 
-        auto ssaoNoiseTexture = Texture2D::CreateUsingData(TextureSpec{
-                4, 4, TextureFormat::RGB32F, false, WrapMode::Repeat, FilterMode::Nearest },
-                ssaoNoise.data());
-
+        auto ssaoNoiseTexture = Texture2D::CreateEmpty(TextureSpec{
+                4, 4, TextureInternalFormat::RGB32F,
+                false, WrapMode::Repeat, FilterMode::Nearest });
+           
+        ssaoNoiseTexture->SubData(ssaoNoise.data(), 4, 4);  
 
 
         auto ssaoMaterial = Material::Create(ssaoShader);
@@ -486,7 +488,7 @@ int main() {
        //     SCR_WIDTH, SCR_WIDTH, FrameBufferType::Screen);
 
         //auto ssaoScreenTexture = Texture2D::CreateEmpty(
-        //    TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::R32F,
+        //    TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::R32F,
         //                 false, WrapMode::ClampToBorder, FilterMode::Nearest });
 
         ssaoFBO->Bind();
@@ -512,7 +514,7 @@ int main() {
     auto ssrQuad = Quad();
 
  auto ssrScreenTexture = Texture2D::CreateEmpty(
-  TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F,
+  TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F,
                false, WrapMode::ClampToBorder, FilterMode::Linear });
 
 
@@ -534,7 +536,7 @@ int main() {
         ssrQuad.SetMaterial(ssrMaterial); 
 
         //auto ssrScreenTexture = Texture2D::CreateEmpty(
-        //    TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGB32F,
+        //    TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F,
         //                 false, WrapMode::ClampToBorder, FilterMode::Linear });
 
         ssrFBO->Bind();

@@ -118,7 +118,7 @@ int main() {
 
     //texture for compute shader result, an image.
     auto computeTexture = Texture2D::CreateEmpty(
-    TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureFormat::RGBA32F, 
+    TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGBA32F, 
     false, WrapMode::ClampToEdge, FilterMode::Linear }); 
  
     auto ID = computeTexture->GetTextureID();

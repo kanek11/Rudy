@@ -19,7 +19,7 @@ uniform sampler2D gRoughness;
 //IBL 
 uniform samplerCube u_DiffuseEnvMap;
 uniform samplerCube u_SpecularEnvMap;
-uniform sampler2D u_BrdfLUT;
+uniform sampler2D u_BrdfLUTMap;
 
 uniform sampler2D u_DepthMap;  //shadow map
 
@@ -135,8 +135,8 @@ void main()
     vec3 N = normalize(texture(gWorldNormal, TexCoords).rgb * 2.0 - 1.0);
 
     vec3 albedo = texture(gAlbedo, TexCoords).rgb;  
-
-
+     
+    //specular or roughness workflow;
     float specularCoeff = texture(gSpecular, TexCoords).r;   
 
     float roughness = texture(gRoughness, TexCoords).r;  //gray
@@ -210,7 +210,7 @@ void main()
         //roughness = 0;
         vec3 specularColor = textureLod(u_SpecularEnvMap, R, roughness * MAX_REFLECTION_LOD).rgb;
 
-        vec2 brdf = texture(u_BrdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
+        vec2 brdf = texture(u_BrdfLUTMap, vec2(max(dot(N, V), 0.0), roughness)).rg;
         vec3 specularEnv = specularColor * (F * brdf.x + brdf.y);
 
 

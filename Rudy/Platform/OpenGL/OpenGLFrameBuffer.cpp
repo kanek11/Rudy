@@ -15,7 +15,7 @@ namespace Rudy {
 			case RenderBufferFormat::DEPTH24STENCIL8: return GL_DEPTH24_STENCIL8;
 			}
 
-			RD_CORE_ASSERT(false, "Unknown TextureFormat!");
+			RD_CORE_ASSERT(false, "Unknown TextureInternalFormat!");
 			return 0;
 		}
 

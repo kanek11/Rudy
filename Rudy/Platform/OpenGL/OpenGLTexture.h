@@ -7,21 +7,24 @@
 
 #include <glad/glad.h>
 
+//todo: 
+// organinze properties in a struct, so that we won't need to change class-by-class.
+//custom mipmap LOD ;
+
+
 namespace Rudy {
 
-	 
-
-
+	  
 	class OpenGLTexture2D : public Texture2D
 	{
 	public:
+		~OpenGLTexture2D();
 		OpenGLTexture2D(const std::string& path, bool isHDRI);
-		OpenGLTexture2D(const TextureSpec& specification);
-		OpenGLTexture2D(const TextureSpec& specification, void* data);
-	    ~OpenGLTexture2D();
+		OpenGLTexture2D(const TextureSpec& specification); 
 
 
-		//gl utils
+		//======inherited
+
 		virtual void Bind(uint32_t slot = 0) const override
 		{
 			glBindTextureUnit(slot, m_TextureID);
@@ -30,6 +33,9 @@ namespace Rudy {
 		{
 			glBindTextureUnit(slot, 0);
 		}
+
+		virtual void SubData(void* data,
+			uint32_t width, uint32_t height, uint32_t xOffset = 0, uint32_t yOffset = 0) override;
 		
 
 		virtual bool IsLoaded() const override { return m_IsLoaded; }
@@ -44,19 +50,10 @@ namespace Rudy {
 		virtual uint32_t GetTextureID() const override { return m_TextureID; }
 		virtual const std::string& GetPath() const override { return m_Path; }  
 	
-	
-
-		//virtual bool operator==(const Texture& other) const override
-		//{
-		//	return m_TextureID == other.GetTextureID();
-		//}
-
-
+	 
 		
 
-	public:
-
-		//inherited
+	public: 
 		uint32_t m_TextureID;
 
 		TextureSpec m_TextureSpec;
@@ -67,10 +64,9 @@ namespace Rudy {
 
 		uint32_t m_Width, m_Height;
 		std::string m_Path;
-
-        //not to be queried from outside, no getter for now.  
-		//GLenum m_InternalFormat, m_DataFormat; 
-		//GLenum m_WrapMode, m_FilterMode;
+		 
+		GLenum m_InternalFormat, m_DataFormat, m_DataType;
+		GLenum m_WrapMode, m_MinFilterMode, m_MagFilterMode;
 
 		bool m_IsLoaded = false;
  
@@ -101,6 +97,10 @@ namespace Rudy {
 			glBindTextureUnit(slot, 0);
 		}
 
+		virtual void SubData(void* data,
+			uint32_t width, uint32_t height, uint32_t xOffset = 0, uint32_t yOffset = 0) override
+		{ //to be implemented
+			RD_CORE_ERROR( "Not implemented yet");}
 
 
 		virtual bool IsLoaded() const override { return m_IsLoaded; }
@@ -138,9 +138,8 @@ namespace Rudy {
 		uint32_t m_TextureID;
 		std::string m_Path;
 
-		//not to be queried from outside, no getter for now.  
-		//GLenum m_InternalFormat, m_DataFormat;
-		//GLenum m_WrapMode, m_FilterMode;
+		GLenum m_InternalFormat, m_DataFormat, m_DataType;
+		GLenum m_WrapMode, m_MinFilterMode, m_MagFilterMode;
 
 		bool m_IsLoaded = false;
 

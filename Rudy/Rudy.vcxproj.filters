@@ -141,6 +141,9 @@
     <ClInclude Include="Overlay.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Rudy\Core\FileSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Rudy\Core\Log.cpp">
@@ -224,7 +227,10 @@
     <ClCompile Include="Rudy\Renderer\Animation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test_ComputeShader.cpp">
+    <ClCompile Include="Rudy\Core\FileSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test_pipeline_pbr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

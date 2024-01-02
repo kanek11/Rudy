@@ -22,9 +22,7 @@ layout(location = 1) uniform float width;             /** Width of the texture *
 void main() {
 	vec4 value = vec4(0.0, 0.0, 0.0, 1.0);
 	ivec2 texelCoord = ivec2(gl_GlobalInvocationID.xy);
-	float speed = 100;
-	// the width of the texture
-	//float width = 1000;
+	float speed = 100; 
 
 	value.x = mod(float(texelCoord.x) + t * speed, width) / (gl_NumWorkGroups.x * gl_WorkGroupSize.x);
 	value.y = float(texelCoord.y) / (gl_NumWorkGroups.y * gl_WorkGroupSize.y);

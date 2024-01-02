@@ -43,17 +43,7 @@ namespace Rudy {
 	}
 
 
-	Ref<Texture2D> Texture2D::CreateUsingData(const TextureSpec& specfication, void* data)
-	{
-		switch (Renderer::GetAPI())
-		{
-		case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTexture2D>(specfication, data);
-		}
-
-		RD_CORE_ASSERT(false, "Unknown RendererAPI!");
-		return nullptr;
-	}
+	 
 
 
 

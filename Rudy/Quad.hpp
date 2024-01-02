@@ -17,7 +17,8 @@ namespace Rudy {
 
     class Quad : public MeshObject {
     public:
-        Quad() { CreateGeometry();
+        Quad() { 
+        CreateGeometry();
         mesh->SetupVertices();
         mesh->LoadToGPU();
         }

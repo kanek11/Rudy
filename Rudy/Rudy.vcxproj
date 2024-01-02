@@ -98,6 +98,7 @@
     <ClInclude Include="Overlay.hpp" />
     <ClInclude Include="Rudy\Core\Assert.h" />
     <ClInclude Include="Rudy\Core\Base.h" />
+    <ClInclude Include="Rudy\Core\FileSystem.h" />
     <ClInclude Include="Rudy\Core\Timer.h" />
     <ClInclude Include="Rudy\Core\Timestep.h" />
     <ClInclude Include="Rudy\Debug\Instrumentor.h" />
@@ -142,10 +143,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="test_pipeline_pbr.cpp" />
     <None Include="Resources\Shaders\DepthMapSkinned_VS.glsl">
       <FileType>Document</FileType>
     </None>
-    <ClCompile Include="test_ComputeShader.cpp" />
+    <ClCompile Include="Rudy\Core\FileSystem.cpp" />
     <ClCompile Include="RudyPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

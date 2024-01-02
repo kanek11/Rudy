@@ -49,20 +49,20 @@ namespace Rudy {
 
 	namespace Utils {
 
-		static GLenum TextureFormatToGLFormat(TextureFormat format)
+		static GLenum TextureInternalFormatToGLFormat(TextureInternalFormat format)
 		{
 			switch (format)
 			{ 
-		    case TextureFormat::R8: return GL_R8; 
-			case TextureFormat::R32F: return GL_R32F;
-		    case TextureFormat::RG8: return GL_RG8;
-		    case TextureFormat::RG32F: return GL_RG32F;
-			case TextureFormat::RGB8:  return GL_RGB8; 
-			case TextureFormat::RGB32F: return GL_RGB32F;
-			case TextureFormat::RGBA8: return GL_RGBA8;
-			case TextureFormat::RGBA32F: return GL_RGBA32F;
+		    case TextureInternalFormat::R8: return GL_R8; 
+			case TextureInternalFormat::R32F: return GL_R32F;
+		    case TextureInternalFormat::RG8: return GL_RG8;
+		    case TextureInternalFormat::RG32F: return GL_RG32F;
+			case TextureInternalFormat::RGB8:  return GL_RGB8; 
+			case TextureInternalFormat::RGB32F: return GL_RGB32F;
+			case TextureInternalFormat::RGBA8: return GL_RGBA8;
+			case TextureInternalFormat::RGBA32F: return GL_RGBA32F;
 
-			case TextureFormat::DEPTH_COMPONENT24: return GL_DEPTH_COMPONENT24;
+			case TextureInternalFormat::DEPTH_COMPONENT24: return GL_DEPTH_COMPONENT24;
 			}
 
 			RD_CORE_ASSERT(false);
@@ -70,25 +70,55 @@ namespace Rudy {
 		}
 
 
-		static  GLenum TextureFormatToDataFormat(TextureFormat format)
+		static  GLenum TextureInternalFormatToDataFormat(TextureInternalFormat format)
 		{
 			switch (format)
 			{ 
-			case TextureFormat::R8: return GL_RED; 
-			case TextureFormat::R32F: return GL_RED;
-			case TextureFormat::RG8: return GL_RG;
-		    case TextureFormat::RG32F: return GL_RG;
-			case TextureFormat::RGB8:  return GL_RGB;
-			case TextureFormat::RGB32F: return GL_RGB;
-			case TextureFormat::RGBA8: return GL_RGBA;
-		    case TextureFormat::RGBA32F: return GL_RGBA;
+			case TextureInternalFormat::R8: return GL_RED; 
+			case TextureInternalFormat::R32F: return GL_RED;
+			case TextureInternalFormat::RG8: return GL_RG;
+		    case TextureInternalFormat::RG32F: return GL_RG;
+			case TextureInternalFormat::RGB8:  return GL_RGB;
+			case TextureInternalFormat::RGB16F: return GL_RGB;
+			case TextureInternalFormat::RGB32F: return GL_RGB;
+			case TextureInternalFormat::RGBA8: return GL_RGBA;
+		    case TextureInternalFormat::RGBA32F: return GL_RGBA;
 
-			case TextureFormat::DEPTH_COMPONENT24: return GL_DEPTH_COMPONENT;
+			case TextureInternalFormat::DEPTH_COMPONENT24: return GL_DEPTH_COMPONENT;
 			}
 
 			RD_CORE_ASSERT(false);
 			return 0;
 		}
+
+		static  GLenum TextureInternalFormatToDataType(TextureInternalFormat format)
+		{
+			switch (format)
+			{
+			case TextureInternalFormat::R8:      return GL_UNSIGNED_BYTE;
+			case TextureInternalFormat::R32F:    return GL_FLOAT;
+			case TextureInternalFormat::RG8:     return GL_UNSIGNED_BYTE;
+			case TextureInternalFormat::RG32F:   return GL_FLOAT;
+			case TextureInternalFormat::RGB8:    return GL_UNSIGNED_BYTE;
+			case TextureInternalFormat::RGB16F:  return GL_FLOAT;
+			case TextureInternalFormat::RGB32F:  return GL_FLOAT;
+			case TextureInternalFormat::RGBA8:   return GL_UNSIGNED_BYTE;
+			case TextureInternalFormat::RGBA32F: return GL_FLOAT; 
+			case TextureInternalFormat::DEPTH_COMPONENT24: return GL_UNSIGNED_INT;
+			}
+
+			RD_CORE_ASSERT(false);
+			return 0;
+		}
+
+
+
+
+
+
+
+
+
 
  
 
@@ -121,6 +151,21 @@ namespace Rudy {
 	}
 
 
+//================================
+	void OpenGLTexture2D::SubData(void* data,
+		uint32_t width, uint32_t height, uint32_t xOffset, uint32_t yOffset)
+	{ 
+		//RD_PROFILE_FUNCTION();
+
+	   //robustness check
+	   RD_CORE_ASSERT(width * height == m_Width * m_Height, "Data must be entire texture!");
+	   RD_CORE_ASSERT(m_DataFormat!=0 && m_DataType != 0, "no deduced data info!");
+  
+	   glTextureSubImage2D(m_TextureID, 0, xOffset, yOffset, width, height, m_DataFormat, m_DataType, data);
+	    
+	 }
+
+
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path, bool isHDRI)
 		: m_Path(path)
@@ -145,7 +190,7 @@ namespace Rudy {
 
 		if (!data)
 		{
-			RD_CORE_WARN("glTexture2D: failded to load texture at path: {0}", path.c_str());
+			RD_CORE_ERROR("glTexture2D: failded to load texture at path: {0}", path.c_str());
 		}
 		else
 		{ 
@@ -154,12 +199,15 @@ namespace Rudy {
 			m_Width = width;
 			m_Height = height;
 
-			GLenum internalFormat = 0, dataFormat = 0;
+			GLint internalFormat = 0;
+			GLenum dataFormat = 0;
+			GLenum dataType = GL_UNSIGNED_BYTE; //most 8 bit texture is unsigned byte
 
 			if (isHDRI)
 			{ 
 				internalFormat = GL_RGB16F;
-				dataFormat = GL_RGB;
+				dataFormat = GL_RGB;   
+                dataType = GL_FLOAT;  //hdri is float
 			}
 		    else
 			if (channels == 4)
@@ -181,8 +229,7 @@ namespace Rudy {
 			auto m_InternalFormat = internalFormat;
 			auto m_DataFormat = dataFormat;
 
-			RD_CORE_ASSERT(internalFormat & dataFormat, "glTexture:Format not supported!");
-
+			RD_CORE_ASSERT(internalFormat & dataFormat, "glTexture:Format not supported!"); 
 
 			glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
 
@@ -193,7 +240,7 @@ namespace Rudy {
 			glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-			glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
+			glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, dataFormat, dataType, data);
 
 			stbi_image_free(data);
 
@@ -209,7 +256,8 @@ namespace Rudy {
 
 	//
 	OpenGLTexture2D::OpenGLTexture2D(const TextureSpec& specification)
-		: m_TextureSpec(specification), m_Width(m_TextureSpec.Width), m_Height(m_TextureSpec.Height)
+		: m_TextureSpec(specification), 
+		m_Width(m_TextureSpec.width), m_Height(m_TextureSpec.height)
 	{
 
 		//RD_PROFILE_FUNCTION();
@@ -218,19 +266,19 @@ namespace Rudy {
 		RD_CORE_ASSERT(m_Width && m_Height, "Texture width and height must be greater than 0!");
 
 
-		auto m_InternalFormat = Utils::TextureFormatToGLFormat(specification.TextureFormat);
-		auto m_DataFormat = Utils::TextureFormatToDataFormat(specification.TextureFormat); 
-		auto m_WrapMode = Utils::WrapModeToGLWrapMode(specification.wrapMode);
-		auto m_MinFilterMode = Utils::FilterModeToGLFilterMode(specification.minfilterMode); 
-		auto m_MagFilterMode = Utils::FilterModeToGLFilterMode(specification.magfilterMode);
+	    m_InternalFormat = Utils::TextureInternalFormatToGLFormat(specification.textureInternalFormat);
+	    m_DataFormat = Utils::TextureInternalFormatToDataFormat(specification.textureInternalFormat); 
+	    m_DataType = Utils::TextureInternalFormatToDataType(specification.textureInternalFormat);
+		m_WrapMode = Utils::WrapModeToGLWrapMode(specification.wrapMode);
+	    m_MinFilterMode = Utils::FilterModeToGLFilterMode(specification.minfilterMode); 
+	    m_MagFilterMode = Utils::FilterModeToGLFilterMode(specification.magfilterMode);
 
-
+		//deprecated old fashion
 		//glGenTextures(1, &m_TextureID);
 		//glBindTexture(GL_TEXTURE_2D, m_TextureID);  
 		// glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, m_Width, m_Height, 0, m_DataFormat, GL_FLOAT, NULL);
 
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);  
-	
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);   
 	  
 	    glTextureStorage2D(m_TextureID, 1, m_InternalFormat, m_Width, m_Height);
 
@@ -239,58 +287,18 @@ namespace Rudy {
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, m_WrapMode);
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, m_WrapMode);
 
+		if (specification.generateMips)
+		{
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
+
+		//no data copy for empty texture
 	    //glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, NULL);
-	 
-		  
-	    RD_CORE_WARN("glTexture2D: empty texture2DId:{0} is created ", m_TextureID); 
+	  
+	    RD_CORE_WARN("glTexture2D: empty texture2D Id:{0} is created ", m_TextureID); 
 
 	}
-
-
-
-
-
-
-	OpenGLTexture2D::OpenGLTexture2D(const TextureSpec& specification, void* data)
-		: m_TextureSpec(specification), m_Width(m_TextureSpec.Width), m_Height(m_TextureSpec.Height)
-	{
-
-		//RD_PROFILE_FUNCTION();
-
-		//deny to create texture with 0 size
-		RD_CORE_ASSERT(m_Width && m_Height, "Texture width and height must be greater than 0!");
-
-
-		auto m_InternalFormat = Utils::TextureFormatToGLFormat(specification.TextureFormat);
-		auto m_DataFormat = Utils::TextureFormatToDataFormat(specification.TextureFormat);
-		auto m_WrapMode = Utils::WrapModeToGLWrapMode(specification.wrapMode);
-		auto m_MinFilterMode = Utils::FilterModeToGLFilterMode(specification.minfilterMode);
-		auto m_MagFilterMode = Utils::FilterModeToGLFilterMode(specification.magfilterMode);
-
-
-		glGenTextures(1, &m_TextureID);
-		glBindTexture(GL_TEXTURE_2D, m_TextureID);
-
-
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_TextureID);
-	    glTextureStorage2D(m_TextureID, 1, m_InternalFormat, m_Width, m_Height);
-
-	 	glTextureParameteri(m_TextureID, GL_TEXTURE_MIN_FILTER, m_MinFilterMode);
-		glTextureParameteri(m_TextureID, GL_TEXTURE_MAG_FILTER, m_MagFilterMode);
-		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_S, m_WrapMode);
-		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, m_WrapMode);
-
-		glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
-		 
-
-		RD_CORE_WARN("glTexture2D: custom texture2DId:{0} is created ", m_TextureID);
-
-	}
-
-
-
 	 
-
 	 
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{
@@ -300,30 +308,23 @@ namespace Rudy {
 	}
 
 
- 
-
-	//void OpenGLTexture2D::SetData(void* data, uint32_t size)
-	//{
-	//	//RD_PROFILE_FUNCTION();
-	//
-	//	uint32_t bpp = m_DataFormat == GL_RGBA ? 4 : 3;
-	//	RD_CORE_ASSERT(size == m_Width * m_Height * bpp, "Data must be entire texture!");
-	//	glTextureSubImage2D(m_TextureID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
-	//}
+  
 
 
+
+
+
+
+
+
+
+	//================================
 	//===========Cube
-
-
-
-	//OpenGLTextureCube(const std::string& path);
-	//OpenGLTextureCube(const std::vector<std::string>& paths);
-	//OpenGLTextureCube(const TextureSpec& specification);
-
-
+	//================================
+	 
 
 	OpenGLTextureCube::OpenGLTextureCube(const TextureSpec& specification)
-		: m_TextureSpec(specification), m_Width(m_TextureSpec.Width), m_Height(m_TextureSpec.Height)
+		: m_TextureSpec(specification), m_Width(m_TextureSpec.width), m_Height(m_TextureSpec.height)
 	{
 
 		//RD_PROFILE_FUNCTION();
@@ -332,17 +333,14 @@ namespace Rudy {
 		RD_CORE_ASSERT(m_Width && m_Height, "Texture width and height must be greater than 0!");
 
 		 
-		auto m_InternalFormat = Utils::TextureFormatToGLFormat(specification.TextureFormat);
-		auto m_DataFormat = Utils::TextureFormatToDataFormat(specification.TextureFormat); 
+		auto m_InternalFormat = Utils::TextureInternalFormatToGLFormat(specification.textureInternalFormat);
+		auto m_DataFormat = Utils::TextureInternalFormatToDataFormat(specification.textureInternalFormat); 
 		auto m_WrapMode = Utils::WrapModeToGLWrapMode(specification.wrapMode);
 		auto m_MinFilterMode = Utils::FilterModeToGLFilterMode(specification.minfilterMode);
 		auto m_MagFilterMode = Utils::FilterModeToGLFilterMode(specification.magfilterMode);
 
 
-
-		//glGenTextures(1, &m_TextureID);
-		//glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID);
-		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_TextureID);
+ 		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_TextureID);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID);
 
 		for (uint32_t i = 0; i < 6; ++i)
@@ -357,13 +355,12 @@ namespace Rudy {
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_R, m_WrapMode);
 
 
-		if (specification.GenerateMips)
+		if (specification.generateMips)
 		{
 			glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-		}
-		 
+		} 
 
-		RD_CORE_WARN("textureCube: CubeMapId:{0} is created ", m_TextureID);
+		RD_CORE_INFO("textureCube: CubeMap Id:{0} is created ", m_TextureID);
 		 
 
 	}
@@ -551,7 +548,7 @@ namespace Rudy {
 
 			//the output prefilter cube map;
 			auto prefilterEnvMap = TextureCube::CreateEmpty(
-				TextureSpec{ 128,128,TextureFormat::RGB32F,
+				TextureSpec{ 128,128,TextureInternalFormat::RGB32F,
 			 	  true, WrapMode::ClampToEdge,FilterMode::LinearMipmapLinear, FilterMode::Linear });
 
 			auto cubeMaterial = Material::Create(prefilterShader);
@@ -633,7 +630,7 @@ namespace Rudy {
 
 			//the output prefilter cube map;
 			auto prefilterEnvMap = TextureCube::CreateEmpty
-			(TextureSpec{ 32,32,TextureFormat::RGB32F,
+			(TextureSpec{ 32,32,TextureInternalFormat::RGB32F,
 				  false, WrapMode::ClampToEdge, FilterMode::Linear, FilterMode::Linear });
 
 
@@ -706,7 +703,7 @@ namespace Rudy {
 	{
 		//RD_PROFILE_FUNCTION();
 
-		RD_CORE_WARN("textureCube: CubeMapID:{0} is deleted ", m_TextureID);
+		RD_CORE_INFO("textureCube: CubeMapID:{0} is deleted ", m_TextureID);
 		glDeleteTextures(1, &m_TextureID);
 
 

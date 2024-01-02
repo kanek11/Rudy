@@ -1,14 +1,13 @@
 #pragma once
+#include "RudyPCH.h"
+ 
 
-#include "Hazel/Core/Buffer.h"
-
-namespace Hazel {
+namespace Rudy {
 
 	class FileSystem
 	{
-	public:
-		// TODO: move to FileSystem class
-		static Buffer ReadFileBinary(const std::filesystem::path& filepath);
+	public: 
+		static std::string& ConvertPath(std::string& path);
 	};
 
 }

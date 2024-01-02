@@ -2,6 +2,11 @@
 #include "RudyPCH.h"
 
 
+//todo: _anisotropy support
+
+//a data copy command. glTextureSubImage2D, but we don't find use case yet.
+//
+
 //textures has 2 sources:
 //1. load from file,  use lib like stb_image,
 //the info is given as a argument,  eg: width, height, format, etc
@@ -12,10 +17,11 @@
   
 namespace Rudy {
 
-	//me: relating high level enums;
-	enum class TextureFormat
+	//data format on GPU; standardize to be "sized";
+	enum class TextureInternalFormat
 	{
 		None = 0,
+
 		R8, 
 		R32F,
 
@@ -23,12 +29,13 @@ namespace Rudy {
 		RG32F,
 
 		RGB8, 
+		RGB16F,
 		RGB32F,
 
 		RGBA8,
 		RGBA32F,
-
-		//system built-in implementation:
+		 
+		//we standardize the depth format to be 24 bit, to be compatible.
 		DEPTH_COMPONENT24,
 		DGL_DEPTH24_STENCIL8,
 	};
@@ -49,6 +56,10 @@ namespace Rudy {
 		Nearest,
 		Linear, 
 		LinearMipmapLinear,
+//might used later;
+//LinearMipmapNearest,
+//NearestMipmapLinear,
+//NearestMipmapNearest,
 	};
 
 
@@ -56,21 +67,25 @@ namespace Rudy {
 	//eg:  TextureSpec spec{ 1024, 1024 };  will use default values for other members
 	struct TextureSpec
 	{
-		uint32_t Width = 0;
-		uint32_t Height = 0;
-		TextureFormat TextureFormat = TextureFormat::RGB8;
-		//data format in GPU is deduced from TextureFormat here;
-		bool GenerateMips = true;
+		uint32_t width = 0;
+		uint32_t height = 0;
+		TextureInternalFormat textureInternalFormat = TextureInternalFormat::RGB8;
+		//data format in GPU is deduced from TextureInternalFormat here;
+		bool generateMips = true;
 		WrapMode wrapMode = WrapMode::Repeat;
 		FilterMode minfilterMode = FilterMode::Linear;
 		FilterMode magfilterMode = FilterMode::Linear;
 	};
 
 
+	//<<interface>>
 	class Texture
 	{
-	public:
-	    ~Texture() = default; 
+	public: 
+		//if ever need compare, copy, move.
+		//virtual bool operator==(const Texture& other) const = 0;
+
+
 		//=====setters and getters
 		//virtual void SetData(void* data, uint32_t size) = 0;
 		virtual const TextureSpec& GetTextureSpec() const = 0;
@@ -81,13 +96,18 @@ namespace Rudy {
 		 
 
 
+		//GL utils
 		virtual void Bind(uint32_t slot = 0) const = 0;
 		virtual void Unbind(uint32_t slot = 0) const = 0;
 
+		//format , type is deduced from internal format
+		virtual void SubData(void* data,  
+			uint32_t width, uint32_t height, uint32_t xOffset=0, uint32_t yOffset=0) = 0;
+
+
+		//helpers
 		virtual bool IsLoaded() const = 0; 
 
-		//virtual bool operator==(const Texture& other) const = 0;
-	 
 		//====static method for state.
 		static void SetFlipYOnLoad(bool flip) ;  //for image loader.
 
@@ -102,7 +122,7 @@ namespace Rudy {
 	public: 
 		static Ref<Texture2D> LoadFile(const std::string& path, bool isHDRI = false);
 		static Ref<Texture2D> CreateEmpty(const TextureSpec& specfication = TextureSpec());
-		static Ref<Texture2D> CreateUsingData(const TextureSpec& specfication = TextureSpec(), void* data = nullptr);
+	    //static Ref<Texture2D> CreateUsingData(const TextureSpec& specfication = TextureSpec(), void* data = nullptr);
 	};
 
 
@@ -116,12 +136,12 @@ namespace Rudy {
 
 	class TextureCube : public Texture
 	{
-	public:
+	public: 
+		static Ref<TextureCube> CreateEmpty(const TextureSpec& specfication = TextureSpec());
+
 		static Ref<TextureCube> LoadHDRI(const std::string& path); 
 		static Ref<TextureCube> LoadImages(const std::vector<std::string>& paths); 
 
-
-		static Ref<TextureCube> CreateEmpty(const TextureSpec& specfication = TextureSpec());
 
 		virtual Ref<TextureCube> CreatePrefilteredEnvMap(Ref<TextureCube> envMap,
 			ConvolutionType type = ConvolutionType::Specular,
