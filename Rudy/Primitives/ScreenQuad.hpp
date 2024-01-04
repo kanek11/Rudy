@@ -2,9 +2,6 @@
 
 #include "RudyPCH.h"
 
-#include <glad/glad.h>
-#include <glm/glm.hpp>
-
 #include "Rudy/Renderer/Renderer.h"
 #include "Rudy/Renderer/Mesh.h"
 #include "Rudy/Renderer/Material.h"
@@ -15,27 +12,31 @@
 namespace Rudy {
 
 
-    class Quad : public MeshObject {
+    class ScreenQuad : public MeshObject {
     public:
-        Quad() { 
-        CreateGeometry();
-        mesh->SetupVertices();
-        mesh->LoadToGPU();
-        }
-        ~Quad() = default; 
+        ~ScreenQuad() = default;
 
-        void CreateGeometry(); 
+        ScreenQuad() : MeshObject() 
+        { 
+          this->SetMesh( CreateMeshGeometry() );  
+        }
+
+        Ref<Mesh> CreateMeshGeometry(); 
+
+        static Ref<ScreenQuad> Create() { return std::make_shared<ScreenQuad>(); }
          
     };
      
 
     //static Scope<Mesh> Create(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
 
-    void Quad::CreateGeometry()
+    Ref<Mesh> ScreenQuad::CreateMeshGeometry()
     {
 
         auto _mesh = Mesh::Create();
-        _mesh->indices = { 0,1,2, 1,2,3 };
+        _mesh->topology = MeshTopology::TRIANGLES;
+        _mesh->drawCommand = MeshDrawCommand::INDEXED;
+        _mesh->indices = { 0,1,2, 1,3,2 };
 
         //float quadVertices[] = {
         //    // positions        // texture Coords  
@@ -60,8 +61,8 @@ namespace Rudy {
          glm::vec2(1.0f, 0.0f)
 
 		}; 
-
-        mesh = _mesh;
+         
+        return _mesh;
 
  
     }

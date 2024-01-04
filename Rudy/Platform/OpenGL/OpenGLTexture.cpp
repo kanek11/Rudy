@@ -4,7 +4,7 @@
 #include "Platform/OpenGL/OpenGLTexture.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "Rudy/Renderer/Material.h"
-#include "Cube.h"
+#include "Primitives/Cube.h"
 
 #include <stb_image.h>
 

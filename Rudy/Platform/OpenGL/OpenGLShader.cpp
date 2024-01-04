@@ -13,6 +13,7 @@ namespace Rudy {
 
 
     OpenGLShader::OpenGLShader(const std::string& name, const std::string& computeSrc)
+        : m_Name(name)
     {
 
 //RD_PROFILE_FUNCTION();
@@ -54,7 +55,7 @@ namespace Rudy {
  
         glDeleteShader(compute);
 
-		RD_CORE_INFO("OpenGLShader: cumpute shaderName: {0} is created, ID:{1}", m_Name, m_ShaderID);
+		RD_CORE_INFO("OpenGLShader: compute shaderName: {0} is created, ID:{1}", m_Name, m_ShaderID);
 
          
     }

@@ -14,7 +14,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{be952e64-8b74-406f-8898-6ad40bcf0da8}</ProjectGuid>
-    <RootNamespace>Ether</RootNamespace>
+    <RootNamespace>Rudy</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>Rudy</ProjectName>
   </PropertyGroup>
@@ -37,15 +37,9 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)/Rudy;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Rudy;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(SolutionDir)/Ether;$(IncludePath)</IncludePath>
@@ -94,8 +88,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Cube.h" />
-    <ClInclude Include="Overlay.hpp" />
+    <ClInclude Include="Primitives\Cube.h" />
+    <ClInclude Include="Primitives\Overlay.hpp" />
+    <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h" />
+    <ClInclude Include="Rudy.h" />
     <ClInclude Include="Rudy\Core\Assert.h" />
     <ClInclude Include="Rudy\Core\Base.h" />
     <ClInclude Include="Rudy\Core\FileSystem.h" />
@@ -109,6 +105,7 @@
     <ClInclude Include="Rudy\Events\KeyCodes.h" />
     <ClInclude Include="Rudy\Events\MouseCodes.h" />
     <ClInclude Include="Rudy\Renderer\Animation.h" />
+    <ClInclude Include="Rudy\Renderer\Buffer.h" />
     <ClInclude Include="Rudy\Renderer\Camera.h" />
     <ClInclude Include="Rudy\Renderer\FrameBuffer.h" />
     <ClInclude Include="Rudy\Renderer\GraphicsContext.h" />
@@ -119,12 +116,10 @@
     <ClInclude Include="Rudy\Renderer\Shader.h" />
     <ClInclude Include="Rudy\Renderer\Renderer.h" />
     <ClInclude Include="Rudy\Renderer\RendererAPI.h" />
-    <ClInclude Include="Rudy\Renderer\Skeleton.h" />
     <ClInclude Include="Rudy\Renderer\Texture.h" />
     <ClInclude Include="Rudy\Renderer\Transform.h" />
-    <ClInclude Include="Plane.hpp" />
+    <ClInclude Include="Primitives\Plane.hpp" />
     <ClInclude Include="Platform\OpenGL\OpenGLFrameBuffer.h" />
-    <ClInclude Include="Platform\OpenGL\OpenGLMesh.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLShader.h" />
@@ -135,15 +130,20 @@
     <ClInclude Include="Rudy\Events\KeyEvent.h" />
     <ClInclude Include="Rudy\Events\MouseEvent.h" />
     <ClInclude Include="RudyPCH.h" />
-    <ClInclude Include="Quad.hpp" />
-    <ClInclude Include="Sphere.hpp" />
+    <ClInclude Include="Primitives\ScreenQuad.hpp" />
+    <ClInclude Include="Primitives\Sphere.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\dependencies\stb_image\stb_image.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp" />
+    <ClCompile Include="Rudy\Renderer\Buffer.cpp" />
     <ClCompile Include="test_pipeline_pbr.cpp" />
+    <None Include="Resources\ComputeShaders\Particle_VS.glsl" />
+    <None Include="Resources\ComputeShaders\Particle_CS.glsl" />
+    <None Include="Resources\ComputeShaders\Particle_FS.glsl" />
     <None Include="Resources\Shaders\DepthMapSkinned_VS.glsl">
       <FileType>Document</FileType>
     </None>
@@ -170,7 +170,7 @@
     <ClCompile Include="Rudy\Renderer\Shader.cpp" />
     <ClCompile Include="Rudy\Renderer\Texture.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp" />
-    <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="Primitives\Cube.cpp" />
     <None Include="Resources\Shaders\BlinnPhong_FS.glsl">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -178,7 +178,6 @@
     </None>
     <ClCompile Include="Platform\OpenGL\OpenGLFrameBuffer.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
-    <ClCompile Include="Platform\OpenGL\OpenGLMesh.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="Platform\Windows\WindowsWindow.cpp" />

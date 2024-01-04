@@ -1,34 +1,6 @@
 //ver 2023.12.30
-
-
 #include "RudyPCH.h" 
-
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include <random> 
-
-#include "Rudy/Core/Window.h" 
-
-#include "Rudy/Renderer/Renderer.h"
-#include "Rudy/Renderer/Mesh.h"
-#include "Rudy/Renderer/Material.h"
-#include "Rudy/Renderer/Shader.h" 
-#include "Rudy/Renderer/FrameBuffer.h" 
-#include "Rudy/Renderer/Camera.h" 
-#include "Rudy/Renderer/Object.h" 
-
-
-#include "Rudy/Renderer/Light.h"
-
-#include "Rudy/Renderer/Scene.h"
-
-#include "Sphere.hpp"
-#include "Plane.hpp"
-#include "Quad.hpp"
-#include "Cube.h"
-
-#include "Overlay.hpp"
+#include <Rudy.h>
 
 
 bool  visualize_buffer = true;
@@ -124,9 +96,9 @@ int main() {
     glViewport(0, 0, 512, 512);
 
 
-    Quad brdfQuad = Quad();
-    brdfQuad.SetMaterial(brdfQuadMaterial); 
-    brdfQuad.Draw(nullptr);
+    auto brdfQuad = ScreenQuad::Create();
+    brdfQuad->SetMaterial(brdfQuadMaterial); 
+    brdfQuad->Draw(nullptr);
     brdfLUTFBO->Unbind(); 
 
 
@@ -227,7 +199,7 @@ int main() {
     plane_Material->SetTexture(TextureType::MetallicMap, plane_metallicMap);
 
 
-    auto floor = Plane::Create(20);
+    auto floor = Plane::Create(30);
     //floor->transform->position = glm::vec3(0.0f, -1.0f, 0.0f);
     floor->SetMaterial(plane_Material);  
     scene->AddRenderableObject(floor);
@@ -292,6 +264,13 @@ int main() {
 
     Model::ScaleFactor = 0.01f;
     auto test_model = Model::LoadModel("D:/CG_resources/dae/vampire/dancing_vampire.dae");
+
+    for (auto meshObj: test_model->meshObjects)
+    {
+		auto _material = meshObj->material;  
+		_material->SetFloat("u_Metallic", 0.0f);
+		_material->SetFloat("u_Roughness", 0.0f);  
+	}
 
     //Model::ScaleFactor = 0.01f;
    // auto test_model = Model::LoadModel("D:/CG_resources/animation/Catwalk Walk Turn 180 Tight.dae"); 
@@ -385,8 +364,8 @@ int main() {
      
      
     //--render quad;
-    Quad lightingPassQuad = Quad();
-    lightingPassQuad.SetMaterial(lightingPassMaterial);
+    auto lightingPassQuad = ScreenQuad::Create();
+    lightingPassQuad->SetMaterial(lightingPassMaterial);
 
  
      
@@ -413,7 +392,7 @@ int main() {
     auto ssaoFBO = FrameBuffer::Create(
     SCR_WIDTH, SCR_WIDTH, FrameBufferType::Screen);
 
-    Quad ssaoQuad = Quad();
+    auto ssaoQuad = ScreenQuad::Create();
 
      auto ssaoScreenTexture = Texture2D::CreateEmpty(
        TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::R32F,
@@ -481,7 +460,7 @@ int main() {
 
         //-------the quad for ssao pass;
        // Quad ssaoQuad = Quad();
-        ssaoQuad.SetMaterial(ssaoMaterial); 
+        ssaoQuad->SetMaterial(ssaoMaterial); 
 
         //FBO, one-channel;
        // auto ssaoFBO = FrameBuffer::Create(
@@ -511,7 +490,7 @@ int main() {
     auto ssrFBO = FrameBuffer::Create(
         SCR_WIDTH, SCR_WIDTH, FrameBufferType::Screen);
 
-    auto ssrQuad = Quad();
+    auto ssrQuad = ScreenQuad::Create();
 
  auto ssrScreenTexture = Texture2D::CreateEmpty(
   TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F,
@@ -533,7 +512,7 @@ int main() {
 
 
         //auto ssrQuad = Quad();
-        ssrQuad.SetMaterial(ssrMaterial); 
+        ssrQuad->SetMaterial(ssrMaterial); 
 
         //auto ssrScreenTexture = Texture2D::CreateEmpty(
         //    TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F,
@@ -564,8 +543,8 @@ int main() {
     auto screenQuadShader = Shader::Create("screen quad shader", "Resources/Shaders/ScreenQuad_VS.glsl", "Resources/Shaders/ScreenQuad_FS.glsl");
     auto screenQuadMaterial = Material::Create(screenQuadShader);
 
-    Quad screenQuad = Quad();
-    screenQuad.SetMaterial(screenQuadMaterial);
+    auto screenQuad = ScreenQuad::Create();
+    screenQuad->SetMaterial(screenQuadMaterial);
      
 
     //======the loop 
@@ -692,7 +671,7 @@ int main() {
             //config:
            lightingPassShader->SetBool("u_EnableSkyBox", enableSkyBox);
 
-            lightingPassQuad.Draw(nullptr);
+            lightingPassQuad->Draw(nullptr);
              
             // glDepthMask(GL_TRUE); 
             glEnable(GL_DEPTH_TEST);
@@ -720,7 +699,7 @@ int main() {
             ssaoShader->SetMat4("u_View", main_camera->GetViewMatrix());
             ssaoShader->SetMat4("u_Projection", main_camera->GetProjectionMatrix());
             
-            ssaoQuad.Draw(nullptr); 
+            ssaoQuad->Draw(nullptr); 
             
             ssaoFBO->Unbind();
 
@@ -745,7 +724,7 @@ int main() {
            ssrShader->SetVec3("u_CameraPos", main_camera->GetPosition()); 
            //HZ_CORE_INFO("cameraPos: {0}", main_camera->GetPosition());
 
-           ssrQuad.Draw(nullptr);  
+           ssrQuad->Draw(nullptr);  
            ssrFBO->Unbind();
 
         }
@@ -781,7 +760,7 @@ int main() {
         //screenQuadShader->SetBool("u_IsGrayScale", true);
         //glBindTextureUnit(0, shadowMap->GetTextureID());  //replace the texture 2D here; 
         glBindTextureUnit(0, lightingPassScreenTexture->GetTextureID());  //replace the texture 2D here; 
-        screenQuad.Draw(nullptr);
+        screenQuad->Draw(nullptr);
 
         //screenQuadShader->SetBool("u_IsGrayScale", true);
         //glBindTextureUnit(0, ssrScreenTexture->GetTextureID());  //replace the texture2D here;
@@ -862,7 +841,7 @@ int main() {
                     screenQuadShader->SetBool("u_IsGrayScale", false);
                 }
 
-                screenQuad.Draw(nullptr);
+                screenQuad->Draw(nullptr);
                 index++;
                 
             }

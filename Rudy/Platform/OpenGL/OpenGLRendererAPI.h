@@ -25,9 +25,12 @@ namespace Rudy {
         virtual void SetClearColor(float r, float g, float b, float a) override;
 		virtual void Clear() override;
 
-		virtual void DrawElement(uint32_t indexCount, MeshTopology topo) override;
-		virtual void DrawArray(uint32_t vertexCount, MeshTopology topo) override;
+		virtual void DrawIndexed(MeshTopology topo, uint32_t indexCount) override;
+		virtual void DrawIndexedInstanced(MeshTopology topo, uint32_t indexCount, uint32_t instanceCount) override;
+		virtual void DrawArrays(MeshTopology topo, uint32_t vertexCount) override;
+		virtual void DrawArraysInstanced(MeshTopology topo, uint32_t vertexCount, uint32_t instanceCount) override;
 
+	
 
 
 	/*	virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) override;

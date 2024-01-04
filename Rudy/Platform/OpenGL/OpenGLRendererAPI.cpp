@@ -9,44 +9,70 @@
 
 namespace Rudy
 {
-
-	//void OpenGLRendererAPI::DrawElements(const Ref<Mesh> &mesh, const Ref<Material> &material, Transform transform)
-	void OpenGLRendererAPI::DrawElement(uint32_t indexCount, MeshTopology topo)
-	{ 
-		//RD_PROFILE_FUNCTION(); 
-
-		switch (topo)
+	namespace utils
+	{
+		GLenum MeshTopologyToGLMode(MeshTopology topo)
 		{
-		 case  MeshTopology::TRIANGLES: 
-			glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
-			break;
+			switch (topo)
+			{
+			case MeshTopology::TRIANGLES:
+				return GL_TRIANGLES;
+			case MeshTopology::LINES:
+				return GL_LINES;
+			case MeshTopology::POINTS:
+				return GL_POINTS;
+			case MeshTopology::STRIP:
+				return GL_TRIANGLE_STRIP;
+			case MeshTopology::QUADS:
+				return GL_QUADS;
+			}
 
-		 case MeshTopology::LINES:
-			glDrawElements(GL_LINES, indexCount, GL_UNSIGNED_INT, nullptr); 
-			break;
 
+			RD_CORE_ASSERT(false, "Unknown MeshTopology!");
+			return 0;
 		}
-	  
+
 	}
 
 
 
-	void OpenGLRendererAPI::DrawArray(uint32_t vertexCount, MeshTopology topo)
+	//void OpenGLRendererAPI::DrawElements(const Ref<Mesh> &mesh, const Ref<Material> &material, Transform transform)
+	void OpenGLRendererAPI::DrawIndexed(MeshTopology topo, uint32_t indexCount)
+	{ 
+		//RD_PROFILE_FUNCTION(); 
+
+		auto GL_mode = utils::MeshTopologyToGLMode(topo);
+		 
+		 glDrawElements(GL_mode, indexCount, GL_UNSIGNED_INT, nullptr);
+		 
+	}
+
+	void OpenGLRendererAPI::DrawIndexedInstanced(MeshTopology topo, uint32_t indexCount, uint32_t instanceCount)
 	{
 		//RD_PROFILE_FUNCTION(); 
 
-		switch (topo)
-		{
-		case  MeshTopology::TRIANGLES:
-			glDrawArrays(GL_TRIANGLES, 0, vertexCount); 
-			break;
+	    auto GL_mode = utils::MeshTopologyToGLMode(topo);
+	    glDrawElementsInstanced(GL_mode, indexCount, GL_UNSIGNED_INT, nullptr, instanceCount);
+	  
 
-		case MeshTopology::LINES:
-			glDrawArrays(GL_LINES, 0, vertexCount); 
-			break;
+	} 
 
-		}
 
+	void OpenGLRendererAPI::DrawArrays(MeshTopology topo,uint32_t vertexCount)
+	{
+		//RD_PROFILE_FUNCTION(); 
+
+	     auto GL_mode = utils::MeshTopologyToGLMode(topo);
+		 glDrawArrays(GL_mode, 0, vertexCount);
+		 
+	}
+
+	void OpenGLRendererAPI::DrawArraysInstanced(MeshTopology topo, uint32_t vertexCount, uint32_t instanceCount)
+	{
+		//RD_PROFILE_FUNCTION(); 
+
+		auto GL_mode = utils::MeshTopologyToGLMode(topo);
+		glDrawArraysInstanced(GL_mode, 0, vertexCount, instanceCount);
 	}
 
 

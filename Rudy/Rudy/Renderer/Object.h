@@ -17,6 +17,8 @@
 
 #include <Rudy/Renderer/Transform.h>
 
+#include <Rudy/Renderer/Buffer.h>
+
 
 namespace Rudy {
 
@@ -51,7 +53,9 @@ namespace Rudy {
  
 
     //<MeshRederer> equivalent;
-    //takes a mesh and material; 
+    //takes a mesh and material;  
+    //handles buffers , draw calls;
+
      class MeshObject : public RenderableObject
      {
     //========user:
@@ -59,14 +63,24 @@ namespace Rudy {
      public:
          static Ref<MeshObject> Create(); 
 
+        //GPU:
+         void SetupMeshBuffers();
+
 
      public:
-     
-         Ref<Mesh> mesh;
-         Ref<Material> material; 
+   
 
-         void SetMesh(Ref<Mesh> m) { mesh = m; }
+         void SetMesh(Ref<Mesh> m) 
+         { 
+             mesh = m; 
+             //prepare
+             mesh->SetupVertices();
+             SetupMeshBuffers();
+         }
          Ref<Mesh> GetMesh() { return mesh; }
+
+         void SetVertexArray(Ref<VertexArray> vao) { vertexArray = vao; }
+         Ref<VertexArray> GetVertexArray() { return vertexArray; }
 
          void SetMaterial(Ref<Material> mat ) { material = mat ; }
          Ref<Material> GetMaterial() { return material; }
@@ -77,18 +91,33 @@ namespace Rudy {
 
       //=======system; 
          ~MeshObject() = default;
-         MeshObject() = default;
+         MeshObject()
+         {
+			 vertexArray = VertexArray::Create(); 
+             vertexBuffer = VertexBuffer::Create();
+             indexBuffer = IndexBuffer::Create(); 
+
+             RD_CORE_INFO("MeshObject ccreated");
+         }
 
 
          void Draw(Ref<Camera> cam) override;
+         void DrawInstanced(Ref<Camera> cam, uint32_t count);
+
+
+         //new: vao is not limited to mesh(geometry) anymore;
+         Ref<VertexArray> vertexArray;
+         Ref<VertexBuffer> vertexBuffer;
+         Ref<IndexBuffer> indexBuffer;
+
+         Ref<Mesh> mesh;
+         Ref<Material> material;
+
      };
 
 
 
-
-
-
-  
+      
 
      //a model contains... whatever the model contains;  
      //expect multiple mesh objects;

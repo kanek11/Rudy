@@ -1,14 +1,10 @@
 #pragma once
   
 #include "RudyPCH.h"  
+
+//todo: check on backface;
  
-#include <glm/glm.hpp> 
- 
-
-//TODO: rewrite the visibility once the API is stab
-// 
-
-
+  
 //mesh mainly handles the geometry data; 
 //the drawcall is handled by the renderer; 
 // the processing is handled by the engine; to be designed;
@@ -48,6 +44,12 @@ namespace Rudy {
         QUADS,
 	};
 
+    enum class MeshDrawCommand { 
+        INDEXED,
+		ARRAYS,
+	};
+
+
 
     //standard 4 bones per vertex
     //designed to be a effective array ;
@@ -73,18 +75,22 @@ namespace Rudy {
     //pre-defined vertex DS , to be used by model loader/creator
     //the loader neednot to care the API setup but to fill the data.
     struct Vertex {
-        glm::vec3 Position= glm::vec3(0,0,0);
+        glm::vec3 Position= glm::vec3(0,0,0); 
+        glm::vec2 UV = glm::vec2(0, 0);
         glm::vec3 Normal= glm::vec3(0,0,0);
         glm::vec3 Tangent= glm::vec3(0,0,0);
-        glm::vec2 UV =  glm::vec2(0,0);
 
         //
         glm::ivec4 BoneIndices = glm::ivec4(-1);  //invalid
         glm::vec4 BoneWeights = glm::vec4(0,0,0,0);
 
         Vertex () = default;
-        Vertex(glm::vec3 position, glm::vec3 normal, glm::vec3 tangent, glm::vec2 uv, 
-            glm::ivec4 boneIndices = glm::ivec4(0,0,0,0), glm::vec4 boneWeights = glm::vec4(0,0,0,0))
+        Vertex(glm::vec3 position, 
+            glm::vec2 uv,
+            glm::vec3 normal, 
+            glm::vec3 tangent, 
+            glm::ivec4 boneIndices = glm::ivec4(0,0,0,0), 
+            glm::vec4 boneWeights = glm::vec4(0,0,0,0))
             : Position(position), Normal(normal), Tangent(tangent), UV(uv), BoneIndices(boneIndices), BoneWeights(boneWeights) {}
     };
 
@@ -92,23 +98,32 @@ namespace Rudy {
 
 
     class Mesh {
-    public: 
-        ~Mesh() = default;
-        Mesh() = default;
+    public:  
+        static Ref<Mesh> Create();
+         void SetupVertices() ;  //to data-oriented structure;
  
 
-        virtual void SetupVertices() = 0;  //to data-oriented structure;
-        virtual void LoadToGPU() = 0;
-        
-        virtual void Bind() = 0;
-        virtual void Unbind() = 0; 
-
         //for drawcall.
-        virtual uint32_t GetVertexArray() = 0;
-        virtual uint32_t GetIndexCount() = 0;
+         uint32_t GetIndexCount()
+         {
+			if (indices.size() == 0)
+				RD_CORE_WARN("Mesh::no indices data");
+			return indices.size();
+        }
+        uint32_t GetVertexCount()
+        {
+            if (vertices.size() == 0)
+                RD_CORE_WARN("Mesh::no vertices data");
+            return vertices.size();
+        }
+        uint32_t GetVertexSize()
+        {
+            return sizeof(Vertex);
+        }
+
           
-        //interface creation;
-        static Ref<Mesh> Create(); 
+ 
+   
 
     public: 
         //interface fields for easy to define;
@@ -116,23 +131,23 @@ namespace Rudy {
         //and we should standardize in this way;  not expose the vertex struct to the user;
 
         std::vector<glm::vec3>  positions;
+        std::vector<glm::vec2>  UVs;
         std::vector<glm::vec3>  normals; 
         std::vector<glm::vec3>  tangents;
-        std::vector<glm::vec2>  UVs; 
 
         std::vector<BoneWeight>  boneWeights; 
 
-        std::vector<uint32_t> indices;
         MeshTopology topology = MeshTopology::TRIANGLES;
+        MeshDrawCommand drawCommand = MeshDrawCommand::INDEXED;
 
 
     public: 
         //lowe-level GPU data;
 
-        uint32_t m_vertexArrayTarget, m_vertexBufferTarget, m_indexBufferTarget;
         std::vector<Vertex>  vertices;  
+        bool verticesDirty = true;  //this marks the vertices is not filled, not ready for GPU;
         
-        //std::vector<uint32_t>  m_indices;  
+        std::vector<uint32_t> indices; 
 
     };
 

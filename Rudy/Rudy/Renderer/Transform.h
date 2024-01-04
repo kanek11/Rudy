@@ -65,7 +65,7 @@ public:
        Ref<Object> gameObject;
        
 
-       //utilities;
+       //util
        //recursively update the global transform;
        static void UpdateWorldTransformRecursive(const Ref<Transform> node, const glm::mat4& parentTransform);
 

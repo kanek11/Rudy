@@ -4,10 +4,7 @@
 #include "RudyPCH.h" 
 
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include <random> 
-
+#include <GLFW/glfw3.h> 
 #include "Rudy/Core/Window.h" 
 
 #include "Rudy/Renderer/Renderer.h"
@@ -17,6 +14,8 @@
 #include "Rudy/Renderer/FrameBuffer.h" 
 #include "Rudy/Renderer/Camera.h" 
 #include "Rudy/Renderer/Object.h" 
+
+#include "Rudy/Renderer/Buffer.h"
 
 
 #include "Rudy/Renderer/Light.h"
@@ -82,7 +81,7 @@ int main() {
 
 
     //=================================================================================================
-    //=== initialize the resources
+    //=== initialize the D:/dev/Rudy/Rudy/Resources
 
 
     //=======environment map precomputing pass
@@ -114,7 +113,7 @@ int main() {
 
     
     //test: compute shader;
-    auto computeShader = Shader::CreateComputeShader("compute shader", "Resources/ComputeShaders/TestImage_CS.glsl");
+    auto computeShader = Shader::CreateComputeShader("compute shader", "D:/dev/Rudy/Rudy/Resources/ComputeShaders/TestImage_CS.glsl");
 
     //texture for compute shader result, an image.
     auto computeTexture = Texture2D::CreateEmpty(
@@ -128,18 +127,18 @@ int main() {
 
 
 
-    auto defaultShader = Shader::Create("default Shader", "Resources/Shaders/Default_VS.glsl", "Resources/Shaders/Default_Flat_FS.glsl");
+    auto defaultShader = Shader::Create("default Shader", "D:/dev/Rudy/Rudy/Resources/Shaders/Default_VS.glsl", "D:/dev/Rudy/Rudy/Resources/Shaders/Default_Flat_FS.glsl");
     WorldGrid grid = WorldGrid(20);
     grid.material = Material::Create(defaultShader);
 
 
-    auto lineShader = Shader::Create("vertex color Shader", "Resources/Shaders/Vertex_Color_VS.glsl", "Resources/Shaders/Vertex_Color_FS.glsl");
+    auto lineShader = Shader::Create("vertex color Shader", "D:/dev/Rudy/Rudy/Resources/Shaders/Vertex_Color_VS.glsl", "D:/dev/Rudy/Rudy/Resources/Shaders/Vertex_Color_FS.glsl");
     Navigation nav = Navigation();
     nav.material = Material::Create(lineShader);
 
 
 
-    auto screenQuadShader = Shader::Create("screen quad shader", "Resources/Shaders/ScreenQuad_VS.glsl", "Resources/Shaders/ScreenQuad_FS.glsl");
+    auto screenQuadShader = Shader::Create("screen quad shader", "D:/dev/Rudy/Rudy/Resources/Shaders/ScreenQuad_VS.glsl", "D:/dev/Rudy/Rudy/Resources/Shaders/ScreenQuad_FS.glsl");
     auto screenQuadMaterial = Material::Create(screenQuadShader);
 
     Quad screenQuad = Quad();

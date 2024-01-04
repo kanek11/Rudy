@@ -87,10 +87,7 @@
     <ClInclude Include="Rudy\Renderer\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Platform\OpenGL\OpenGLMesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sphere.hpp">
+    <ClInclude Include="Primitives\Sphere.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy\Renderer\Texture.h">
@@ -117,19 +114,16 @@
     <ClInclude Include="Platform\OpenGL\OpenGLFrameBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Plane.hpp">
+    <ClInclude Include="Primitives\Plane.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Quad.hpp">
+    <ClInclude Include="Primitives\ScreenQuad.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Cube.h">
+    <ClInclude Include="Primitives\Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy\Renderer\Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Rudy\Renderer\Skeleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy\Renderer\Transform.h">
@@ -138,10 +132,19 @@
     <ClInclude Include="Rudy\Renderer\Animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Overlay.hpp">
+    <ClInclude Include="Primitives\Overlay.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy\Core\FileSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\Buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -168,9 +171,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Rudy\Renderer\Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform\OpenGL\OpenGLMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Rudy\Renderer\Mesh.cpp">
@@ -218,7 +218,7 @@
     <ClCompile Include="Rudy\Renderer\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Cube.cpp">
+    <ClCompile Include="Primitives\Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Rudy\Renderer\Transform.cpp">
@@ -228,6 +228,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Rudy\Core\FileSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\Buffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="test_pipeline_pbr.cpp">
@@ -279,5 +285,8 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="Resources\ComputeShaders\TestImage_CS.glsl" />
+    <None Include="Resources\ComputeShaders\Particle_VS.glsl" />
+    <None Include="Resources\ComputeShaders\Particle_FS.glsl" />
+    <None Include="Resources\ComputeShaders\Particle_CS.glsl" />
   </ItemGroup>
 </Project>

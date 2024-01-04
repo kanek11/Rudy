@@ -17,59 +17,21 @@ namespace Rudy {
 
 	public:
         ~Sphere() = default;
-        Sphere(uint32_t subdivision)
-            :m_subdivision(subdivision)
+        Sphere(uint32_t subdivision) : MeshObject(),
+            m_subdivision(subdivision)
         {
-            CreateGeometry(subdivision);
-            //mesh->SetupVertices();
-            mesh->LoadToGPU();
+           this->SetMesh( CreateMeshGeometry(subdivision)); 
         }
 
-        static Ref<Sphere> Create(uint32_t subdivision) { return CreateRef<Sphere>(subdivision); }
-
-		void CreateGeometry(uint32_t subdivision);
-
-        void Draw(Ref<Camera> cam) override;
-          
+        static Ref<Sphere> Create(uint32_t subdivision) 
+        { return CreateRef<Sphere>(subdivision); }
+         
+        Ref<Mesh> CreateMeshGeometry(uint32_t subdivision);
  
-        //Ref<Mesh>  Mesh;
-        //Ref<Material>  Material; 
 		  
         uint32_t m_subdivision = 20;
 	};
-
-
-
-    void Sphere::Draw (Ref<Camera> cam)
-    {
-        //glBindVertexArray(mesh->GetVertexArray());
-        //glBindVertexArray(0); 
-
-        if(hasMesh())
-        mesh->Bind(); 
-        else
-            RD_CORE_INFO("no mesh attached to sphere");
-
-      if(hasMaterial())
-        material->Bind();
-       else
-	    RD_CORE_INFO("no material attached to sphere");
-
-        // set uniforms for transforms
-        // identity matrix for now;
-
-        this->transform->UpdateWorldTransform();
-        glm::mat4 model = this->transform->GetWorldTransform(); 
-        glm::mat4 projection_view = cam->GetProjectionViewMatrix(); 
-
-        material->GetShader()->SetMat4("u_Model", model);  
-        material->GetShader()->SetMat4("u_ProjectionView", projection_view);
-
-        glDrawElements(GL_TRIANGLE_STRIP,  mesh->GetIndexCount(),  GL_UNSIGNED_INT, 0); 
-        
-        mesh->Unbind();
-        material->Unbind();
-    }
+ 
     
 
 
@@ -81,7 +43,7 @@ namespace Rudy {
 
     //subdivision say 4 , means 4 facets; 
     //say theta varys   [0,..4]* pi/4
-	void Sphere::CreateGeometry(uint32_t subdivision)
+    Ref<Mesh> Sphere::CreateMeshGeometry(uint32_t subdivision)
 	{
 
          std::vector<Vertex> Vertices;
@@ -166,8 +128,10 @@ namespace Rudy {
          auto _mesh = Mesh::Create();
          _mesh->vertices = Vertices;
          _mesh->indices = Indices;
+         _mesh->topology = MeshTopology::STRIP;
+         _mesh->drawCommand = MeshDrawCommand::INDEXED;
 
-         mesh = _mesh;
+         return _mesh;
 
  
 	}

@@ -112,7 +112,7 @@ namespace Rudy {
 	    
 	    {"u_Metallic",    1.0f},
 	    {"u_Roughness",   1.0f},
-		{"u_Specular",    0.0f},
+		{"u_Specular",    1.0f},
 
 		//intensity for techs
 		//{"u_NormalScale", 1.0f},
