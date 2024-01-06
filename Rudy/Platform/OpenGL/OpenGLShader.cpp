@@ -217,6 +217,12 @@ namespace Rudy {
     {
         glUniform1i(glGetUniformLocation(m_ShaderID, name.c_str()), value);
     }
+
+    void OpenGLShader::SetUInt(const std::string& name, int value) const
+    {
+        glUniform1ui(glGetUniformLocation(m_ShaderID, name.c_str()), value);
+    }
+
     // ------------------------------------------------------------------------
     void OpenGLShader::SetFloat(const std::string& name, float value) const
     {

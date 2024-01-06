@@ -7,7 +7,7 @@ namespace Rudy {
 	class FileSystem
 	{
 	public: 
-		static std::string& ConvertPath(std::string& path);
+		static std::string ConvertPath(const char* path);
 	};
 
 }

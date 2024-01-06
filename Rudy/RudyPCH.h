@@ -8,6 +8,8 @@
 
 #include "Rudy/Core/Assert.h"
 
+#include "Rudy/Core/FileSystem.h"
+
 #include "Rudy/Debug/Instrumentor.h"
 
 

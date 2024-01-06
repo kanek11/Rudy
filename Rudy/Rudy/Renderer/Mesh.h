@@ -139,7 +139,7 @@ namespace Rudy {
 
         MeshTopology topology = MeshTopology::TRIANGLES;
         MeshDrawCommand drawCommand = MeshDrawCommand::INDEXED;
-
+ 
 
     public: 
         //lowe-level GPU data;

@@ -11,9 +11,8 @@ uniform sampler2D gScreenDepth;
 
 uniform sampler2D u_LightingPassTexture;
 
-uniform mat4 u_ProjectionView;
-uniform mat4 u_Projection;
-uniform mat4 u_View;
+uniform mat4 u_projection;
+uniform mat4 u_view;
 
 uniform vec3 u_CameraPos;
  
@@ -56,10 +55,10 @@ void main()
         {
             currentPos += reflectedRay * 0.01; // Step along the reflected ray
  
-            vec3 currentViewPos = (u_View * vec4(currentPos, 1.0)).xyz;
+            vec3 currentViewPos = (u_view * vec4(currentPos, 1.0)).xyz;
             float currentDepth = currentViewPos.z;
  
-            vec4 clipCoords = u_ProjectionView * vec4(currentPos, 1.0);
+            vec4 clipCoords = u_projection * u_view * vec4(currentPos, 1.0);
             vec3 ndc = clipCoords.xyz / clipCoords.w;
             sampleUV = ndc.xy * 0.5 + 0.5;  
             //out of screen space
@@ -73,7 +72,7 @@ void main()
 				break; 
 
             vec3 FragPos = texture(gPosition, sampleUV).rgb;
-            vec3 FragViewPos = (u_View * vec4(FragPos, 1.0)).xyz;
+            vec3 FragViewPos = (u_view * vec4(FragPos, 1.0)).xyz;
             float FragDepth =  FragViewPos.z;
 
             //float sampleDepth = texture(gScreenDepth, sampleUV).r; 

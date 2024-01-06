@@ -289,7 +289,8 @@ namespace Rudy {
 
 		if (specification.generateMips)
 		{
-			glGenerateMipmap(GL_TEXTURE_2D);
+			//glGenerateMipmap(GL_TEXTURE_2D);
+			glGenerateTextureMipmap(m_TextureID);
 		}
 
 		//no data copy for empty texture
@@ -357,7 +358,8 @@ namespace Rudy {
 
 		if (specification.generateMips)
 		{
-			glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+			//glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+			glGenerateTextureMipmap(m_TextureID);
 		} 
 
 		RD_CORE_INFO("textureCube: CubeMap Id:{0} is created ", m_TextureID);
@@ -497,7 +499,8 @@ namespace Rudy {
 		for (uint32_t i = 0; i < 6; ++i)
 		{
 			rectToCubeShader->Bind();
-			rectToCubeShader->SetMat4("u_ProjectionView", captureProjection * captureViews[i]);
+			rectToCubeShader->SetMat4("u_projection", captureProjection);
+rectToCubeShader->SetMat4("u_view", captureViews[i]); 
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, m_TextureID, 0); 
 
 			glClearColor(0.0f, 0.5f, 0.0f, 1.0f);
@@ -513,10 +516,7 @@ namespace Rudy {
 
 	}
 
-
-	//create a identity matrix
-
-		//rectToCubeShader->SetMat4("u_ProjectionView", identity);
+	 
 
 
 	Ref<TextureCube> OpenGLTextureCube::CreatePrefilteredEnvMap(Ref<TextureCube> envMap, 
@@ -549,7 +549,7 @@ namespace Rudy {
 			//the output prefilter cube map;
 			auto prefilterEnvMap = TextureCube::CreateEmpty(
 				TextureSpec{ 128,128,TextureInternalFormat::RGB32F,
-			 	  true, WrapMode::ClampToEdge,FilterMode::LinearMipmapLinear, FilterMode::Linear });
+			 	  true, WrapMode::ClampToEdge, FilterMode::LinearMipmapLinear, FilterMode::Linear });
 
 			auto cubeMaterial = Material::Create(prefilterShader);
 			cubeMaterial->SetTexture(TextureType::EnvironmentMap, envMap);
@@ -601,11 +601,11 @@ namespace Rudy {
 				{
 
 					prefilterShader->Bind();
-					prefilterShader->SetMat4("u_ProjectionView", captureProjection * captureViews[i]);
-					//captureCamera->m_ProjectionMatrix = captureProjection;
-					//captureCamera->m_ViewMatrix = captureViews[i];
+					prefilterShader->SetMat4("u_projection", captureProjection);
+prefilterShader->SetMat4("u_view", captureViews[i]);
 
-					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterEnvMap->GetTextureID(), mip);
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 
+					prefilterEnvMap->GetTextureID(), mip);
 
 					glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 					cube.Draw(nullptr);
@@ -654,9 +654,7 @@ namespace Rudy {
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
-
-			auto captureCamera = Camera::Create(); 
-			captureCamera->m_Position = glm::vec3(0.0f, 0.0f, 0.0f);
+ 
 
 			// pbr: run a quasi monte-carlo simulation on the environment lighting to create a prefilter (cube)map.
 			// ----------------------------------------------------------------------------------------------------
@@ -669,14 +667,14 @@ namespace Rudy {
 			for (uint32_t i = 0; i < 6; ++i)
 			{
 				prefilterShader->Bind();
-				prefilterShader->SetMat4("u_ProjectionView", captureProjection * captureViews[i]);
-				captureCamera->m_ProjectionMatrix = captureProjection;
-				captureCamera->m_ViewMatrix = captureViews[i];
+				prefilterShader->SetMat4("u_projection",  captureProjection);
+prefilterShader->SetMat4("u_view", captureViews[i]);
+			 
 
 				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterEnvMap->GetTextureID(), 0);
 
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-				cube.Draw(captureCamera);
+				cube.Draw(nullptr);
 			}
 
 

@@ -34,6 +34,7 @@ namespace Rudy {
 
 		virtual void SetBool(const std::string& name, bool value)  const override;
 		virtual void SetInt(const std::string& name, int value)   const override;
+		virtual void SetUInt(const std::string& name, int value) const override;
 		virtual void SetFloat(const std::string& name, float value) const override;
 
 		//me: change to set Vec , instead of set float

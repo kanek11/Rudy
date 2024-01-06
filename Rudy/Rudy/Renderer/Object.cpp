@@ -104,10 +104,11 @@ namespace Rudy
 
              this->transform->UpdateWorldTransform();
              glm::mat4 model = this->transform->GetWorldTransform(); 
-             glm::mat4 projection_view = cam->GetProjectionViewMatrix();
+           
 
-             material->GetShader()->SetMat4("u_Model", model);
-             material->GetShader()->SetMat4("u_ProjectionView", projection_view);
+             material->GetShader()->SetMat4("u_model", model);
+             material->GetShader()->SetMat4("u_projection", cam->GetProjectionMatrix());
+material->GetShader()->SetMat4("u_view", cam->GetViewMatrix());
          } 
 
          switch (mesh->drawCommand)
@@ -129,13 +130,7 @@ namespace Rudy
 
 
 
-
-
-
-
-
-
-
+     
 
 
     void Model::Draw(Ref<Camera> cam)

@@ -17,9 +17,8 @@ uniform sampler2D u_NoiseTexture;
 
 uniform vec3 samples[64];
 
-uniform mat4 u_ProjectionView;
-uniform mat4 u_View;
-uniform mat4 u_Projection;
+uniform mat4 u_projection;
+uniform mat4 u_view; 
 
 // parameters (you'd probably want to use them as uniforms to more easily tweak the effect)
 int kernelSize = 64;
@@ -49,12 +48,12 @@ void main()
 
 
      //turn into view space
-     vec3 fragPosView = vec3(u_View * vec4(fragPos, 1.0));
-     vec3 normalView = normalize(vec3(u_View * vec4(normal, 0.0)));
+     vec3 fragPosView = vec3(u_view * vec4(fragPos, 1.0));
+     vec3 normalView = normalize(vec3(u_view * vec4(normal, 0.0)));
       
      //test: use tangent from gbuffer
      vec3 tangent = texture(gWorldTangent, TexCoords).rgb;
-     vec3 tangentView = normalize(vec3(u_View * vec4(tangent, 0.0)));
+     vec3 tangentView = normalize(vec3(u_view * vec4(tangent, 0.0)));
 
      vec3 bitangentView = cross(normalView, tangentView);
      mat3 TBNView = mat3(tangentView, bitangentView, normalView);
@@ -72,7 +71,7 @@ void main()
 
          //project to view
          vec4 offset = vec4(samplePos, 1.0); 
-         offset = u_Projection * offset; // from view to clip-space
+         offset = u_projection * offset; // from view to clip-space
          offset.xyz /= offset.w; // perspective divide
          offset.xyz = offset.xyz * 0.5 + 0.5; // transform to range 0.0 - 1.0
 
@@ -80,7 +79,7 @@ void main()
          vec3 sampleFragWorldPos = texture(gPosition, offset.xy).rgb;
 
          //to view
-         vec3 sampleFragViewPos = vec3(u_View * vec4(sampleFragWorldPos, 1.0));
+         vec3 sampleFragViewPos = vec3(u_view * vec4(sampleFragWorldPos, 1.0));
          float sampleFragDepth = sampleFragViewPos.z; 
 
          // range check & accumulate

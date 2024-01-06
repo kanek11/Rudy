@@ -104,6 +104,7 @@
     <ClInclude Include="Rudy\Core\Window.h" />
     <ClInclude Include="Rudy\Events\KeyCodes.h" />
     <ClInclude Include="Rudy\Events\MouseCodes.h" />
+    <ClInclude Include="Rudy\Particles\ParticleSystem.h" />
     <ClInclude Include="Rudy\Renderer\Animation.h" />
     <ClInclude Include="Rudy\Renderer\Buffer.h" />
     <ClInclude Include="Rudy\Renderer\Camera.h" />
@@ -139,12 +140,21 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp" />
+    <ClCompile Include="Rudy\Particles\ParticleSystem.cpp" />
     <ClCompile Include="Rudy\Renderer\Buffer.cpp" />
-    <ClCompile Include="test_pipeline_pbr.cpp" />
-    <None Include="Resources\ComputeShaders\Particle_VS.glsl" />
-    <None Include="Resources\ComputeShaders\Particle_CS.glsl" />
-    <None Include="Resources\ComputeShaders\Particle_FS.glsl" />
-    <None Include="Resources\Shaders\DepthMapSkinned_VS.glsl">
+    <ClCompile Include="test_particles_new.cpp" />
+    <None Include="Shaders\Particles\particle_render_sprite_FS.glsl" />
+    <None Include="Shaders\Particles\particle_render_sprite_GS.glsl" />
+    <None Include="Shaders\Particles\particle_render_sprite_VS.glsl" />
+    <None Include="Shaders\PostProcess\DownSample_CS.glsl" />
+    <None Include="Shaders\Particles\particle_emission_CS.glsl" />
+    <None Include="Shaders\Particles\particle_reset_CS.glsl" />
+    <None Include="Shaders\Particles\particle_update_CS.glsl" />
+    <None Include="Shaders\Particles\particle_render_mesh_VS.glsl" />
+    <None Include="Shaders\Particles\Particle_CS.glsl" />
+    <None Include="Shaders\Particles\particle_render_mesh_FS.glsl" />
+    <None Include="Shaders\PostProcess\UpSample_CS.glsl" />
+    <None Include="Shaders\Shaders\DepthMapSkinned_VS.glsl">
       <FileType>Document</FileType>
     </None>
     <ClCompile Include="Rudy\Core\FileSystem.cpp" />
@@ -171,7 +181,7 @@
     <ClCompile Include="Rudy\Renderer\Texture.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="Primitives\Cube.cpp" />
-    <None Include="Resources\Shaders\BlinnPhong_FS.glsl">
+    <None Include="Shaders\Deferred\BlinnPhong_FS.glsl">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <FileType>Document</FileType>
@@ -181,46 +191,44 @@
     <ClCompile Include="Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="Platform\Windows\WindowsWindow.cpp" />
-    <None Include="Resources\Shaders\BlinnPhong_Color_FS.glsl" />
-    <None Include="Resources\Shaders\BrdfLUT_FS.glsl" />
-    <None Include="Resources\Shaders\BrdfLUT_VS.glsl" />
-    <None Include="Resources\Shaders\Default_Flat_FS.glsl" />
-    <None Include="Resources\Shaders\DepthMap_VS.glsl" />
-    <None Include="Resources\Shaders\DepthMap_FS.glsl" />
-    <None Include="Resources\Shaders\DepthQuad_FS.glsl" />
-    <None Include="Resources\Shaders\DepthQuad_VS.glsl" />
-    <None Include="Resources\Shaders\DiffuseEnvMap_FS.glsl" />
-    <None Include="Resources\Shaders\DiffuseEnvMap_VS.glsl" />
-    <None Include="Resources\Shaders\GBufferSkinned_VS.glsl" />
-    <None Include="Resources\Shaders\GBuffer_FS.glsl" />
-    <None Include="Resources\Shaders\GBuffer_VS.glsl" />
-    <None Include="Resources\ComputeShaders\TestImage_CS.glsl" />
-    <None Include="Resources\Shaders\TextureOnly_VS.glsl" />
-    <None Include="Resources\Shaders\PBR_FS.glsl" />
-    <None Include="Resources\Shaders\PBR_VS.glsl" />
-    <None Include="Resources\Shaders\RectToCube_VS.glsl" />
-    <None Include="Resources\Shaders\RectToCube_FS.glsl" />
-    <None Include="Resources\Shaders\TextureOnly_FS.glsl" />
-    <None Include="Resources\Shaders\SpecularEnvMap_FS.glsl" />
-    <None Include="Resources\Shaders\SpecularEnvMap_VS.glsl" />
-    <None Include="Resources\Shaders\ScreenQuad_FS.glsl" />
-    <None Include="Resources\Shaders\ScreenQuad_VS.glsl" />
-    <None Include="Resources\Shaders\Skybox_FS.glsl" />
-    <None Include="Resources\Shaders\Skybox_VS.glsl" />
-    <None Include="Resources\Shaders\SSAO_FS.glsl" />
-    <None Include="Resources\Shaders\SSAO_VS.glsl" />
-    <None Include="Resources\Shaders\SSR_FS.glsl" />
-    <None Include="Resources\Shaders\SSR_VS.glsl" />
-    <None Include="Resources\Shaders\Vertex_Color_FS.glsl" />
-    <None Include="Resources\Shaders\Vertex_Color_VS.glsl" />
+    <None Include="Shaders\Deferred\BlinnPhong_Color_FS.glsl" />
+    <None Include="Shaders\Shaders\BrdfLUT_FS.glsl" />
+    <None Include="Shaders\Shaders\BrdfLUT_VS.glsl" />
+    <None Include="Shaders\Forward\Default_Flat_FS.glsl" />
+    <None Include="Shaders\Shaders\DepthMap_VS.glsl" />
+    <None Include="Shaders\Shaders\DepthMap_FS.glsl" />
+    <None Include="Shaders\Shaders\DepthQuad_FS.glsl" />
+    <None Include="Shaders\Shaders\DepthQuad_VS.glsl" />
+    <None Include="Shaders\Shaders\DiffuseEnvMap_FS.glsl" />
+    <None Include="Shaders\Shaders\DiffuseEnvMap_VS.glsl" />
+    <None Include="Shaders\Deferred\GBufferSkinned_VS.glsl" />
+    <None Include="Shaders\Deferred\GBuffer_FS.glsl" />
+    <None Include="Shaders\Deferred\GBuffer_VS.glsl" />
+    <None Include="Shaders\PostProcess\TestImage_CS.glsl" />
+    <None Include="Shaders\Deferred\PBR_FS.glsl" />
+    <None Include="Shaders\Deferred\PBR_VS.glsl" />
+    <None Include="Shaders\Shaders\RectToCube_VS.glsl" />
+    <None Include="Shaders\Shaders\RectToCube_FS.glsl" />
+    <None Include="Shaders\Shaders\SpecularEnvMap_FS.glsl" />
+    <None Include="Shaders\Shaders\SpecularEnvMap_VS.glsl" />
+    <None Include="Shaders\Shaders\ScreenQuad_FS.glsl" />
+    <None Include="Shaders\Shaders\ScreenQuad_VS.glsl" />
+    <None Include="Shaders\Shaders\Skybox_FS.glsl" />
+    <None Include="Shaders\Shaders\Skybox_VS.glsl" />
+    <None Include="Shaders\PostProcess\SSAO_FS.glsl" />
+    <None Include="Shaders\PostProcess\SSAO_VS.glsl" />
+    <None Include="Shaders\PostProcess\SSR_FS.glsl" />
+    <None Include="Shaders\PostProcess\SSR_VS.glsl" />
+    <None Include="Shaders\Forward\Vertex_Color_FS.glsl" />
+    <None Include="Shaders\Forward\Vertex_Color_VS.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="dependencies.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\Default_FS.glsl" />
-    <None Include="Resources\Shaders\Default_VS.glsl" />
-    <None Include="Resources\Shaders\BlinnPhong_VS.glsl" />
+    <None Include="Shaders\Forward\default_FS.glsl" />
+    <None Include="Shaders\Forward\default_VS.glsl" />
+    <None Include="Shaders\Deferred\BlinnPhong_VS.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

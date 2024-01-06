@@ -122,10 +122,12 @@ namespace Rudy
 
 
         glm::mat4 model = glm::mat4(1.0f);   
-        glm::mat4 projection_view = Renderer::GetMainCamera()->GetProjectionViewMatrix(); 
+        glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix(); 
+glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix();
 
-        material->GetShader()->SetMat4("u_Model", model);
-        material->GetShader()->SetMat4("u_ProjectionView", projection_view); 
+        material->GetShader()->SetMat4("u_model", model);
+        material->GetShader()->SetMat4("u_projection",  projection);
+material->GetShader()->SetMat4("u_view", view);
 
 
         glDrawArrays(GL_LINES, 0, gridVertices.size()/3);  // 3 because each vertex has 3 floats.
@@ -200,18 +202,16 @@ namespace Rudy
         glBindVertexArray(vao); 
 
         glm::mat4 model = glm::mat4(1.0f); 
-        material->GetShader()->SetMat4("u_Model", model);
+        material->GetShader()->SetMat4("u_model", model);
 
-
-
-       //glm::mat4 projection_view = Renderer::GetMainCamera()->GetProjectionViewMatrix();
-       //material->GetShader()->SetMat4("u_ProjectionView", projection_view);
+         
 
         glm::mat4  view = Renderer::GetMainCamera()->GetViewMatrix();
         //view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
         glm::mat4  projection = Renderer::GetMainCamera()->GetProjectionMatrix();
         
-        material->GetShader()->SetMat4("u_ProjectionView", projection * view);
+        material->GetShader()->SetMat4("u_projection", projection);
+material->GetShader()->SetMat4("u_view", view);
 
         glViewport(0,0, 2560/4, 1440/4);
         glDrawArrays(GL_LINES, 0, 6);

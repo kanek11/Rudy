@@ -11,12 +11,10 @@
 
 #include <Rudy/Renderer/Mesh.h>
 #include <Rudy/Renderer/Material.h> 
-#include <Rudy/Renderer/Camera.h>
 
-#include <Rudy/Renderer/Animation.h>
-
-#include <Rudy/Renderer/Transform.h>
-
+#include <Rudy/Renderer/Camera.h> 
+#include <Rudy/Renderer/Animation.h> 
+#include <Rudy/Renderer/Transform.h> 
 #include <Rudy/Renderer/Buffer.h>
 
 
@@ -72,11 +70,14 @@ namespace Rudy {
 
          void SetMesh(Ref<Mesh> m) 
          { 
+             RD_CORE_INFO("MeshObject:SetMesh");
              mesh = m; 
              //prepare
              mesh->SetupVertices();
-             SetupMeshBuffers();
+             SetupMeshBuffers(); 
+
          }
+
          Ref<Mesh> GetMesh() { return mesh; }
 
          void SetVertexArray(Ref<VertexArray> vao) { vertexArray = vao; }
@@ -93,11 +94,12 @@ namespace Rudy {
          ~MeshObject() = default;
          MeshObject()
          {
+             RD_CORE_INFO("MeshObject created");
+
 			 vertexArray = VertexArray::Create(); 
              vertexBuffer = VertexBuffer::Create();
-             indexBuffer = IndexBuffer::Create(); 
-
-             RD_CORE_INFO("MeshObject ccreated");
+             indexBuffer = IndexBuffer::Create();  
+             
          }
 
 

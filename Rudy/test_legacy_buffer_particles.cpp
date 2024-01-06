@@ -26,7 +26,8 @@ const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 2.0f, 5.0f);
 
 
 
-const uint32_t ParticleCount = 10;
+const uint32_t ParticleCount = 32;
+//320000 is about th limit.
 
 
 using namespace glm;
@@ -46,7 +47,7 @@ vec2  m_start_velocity_min_max = vec2(-1.5, 1.5);
 //vec3  m_direction_constraints = vec3(1, 1, 1);
 //float m_cone_angle = glm::degrees(glm::pi<float>() / 8.0f);
 float m_particle_lifetime = 3.0f;
-vec3 m_particles_color = vec3(1, 0.474, 0.058);
+vec3 m_particles_color = vec3(0, 1, 0.0);
 
 
  

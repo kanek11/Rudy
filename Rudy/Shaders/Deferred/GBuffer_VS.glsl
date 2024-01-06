@@ -14,22 +14,25 @@ out vec3 WorldTangent;
 
 out mat3 WorldTBN;
 
-uniform mat4 u_Model;
-uniform mat4 u_ProjectionView;
+uniform mat4 u_model;
+ 
 
+uniform mat4 u_projection;
+uniform mat4 u_view;
 
+ 
 void main()
 {
-    WorldPos = vec3(u_Model * vec4(aPos, 1.0));
+    WorldPos = vec3(u_model * vec4(aPos, 1.0));
 
     TexCoords = aTexCoords;
 
-    WorldNormal = mat3(transpose(inverse(u_Model))) * aNormal;
-    WorldTangent = mat3(transpose(inverse(u_Model))) * aTangent; 
+    WorldNormal = mat3(transpose(inverse(u_model))) * aNormal;
+    WorldTangent = mat3(transpose(inverse(u_model))) * aTangent; 
 
     vec3 WorldBitangent = cross(WorldNormal, WorldTangent);
     WorldTBN = mat3(WorldTangent, WorldBitangent, WorldNormal);
 
-    gl_Position = u_ProjectionView * vec4(WorldPos, 1.0);
+    gl_Position = u_projection * u_view * vec4(WorldPos, 1.0);
 
 }

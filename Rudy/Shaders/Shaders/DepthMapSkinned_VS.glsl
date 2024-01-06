@@ -7,8 +7,9 @@ layout(location = 4) in vec4 aBoneIndices;
 layout(location = 5) in vec4 aBoneWeights;
 
 
-uniform mat4 u_Model;
-uniform mat4 u_ProjectionView;
+uniform mat4 u_model;
+uniform mat4 u_projection;
+uniform mat4 u_view;
 
 
 uniform mat4 u_BoneTransforms[100];
@@ -32,6 +33,6 @@ void main()
         }
          
     } 
-    gl_Position = u_ProjectionView * u_Model * boneMatrix * vec4(aPos, 1.0);
+    gl_Position = u_projection * u_view * u_model * boneMatrix * vec4(aPos, 1.0);
 
 }

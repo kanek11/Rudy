@@ -16,8 +16,9 @@ out vec3 WorldNormal;
 out vec3 WorldTangent; 
 out mat3 WorldTBN;
 
-uniform mat4 u_Model;   //essentially the transform of the root bone
-uniform mat4 u_ProjectionView;
+uniform mat4 u_model;   //essentially the transform of the root bone
+uniform mat4 u_projection;
+uniform mat4 u_view;
 
 //the holder of the bone transforms,
 //it combines the  ToWorld and ToBoneLocal transforms
@@ -73,12 +74,12 @@ void main()
     //boneMatrix = mat4(1.0);
 
 
-    WorldPos = vec3( u_Model * boneMatrix * vec4(aPos, 1.0) ); 
+    WorldPos = vec3( u_model * boneMatrix * vec4(aPos, 1.0) ); 
 
     //also the normal and tangent need to be transformed
     //the bone animation is basically uniform, so dont need to use the inverse transpose
-    WorldNormal =  mat3(u_Model) * mat3(boneMatrix) * aNormal;
-    WorldTangent = mat3(u_Model) * mat3(boneMatrix) * aTangent;
+    WorldNormal =  mat3(u_model) * mat3(boneMatrix) * aNormal;
+    WorldTangent = mat3(u_model) * mat3(boneMatrix) * aTangent;
      
 
     TexCoords = aTexCoords; 
@@ -86,7 +87,7 @@ void main()
     vec3 WorldBitangent = cross(WorldNormal, WorldTangent);
     WorldTBN = mat3(WorldTangent, WorldBitangent, WorldNormal);
 
-    gl_Position = u_ProjectionView * vec4(WorldPos, 1.0);
+    gl_Position = u_projection * u_view * vec4(WorldPos, 1.0);
 
 }
 

@@ -10,7 +10,7 @@ namespace Rudy
         //we don't use indices for now
         float CubeVertices[] = {
           
-            //-x
+              //-x
               -1.0f, -1.0f,  1.0f,
               -1.0f, -1.0f, -1.0f,
               -1.0f,  1.0f, -1.0f,
@@ -39,7 +39,15 @@ namespace Rudy
                1.0f,  1.0f,  1.0f,
                1.0f,  1.0f,  1.0f,
                1.0f, -1.0f,  1.0f,
+              -1.0f, -1.0f,  1.0f, 
+               
+              //-y
+              -1.0f, -1.0f, -1.0f,
               -1.0f, -1.0f,  1.0f,
+               1.0f, -1.0f, -1.0f,
+               1.0f, -1.0f, -1.0f,
+              -1.0f, -1.0f,  1.0f,
+               1.0f, -1.0f,  1.0f, 
 
               //+y
               -1.0f,  1.0f, -1.0f,
@@ -49,13 +57,6 @@ namespace Rudy
               -1.0f,  1.0f,  1.0f,
               -1.0f,  1.0f, -1.0f,
 
-              //-y
-              -1.0f, -1.0f, -1.0f,
-              -1.0f, -1.0f,  1.0f,
-               1.0f, -1.0f, -1.0f,
-               1.0f, -1.0f, -1.0f,
-              -1.0f, -1.0f,  1.0f,
-               1.0f, -1.0f,  1.0f
         };
 
         std::vector<glm::vec3>  _positions;
@@ -68,14 +69,7 @@ namespace Rudy
 
         //normals 
 std::vector<glm::vec3> _normals = {
-    // 后面
-glm::vec3(0.0f, 0.0f, -1.0f),
-glm::vec3(0.0f, 0.0f, -1.0f),
-glm::vec3(0.0f, 0.0f, -1.0f),
-glm::vec3(0.0f, 0.0f, -1.0f),
-glm::vec3(0.0f, 0.0f, -1.0f),
-glm::vec3(0.0f, 0.0f, -1.0f),
-
+     
 // 左面
 glm::vec3(-1.0f, 0.0f, 0.0f),
 glm::vec3(-1.0f, 0.0f, 0.0f),
@@ -90,7 +84,15 @@ glm::vec3(1.0f, 0.0f, 0.0f),
 glm::vec3(1.0f, 0.0f, 0.0f),
 glm::vec3(1.0f, 0.0f, 0.0f),
 glm::vec3(1.0f, 0.0f, 0.0f),
-glm::vec3(1.0f, 0.0f, 0.0f),
+glm::vec3(1.0f, 0.0f, 0.0f), 
+
+// 后面
+glm::vec3(0.0f, 0.0f, -1.0f),
+glm::vec3(0.0f, 0.0f, -1.0f),
+glm::vec3(0.0f, 0.0f, -1.0f),
+glm::vec3(0.0f, 0.0f, -1.0f),
+glm::vec3(0.0f, 0.0f, -1.0f),
+glm::vec3(0.0f, 0.0f, -1.0f),
 
 // 前面
 glm::vec3(0.0f, 0.0f, 1.0f),
@@ -100,13 +102,6 @@ glm::vec3(0.0f, 0.0f, 1.0f),
 glm::vec3(0.0f, 0.0f, 1.0f),
 glm::vec3(0.0f, 0.0f, 1.0f),
 
-// 顶面
-glm::vec3(0.0f, 1.0f, 0.0f),
-glm::vec3(0.0f, 1.0f, 0.0f),
-glm::vec3(0.0f, 1.0f, 0.0f),
-glm::vec3(0.0f, 1.0f, 0.0f),
-glm::vec3(0.0f, 1.0f, 0.0f),
-glm::vec3(0.0f, 1.0f, 0.0f),
 
 // 底面
 glm::vec3(0.0f, -1.0f, 0.0f),
@@ -115,6 +110,15 @@ glm::vec3(0.0f, -1.0f, 0.0f),
 glm::vec3(0.0f, -1.0f, 0.0f),
 glm::vec3(0.0f, -1.0f, 0.0f),
 glm::vec3(0.0f, -1.0f, 0.0f),
+
+// 顶面
+glm::vec3(0.0f, 1.0f, 0.0f),
+glm::vec3(0.0f, 1.0f, 0.0f),
+glm::vec3(0.0f, 1.0f, 0.0f),
+glm::vec3(0.0f, 1.0f, 0.0f),
+glm::vec3(0.0f, 1.0f, 0.0f),
+glm::vec3(0.0f, 1.0f, 0.0f), 
+
 };
 
     
@@ -151,7 +155,8 @@ glm::vec3(0.0f, -1.0f, 0.0f),
        view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
        glm::mat4  projection = Renderer::GetMainCamera()->GetProjectionMatrix();
 
-       material->GetShader()->SetMat4("u_ProjectionView", projection* view);
+       material->GetShader()->SetMat4("u_projection", projection);
+material->GetShader()->SetMat4("u_view", view);
   
        
       glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
