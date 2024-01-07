@@ -113,6 +113,7 @@
     <ClInclude Include="Rudy\Renderer\Material.h" />
     <ClInclude Include="Rudy\Renderer\Mesh.h" />
     <ClInclude Include="Rudy\Renderer\Object.h" />
+    <ClInclude Include="Rudy\Renderer\RendererComponent.h" />
     <ClInclude Include="Rudy\Renderer\Scene.h" />
     <ClInclude Include="Rudy\Renderer\Shader.h" />
     <ClInclude Include="Rudy\Renderer\Renderer.h" />
@@ -142,7 +143,8 @@
     <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="Rudy\Particles\ParticleSystem.cpp" />
     <ClCompile Include="Rudy\Renderer\Buffer.cpp" />
-    <ClCompile Include="test_particles_new.cpp" />
+    <ClCompile Include="Rudy\Renderer\RendererComponent.cpp" />
+    <ClCompile Include="test_pipeline_pbr.cpp" />
     <None Include="Shaders\Particles\particle_render_sprite_FS.glsl" />
     <None Include="Shaders\Particles\particle_render_sprite_GS.glsl" />
     <None Include="Shaders\Particles\particle_render_sprite_VS.glsl" />
@@ -194,7 +196,7 @@
     <None Include="Shaders\Deferred\BlinnPhong_Color_FS.glsl" />
     <None Include="Shaders\Shaders\BrdfLUT_FS.glsl" />
     <None Include="Shaders\Shaders\BrdfLUT_VS.glsl" />
-    <None Include="Shaders\Forward\Default_Flat_FS.glsl" />
+    <None Include="Shaders\Shaders\Default_Flat_FS.glsl" />
     <None Include="Shaders\Shaders\DepthMap_VS.glsl" />
     <None Include="Shaders\Shaders\DepthMap_FS.glsl" />
     <None Include="Shaders\Shaders\DepthQuad_FS.glsl" />
@@ -219,15 +221,15 @@
     <None Include="Shaders\PostProcess\SSAO_VS.glsl" />
     <None Include="Shaders\PostProcess\SSR_FS.glsl" />
     <None Include="Shaders\PostProcess\SSR_VS.glsl" />
-    <None Include="Shaders\Forward\Vertex_Color_FS.glsl" />
-    <None Include="Shaders\Forward\Vertex_Color_VS.glsl" />
+    <None Include="Shaders\Shaders\Vertex_Color_FS.glsl" />
+    <None Include="Shaders\Shaders\Vertex_Color_VS.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="dependencies.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\Forward\default_FS.glsl" />
-    <None Include="Shaders\Forward\default_VS.glsl" />
+    <None Include="Shaders\Shaders\default_FS.glsl" />
+    <None Include="Shaders\Shaders\default_VS.glsl" />
     <None Include="Shaders\Deferred\BlinnPhong_VS.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

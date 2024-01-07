@@ -18,7 +18,7 @@ namespace Rudy {
 
         ScreenQuad() : MeshObject() 
         { 
-          this->SetMesh( CreateMeshGeometry() );  
+            this->GetRendererComponent()->SetMesh( CreateMeshGeometry() );
         }
 
         Ref<Mesh> CreateMeshGeometry(); 

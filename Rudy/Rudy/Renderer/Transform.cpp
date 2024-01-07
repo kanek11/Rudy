@@ -7,6 +7,32 @@
 
 namespace Rudy {
 
+     
+    uint32_t Transform::GetChildCount() const 
+    { return children.size(); }
+
+
+
+    void Transform::UpdateLocalTransform()
+    {
+        localTransform =
+            glm::translate(glm::mat4(1.0f), localPosition) *
+            glm::mat4_cast(localRotation) *
+            glm::scale(glm::mat4(1.0f), localScale);
+    }
+
+
+    void Transform::UpdateWorldTransform()
+    {
+        worldTransform = 
+        glm::translate(
+            glm::mat4(1.0f), position)*
+            glm::mat4_cast(rotation)*
+            glm::scale(glm::mat4(1.0f), scale); 
+
+    }
+
+
 
     void Transform::UpdateWorldTransformRecursive(const Ref<Transform> node, const glm::mat4& parentTransform)
     {
@@ -26,32 +52,11 @@ namespace Rudy {
     }
 
 
-
-    uint32_t Transform::GetChildCount() const 
-    { return children.size(); }
-
-    void Transform::UpdateLocalTransform()
-    {
-        localTransform =
-            glm::translate(glm::mat4(1.0f), localPosition) *
-            glm::mat4_cast(localRotation) *
-            glm::scale(glm::mat4(1.0f), localScale);
-    }
-
-
-    void Transform::UpdateWorldTransform()
-    {
-        worldTransform = 
-        glm::translate(glm::mat4(1.0f), position)*
-            glm::mat4_cast(rotation)*
-            glm::scale(glm::mat4(1.0f), scale); 
-
-    }
-
-
-    glm::mat4 Transform::GetWorldTransform() const
+    glm::mat4 Transform::GetWorldTransform()  
     { 
+        this->UpdateWorldTransform();
         return worldTransform;
     }
+
 
 }

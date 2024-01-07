@@ -2,8 +2,7 @@
   
 #include "RudyPCH.h"  
 
-//todo: check on backface;
- 
+//todo: check on backface; 
   
 //mesh mainly handles the geometry data; 
 //the drawcall is handled by the renderer; 
@@ -35,7 +34,7 @@
 namespace Rudy {
 
 
-    //the "topo" determines the interpretation of the index buffer;  and hence the drawcall;
+    //the "topo" is needed by drawcall;
     enum class MeshTopology {
 		TRIANGLES,   //triangle is THE default for games; 
         POINTS, 
@@ -99,10 +98,13 @@ namespace Rudy {
 
     class Mesh {
     public:  
-        static Ref<Mesh> Create();
-         void SetupVertices() ;  //to data-oriented structure;
- 
+        Mesh() = default;
+        ~Mesh() = default;
 
+
+        static Ref<Mesh> Create();
+      
+  
         //for drawcall.
          uint32_t GetIndexCount()
          {
@@ -120,10 +122,10 @@ namespace Rudy {
         {
             return sizeof(Vertex);
         }
-
-          
+         
  
-   
+    //system utility; 
+        void SetupVertices();  //to data-oriented structure;
 
     public: 
         //interface fields for easy to define;
@@ -137,6 +139,7 @@ namespace Rudy {
 
         std::vector<BoneWeight>  boneWeights; 
 
+        //parameters for drawcall;
         MeshTopology topology = MeshTopology::TRIANGLES;
         MeshDrawCommand drawCommand = MeshDrawCommand::INDEXED;
  

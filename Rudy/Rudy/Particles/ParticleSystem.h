@@ -3,6 +3,7 @@
 
 #include "Rudy/Renderer/Object.h"
 #include "Rudy/Renderer/Buffer.h"
+#include "Rudy/Renderer/RendererComponent.h"
 
 
 namespace Rudy
@@ -27,14 +28,7 @@ namespace Rudy
 		uint32_t deadCount;
 		uint32_t aliveCount[2];  //pre-sim and post-sim
 	};
-
-
-	struct DrawIndirectCommand {
-		uint32_t  count = 0;
-		uint32_t  instanceCount = 1;
-		uint32_t  first = 0;
-		uint32_t  baseInstance = 0;
-	};	
+	 
 
 	struct DispatchComputeIndirectCommand{
 		uint32_t  numGroupsX = 1;
@@ -52,9 +46,7 @@ namespace Rudy
 		~ParticleSystem();
 
 		
-		void Render();
-		
- 
+		void Render(); 
 	
 	};
 
@@ -63,7 +55,7 @@ namespace Rudy
 	//void OnImGuiRender(); 
 
 
-	class Emitter : public MeshObject
+	class Emitter : public RenderableObject
 	{
 public: 
 		Emitter();
@@ -72,28 +64,27 @@ public:
 	
 		void Spawn();
 		void Update();
-
-
-
-
-   //render:
-	     void Draw(Ref<Camera> cam) override;
-
-
-
-		//Particle& m_Particle; 
+		void Reset(); 
+		
+		   
+	//inherit;
+		void Draw(Ref<Camera> cam) override;
+	
 	public: 
 
 		//system handles 
-		float m_deltaTime = 0.01f;
+		float m_deltaTime = 0.0f;
 
 		uint32_t m_local_size_x = 32;
 		uint32_t m_local_size_y = 1;
-		uint32_t m_local_size_z = 1;
-
+		uint32_t m_local_size_z = 1; 
 		
 		 
 		uint32_t m_maxParticleCount = 512;
+
+		uint32_t m_currentAliveCount = 0;
+
+
 
 		//emitter spawn parameters
 
@@ -144,10 +135,10 @@ public:
 
 		//indirect for dispatch of each stage ; for dynamic length updated by compute shader 
 		Ref<StorageBuffer> m_indirect_dispatch_update_buffer; 
-		Ref<StorageBuffer> m_indirect_render_buffer;
 
-
-
+		
+		
+		 
 
 	public:
 		//meta data

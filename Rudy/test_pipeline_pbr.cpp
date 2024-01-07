@@ -77,7 +77,7 @@ int main() {
    
 
     //the LUT for BRDF
-    auto brdfLUTShader = Shader::Create("brdfLUT Shader", "Resources/Shaders/BrdfLUT_VS.glsl", "Resources/Shaders/BrdfLUT_FS.glsl");
+    auto brdfLUTShader = Shader::Create("brdfLUT Shader", "Shaders/Shaders/BrdfLUT_VS.glsl", "Shaders/Shaders/BrdfLUT_FS.glsl");
     Material::SetMaterialProperties(brdfLUTShader);
 
     auto brdfQuadMaterial = Material::Create(brdfLUTShader);
@@ -124,7 +124,8 @@ int main() {
 
     //======gbuffer pass;
 
-    auto gBufferPassShader = Shader::Create("gBuffer Shader", "Resources/Shaders/GBuffer_VS.glsl", "Resources/Shaders/GBuffer_FS.glsl");
+    auto gBufferPassShader = Shader::Create("gBuffer Shader", 
+               "Shaders/Deferred/GBuffer_VS.glsl", "Shaders/Deferred/GBuffer_FS.glsl");
     Material::SetMaterialProperties(gBufferPassShader);
 
 
@@ -201,10 +202,8 @@ int main() {
 
     auto floor = Plane::Create(30);
     //floor->transform->position = glm::vec3(0.0f, -1.0f, 0.0f);
-    floor->SetMaterial(plane_Material);  
-    scene->AddRenderableObject(floor);
-     
-
+    floor->SetMaterial(plane_Material);   
+      
 
     //
     auto sphere_Material = Material::Create(gBufferPassShader); 
@@ -222,8 +221,7 @@ int main() {
 
 
     auto sphere = Sphere::Create(20);
-    sphere->SetMaterial(sphere_Material);
-    scene->AddRenderableObject(sphere);
+    sphere->SetMaterial(sphere_Material); 
 
 
     sphere->transform->position = glm::vec3(1.0f, +1.0f, 0.0f);
@@ -231,10 +229,10 @@ int main() {
      
 
     //==========shadow map pass
-    auto shadowMapShader = Shader::Create("shadow map Shader", "Resources/Shaders/DepthMap_VS.glsl", "Resources/Shaders/DepthMap_FS.glsl");
+    auto shadowMapShader = Shader::Create("shadow map Shader", "Shaders/Shaders/DepthMap_VS.glsl", "Shaders/Shaders/DepthMap_FS.glsl");
     Material::SetMaterialProperties(shadowMapShader);
 
-    auto shadowMapSkinnedShader = Shader::Create("shadow map Shader", "Resources/Shaders/DepthMapSkinned_VS.glsl", "Resources/Shaders/DepthMap_FS.glsl");
+    auto shadowMapSkinnedShader = Shader::Create("shadow map Shader", "Shaders/Shaders/DepthMapSkinned_VS.glsl", "Shaders/Shaders/DepthMap_FS.glsl");
     Material::SetMaterialProperties(shadowMapSkinnedShader);
 
 
@@ -255,19 +253,20 @@ int main() {
     //===========new: animated model
 
      //auto test_model = Model::LoadModel("D:/CG_resources/backpack/backpack.obj");
-    auto gBufferPassSkinnedShader = Shader::Create("gBuffer Shader", "Resources/Shaders/GBufferSkinned_VS.glsl", "Resources/Shaders/GBuffer_FS.glsl");
+    auto gBufferPassSkinnedShader = Shader::Create("gBuffer Shader", "Shaders/Deferred/GBufferSkinned_VS.glsl",
+         "Shaders/Deferred/GBuffer_FS.glsl");
     Material::SetMaterialProperties(gBufferPassSkinnedShader);
 
 
 
     Texture2D::SetFlipYOnLoad(true); //eg: for .png;
 
-    Model::ScaleFactor = 0.01f;
+    Model::s_scaleFactor = 0.01f;
     auto test_model = Model::LoadModel("D:/CG_resources/dae/vampire/dancing_vampire.dae");
 
     for (auto meshObj: test_model->meshObjects)
     {
-		auto _material = meshObj->material;  
+		auto _material = meshObj->GetRendererComponent()->GetMaterial();
 		_material->SetFloat("u_Metallic", 0.0f);
 		_material->SetFloat("u_Roughness", 0.0f);  
 	}
@@ -324,8 +323,8 @@ int main() {
     //=================================================================================================
     //======lighting pass
 
-    //auto lightingPassShader = Shader::Create("blinnPhong Shader", "Resources/Shaders/BlinnPhong_VS.glsl", "Resources/Shaders/BlinnPhong_FS.glsl");
-    auto lightingPassShader = Shader::Create("pbr Shader", "Resources/Shaders/PBR_VS.glsl", "Resources/Shaders/PBR_FS.glsl");
+    //auto lightingPassShader = Shader::Create("blinnPhong Shader", "Shaders/Shaders/BlinnPhong_VS.glsl", "Shaders/Shaders/BlinnPhong_FS.glsl");
+    auto lightingPassShader = Shader::Create("pbr Shader", "Shaders/Deferred/PBR_VS.glsl", "Shaders/Deferred/PBR_FS.glsl");
     Material::SetMaterialProperties(lightingPassShader);
 
 
@@ -371,7 +370,7 @@ int main() {
      
 
     //=====skybox pass
-    auto skyboxShader = Shader::Create("skybox", "Resources/Shaders/Skybox_VS.glsl", "Resources/Shaders/Skybox_FS.glsl");
+    auto skyboxShader = Shader::Create("skybox", "Shaders/Shaders/Skybox_VS.glsl", "Shaders/Shaders/Skybox_FS.glsl");
     Material::SetMaterialProperties(skyboxShader);
 
     //material 
@@ -386,7 +385,7 @@ int main() {
 
     //========postprocess: SSAO pass;
 
-    auto ssaoShader = Shader::Create("ssao Shader", "Resources/Shaders/SSAO_VS.glsl", "Resources/Shaders/SSAO_FS.glsl");
+    auto ssaoShader = Shader::Create("ssao Shader", "Shaders/PostProcess/SSAO_VS.glsl", "Shaders/PostProcess/SSAO_FS.glsl");
     Material::SetMaterialProperties(ssaoShader);
 
     auto ssaoFBO = FrameBuffer::Create(
@@ -484,7 +483,7 @@ int main() {
     //==========SSR; 
 
 
-    auto ssrShader = Shader::Create("ssr Shader", "Resources/Shaders/SSR_VS.glsl", "Resources/Shaders/SSR_FS.glsl");
+    auto ssrShader = Shader::Create("ssr Shader", "Shaders/PostProcess/SSR_VS.glsl", "Shaders/PostProcess/SSR_FS.glsl");
     Material::SetMaterialProperties(ssrShader); 
 
     auto ssrFBO = FrameBuffer::Create(
@@ -492,8 +491,8 @@ int main() {
 
     auto ssrQuad = ScreenQuad::Create();
 
- auto ssrScreenTexture = Texture2D::CreateEmpty(
-  TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F,
+    auto ssrScreenTexture = Texture2D::CreateEmpty(
+    TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F,
                false, WrapMode::ClampToBorder, FilterMode::Linear });
 
 
@@ -530,17 +529,17 @@ int main() {
 
     //=================================================================================================
 
-    auto defaultShader = Shader::Create("default Shader", "Resources/Shaders/Default_VS.glsl", "Resources/Shaders/Default_Flat_FS.glsl");
+    auto defaultShader = Shader::Create("default Shader", "Shaders/Shaders/Default_VS.glsl", "Shaders/Shaders/Default_Flat_FS.glsl");
     WorldGrid grid = WorldGrid(20);
     grid.material = Material::Create(defaultShader);
 
 
-    auto lineShader = Shader::Create("vertex color Shader", "Resources/Shaders/Vertex_Color_VS.glsl", "Resources/Shaders/Vertex_Color_FS.glsl");
+    auto lineShader = Shader::Create("vertex color Shader", "Shaders/Shaders/Vertex_Color_VS.glsl", "Shaders/Shaders/Vertex_Color_FS.glsl");
     Navigation nav = Navigation();
     nav.material = Material::Create(lineShader); 
  
      
-    auto screenQuadShader = Shader::Create("screen quad shader", "Resources/Shaders/ScreenQuad_VS.glsl", "Resources/Shaders/ScreenQuad_FS.glsl");
+    auto screenQuadShader = Shader::Create("screen quad shader", "Shaders/Shaders/ScreenQuad_VS.glsl", "Shaders/Shaders/ScreenQuad_FS.glsl");
     auto screenQuadMaterial = Material::Create(screenQuadShader);
 
     auto screenQuad = ScreenQuad::Create();
@@ -581,8 +580,8 @@ int main() {
 
             //get scene camera info 
             //scene->Render(main_camera);
-            floor->material->SetShader(gBufferPassShader);
-            sphere->material->SetShader(gBufferPassShader);
+            floor->SetShader(gBufferPassShader);
+            sphere->SetShader(gBufferPassShader);
             floor->Draw(main_camera);
             sphere->Draw(main_camera);
 
@@ -617,8 +616,8 @@ int main() {
             
             //render the scene to the shadowMap;
             //set the shader as shadowMapShader; 
-            floor->material->SetShader(shadowMapShader);
-            sphere->material->SetShader(shadowMapShader);
+            floor->SetShader(shadowMapShader);
+            sphere->SetShader(shadowMapShader);
             
             floor->Draw(lightSpaceCamera);
             sphere->Draw(lightSpaceCamera); 
@@ -768,34 +767,28 @@ int main() {
 
        
         glDisable(GL_BLEND);
-        glEnable(GL_DEPTH_TEST);   
-
-
+        glEnable(GL_DEPTH_TEST);    
 
         //=======skybox overlay; on final default framebuffer; 
         //compare the depth with gbuffer;  make sure enable the depth test; 
 
         if (enableSkyBox)
         {
-
+          
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+        
             glEnable(GL_DEPTH_TEST);
             glBindFramebuffer(GL_READ_FRAMEBUFFER, GBufferFBO->GetFrameBufferID());
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
             glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-            skybox.DrawSkybox();
+            skybox.DrawSkybox(main_camera);
+
+
         }
 
 
 
-
-
-
-
-
-
-
+         
 
         //=======optional : visualize the buffers£»
 

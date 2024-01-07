@@ -1,14 +1,12 @@
 #pragma once
+ 
+#include "RudyPCH.h"
 
-//#include "Rudy/Renderer/RenderCommand.h"
-
-//#include "Rudy/Renderer/OrthographicCamera.h"
-
-#include "Rudy/Renderer/RendererAPI.h"
-
-#include "Rudy/Renderer/Camera.h"
 #include "Rudy/Core/Window.h"
 
+
+#include "Rudy/Renderer/RendererAPI.h" 
+#include "Rudy/Renderer/Camera.h" 
 #include "Rudy/Renderer/Scene.h"
 
 
@@ -72,10 +70,4 @@ namespace Rudy {
 }
 
 
-
-//struct SceneData
-//{
-//	//glm::mat4 View < ProjectionMatrix; 
-//};
-//
-//static Scope<SceneData> s_SceneData;
+ 

@@ -38,10 +38,10 @@ int main() {
     //Input::SetWindowContext(window->GetNativeWindow());
 
 
-    auto m_camera = Camera::Create(MAIN_CAMERA_POS);
+    auto main_camera = Camera::Create(MAIN_CAMERA_POS);
 
     Renderer::Init(SCR_WIDTH, SCR_HEIGHT);
-    Renderer::SetMainCamera(m_camera);
+    Renderer::SetMainCamera(main_camera);
 
     auto renderAPI = Renderer::s_RendererAPI;
 
@@ -49,72 +49,67 @@ int main() {
 
     //=================================================================================================
 
-    //the texture
+    //sprite renderer 
     auto radial_sprite = Texture2D::LoadFile( "D:/CG_resources/radial_gradient.png")  ;
      
 
-    Emitter* test_particle = new Emitter(); 
-
-    auto m_particle_render_shader = Shader::Create("particle render mesh",
+    auto m_particle_sprite_shader = Shader::Create("particle sprite shader",
         "Shaders/Particles/particle_render_sprite_VS.glsl",
         "Shaders/Particles/particle_render_sprite_FS.glsl",
         "Shaders/Particles/particle_render_sprite_GS.glsl");
 
-    m_particle_render_shader->Bind();
-    m_particle_render_shader->SetInt("u_sprite", 0);
-    glBindTextureUnit (0, radial_sprite->GetTextureID());
-    
-    m_particle_render_shader->SetVec4("u_color", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)); //red
+    m_particle_sprite_shader->Bind();
+    m_particle_sprite_shader->SetInt("u_sprite", 0);
+    glBindTextureUnit(0, radial_sprite->GetTextureID());
+
+    m_particle_sprite_shader->SetVec4("u_color", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)); //red 
+    m_particle_sprite_shader->SetFloat("u_sprite_size", 0.6f);
      
-    m_particle_render_shader->SetFloat("u_sprite_size", 0.6f);
+    auto particle_sprite_material = Material::Create(m_particle_sprite_shader);
+   
+
+    auto particle_sprite_renderer = ParticleSpriteRendererComponent::Create();
+    particle_sprite_renderer->SetMaterial(particle_sprite_material);
 
 
-    auto particle_material = Material::Create(m_particle_render_shader);
-    test_particle->SetMaterial(particle_material);
+    //mesh renderer
+    auto m_particle_mesh_shader = Shader::Create("particle mesh shader",
+        "Shaders/Particles/particle_render_mesh_VS.glsl",
+        "Shaders/Particles/particle_render_mesh_FS.glsl" );
+
+    auto particle_mesh_material = Material::Create(m_particle_mesh_shader);
 
 
 
 
-    auto cube = Cube::Create();
+    Emitter* test_particle = new Emitter(); 
 
+
+    auto particle_mesh_renderer = MeshRendererComponent::Create(); 
+    particle_mesh_renderer->SetMaterial(particle_mesh_material);
+ 
+
+    auto cube = Cube::Create(); 
     auto defaultShader = Shader::Create("default Shader", 
-        "Shaders/Forward/default_VS.glsl", "Shaders/Forward/default_FS.glsl");
+        "Shaders/Shaders/default_VS.glsl", "Shaders/Shaders/default_FS.glsl");
     auto defaultMaterial = Material::Create(defaultShader);
-    cube->SetMaterial(defaultMaterial);
+    cube->GetRendererComponent()->SetMaterial(defaultMaterial);
 
 
-    //try draw indirect
-    auto drawIndirectBuffer = StorageBuffer::Create();
+    particle_mesh_renderer->SetMesh(cube->GetRendererComponent()->GetMesh()); 
 
-    struct DrawIndirectCommand {
-        uint32_t  count;
-        uint32_t  instanceCount = 1;
-        uint32_t  first = 0;
-        uint32_t  baseInstance = 0;
-    };
-
-    auto cmd = new DrawIndirectCommand();
-    cmd->count = 36;
-
-    drawIndirectBuffer->SetData(cmd, sizeof(DrawIndirectCommand), BufferUsage::DYNAMIC_COPY);
      
-    test_particle->SetMesh(cube->mesh);
-    //test_particle->SetMaterial(defaultMaterial);
-     
-  
+    //test_particle ->SetRendererComponent(particle_mesh_renderer);
+    test_particle->SetRendererComponent(particle_sprite_renderer);
+    test_particle->Spawn();
 
-    auto lineShader = Shader::Create("line Shader", "Shaders/Forward/Vertex_Color_VS.glsl",
-                 "Shaders/Forward/Vertex_Color_FS.glsl");
+
+
+    auto lineShader = Shader::Create("line Shader",
+                 "Shaders/Shaders/Vertex_Color_VS.glsl",
+                 "Shaders/Shaders/Vertex_Color_FS.glsl");
     Navigation nav = Navigation();
     nav.material = Material::Create(lineShader);
-    //
-    //
-    //
-    // auto screenQuadShader = Shader::Create("screen quad shader", "Resources/Shaders/ScreenQuad_VS.glsl", "Resources/Shaders/ScreenQuad_FS.glsl");
-    // auto screenQuadMaterial = Material::Create(screenQuadShader);
-    //
-    // Quad screenQuad = Quad();
-    // screenQuad.SetMaterial(screenQuadMaterial);
 
 
      //======the loop 
@@ -143,21 +138,16 @@ glEnable(GL_BLEND);
 glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         test_particle->m_deltaTime = deltaTime;
         test_particle->Update();
-        test_particle->Draw(m_camera);
+        test_particle->Draw(main_camera);
 glDisable(GL_BLEND);
 
       
-     
-
-
-     
-       
-     
+      
         //=======overlay: world grid; 
         // grid.Draw();  
         nav.Draw();
 
-        m_camera->OnUpdate(deltaTime);
+        main_camera->OnUpdate(deltaTime);
         Renderer::WindowOnUpdate();
         // glfwSwapBuffers(window);  
          //glfwPollEvents();

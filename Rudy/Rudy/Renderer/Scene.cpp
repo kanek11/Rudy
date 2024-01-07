@@ -10,21 +10,23 @@ namespace Rudy
 		return CreateRef<Scene>();
 	}
 
-    void Scene::AddRenderableObject(Ref<RenderableObject> object)
+    void Scene::AddObject(Ref<Object> object)
     {
-        renderObjects.push_back(object);
-        std::cout << "Scene: add object, current size: " << renderObjects.size() << std::endl;
+        objects.push_back(object);
+        std::cout << "Scene: add object, current size: " << objects.size() << std::endl;
     }
 
 
+    //until we determine a stable framework;
     void Scene::Render(Ref<Camera> camera)
     {
-		//RD_CORE_INFO("Scene::Draw"); 
+		 RD_CORE_ERROR("not implemented"); 
 
-        for (const auto& object : renderObjects)
-        { 
-			object->Draw(camera);
-		}
+        //for (const auto& object : objects)
+        //{ 
+        //    if(object->isRenderable)
+		//		object->Draw(camera); 
+		//}
 	}
 
 

@@ -16,7 +16,7 @@ namespace Rudy {
         ~Scene() = default;
         Scene() = default;
 
-        std::vector<Ref<RenderableObject>> renderObjects;  //scene objects  
+        std::vector<Ref<Object>> objects;  //scene objects  
          
 
         static Ref<Scene> Create();
@@ -24,7 +24,7 @@ namespace Rudy {
         // 
         //BVHAccel* Bvh = nullptr;  //scene organization if needed
 
-        void AddRenderableObject(Ref<RenderableObject> object);
+        void AddObject(Ref<Object> object);
         void Render(Ref<Camera> camera);
 
         //const std::vector<Ref<Object>>>& get_objects() const { return Objects; }

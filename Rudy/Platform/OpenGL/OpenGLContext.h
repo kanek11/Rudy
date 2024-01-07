@@ -10,11 +10,9 @@ namespace Rudy {
 	{
 	public:
 		OpenGLContext(GLFWwindow* windowHandle);
-		~OpenGLContext() = default;
+		~OpenGLContext() = default; 
 
-
-		virtual void Init() override;
-
+		virtual void Init() override; 
 
 	private:
 		GLFWwindow* m_WindowHandle;

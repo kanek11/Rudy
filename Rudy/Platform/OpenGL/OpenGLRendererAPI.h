@@ -27,16 +27,17 @@ namespace Rudy {
 
 		virtual void DrawIndexed(MeshTopology topo, uint32_t indexCount) override;
 		virtual void DrawIndexedInstanced(MeshTopology topo, uint32_t indexCount, uint32_t instanceCount) override;
+		virtual void DrawIndexedIndirect(MeshTopology topo) override;
+		
 		virtual void DrawArrays(MeshTopology topo, uint32_t vertexCount) override;
 		virtual void DrawArraysInstanced(MeshTopology topo, uint32_t vertexCount, uint32_t instanceCount) override;
+		virtual void DrawArraysIndirect(MeshTopology topo) override;
 
 	
 
-
-	/*	virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) override;
-		virtual void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) override;
+ 	     //virtual void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) override;
 		
-		virtual void SetLineWidth(float width) override;*/
+		//virtual void SetLineWidth(float width) override;*/
 	};
 
 

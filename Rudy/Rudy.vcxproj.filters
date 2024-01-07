@@ -150,6 +150,9 @@
     <ClInclude Include="Rudy\Particles\ParticleSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Rudy\Renderer\RendererComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Rudy\Core\Log.cpp">
@@ -239,10 +242,13 @@
     <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test_particles_new.cpp">
+    <ClCompile Include="Rudy\Particles\ParticleSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Particles\ParticleSystem.cpp">
+    <ClCompile Include="Rudy\Renderer\RendererComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test_pipeline_pbr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -250,8 +256,8 @@
     <Text Include="dependencies.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\Forward\default_FS.glsl" />
-    <None Include="Shaders\Forward\default_VS.glsl" />
+    <None Include="Shaders\Shaders\default_FS.glsl" />
+    <None Include="Shaders\Shaders\default_VS.glsl" />
     <None Include="Shaders\Deferred\BlinnPhong_VS.glsl" />
     <None Include="Shaders\Deferred\BlinnPhong_FS.glsl">
       <Filter>Source Files</Filter>
@@ -281,9 +287,9 @@
     <None Include="Shaders\PostProcess\SSR_FS.glsl" />
     <None Include="Shaders\PostProcess\SSR_VS.glsl" />
     <None Include="Shaders\Deferred\GBufferSkinned_VS.glsl" />
-    <None Include="Shaders\Forward\Default_Flat_FS.glsl" />
-    <None Include="Shaders\Forward\Vertex_Color_VS.glsl" />
-    <None Include="Shaders\Forward\Vertex_Color_FS.glsl" />
+    <None Include="Shaders\Shaders\Default_Flat_FS.glsl" />
+    <None Include="Shaders\Shaders\Vertex_Color_VS.glsl" />
+    <None Include="Shaders\Shaders\Vertex_Color_FS.glsl" />
     <None Include="Shaders\Deferred\BlinnPhong_Color_FS.glsl" />
     <None Include="Shaders\Shaders\DepthMapSkinned_VS.glsl">
       <Filter>Source Files</Filter>

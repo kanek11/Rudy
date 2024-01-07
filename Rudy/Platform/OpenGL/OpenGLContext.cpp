@@ -3,11 +3,8 @@
 
 #include "RudyPCH.h"
 
-#include "Platform/OpenGL/OpenGLContext.h"
-
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
+#include "OpenGLContext.h"
+ 
 
 namespace Rudy {
 
@@ -31,8 +28,7 @@ namespace Rudy {
 		RD_CORE_INFO("GLVersion: {0}", glGetString(GL_VERSION)); 
 		RD_CORE_INFO("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));	
 
-		  
-
+		   
 		GLint maxDrawBuffers;
 		glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
 		RD_CORE_INFO("MRT: Max supported draw buffers: {0}", maxDrawBuffers);  
@@ -83,10 +79,7 @@ namespace Rudy {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LINE_SMOOTH);
 
-		
-
-	
-	
+		 
 	
 	}
 

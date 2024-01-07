@@ -9,19 +9,22 @@
 
 namespace Rudy {
 
-
+    //<<terminal>>
     class Cube : public MeshObject {
     public:
-        Cube() : MeshObject()
-        { 
-            SetMesh( CreateMeshGeometry() );   
-        }
         ~Cube() = default;
 
-        Ref<Mesh> CreateMeshGeometry();
-
+        Cube() : MeshObject()
+        { 
+            this->GetRendererComponent()->SetMesh( CreateMeshGeometry() );
+        }
       
-        void DrawSkybox();  //need to set special view matrix, and gldepthfunc;
+
+        Ref<Mesh> CreateMeshGeometry(); 
+      
+      
+
+        void DrawSkybox(Ref<Camera> cam);  //need to set special view matrix, and gldepthfunc;
   
         static Ref<Cube> Create() { return std::make_shared<Cube>(); }
         

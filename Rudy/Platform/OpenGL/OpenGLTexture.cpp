@@ -468,7 +468,7 @@ namespace Rudy {
 		 
 
 		//shader
-		auto rectToCubeShader = Shader::Create("equirectangular to cubemap Shader", "Resources/Shaders/RectToCube_VS.glsl", "Resources/Shaders/RectToCube_FS.glsl");
+		auto rectToCubeShader = Shader::Create("equirectangular to cubemap Shader", "Shaders/Shaders/RectToCube_VS.glsl", "Shaders/Shaders/RectToCube_FS.glsl");
 		Material::SetMaterialProperties(rectToCubeShader); 
 	    
 		//material 
@@ -543,7 +543,7 @@ rectToCubeShader->SetMat4("u_view", captureViews[i]);
 
 
 			//shader
-			auto prefilterShader = Shader::Create("Prefilter specular Shader", "Resources/Shaders/SpecularEnvMap_VS.glsl", "Resources/Shaders/SpecularEnvMap_FS.glsl");
+			auto prefilterShader = Shader::Create("Prefilter specular Shader", "Shaders/Shaders/SpecularEnvMap_VS.glsl", "Shaders/Shaders/SpecularEnvMap_FS.glsl");
 			Material::SetMaterialProperties(prefilterShader);
 
 			//the output prefilter cube map;
@@ -624,7 +624,7 @@ prefilterShader->SetMat4("u_view", captureViews[i]);
 		case ConvolutionType::Diffuse:
 		{
 
-			auto prefilterShader = Shader::Create("Prefilter diffuse Shader", "Resources/Shaders/DiffuseEnvMap_VS.glsl", "Resources/Shaders/DiffuseEnvMap_FS.glsl");
+			auto prefilterShader = Shader::Create("Prefilter diffuse Shader", "Shaders/Shaders/DiffuseEnvMap_VS.glsl", "Shaders/Shaders/DiffuseEnvMap_FS.glsl");
 			Material::SetMaterialProperties(prefilterShader);
 
 

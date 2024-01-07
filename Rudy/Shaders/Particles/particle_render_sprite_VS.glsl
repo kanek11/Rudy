@@ -1,6 +1,4 @@
-#version 460 core
-layout(location = 0) in vec3 in_position;
-
+#version 460 core 
 
 layout(std430, binding = 0) buffer ParticleIndices_t
 {
@@ -23,6 +21,6 @@ void main()
 
 	vec3 particle_offset = ParticlePositions.positions[index];
 
-	 gl_Position = vec4(in_position + particle_offset, 1.0);
+	gl_Position = vec4(particle_offset, 1.0);
  
 }

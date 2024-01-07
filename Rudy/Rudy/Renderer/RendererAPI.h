@@ -42,9 +42,13 @@ namespace Rudy {
 
 		 virtual void DrawIndexed(MeshTopology topo ,uint32_t indexCount) = 0;
 		 virtual void DrawIndexedInstanced(MeshTopology topo, uint32_t indexCount, uint32_t instanceCount) = 0;
+		 virtual void DrawIndexedIndirect(MeshTopology topo) = 0;
+
 		 virtual void DrawArrays          (MeshTopology topo, uint32_t vertexCount) = 0;
          virtual void DrawArraysInstanced (MeshTopology topo, uint32_t vertexCount, uint32_t instanceCount) = 0;
-		
+	     virtual void DrawArraysIndirect  (MeshTopology topo) = 0;
+
+
 		 //virtual void SetLineWidth(float width) = 0;
 
 		static API GetAPI() { return s_API; }

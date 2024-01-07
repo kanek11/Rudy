@@ -26,7 +26,7 @@ namespace Rudy {
 
         Plane(float size): MeshObject()
         { 
-           SetMesh( CreateMeshGeometry(size) );   
+            this->GetRendererComponent()->SetMesh( CreateMeshGeometry(size) );
         }
 
         Ref<Mesh> CreateMeshGeometry(float size);
@@ -74,6 +74,10 @@ namespace Rudy {
 		_mesh->tangents = std::vector<glm::vec3>(_positions.size(), tangent);
 
         _mesh->indices = _indices;
+
+        _mesh->topology = MeshTopology::TRIANGLES;
+        _mesh->drawCommand = MeshDrawCommand::INDEXED;
+
 
         return _mesh;
 

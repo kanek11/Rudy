@@ -3,6 +3,8 @@
 // CONSTANTS ---------------------------------------------------------
 // ------------------------------------------------------------------
  
+
+
 // ------------------------------------------------------------------
 // INPUTS -----------------------------------------------------------
 // ------------------------------------------------------------------
@@ -15,6 +17,8 @@ layout(local_size_x = 32, local_size_y = 1, local_size_z = 1) in;
 
 
 uniform int u_maxParticleCount;
+
+uniform int u_drawMode;
 
 
 
@@ -40,15 +44,8 @@ layout(std430, binding = 2) buffer ParticleUpdateArgs_t
 }
 ParticleUpdateArgs;
 
+ 
 
-layout(std430, binding = 3) buffer ParticleRenderArgs_t
-{
-    uint count;
-    uint instance_count;
-    uint first;
-    uint base_instance;
-}
-ParticleRenderArgs;
 
 
 // ------------------------------------------------------------------
@@ -67,23 +64,18 @@ void main()
         Counters.alive_count[1] = 0;
 
 
-
-
         ParticleUpdateArgs.numGroupsX = 0;
         ParticleUpdateArgs.numGroupsY = 1;
         ParticleUpdateArgs.numGroupsZ = 1;
-
-
+         
          
         //reset instance_count
         ParticleUpdateArgs.numGroupsX = 0;
-
-        ParticleRenderArgs.count = 1;
-        ParticleRenderArgs.instance_count = 0; 
-
-
+         
+      
         
     }
+
 
     if (index < u_maxParticleCount)
         DeadIndices.indices[index] = index;

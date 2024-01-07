@@ -87,14 +87,6 @@ layout(std430, binding = 3) buffer ParticleUpdateArgs_t
 ParticleUpdateArgs;
 
 
-layout(std430, binding = 4) buffer ParticleRenderArgs_t
-{
-    uint count;
-    uint instance_count;
-    uint first;
-    uint base_instance;
-}
-ParticleRenderArgs;
 
 
 //attributes
@@ -200,11 +192,11 @@ void main()
     }
 
     //initialize dispatch for following stages
+    //assume emission shader must be dispatched; this can be separated into another shader
     if (index == 0)
 	{
 		 ParticleUpdateArgs.numGroupsX = uint( ceil( float(Counters.alive_count[u_preSimIndex]) 
                                                    / float(u_local_size_x ) ) ); 
-         ParticleRenderArgs.instance_count = 0; 
 	}
 
 }

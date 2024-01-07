@@ -61,18 +61,7 @@ layout(std430, binding = 3) buffer ParticleCounters_t
 }
 Counters;
 
-
-layout(std430, binding = 4) buffer ParticleRenderArgs_t
-{
-    uint count;
-    uint instance_count;
-    uint first;
-    uint base_instance;
-}
-ParticleRenderArgs;
-
-
-
+ 
 
 
 layout(std430, binding = 5) buffer ParticlePosition_t
@@ -177,10 +166,11 @@ void main()
             push_alive_index(particle_index);
 
             // Increment draw instance count
-            atomicAdd(ParticleRenderArgs.instance_count, 1);
+            //atomicAdd(ParticleRenderArgs.instance_count, 1);
+
         }
 
-    }
+     }
 
 
 }

@@ -53,8 +53,7 @@ namespace Rudy
 
 	    auto GL_mode = utils::MeshTopologyToGLMode(topo);
 	    glDrawElementsInstanced(GL_mode, indexCount, GL_UNSIGNED_INT, nullptr, instanceCount);
-	  
-
+	   
 	} 
 
 
@@ -75,8 +74,23 @@ namespace Rudy
 		glDrawArraysInstanced(GL_mode, 0, vertexCount, instanceCount);
 	}
 
+	void OpenGLRendererAPI::DrawArraysIndirect(MeshTopology topo)
+	{
+		//RD_PROFILE_FUNCTION(); 
+
+		auto GL_mode = utils::MeshTopologyToGLMode(topo);
+		glDrawArraysIndirect(GL_mode, 0);
+
+	}
 
 
+   void OpenGLRendererAPI::DrawIndexedIndirect(MeshTopology topo)
+	{
+		//RD_PROFILE_FUNCTION();  
+		auto GL_mode = utils::MeshTopologyToGLMode(topo);
+		glDrawElementsIndirect(GL_mode, GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	}
 	 
 
 

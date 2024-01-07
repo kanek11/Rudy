@@ -11,8 +11,7 @@ namespace Rudy
 
 {   
     //static declaration
-    float Model::ScaleFactor = 1.0f;
-
+    float Model::s_scaleFactor  = 1.0f; 
 
     namespace AssimpGLMHelpers
     { 
@@ -41,91 +40,6 @@ namespace Rudy
     };
 
 
-    
-    Ref<MeshObject> MeshObject::Create()
-    {
-		return CreateRef<MeshObject>();
-	}
-
-
-
-    void  MeshObject::SetupMeshBuffers()
-    {
-		//RD_PROFILE_FUNCTION(); 
-
-        if(!hasMesh())
-		{
-			RD_CORE_ERROR("MeshObject::SetupBuffers: no mesh attached");
-			return;
-		}
-
-        
-        //data copy
-        vertexBuffer->SetData( mesh->vertices.data(), mesh->vertices.size() * sizeof(Vertex), BufferUsage::STATIC_DRAW);
-        indexBuffer ->SetData( mesh->indices.data(), mesh->indices.size() * sizeof(uint32_t), BufferUsage::STATIC_DRAW);
-
-        //attach
-        vertexArray->AttachVertexBuffer(vertexBuffer->GetBufferID(), 0, sizeof(Vertex));
-        vertexArray->AttachIndexBuffer(indexBuffer->GetBufferID());
-
-
-        vertexArray->AddAttribute( 0, 0, 3, BufferDataType::FLOAT32, offsetof(Vertex, Position));
-        vertexArray->AddAttribute( 1, 0, 2, BufferDataType::FLOAT32, offsetof(Vertex, UV));
-        vertexArray->AddAttribute( 2, 0, 3, BufferDataType::FLOAT32, offsetof(Vertex, Normal));
-        vertexArray->AddAttribute( 3, 0, 3, BufferDataType::FLOAT32, offsetof(Vertex, Tangent));
-        vertexArray->AddAttribute( 4, 0, 4, BufferDataType::INT32,   offsetof(Vertex, BoneIndices));
-        vertexArray->AddAttribute( 5, 0, 4, BufferDataType::FLOAT32, offsetof(Vertex, BoneWeights));
-
-         
-        RD_CORE_INFO("MeshObject::SetupBuffers: mesh buffers setup finished");
-
-    }
-
-
-     
-     
-
-    void MeshObject::Draw(Ref<Camera> cam)
-    { 
-        if(!hasMesh())
-		{
-		 RD_CORE_ERROR("MeshObject::Draw: no mesh attached"); 
-		}
-        if(!hasMaterial())
-        {
-        RD_CORE_ERROR("MeshObject::Draw: no material attached");
-        }
-
-         vertexArray->Bind();
-         material->Bind(); 
-
-         if (cam != nullptr)
-         {
-
-             this->transform->UpdateWorldTransform();
-             glm::mat4 model = this->transform->GetWorldTransform(); 
-           
-
-             material->GetShader()->SetMat4("u_model", model);
-             material->GetShader()->SetMat4("u_projection", cam->GetProjectionMatrix());
-material->GetShader()->SetMat4("u_view", cam->GetViewMatrix());
-         } 
-
-         switch (mesh->drawCommand)
-         {
-         case MeshDrawCommand::INDEXED:
-             Renderer::GetRendererAPI()->DrawIndexed(mesh->topology, mesh->GetIndexCount());
-
-         case MeshDrawCommand::ARRAYS:
-             Renderer::GetRendererAPI()->DrawArrays(mesh->topology, mesh->GetVertexCount());
-         }
-            
-
-         material->Unbind();
-         vertexArray->Unbind();
-
-	}
-
 
 
 
@@ -133,12 +47,13 @@ material->GetShader()->SetMat4("u_view", cam->GetViewMatrix());
      
 
 
-    void Model::Draw(Ref<Camera> cam)
-    {
-       for (auto meshObj : this->meshObjects)
-            meshObj->Draw( cam);
-	} 
 
+    //-------------------------
+    //---model-----------------
+    //-------------------------
+
+
+  
      
     Ref<Model> Model::LoadModel(std::string const& path)
 
@@ -159,7 +74,7 @@ material->GetShader()->SetMat4("u_view", cam->GetViewMatrix());
         //it's kinda weird logic that bone and mesh can be in different scale initially;
         //so i will override this in the root node transform;
 
-        importer.SetPropertyFloat("GLOBAL_SCALE_FACTOR",  this->ScaleFactor); 
+        importer.SetPropertyFloat("GLOBAL_SCALE_FACTOR",  this->s_scaleFactor ); 
 
         //read data ,  optionally with some postprocessing
         const aiScene* scene = importer.ReadFile
@@ -230,8 +145,7 @@ material->GetShader()->SetMat4("u_view", cam->GetViewMatrix());
         scene_node->transform->localTransform = AssimpGLMHelpers::ConvertMatrixToGLMFormat(ai_node->mTransformation);
         scene_node->transform->gameObject = scene_node;  //important
 
-
-
+         
         //process meshes in the node if any
         //they are separated by one-material-per-mesh when imported
         RD_CORE_INFO("modelloader: find {0} meshes in the node: {1}", ai_node->mNumMeshes, name);
@@ -242,12 +156,13 @@ material->GetShader()->SetMat4("u_view", cam->GetViewMatrix());
 
             //engine-specific mesh object
             auto meshObject = MeshObject::Create();
+            auto meshRenderer = meshObject->GetRendererComponent();
+        
+            RD_CORE_INFO("model: process mesh");
+            meshRenderer->SetMesh( processMesh(ai_mesh, scene) );
 
-            RD_CORE_INFO("process mesh");
-            meshObject->SetMesh( processMesh(ai_mesh, scene) );
-
-            RD_CORE_INFO("process material");
-            meshObject->material = processMaterial(ai_mesh, scene);
+            RD_CORE_INFO("model: process material");
+            meshRenderer->SetMaterial( processMaterial(ai_mesh, scene) );
 
 
             this->meshObjects.push_back(meshObject);  
@@ -636,16 +551,23 @@ material->GetShader()->SetMat4("u_view", cam->GetViewMatrix());
 
 
 
+    void Model::Draw(Ref<Camera> cam)
+    {
+        for (auto meshObj : this->meshObjects)
+            meshObj->GetRendererComponent()->Draw(cam);
+    }
+
+
     void Model::SetMaterial(Ref<Material> mat)
 {
-		for (auto meshObj : this->meshObjects)
-			meshObj->material = mat;
+        for (auto meshObj : this->meshObjects)
+            meshObj->GetRendererComponent()->SetMaterial(mat);
 	}
 
     void Model::SetShader(Ref<Shader> shader)
 {
 		for (auto meshObj : this->meshObjects)
-			meshObj->material->SetShader(shader);
+            meshObj->GetRendererComponent()->SetShader(shader);
 	}
 
 

@@ -20,15 +20,14 @@ namespace Rudy {
         Sphere(uint32_t subdivision) : MeshObject(),
             m_subdivision(subdivision)
         {
-           this->SetMesh( CreateMeshGeometry(subdivision)); 
+           this->GetRendererComponent()->SetMesh( CreateMeshGeometry(subdivision) ); 
         }
 
         static Ref<Sphere> Create(uint32_t subdivision) 
         { return CreateRef<Sphere>(subdivision); }
          
         Ref<Mesh> CreateMeshGeometry(uint32_t subdivision);
- 
-		  
+  
         uint32_t m_subdivision = 20;
 	};
  

@@ -138,39 +138,41 @@ glm::vec3(0.0f, 1.0f, 0.0f),
  
 
 
-    void Cube::DrawSkybox()
-    {
-        if (hasMaterial()) 
-            material->Bind();
-        else
-            RD_CORE_WARN("Cube: no bound material");
+   void Cube::DrawSkybox(Ref<Camera> cam)
+   {
+       auto renderer = this->GetRendererComponent();
+
+       if (!renderer->hasMaterial())  
+           RD_CORE_WARN("Cube: no bound material");
+     
+       if (!renderer->hasMesh()) 
+    	   RD_CORE_WARN("Cube: no bound mesh");
+
+
+      renderer->GetVertexArray()->Bind();
+      renderer->GetMaterial()->Bind();
+   
+      glm::mat4  view = cam->GetViewMatrix();
+      view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
+      glm::mat4  projection = cam->GetProjectionMatrix();
+   
+      renderer->GetMaterial()->GetShader()->SetMat4("u_projection", projection);
+      renderer->GetMaterial()->GetShader()->SetMat4("u_view", view);
+   
       
-        if (hasMesh())
-			vertexArray->Bind();
-		else
-			RD_CORE_WARN("Cube: no bound mesh");
-        
-
-       glm::mat4  view = Renderer::GetMainCamera()->GetViewMatrix();
-       view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
-       glm::mat4  projection = Renderer::GetMainCamera()->GetProjectionMatrix();
-
-       material->GetShader()->SetMat4("u_projection", projection);
-material->GetShader()->SetMat4("u_view", view);
-  
-       
-      glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+     // change depth function so depth test passes when values are equal to depth buffer's content
+     
+      glDepthFunc(GL_LEQUAL);
+      Renderer::GetRendererAPI()->DrawArrays(MeshTopology::TRIANGLES, renderer->GetMesh()->vertices.size());
       
-      Renderer::GetRendererAPI()->DrawArrays(MeshTopology::TRIANGLES, mesh->vertices.size());
-
       glDepthFunc(GL_LESS); // set depth function back to default 
       
       
-      vertexArray->Unbind();
-      material->Unbind();
-     
-  
-  }
+      renderer->GetVertexArray()->Unbind();
+      renderer->GetMaterial()->Unbind();
+    
+   
+   }
 
 
 

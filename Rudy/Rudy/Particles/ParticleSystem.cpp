@@ -5,11 +5,11 @@
 namespace Rudy
 {
 
-	Emitter::Emitter(): MeshObject()
+	Emitter::Emitter(): RenderableObject()
 	{
 
-		RD_CORE_INFO("Emitter {0} spawn init", m_name);
-		Spawn(); 
+		RD_CORE_INFO("Emitter {0} created:", m_name);
+		
 	}
 
     Emitter::~Emitter()
@@ -17,14 +17,32 @@ namespace Rudy
 		RD_CORE_INFO("Emitter {0} destroyed", m_name);
 	}
 
+	void Emitter::Draw(Ref<Camera> cam)
+	{ 
+		this->GetRendererComponent()->DrawInstanced(cam, m_currentAliveCount);
+	}
+
+
 
 	void Emitter::Spawn() {
 
-		auto drawIndirectCommand = new DrawIndirectCommand();
- 
-
+		//the initiaization of draw indirect buffer is now handled by the renderer
+		//but we keep the structure consistent and simple by simply assigning the draw indirect buffer
+		//auto DrawArraysIndirectCommand = new DrawArraysIndirectCommand();
+  
 		auto dispatchComputeIndirectCommand = new DispatchComputeIndirectCommand();
  
+		//handles rendering
+		//we get it from component, to keep the code more consistent
+		//the intialization, data copy is handled by the renderer, also some infos are needed for the shader.
+		{
+			if(!this->hasRendererComponent())
+			{
+				RD_CORE_ERROR("Emitter {0} has no renderer component ", m_name); 
+			} 
+
+		} 
+
 
 		//----------------------------------
 		//initialize buffers 
@@ -51,11 +69,14 @@ namespace Rudy
 			m_counter_buffer     ->SetData(nullptr, sizeof(Counter),                       BufferUsage::DYNAMIC_COPY);
 
 	 
-			m_indirect_dispatch_update_buffer = StorageBuffer::Create();
-			m_indirect_render_buffer = StorageBuffer::Create();
-
+			m_indirect_dispatch_update_buffer = StorageBuffer::Create(); 
 			m_indirect_dispatch_update_buffer->SetData(dispatchComputeIndirectCommand, sizeof(DispatchComputeIndirectCommand), BufferUsage::DYNAMIC_COPY);
-			m_indirect_render_buffer->SetData(drawIndirectCommand, sizeof(DrawIndirectCommand),       BufferUsage::DYNAMIC_COPY);
+
+			//m_indirect_draw_buffer = StorageBuffer::Create(); 
+			// //m_indirect_draw_buffer->SetData(DrawArraysIndirectCommand, sizeof(DrawArraysIndirectCommand),       BufferUsage::DYNAMIC_COPY);
+
+			//m_indirect_draw_buffer = this->rendererComponent->GetDrawIndirectBuffer();
+
 
 		}
 
@@ -68,67 +89,59 @@ namespace Rudy
 			m_particle_reset_compute_shader =    Shader::CreateComputeShader("particle reset",  "Shaders/Particles/particle_reset_CS.glsl");
 			m_particle_emission_compute_shader = Shader::CreateComputeShader("particle emit",   "Shaders/Particles/particle_emission_CS.glsl");
 			m_particle_update_compute_shader =   Shader::CreateComputeShader("particle update", "Shaders/Particles/particle_update_CS.glsl");
-			
-	
+			 
 
-			//----------------------------------
-			m_particle_reset_compute_shader->Bind();
-
+			////----------------------------------
+			//m_particle_reset_compute_shader->Bind(); 
+            //m_particle_reset_compute_shader->Unbind();
+			//
+			//
+		 	//
+			//// ------------------------------
+			//m_particle_emission_compute_shader->Bind();  
+			//m_particle_emission_compute_shader->Unbind();
+			//
+			//
+            ////----------------------------------
+			//
+			//m_particle_update_compute_shader->Bind(); 
+			//m_particle_update_compute_shader->Unbind();
  
-
-            m_particle_reset_compute_shader->Unbind();
-
-			
-		 
-			// ------------------------------
-			m_particle_emission_compute_shader->Bind(); 
-	
-		 
 			  
-			m_particle_emission_compute_shader->Unbind();
-			
-			
-            //----------------------------------
-
-			m_particle_update_compute_shader->Bind();
-
-         
-
-			m_particle_update_compute_shader->Unbind();
- 
-			
-
-
 		}
 		
-		//reset  at first
-		{
-		 //std::cout << "execute reset" << std::endl;
-			m_particle_reset_compute_shader->Bind();
 
-			m_deadList_buffer->BindBase(0);
-			m_counter_buffer->BindBase(1);
-			m_indirect_dispatch_update_buffer->BindBase(2);
-			m_indirect_render_buffer->BindBase(3);
+		//reset once
+		this->Reset();
+		
 
-			//set uniforms
-			m_particle_reset_compute_shader->SetInt("u_maxParticleCount", m_maxParticleCount);
-			
-			uint32_t dispatchX = static_cast<uint32_t>(
-				std::ceil((float)m_maxParticleCount / (float)m_local_size_x));
-			glDispatchCompute(dispatchX, 1, 1);
 
-			glDispatchCompute(dispatchX, 1, 1);
-			glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-			 
-			 
-			m_particle_reset_compute_shader->Unbind();
-			 
+	}
+
+	void Emitter::Reset()
+	{
+	 
+			//std::cout << "execute reset" << std::endl;
+		 m_particle_reset_compute_shader->Bind();
 		 
-		}
+		 m_deadList_buffer->BindBase(0);
+		 m_counter_buffer->BindBase(1);
+		 m_indirect_dispatch_update_buffer->BindBase(2);
+		// m_indirect_draw_buffer->BindBase(3);
 		 
-
-
+		 //set uniforms
+		 m_particle_reset_compute_shader->SetInt("u_maxParticleCount", m_maxParticleCount);
+		 
+		 uint32_t dispatchX = static_cast<uint32_t>(
+		 	std::ceil((float)m_maxParticleCount / (float)m_local_size_x));
+		 glDispatchCompute(dispatchX, 1, 1);
+		 
+		 glDispatchCompute(dispatchX, 1, 1);
+		 glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+		 
+		 
+		 m_particle_reset_compute_shader->Unbind();
+ 
 	}
 
 
@@ -146,7 +159,7 @@ namespace Rudy
 			m_deadList_buffer->BindBase(0);
 			m_counter_buffer->BindBase(1);
 			m_indirect_dispatch_update_buffer->BindBase(2);
-			m_indirect_render_buffer->BindBase(3);
+			//m_indirect_draw_buffer->BindBase(3);
 
 			//set uniforms
 			m_particle_reset_compute_shader->SetInt("u_maxParticleCount", 64);
@@ -203,7 +216,7 @@ namespace Rudy
 			m_aliveList_buffer[m_preSimIndex]->BindBase(1);
 			m_counter_buffer->BindBase(2);
 			m_indirect_dispatch_update_buffer->BindBase(3);
-			m_indirect_render_buffer ->BindBase(4);
+			//m_indirect_draw_buffer ->BindBase(4);
 
 			m_particle_position_buffer->BindBase(5);
 			m_particle_velocity_buffer->BindBase(6);
@@ -334,7 +347,7 @@ namespace Rudy
 			m_aliveList_buffer[m_preSimIndex]->BindBase(1);
 			m_aliveList_buffer[m_postSimIndex]->BindBase(2);
 			m_counter_buffer->BindBase(3);
-			m_indirect_render_buffer->BindBase(4);
+			//m_indirect_draw_buffer->BindBase(4);
 
 			m_particle_position_buffer->BindBase(5);
 			m_particle_velocity_buffer->BindBase(6);
@@ -396,21 +409,9 @@ namespace Rudy
 
 		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
-
-
-
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_indirect_render_buffer->GetBufferID());
-		DrawIndirectCommand* drawIndirect = (DrawIndirectCommand*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
-
-		std::cout << "draw instance: " << std::endl;
-		std::cout << drawIndirect->instanceCount << std::endl;
-
-		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-
-
 		 
-		
-		 
+
+	  
 		}
 
 		if (false)
@@ -430,81 +431,37 @@ namespace Rudy
 		}
 
 
-		//important:
-	//swap pre and post sim index, after sim;
+		//get the current active
+		//get active particle count
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_counter_buffer->GetBufferID());
+		Counter* counter = (Counter*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
+		  
+		m_currentAliveCount = counter->aliveCount[m_postSimIndex];
+		//unmap
+        glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+
+		//set bindings for material 
+		auto _shader = this->rendererComponent->GetMaterial()->GetShader();
+		_shader->Bind();
+
+		m_aliveList_buffer[m_postSimIndex]->BindBase(0);
+		m_particle_position_buffer->BindBase(1); 
+
+		_shader->Unbind();
+
+		  
+
+		//post-sim process
+	    //swap pre and post sim index, after sim;
 		m_preSimIndex = (m_preSimIndex == 0 ? 1 : 0);
 		m_postSimIndex = (m_postSimIndex == 0 ? 1 : 0);
 
-
-
-
-
-
-
 	
 
 	}
 
 
-
-
-	void Emitter::Draw(Ref<Camera> cam) {
-
-		 
-		//integrate with material system
-
-		//if (!hasMesh())
-		//{
-		//	RD_CORE_ERROR("MeshObject::Draw: no mesh attached");
-		//}
-		 
-		if (!hasMaterial())
-		{
-			RD_CORE_ERROR("MeshObject::Draw: no material attached");
-		}
-
-		//vertexArray->Bind();
-		material->Bind();
-
-
-		if (cam != nullptr)
-		{
-			//std::cout << "not empty cam" << std::endl;
-			this->transform->UpdateWorldTransform();
-			glm::mat4 model = this->transform->GetWorldTransform();
-			glm::mat4 projection = cam->GetProjectionMatrix();
-            glm::mat4 view = cam->GetViewMatrix();
-
-			material->GetShader()->SetMat4("u_model", model); 
-			material->GetShader()->SetMat4("u_view", view);
-			material->GetShader()->SetMat4("u_projection", projection);
-		}
-
-
-	
-		 m_aliveList_buffer[m_postSimIndex]->BindBase(0);  
-		 m_particle_position_buffer->BindBase(1);
-
-		 glBindBuffer(GL_DRAW_INDIRECT_BUFFER, m_indirect_render_buffer->GetBufferID());
-		 
-		 //glDrawArraysIndirect(GL_TRIANGLES, 0);
-		 glDrawArraysIndirect(GL_POINTS, 0);
-		   
-		 glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
-
-
-		 //glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
-		//material->Unbind();
-		vertexArray->Unbind();
-
-	
-
-	}
-
-
-  
-
-
+	 
 }

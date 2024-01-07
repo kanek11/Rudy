@@ -182,7 +182,7 @@ namespace Rudy {
 
 		//default shader
 		static Ref<Material> Create(Ref<Shader> shader =
-			Shader::Create("Basic Shader", "Resources/Shaders/Default_VS.glsl", "Resources/Shaders/Default_FS.glsl"));
+			Shader::Create("Basic Shader", "Shaders/Shaders/Default_VS.glsl", "Shaders/Shaders/Default_FS.glsl"));
 
 	
 
