@@ -110,6 +110,7 @@
     <ClInclude Include="Rudy\Renderer\Camera.h" />
     <ClInclude Include="Rudy\Renderer\FrameBuffer.h" />
     <ClInclude Include="Rudy\Renderer\GraphicsContext.h" />
+    <ClInclude Include="Rudy\Renderer\Kernel.h" />
     <ClInclude Include="Rudy\Renderer\Material.h" />
     <ClInclude Include="Rudy\Renderer\Mesh.h" />
     <ClInclude Include="Rudy\Renderer\Object.h" />
@@ -143,8 +144,13 @@
     <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="Rudy\Particles\ParticleSystem.cpp" />
     <ClCompile Include="Rudy\Renderer\Buffer.cpp" />
+    <ClCompile Include="Rudy\Renderer\Kernel.cpp" />
     <ClCompile Include="Rudy\Renderer\RendererComponent.cpp" />
-    <ClCompile Include="test_pipeline_pbr.cpp" />
+    <ClCompile Include="test_particles_new.cpp" />
+    <None Include="Shaders\Particles\particle_dispatch_CS.glsl" />
+    <None Include="Shaders\Shaders\Genshin_FS.glsl" />
+    <None Include="Shaders\Shaders\Genshin_VS.glsl" />
+    <None Include="Shaders\Deferred\Lambertian_FS.glsl" />
     <None Include="Shaders\Particles\particle_render_sprite_FS.glsl" />
     <None Include="Shaders\Particles\particle_render_sprite_GS.glsl" />
     <None Include="Shaders\Particles\particle_render_sprite_VS.glsl" />
@@ -209,6 +215,8 @@
     <None Include="Shaders\PostProcess\TestImage_CS.glsl" />
     <None Include="Shaders\Deferred\PBR_FS.glsl" />
     <None Include="Shaders\Deferred\PBR_VS.glsl" />
+    <None Include="Shaders\Shaders\show_normal_FS.glsl" />
+    <None Include="Shaders\Shaders\show_normal_GS.glsl" />
     <None Include="Shaders\Shaders\RectToCube_VS.glsl" />
     <None Include="Shaders\Shaders\RectToCube_FS.glsl" />
     <None Include="Shaders\Shaders\SpecularEnvMap_FS.glsl" />

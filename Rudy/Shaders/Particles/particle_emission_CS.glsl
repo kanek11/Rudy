@@ -22,14 +22,9 @@ layout(local_size_x = 32, local_size_y = 1, local_size_z = 1) in;
 
  
 //====system 
-uniform vec3 u_seeds;
-
-uniform int  u_local_size_x;
-
-
+uniform vec3 u_seeds; 
 //===emitter
-//emitter spawn
-uniform uint  u_emission_count;
+//emitter spawn 
 uniform vec3  u_emitter_position;
 
 //uniform int   u_Emission_Shape;
@@ -38,7 +33,7 @@ uniform vec3  u_emitter_position;
 uniform float u_sphereRadius;
 
 //emitter update
-uniform uint   u_preSimIndex; 
+uniform uint u_preSimIndex; 
 
 
 //======particle
@@ -56,38 +51,31 @@ uniform float u_particle_maxInitialSpeed;
 
 //management
 
-layout(std430, binding = 0) buffer ParticleDeadIndices_t
+
+layout(std430, binding = 0) buffer Counters_t
+{
+    uint dead_count;
+    uint alive_count[2];
+    uint emission_count;
+    uint update_count;
+}
+Counters;
+
+
+layout(std430, binding = 1) buffer ParticleDeadIndices_t
 {
     uint indices[];
 }
 DeadIndices;
 
-layout(std430, binding = 1) buffer ParticleAlivePreSimIndices_t
+layout(std430, binding = 2) buffer ParticleAlivePreSimIndices_t
 {
     uint indices[];
 }
 AliveIndicesPreSim;
+  
+
  
-
-
-layout(std430, binding = 2) buffer Counters_t
-{
-    uint dead_count;
-    uint alive_count[2]; 
-}
-Counters;
-
-
-layout(std430, binding = 3) buffer ParticleUpdateArgs_t
-{
-    uint numGroupsX;
-    uint numGroupsY;
-    uint numGroupsZ;
-}
-ParticleUpdateArgs;
-
-
-
 
 //attributes
 layout(std430, binding = 5) buffer ParticlePosition_t
@@ -155,16 +143,9 @@ float rand(vec3 co)
 void main()
 {
     uint index = gl_GlobalInvocationID.x;
+     
 
-    //handle out of bounds
-    uint emission_count = u_emission_count;
-
-    if (Counters.dead_count < emission_count)
-	{
-        emission_count = Counters.dead_count;
-	}
-
-    if (index <  emission_count)
+    if (index <  Counters.emission_count)
     {
         uint particle_index = pop_dead_index();
 
@@ -190,14 +171,7 @@ void main()
         push_alive_index(particle_index);
 
     }
-
-    //initialize dispatch for following stages
-    //assume emission shader must be dispatched; this can be separated into another shader
-    if (index == 0)
-	{
-		 ParticleUpdateArgs.numGroupsX = uint( ceil( float(Counters.alive_count[u_preSimIndex]) 
-                                                   / float(u_local_size_x ) ) ); 
-	}
+ 
 
 }
 

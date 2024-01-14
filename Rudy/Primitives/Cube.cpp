@@ -142,11 +142,18 @@ glm::vec3(0.0f, 1.0f, 0.0f),
    {
        auto renderer = this->GetRendererComponent();
 
-       if (!renderer->hasMaterial())  
+       if (!renderer->hasMaterial())
+       { 
            RD_CORE_WARN("Cube: no bound material");
+           return;
+       }
      
-       if (!renderer->hasMesh()) 
-    	   RD_CORE_WARN("Cube: no bound mesh");
+       if (!renderer->hasMesh())
+       {
+           RD_CORE_WARN("Cube: no bound mesh");
+           return;
+       }
+    	  
 
 
       renderer->GetVertexArray()->Bind();

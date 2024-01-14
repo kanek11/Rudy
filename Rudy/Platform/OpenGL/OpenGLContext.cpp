@@ -72,6 +72,9 @@ namespace Rudy {
 		//glEnable(GL_CULL_FACE);
 		//glCullFace(GL_BACK);
 
+		//polygon mode, careful for deferred shading?
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 
 		//not used;
 		//glEnable(GL_MULTISAMPLE); 

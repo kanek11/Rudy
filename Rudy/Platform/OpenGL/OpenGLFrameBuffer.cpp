@@ -86,7 +86,7 @@ namespace Rudy {
 		}
 
 
-		case FrameBufferType::DepthMap:
+		case FrameBufferType::DepthTexture:
 		{
 
 			//create and bind framebuffer
@@ -95,7 +95,7 @@ namespace Rudy {
 
 
 
-			//m_TextureBuffers[TextureType::DepthMap]->Bind();
+			//m_TextureBuffers[TextureType::DepthTexture]->Bind();
 			//m_TextureBuffers.push_back(Texture2D::Create(
 			//	TextureSpec{ width,height, }));
 
@@ -106,7 +106,7 @@ namespace Rudy {
 
 
 			//attach texture to framebuffer
-			//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_TextureBuffers[TextureType::DepthMap]->GetTextureID(), 0);
+			//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_TextureBuffers[TextureType::DepthTexture]->GetTextureID(), 0);
 
 			//disable color buffer
 			glDrawBuffer(GL_NONE);
@@ -117,7 +117,7 @@ namespace Rudy {
 			//unbind framebuffer
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-			RD_CORE_WARN("DepthMap FrameBufferid:{0} is created", m_FrameBufferID);
+			RD_CORE_WARN("DepthTexture FrameBufferid:{0} is created", m_FrameBufferID);
 
 			break;
 
@@ -146,7 +146,7 @@ namespace Rudy {
 			//for (auto g_texture : m_TextureBuffers)
 			//{
 			//	//for depth map;
-			//	if (g_texture.first == TextureType::DepthMap)
+			//	if (g_texture.first == TextureType::DepthTexture)
 			//	{
 			//		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, g_texture.second->GetTextureID(), 0);
 			//

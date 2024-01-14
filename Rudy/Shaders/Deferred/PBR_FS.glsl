@@ -1,11 +1,15 @@
-#version 460 core
+#version 460 core 
+//===MACRO
+#define PI 3.14159265359
+//=====output
+layout(location = 0) out vec4 out_FragColor; 
+ 
+//=====input
+in VS_OUT
+{
+    vec2 TexCoords;
 
-out vec4 FragColor;
-
-in vec2 TexCoords;
-
-const float PI = 3.14159265359;
-
+} fs_in; 
 
  
 uniform sampler2D gPosition;
@@ -19,13 +23,14 @@ uniform sampler2D gRoughness;
 //IBL 
 uniform samplerCube u_DiffuseEnvMap;
 uniform samplerCube u_SpecularEnvMap;
-uniform sampler2D u_BrdfLUTMap;
+uniform sampler2D u_brdfLUTTexture;
 
-uniform sampler2D u_DepthMap;  //shadow map
+uniform sampler2D u_DepthTexture;  //shadow map
 
 
 //test: config flag
 uniform bool u_EnableSkyBox;
+
 
 struct DirLight { 
     vec3 color;
@@ -40,6 +45,8 @@ uniform mat4 u_LightSpaceMatrix;  //for shadow map
 uniform vec3 u_CameraPos;
  
 
+
+
 //---shadow map
 //return 1 if in shadow, 0 otherwise;
 float ShadowCalculation(vec4 WorldFragPos)
@@ -49,9 +56,9 @@ float ShadowCalculation(vec4 WorldFragPos)
    vec4 lightSpaceFragPos = u_LightSpaceMatrix * WorldFragPos;
 
     vec3 projCoords = lightSpaceFragPos.xyz / lightSpaceFragPos.w;   //perspective division
-      projCoords = projCoords * 0.5 + 0.5;
+    projCoords = projCoords * 0.5 + 0.5;
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(u_DepthMap, projCoords.xy).r;
+    float closestDepth = texture(u_DepthTexture, projCoords.xy).r;
 
 
     // get depth of current fragment from light's perspective
@@ -121,29 +128,26 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 
 
 
-
-
-
-
 void main()
 {
   
 
     //gbuffers;
-    vec3 worldPos = texture(gPosition, TexCoords).rgb; 
+    vec3 worldPos = texture(gPosition, fs_in.TexCoords).rgb; 
 
-    vec3 N = normalize(texture(gWorldNormal, TexCoords).rgb * 2.0 - 1.0);
+    vec3 worldNormal = texture(gWorldNormal, fs_in.TexCoords).rgb;
+    if (length(worldNormal) < 0.2) discard;  //discard background
+    vec3 N = normalize(worldNormal * 2.0 - 1.0);
 
-    vec3 albedo = texture(gAlbedo, TexCoords).rgb;  
+    vec3 albedo = texture(gAlbedo, fs_in.TexCoords).rgb;  
      
     //specular or roughness workflow;
-    float specularCoeff = texture(gSpecular, TexCoords).r;   
+    float specularCoeff = texture(gSpecular, fs_in.TexCoords).r;   
 
-    float roughness = texture(gRoughness, TexCoords).r;  //gray
+    float roughness = texture(gRoughness, fs_in.TexCoords).r;  //gray
     if ( roughness < 0.001)  roughness = 1 - specularCoeff;  //todo: better way to be compatible with blinn-phong model;
 
-    float metallic = texture(gMetallic, TexCoords).r;  //gray  
-   
+    float metallic = texture(gMetallic, fs_in.TexCoords).r;  //gray   
 
     //Fresnel
     vec3 F0 = vec3(0.04);  //default specular color 
@@ -154,37 +158,40 @@ void main()
 
 
     //======Scene lighting
-    vec3 radiance = u_DirLight.color * u_DirLight.intensity; 
-    vec3 L = - normalize(u_DirLight.direction);   //minus, from shading point
-    vec3 V = normalize(u_CameraPos - worldPos);
-    vec3 H = normalize(L + V);
+    
+        vec3 radiance = u_DirLight.color * u_DirLight.intensity;
+        vec3 L = - normalize(u_DirLight.direction);   //minus, from shading point
+        vec3 V = normalize(u_CameraPos - worldPos);
+        vec3 H = normalize(L + V);
 
-    //shadow
-    float shadow = ShadowCalculation(vec4(worldPos, 1.0));
-     
-
-    float NDF = DistributionGGX(N, H, roughness);
-    float G = GeometrySmith(N, V, L, roughness);
-
-    float NdotV = dot(N, V);
-    vec3 F = vec3(0.0);
-    if (NdotV >= 0.0)
-      F = fresnelSchlick(NdotV, F0);   
-
-    vec3 numerator = NDF * G * F;
-
-    float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero ,also eps
-    vec3 specular = numerator / denominator; 
-    specular *= (1 - shadow);  //todo: better performance;
-     
-
-    vec3 kS = F;
-    vec3 kD = vec3(1.0) - kS;
-    kD *= 1.0 - metallic;
+        //shadow
+        float shadow = ShadowCalculation(vec4(worldPos, 1.0));
 
 
-    float NdotL = max(dot(N, L), 0.0);
-    Lo += (kD * albedo / PI + specular) * radiance * NdotL;
+        float NDF = DistributionGGX(N, H, roughness);
+        float G = GeometrySmith(N, V, L, roughness);
+
+        float NdotV = dot(N, V);
+        vec3 F = vec3(0.0);
+        if (NdotV >= 0.0)
+            F = fresnelSchlick(NdotV, F0);
+
+        vec3 numerator = NDF * G * F;
+
+        float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero ,also eps
+        vec3 specular = numerator / denominator;
+        specular *= (1 - shadow);  //todo: better performance;
+
+
+        vec3 kS = F;
+        vec3 kD = vec3(1.0) - kS;
+        kD *= 1.0 - metallic;
+
+
+        float NdotL = max(dot(N, L), 0.0);
+        Lo += (kD * albedo / PI + specular) * radiance * NdotL;
+
+   
 
 
     vec3 FragColor_HDR = Lo;
@@ -210,7 +217,7 @@ void main()
         //roughness = 0;
         vec3 specularColor = textureLod(u_SpecularEnvMap, R, roughness * MAX_REFLECTION_LOD).rgb;
 
-        vec2 brdf = texture(u_BrdfLUTMap, vec2(max(dot(N, V), 0.0), roughness)).rg;
+        vec2 brdf = texture(u_brdfLUTTexture, vec2(max(dot(N, V), 0.0), roughness)).rg;
         vec3 specularEnv = specularColor * (F * brdf.x + brdf.y);
 
 
@@ -223,8 +230,8 @@ void main()
     // color = vec3(1.0) - exp(-color * 1.0);   //in exposure
      
 
-    FragColor = vec4(FragColor_LDR, 1.0);
-     
+    out_FragColor = vec4(FragColor_LDR, 1.0);  
+    //out_FragColor = vec4(1.0, 0.0, 0.0, 1.0);  //debug
     //FragColor = vec4(vec3(shadow), 1.0);    
 
     //FragColor = vec4(V*0.5 +0.5, 1.0);

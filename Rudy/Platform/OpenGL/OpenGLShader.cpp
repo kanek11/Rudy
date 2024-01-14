@@ -220,7 +220,12 @@ namespace Rudy {
 
     void OpenGLShader::SetUInt(const std::string& name, int value) const
     {
-        glUniform1ui(glGetUniformLocation(m_ShaderID, name.c_str()), value);
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            RD_CORE_WARN("OpenGLShader: SetUInt: uniform {0} not properly found", name);
+            return;
+        }  
+        glUniform1ui(location, value);
     }
 
     // ------------------------------------------------------------------------

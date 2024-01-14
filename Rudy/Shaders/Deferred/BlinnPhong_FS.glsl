@@ -25,7 +25,7 @@ uniform sampler2D gRoughness;
 //uniform sampler2D u_AlbedoMap;
 //uniform sampler2D u_RoughnessMap;
 //uniform sampler2D u_NormalMap;  
-//uniform sampler2D u_DepthMap;  //shadow map
+//uniform sampler2D u_DepthTexture;  //shadow map
 
   
 
@@ -63,7 +63,7 @@ vec3 CameraPos = vec3(0.0, 0.0, 5.0);
 //    vec3 projCoords = lightSpaceFragPos.xyz / lightSpaceFragPos.w;   //perspective division
 //      projCoords = projCoords * 0.5 + 0.5;
 //    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-//    float closestDepth = texture(u_DepthMap, projCoords.xy).r;
+//    float closestDepth = texture(u_DepthTexture, projCoords.xy).r;
 
 //
 //    // get depth of current fragment from light's perspective

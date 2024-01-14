@@ -152,6 +152,11 @@ namespace Rudy {
         
         std::vector<uint32_t> indices; 
 
+
+    public:
+        //management info;
+         std::string name = "default_mesh";
+         uint32_t globalIndex = 0;  
     };
 
 }

@@ -147,7 +147,7 @@ namespace Rudy {
 		
 		Screen,  //colorbuffer as texture2D, depth24+stencil8 as renderbuffer; 
 
-		DepthMap,   //depth as texture, no colorbuffer 
+		DepthTexture,   //depth as texture, no colorbuffer 
 
 		GBuffer, //basically default but with multiple colorbuffers
 		 

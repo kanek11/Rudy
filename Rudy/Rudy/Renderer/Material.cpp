@@ -6,30 +6,20 @@
 
 namespace Rudy 
 {
-
-	 //TODO: built-in material types with shader organization
-	//Ref<Material> Material::Create(MaterialType type)
-	//{ 
-	//	 return CreateRef<Material>(type); 
-	//}
-
-	Ref<Material> Material::Create(Ref<Shader> shader)
+ 
+	Ref<Material> Material::Create(Ref<Shader> shader, const std::string& name)
 	{
-		return CreateRef<Material>(shader);
-	}
+		return CreateRef<Material>(shader, name);
+	} 
+ 
 
-	 
-	//Material::Material(MaterialType type)
-	//	: materialType(type)
-	//{
-	//	RD_CORE_WARN("Material:  Material is Created without Shader");
-	//	//SetupMaterial();
-	//}
-
-	Material::Material(Ref<Shader> shader)
-		: m_Shader(shader)
+	Material::Material(Ref<Shader> shader, const std::string& name)
+		: m_Shader(shader), m_Name(name)
 	{ 
-		RD_CORE_INFO("Material:  Material is Created using shader: {0}", shader->GetName());
+		if(shader!=nullptr)
+		RD_CORE_INFO("Material:  Material:{0} is Created using shader: {1}", m_Name, shader->GetName());
+		else
+        RD_CORE_WARN("Material:  Material: {0} is Created without Shader", m_Name);
         
 	}
 	 
@@ -50,44 +40,22 @@ namespace Rudy
 	    { 
 			 shader->SetInt(texture.second, (int)texture.first); 
 	    }
-		
-		for (auto& value: FloatDefaultValue)
-		{
-			shader->SetFloat(value.first, value.second);
-		}
-
-       for (auto& value : Vec3DefaultValue)
-		{
-			shader->SetVec3(value.first, value.second);
-		}
-	
+ 
 		 
 	}
  
 
-	//RD_CORE_INFO("Material: sampler2D {0} is set to slot {1}", texture.second, (int)texture.first);
-
-	//const std::string& textureName = TextureTypeName[texture.first];
-
-	// Check if the uniform name is valid
-	//if (textureName.empty()) {
-	//	RD_CORE_WARN("setupMaterial: didn't recognize type {0}", static_cast<int>(texture.first));
-	//}
-	//else
-
 	 
-
-	//void Material::SetupMaterial()
-	//{ 
-	//}
-
 
 	void Material::Bind()
 	{ 
-		if (m_Shader)
+		if (m_Shader != nullptr)
 		m_Shader->Bind(); 
 		else
-		RD_CORE_ERROR("Material: no shader bound");
+		{ 
+			RD_CORE_ERROR("Material: no shader bound");
+			return;
+		}
 
 
 		//for unordered map, .first is the key, .second is the value 
@@ -120,10 +88,14 @@ namespace Rudy
 
 	void Material::Unbind()
 	{ 
-		if (m_Shader)
-			m_Shader->Unbind();
+		if (m_Shader != nullptr)
+			m_Shader->Bind();
 		else
+		{
 			RD_CORE_ERROR("Material: no shader bound");
+			return;
+		}
+
 
 		//int slot = 0;
 		for (auto& texture : m_Texture_map)

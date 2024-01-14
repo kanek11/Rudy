@@ -116,7 +116,7 @@ int main() {
      /* Loop until the user closes the window */
 
 
-    float lastFrameTime = 0.0f;
+    float lastFrameTime = (float)glfwGetTime();
     float timer = 0.0f;
     RD_CORE_WARN("App: Entering the loop");
     while (!Renderer::ShouldClose())

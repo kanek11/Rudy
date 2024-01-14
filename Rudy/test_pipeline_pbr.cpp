@@ -17,7 +17,7 @@ const uint32_t BUFFER_HEIGHT = SCR_HEIGHT / 4;
 const uint32_t SHADOW_WIDTH = 2560, SHADOW_HEIGHT = 2560;
 
 
-const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 2.0f, 5.0f);
+const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 1.5f, 5.0f);
 
 //const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 0.0f, 3.0f);
 
@@ -82,13 +82,13 @@ int main() {
 
     auto brdfQuadMaterial = Material::Create(brdfLUTShader);
 
-    auto brdfLUTMap = Texture2D::CreateEmpty(TextureSpec{ 512, 512, TextureInternalFormat::RGB32F });
+    auto brdfLUTTexture = Texture2D::CreateEmpty(TextureSpec{ 512, 512, TextureInternalFormat::RGB32F });
 
     auto brdfLUTFBO = FrameBuffer::Create(
 		        512, 512, FrameBufferType::Screen); 
 
     brdfLUTFBO->Bind();
-    brdfLUTFBO->SetColorAttachmentTexture(brdfLUTMap, 0); 
+    brdfLUTFBO->SetColorAttachmentTexture(brdfLUTTexture, 0); 
  
     glClearColor(0.1f, 0.2f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
@@ -125,9 +125,9 @@ int main() {
     //======gbuffer pass;
 
     auto gBufferPassShader = Shader::Create("gBuffer Shader", 
-               "Shaders/Deferred/GBuffer_VS.glsl", "Shaders/Deferred/GBuffer_FS.glsl");
-    Material::SetMaterialProperties(gBufferPassShader);
+               "Shaders/Deferred/GBuffer_VS.glsl", "Shaders/Deferred/GBuffer_FS.glsl"); 
 
+    Material::SetMaterialProperties(gBufferPassShader);
 
     //Framebuffer;
     auto GBufferFBO = FrameBuffer::Create(
@@ -177,7 +177,7 @@ int main() {
     glm::mat4 lightProjection = glm::ortho(
         -20.0f, 20.0f, -20.0f, 20.0f, -10.0f, 20.0f);  //the near and far plane should be large enough to cover the scene
     //look at minus direction;
-    glm::mat4 lightView = glm::lookAt( -sunlight->direction, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+    glm::mat4 lightView = glm::lookAt( sunlight->direction, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 
     auto lightSpaceCamera = Camera::Create();
     lightSpaceCamera->m_ProjectionMatrix = lightProjection;
@@ -186,7 +186,7 @@ int main() {
 
 
     //plane;
-    auto plane_Material = Material::Create(gBufferPassShader);
+    auto plane_gMaterial = PBRMaterial::Create(gBufferPassShader); 
 
     auto plane_albedoMap =    Texture2D::LoadFile("D:/CG_resources/PBRTextures/Floor_brown_ue/albedo.png");
     auto plane_normalMap =    Texture2D::LoadFile("D:/CG_resources/PBRTextures/Floor_brown_ue/normal.png"); 
@@ -194,50 +194,61 @@ int main() {
     auto plane_metallicMap =  Texture2D::LoadFile("D:/CG_resources/PBRTextures/Floor_brown_ue/metallic.png");
 
 
-    plane_Material->SetTexture(TextureType::AlbedoMap, plane_albedoMap);
-    plane_Material->SetTexture(TextureType::NormalMap, plane_normalMap);
-    plane_Material->SetTexture(TextureType::RoughnessMap, plane_roughnessMap);
-    plane_Material->SetTexture(TextureType::MetallicMap, plane_metallicMap);
+    plane_gMaterial->SetTexture(TextureType::AlbedoMap, plane_albedoMap);
+    plane_gMaterial->SetTexture(TextureType::NormalMap, plane_normalMap);
+    plane_gMaterial->SetTexture(TextureType::RoughnessMap, plane_roughnessMap);
+    plane_gMaterial->SetTexture(TextureType::MetallicMap, plane_metallicMap);
+
+
 
 
     auto floor = Plane::Create(30);
     //floor->transform->position = glm::vec3(0.0f, -1.0f, 0.0f);
-    floor->SetMaterial(plane_Material);   
+    floor->SetMaterial(plane_gMaterial);   
       
 
     //
-    auto sphere_Material = Material::Create(gBufferPassShader); 
+    auto sphere_gMaterial = PBRMaterial::Create(gBufferPassShader);  
+    
     //auto sphere_albedoMap =    Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/albedo.png");
-    sphere_Material->SetVec3("u_Albedo", glm::vec3(1.0f, 0.0f, 0.0f));
+    sphere_gMaterial->SetVec3("u_Albedo", glm::vec3(1.0f, 0.0f, 0.0f));
     auto sphere_normalMap =    Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/normal.png");
     auto sphere_roughnessMap = Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/roughness.png");
     auto sphere_metallicMap =  Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/metallic.png");
 
 
-    //sphere_Material->SetTexture(TextureType::AlbedoMap,    sphere_albedoMap);
-    sphere_Material->SetTexture(TextureType::NormalMap,    sphere_normalMap);
-    sphere_Material->SetTexture(TextureType::RoughnessMap, sphere_roughnessMap);
-    sphere_Material->SetTexture(TextureType::MetallicMap,  sphere_metallicMap);
+    //sphere_gMaterial->SetTexture(TextureType::AlbedoMap,    sphere_albedoMap);
+    sphere_gMaterial->SetTexture(TextureType::NormalMap,    sphere_normalMap);
+    sphere_gMaterial->SetTexture(TextureType::RoughnessMap, sphere_roughnessMap);
+    sphere_gMaterial->SetTexture(TextureType::MetallicMap,  sphere_metallicMap);
 
 
     auto sphere = Sphere::Create(20);
-    sphere->SetMaterial(sphere_Material); 
-
+    sphere->SetMaterial(sphere_gMaterial); 
 
     sphere->transform->position = glm::vec3(1.0f, +1.0f, 0.0f);
-
      
 
+
+
     //==========shadow map pass
-    auto shadowMapShader = Shader::Create("shadow map Shader", "Shaders/Shaders/DepthMap_VS.glsl", "Shaders/Shaders/DepthMap_FS.glsl");
+    auto shadowMapShader = Shader::Create("shadow map Shader", 
+        "Shaders/Shaders/DepthMap_VS.glsl", 
+        "Shaders/Shaders/DepthMap_FS.glsl");
     Material::SetMaterialProperties(shadowMapShader);
 
-    auto shadowMapSkinnedShader = Shader::Create("shadow map Shader", "Shaders/Shaders/DepthMapSkinned_VS.glsl", "Shaders/Shaders/DepthMap_FS.glsl");
+    auto shadowMapSkinnedShader = Shader::Create("shadow map Shader", 
+        "Shaders/Shaders/DepthMapSkinned_VS.glsl", 
+        "Shaders/Shaders/DepthMap_FS.glsl");
     Material::SetMaterialProperties(shadowMapSkinnedShader);
 
 
+    auto shadowMapMaterial = Material::Create(shadowMapShader);
+    auto shadowMapSkinnedMaterial = Material::Create(shadowMapSkinnedShader);
+
+
     auto shadowMapFBO = FrameBuffer::Create(
-		SHADOW_WIDTH, SHADOW_HEIGHT, FrameBufferType::DepthMap);
+		SHADOW_WIDTH, SHADOW_HEIGHT, FrameBufferType::DepthTexture);
 
     auto shadowMap = Texture2D::CreateEmpty(
 		TextureSpec{ SHADOW_WIDTH, SHADOW_HEIGHT, TextureInternalFormat::DEPTH_COMPONENT24,
@@ -253,20 +264,28 @@ int main() {
     //===========new: animated model
 
      //auto test_model = Model::LoadModel("D:/CG_resources/backpack/backpack.obj");
-    auto gBufferPassSkinnedShader = Shader::Create("gBuffer Shader", "Shaders/Deferred/GBufferSkinned_VS.glsl",
+    auto gBufferPassSkinnedShader = Shader::Create("gBuffer Shader",
+        "Shaders/Deferred/GBufferSkinned_VS.glsl",
          "Shaders/Deferred/GBuffer_FS.glsl");
-    Material::SetMaterialProperties(gBufferPassSkinnedShader);
 
-
+     Material::SetMaterialProperties(gBufferPassSkinnedShader);
+ 
 
     Texture2D::SetFlipYOnLoad(true); //eg: for .png;
 
     Model::s_scaleFactor = 0.01f;
     auto test_model = Model::LoadModel("D:/CG_resources/dae/vampire/dancing_vampire.dae");
 
+
+    std::vector< Ref<Material> > model_materials;
+   
+    
     for (auto meshObj: test_model->meshObjects)
     {
 		auto _material = meshObj->GetRendererComponent()->GetMaterial();
+        _material->SetShader(gBufferPassSkinnedShader);
+         model_materials.push_back(_material);
+
 		_material->SetFloat("u_Metallic", 0.0f);
 		_material->SetFloat("u_Roughness", 0.0f);  
 	}
@@ -277,11 +296,6 @@ int main() {
     //test: update the global transform of the model; according to the transform of bones;
     //Transform::UpdateWorldTransformRecursive(test_model->rootNode->transform, glm::mat4(1.0f)); 
 
-
-   // for (auto meshObj : test_model->meshObjects)
-   // {
-   //     meshObj->material->SetShader(gBufferPassSkinnedShader);
-   // }
 
 
     auto transforms = std::vector<glm::mat4>(100, glm::mat4(1.0f));
@@ -325,8 +339,8 @@ int main() {
 
     //auto lightingPassShader = Shader::Create("blinnPhong Shader", "Shaders/Shaders/BlinnPhong_VS.glsl", "Shaders/Shaders/BlinnPhong_FS.glsl");
     auto lightingPassShader = Shader::Create("pbr Shader", "Shaders/Deferred/PBR_VS.glsl", "Shaders/Deferred/PBR_FS.glsl");
+   
     Material::SetMaterialProperties(lightingPassShader);
-
 
     //=== FBO
     auto lightingPassFBO = FrameBuffer::Create(
@@ -343,6 +357,7 @@ int main() {
     //=== material
 
     auto lightingPassMaterial = Material::Create(lightingPassShader); 
+
     lightingPassMaterial->SetTexture(TextureType::gPosition,     gPosition);
     lightingPassMaterial->SetTexture(TextureType::gAlbedo,       gAlbedo);
     lightingPassMaterial->SetTexture(TextureType::gWorldNormal,  gWorldNormal);
@@ -354,9 +369,9 @@ int main() {
 
     lightingPassMaterial->SetTexture(TextureType::diffuseEnvMap, diffuseEnvMap);
     lightingPassMaterial->SetTexture(TextureType::specularEnvMap, specularEnvMap);
-    lightingPassMaterial->SetTexture(TextureType::brdfLUTMap, brdfLUTMap);
+    lightingPassMaterial->SetTexture(TextureType::brdfLUTTexture, brdfLUTTexture);
 
-    lightingPassMaterial->SetTexture(TextureType::DepthMap, shadowMap);
+    lightingPassMaterial->SetTexture(TextureType::DepthTexture, shadowMap);
 
 
     ////HZ_CORE_ERROR("size of lightingpass material textures: {0}", lightingPassMaterial->GetTextures().size());
@@ -540,7 +555,7 @@ int main() {
  
      
     auto screenQuadShader = Shader::Create("screen quad shader", "Shaders/Shaders/ScreenQuad_VS.glsl", "Shaders/Shaders/ScreenQuad_FS.glsl");
-    auto screenQuadMaterial = Material::Create(screenQuadShader);
+    auto screenQuadMaterial =  Material::Create(screenQuadShader);
 
     auto screenQuad = ScreenQuad::Create();
     screenQuad->SetMaterial(screenQuadMaterial);
@@ -568,7 +583,7 @@ int main() {
         //renderAPI->Clear();
 
 
-        //====== buffer pass: render the scene to the gbuffer 
+        //======g buffer pass: render the scene to the gbuffer 
         {
             GBufferFBO->Bind();
 
@@ -580,23 +595,25 @@ int main() {
 
             //get scene camera info 
             //scene->Render(main_camera);
-            floor->SetShader(gBufferPassShader);
-            sphere->SetShader(gBufferPassShader);
-            floor->Draw(main_camera);
+            floor->SetMaterial(plane_gMaterial);
+            sphere->SetMaterial(sphere_gMaterial);
+            floor->Draw(main_camera); 
             sphere->Draw(main_camera);
-
-
-
-             test_model->SetShader(gBufferPassSkinnedShader);
              
-             gBufferPassSkinnedShader->Bind(); 
-             auto transforms = animator->GetBoneTransforms(timer);
-             for (int i = 0; i < 100; ++i)
-                 gBufferPassSkinnedShader->SetMat4("u_BoneTransforms[" + std::to_string(i) + "]", transforms[i]);
+            int index = 0;
+            for (auto meshObj : test_model->meshObjects)
+            {
+			   meshObj->SetMaterial(model_materials[index++]); 
+            }
              
-             gBufferPassSkinnedShader->Unbind(); 
-             
-             test_model->Draw(main_camera);
+            gBufferPassSkinnedShader->Bind(); 
+            auto transforms = animator->GetBoneTransforms(timer);
+            for (int i = 0; i < 100; ++i)
+                gBufferPassSkinnedShader->SetMat4("u_BoneTransforms[" + std::to_string(i) + "]", transforms[i]);
+            
+            gBufferPassSkinnedShader->Unbind(); 
+            
+            test_model->Draw(main_camera);
 
 
             GBufferFBO->Unbind();
@@ -604,6 +621,7 @@ int main() {
         
 
         //====== shadowMap pass: render the scene to the shadowMap;
+        if(false)
         {
 			shadowMapFBO->Bind();
             
@@ -614,24 +632,23 @@ int main() {
             
 			glEnable(GL_DEPTH_TEST);
             
-            //render the scene to the shadowMap;
-            //set the shader as shadowMapShader; 
-            floor->SetShader(shadowMapShader);
-            sphere->SetShader(shadowMapShader);
+            //render the scene to the shadowMap; 
+            floor->SetMaterial(shadowMapMaterial);
+            sphere->SetMaterial(shadowMapMaterial);
             
             floor->Draw(lightSpaceCamera);
             sphere->Draw(lightSpaceCamera); 
 
 
-           test_model->SetShader(shadowMapSkinnedShader );
-           shadowMapSkinnedShader->Bind();
-            
-           auto transforms = animator->GetBoneTransforms(timer);
-           for (int i = 0; i < 100; ++i)
-               shadowMapSkinnedShader->SetMat4("u_BoneTransforms[" + std::to_string(i) + "]", transforms[i]);
-           
-           shadowMapSkinnedShader->Unbind();
-           test_model->Draw(lightSpaceCamera);  //todo:  skinned mesh need special treatment for shadowmap too;
+          //test_model->SetShader(shadowMapSkinnedShader );
+          //shadowMapSkinnedShader->Bind();
+          // 
+          //auto transforms = animator->GetBoneTransforms(timer);
+          //for (int i = 0; i < 100; ++i)
+          //    shadowMapSkinnedShader->SetMat4("u_BoneTransforms[" + std::to_string(i) + "]", transforms[i]);
+          //
+          //shadowMapSkinnedShader->Unbind();
+          //test_model->Draw(lightSpaceCamera);  //todo:  skinned mesh need special treatment for shadowmap too;
             
              
            shadowMapFBO->Unbind();
@@ -640,10 +657,10 @@ int main() {
 
 
         //======= lighting pass: render the quad;
+        if(true)
         {
 
-            lightingPassFBO->Bind();
-
+            lightingPassFBO->Bind(); 
 
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -668,7 +685,7 @@ int main() {
             lightingPassShader->SetMat4("u_LightSpaceMatrix", lightSpaceCamera->GetProjectionViewMatrix());
 
             //config:
-           lightingPassShader->SetBool("u_EnableSkyBox", enableSkyBox);
+            lightingPassShader->SetBool("u_EnableSkyBox", enableSkyBox);
 
             lightingPassQuad->Draw(nullptr);
              
@@ -757,7 +774,7 @@ int main() {
       //  screenQuad.Draw(nullptr);
 
         //screenQuadShader->SetBool("u_IsGrayScale", true);
-        //glBindTextureUnit(0, shadowMap->GetTextureID());  //replace the texture 2D here; 
+        //glBindTextureUnit(0, gAlbedo->GetTextureID());  //replace the texture 2D here; 
         glBindTextureUnit(0, lightingPassScreenTexture->GetTextureID());  //replace the texture 2D here; 
         screenQuad->Draw(nullptr);
 

@@ -61,9 +61,7 @@ namespace Rudy {
     {
     public: 
         virtual ~RenderableObject() = default; 
-       RenderableObject() : Object() { isRenderable = true; }
-
-      
+       RenderableObject() : Object() { isRenderable = true; } 
      
 
         void SetRendererComponent(Ref<RendererComponent> rendererComponent) 
@@ -106,26 +104,23 @@ namespace Rudy {
 
 
         void SetRendererComponent(Ref<MeshRendererComponent> rendererComponent)
-        {
-           
+        { 
             this->rendererComponent = rendererComponent;
         }
 
         Ref<MeshRendererComponent> GetRendererComponent()
         {
-            return rendererComponent;
-        }
-          
-
+            return this->rendererComponent;
+        }  
 
         void SetMaterial(Ref<Material> mat)
 		{
-			this->GetRendererComponent()->SetMaterial(mat);
+			this->rendererComponent->SetMaterial(mat);
 		}
 
         void SetShader(Ref<Shader> shader)
         { 
-            this->GetRendererComponent()->SetShader(shader);
+            this->rendererComponent->SetShader(shader);
 		}
 
 
@@ -133,11 +128,9 @@ namespace Rudy {
         //override draw command if needed;
         virtual void Draw(Ref<Camera> cam)
         {
-            this->GetRendererComponent()->Draw(cam);
+            this->rendererComponent->Draw(cam);
         }
-
-
-
+         
         Ref<MeshRendererComponent> rendererComponent = nullptr;
 
     };
@@ -164,6 +157,8 @@ namespace Rudy {
  
      public:
          std::vector< Ref<MeshObject> >  meshObjects;
+
+
          std::string directory;
 
 
@@ -174,15 +169,11 @@ namespace Rudy {
          //retreive the bound bones defined in the mesh;     //aiBone->mName; aiBone->mOffsetMatrix 
          //ordered map,  key = name to facilate searching by name in animation keyframe; 
          std::map<std::string, Bone> bindPoseBoneMap;
-
-
-
-    
+          
 
 	 public:  
          void Draw(Ref<Camera> cam); 
-
-         void SetMaterial(Ref<Material> mat) ;
+          
          void SetShader(Ref<Shader> shader) ;
 
 

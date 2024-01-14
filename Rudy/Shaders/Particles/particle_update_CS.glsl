@@ -24,8 +24,8 @@ uniform float u_deltaTime;
 
 //emitter
 
-uniform uint  u_preSimIndex;
-uniform uint  u_postSimIndex;
+uniform uint u_preSimIndex;
+uniform uint u_postSimIndex;
 
 
 //simulation parameters   
@@ -35,31 +35,35 @@ uniform uint  u_postSimIndex;
 
 
 
-layout(std430, binding = 0) buffer ParticleDeadIndices_t
+layout(std430, binding = 0) buffer Counters_t
+{
+    uint dead_count;
+    uint alive_count[2];
+    uint emission_count;
+    uint update_count;
+}
+Counters;
+
+
+layout(std430, binding = 1) buffer ParticleDeadIndices_t
 {
     uint indices[];
 }
 DeadIndices;
 
-layout(std430, binding = 1) buffer ParticleAlivePreSimIndices_t
+layout(std430, binding = 2) buffer ParticleAlivePreSimIndices_t
 {
     uint indices[];
 }
 AliveIndicesPreSim;
 
-layout(std430, binding = 2) buffer ParticleAlivePostSimIndices_t
+layout(std430, binding = 3) buffer ParticleAlivePostSimIndices_t
 {
     uint indices[];
 }
 AliveIndicesPostSim;
 
  
-layout(std430, binding = 3) buffer ParticleCounters_t
-{
-    uint dead_count;
-    uint alive_count[2]; 
-}
-Counters;
 
  
 
@@ -128,7 +132,7 @@ void main()
 {
     uint index = gl_GlobalInvocationID.x;
 
-     if (index < Counters.alive_count[u_preSimIndex])
+     if (index < Counters.update_count)
     {
         // Consume an Alive particle index
         uint particle_index = pop_alive_index();

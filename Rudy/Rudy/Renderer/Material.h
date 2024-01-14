@@ -16,7 +16,7 @@ namespace Rudy {
 	//conventions:
     //textures used as varying property on geometry surface is named []Map,
 	//and has a variable version ;
-	//textures used as for utility purpose is named []Texture, 
+	//textures used as for utilities is named []Texture, 
 	//including output of a quad, cubemap, and other custom textures.
 
 
@@ -32,7 +32,7 @@ namespace Rudy {
 		RoughnessMap,   //or glossiness; 
 		MetallicMap, 
 		AOMap,  //ambient occlusion 
-		DepthMap, //for shadowmap
+		DepthTexture, //for shadowmap
 		//HeightMap, //displacement
 		//MaskMap,   //for masking
 		//LightMap,    //global illumination
@@ -61,7 +61,12 @@ namespace Rudy {
 		EnvironmentMap,  //cubemap 
 		diffuseEnvMap,  //cubemap
 		specularEnvMap,   //cubemap
-		brdfLUTMap,  //2D
+		brdfLUTTexture,  //2D
+
+
+		//NPR
+         ToonTexture,
+		 FaceSDFTexture, 
 		 
 
 	};
@@ -83,7 +88,7 @@ namespace Rudy {
 		{TextureType::AOMap, "u_AOMap"}, 
 		{TextureType::EnvironmentMap, "u_EnvironmentMap"},
 
-		{TextureType::DepthMap, "u_DepthMap"},
+		{TextureType::DepthTexture, "u_DepthTexture"},
 
 		{TextureType::gPosition,    "gPosition"},
 		{TextureType::gAlbedo,      "gAlbedo"},
@@ -100,50 +105,31 @@ namespace Rudy {
 
 		{TextureType::diffuseEnvMap, "u_DiffuseEnvMap"},
 		{TextureType::specularEnvMap, "u_SpecularEnvMap"},
-		{TextureType::brdfLUTMap, "u_BrdfLUTMap"},
+		{TextureType::brdfLUTTexture, "u_brdfLUTTexture"},
 
 		{TextureType::NoiseTexture, "u_NoiseTexture"},
+
+		{TextureType::ToonTexture, "u_ToonTexture"},
+        {TextureType::FaceSDFTexture, "u_FaceSDFTexture"},
 		 
 	};
 
 
-	inline std::unordered_map<std::string, float> FloatDefaultValue
-	{
-	    
-	    {"u_Metallic",    1.0f},
-	    {"u_Roughness",   1.0f},
-		{"u_Specular",    1.0f},
 
-		//intensity for techs
-		//{"u_NormalScale", 1.0f},
-	    //{"u_AO",          1.0f},
-	};
-
-	inline std::unordered_map<std::string, glm::vec3> Vec3DefaultValue
-	{
-		{"u_Albedo", glm::vec3(1.0,1.0,1.0)},
-	};
-
-	inline std::unordered_map<std::string, bool> BoolDefaultValue
-	{
-		{"Use_u_AlbedoMap", false},
-	    {"Use_u_SpecularMap", false},
-	    {"Use_u_MetallicMap", false},
-	    {"Use_u_RoughnessMap", false},
-
-
-		{"Use_u_NormalMap", false},
-	};
-	 
 	 
 	class Material
 	{
 	public : 
 		~Material() = default;
-		Material() = default;  
-		Material(Ref<Shader> shader);
+		Material()
+		{ 
+			//m_Shader = ShaderLibrary::Get("Basic");
+		}
+		Material(Ref<Shader> shader, const std::string& name);
+ 
+		static Ref<Material> Create(Ref<Shader> shader = nullptr, const std::string& name = "UnnamedMaterial");
 
-
+		 
 	   //getters and setters
 		void SetShader(Ref<Shader> shader) { m_Shader = shader; } 
 	    Ref<Shader> GetShader() const { return m_Shader; } 
@@ -160,51 +146,118 @@ namespace Rudy {
 		}
 		std::unordered_map<TextureType, Ref<Texture>> GetTextures() const { return m_Texture_map; }
 
+
+
        void SetFloat(const std::string& name, float value) 
 	   {
             m_Float_map[name] = value;
 	   } 
+	   void SetFloatMap(const std::unordered_map<std::string, float>& map)
+       {
+       m_Float_map = map;
+       }
        void SetVec3(const std::string& name, const glm::vec3& value)
 	   {
 		    m_Vec3_map[name] = value;
+	   }
+void SetVec3Map(const std::unordered_map<std::string, glm::vec3>& map)
+	   {
+		    m_Vec3_map = map;
 	   }
 	   void SetBool(const std::string& name, bool value)
 	   {
 		    m_Bool_map[name] = value;
 	   }
+void SetBoolMap(const std::unordered_map<std::string, bool>& map)
+	   {
+		    m_Bool_map = map;
+	   }
  
 
 		void Bind();   //before draw call, bind the material/textures
 		void Unbind();
-
-		//material and shader works so closely here;
-		static void SetMaterialProperties(Ref<Shader> shader);
-
-		//default shader
-		static Ref<Material> Create(Ref<Shader> shader =
-			Shader::Create("Basic Shader", "Shaders/Shaders/Default_VS.glsl", "Shaders/Shaders/Default_FS.glsl"));
-
-	
-
-		//static Ref<Material> Create(MaterialType = MaterialType::Basic);
-		//static void SetupMaterial();  //set up uniform variables in shader. etc.
-
 		 
+		static void SetMaterialProperties(Ref<Shader> shader);
+		  
 
-	private:
-		Ref<Shader> m_Shader;
+	public:
+		Ref<Shader> m_Shader = nullptr;
+		std::string m_Name = "UnnamedMaterial";
+		uint32_t m_GlobalIndex = 0;  //unique id for each material
 
 		//used for binding textures
 		std::unordered_map<TextureType, Ref<Texture>> m_Texture_map;
-		std::unordered_map<std::string, glm::vec3>  m_Vec3_map = Vec3DefaultValue;
-		std::unordered_map<std::string, float>      m_Float_map = FloatDefaultValue;
-		std::unordered_map<std::string, bool>       m_Bool_map = BoolDefaultValue;
-
+		std::unordered_map<std::string, glm::vec3>  m_Vec3_map  ;
+		std::unordered_map<std::string, float>      m_Float_map  ;
+		std::unordered_map<std::string, bool>       m_Bool_map  ;
 		 
-		//MaterialType materialType;
-
 
 	};
+
+
+	//==========PBR
+
+
+	inline std::unordered_map<std::string, float> PBRDefaultFloatMap
+	{
+
+		{"u_Metallic",    1.0f},
+		{"u_Roughness",   1.0f},
+		{"u_Specular",    1.0f},
+
+		//intensity for techs
+		//{"u_NormalScale", 1.0f},
+		//{"u_AO",          1.0f},
+	};
+
+	inline std::unordered_map<std::string, glm::vec3> PBRDefaultVec3Map
+	{
+		{"u_Albedo", glm::vec3(1.0,1.0,1.0)},
+
+		{"u_litColor", glm::vec3(1.0,1.0,1.0)},
+		{"u_shadowColor", glm::vec3(1.0,1.0,1.0)},
+
+	};
+
+	inline std::unordered_map<std::string, bool> PBRDefaultBoolMap
+	{
+		{"Use_u_AlbedoMap", false},
+		{"Use_u_SpecularMap", false},
+		{"Use_u_MetallicMap", false},
+		{"Use_u_RoughnessMap", false},
+
+		{"Use_u_NormalMap", false},
+	};
+
+
+	class PBRMaterial : public Material
+	{
+	public:
+		~PBRMaterial() = default;
+		PBRMaterial() = default;
+
+		//set preset values
+		PBRMaterial(Ref<Shader> shader, const std::string& name) : Material(shader, name)
+		{
+			this->SetFloatMap(PBRDefaultFloatMap);
+			this->SetVec3Map(PBRDefaultVec3Map);
+			this->SetBoolMap(PBRDefaultBoolMap);
+		}
+
+		static Ref<PBRMaterial> Create(Ref<Shader> shader = nullptr, const std::string& name = "UnnamedPBRMaterial")
+		{
+			return CreateRef<PBRMaterial>(shader, name);
+		}
+
+	};
+
+
+
+
+
+
+
+
 
 
 }

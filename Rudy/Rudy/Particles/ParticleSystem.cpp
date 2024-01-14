@@ -72,10 +72,10 @@ namespace Rudy
 			m_indirect_dispatch_update_buffer = StorageBuffer::Create(); 
 			m_indirect_dispatch_update_buffer->SetData(dispatchComputeIndirectCommand, sizeof(DispatchComputeIndirectCommand), BufferUsage::DYNAMIC_COPY);
 
-			//m_indirect_draw_buffer = StorageBuffer::Create(); 
-			// //m_indirect_draw_buffer->SetData(DrawArraysIndirectCommand, sizeof(DrawArraysIndirectCommand),       BufferUsage::DYNAMIC_COPY);
-
-			//m_indirect_draw_buffer = this->rendererComponent->GetDrawIndirectBuffer();
+			m_indirect_dispatch_emission_buffer = StorageBuffer::Create();
+			m_indirect_dispatch_emission_buffer->SetData(dispatchComputeIndirectCommand, sizeof(DispatchComputeIndirectCommand), BufferUsage::DYNAMIC_COPY);
+		 
+		 
 
 
 		}
@@ -86,10 +86,11 @@ namespace Rudy
 		//initialize shaders
 
 		{
-			m_particle_reset_compute_shader =    Shader::CreateComputeShader("particle reset",  "Shaders/Particles/particle_reset_CS.glsl");
+			m_particle_reset_compute_shader    = Shader::CreateComputeShader("particle reset",  "Shaders/Particles/particle_reset_CS.glsl");
 			m_particle_emission_compute_shader = Shader::CreateComputeShader("particle emit",   "Shaders/Particles/particle_emission_CS.glsl");
-			m_particle_update_compute_shader =   Shader::CreateComputeShader("particle update", "Shaders/Particles/particle_update_CS.glsl");
-			 
+			m_particle_update_compute_shader   = Shader::CreateComputeShader("particle update", "Shaders/Particles/particle_update_CS.glsl");
+			
+			m_particle_dispatch_compute_shader = Shader::CreateComputeShader("particle dispatch", "Shaders/Particles/particle_dispatch_CS.glsl");
 
 			////----------------------------------
 			//m_particle_reset_compute_shader->Bind(); 
@@ -108,39 +109,30 @@ namespace Rudy
 			//m_particle_update_compute_shader->Unbind();
  
 			  
-		}
-		
-
+		} 
 		//reset once
-		this->Reset();
-		
-
+		this->Reset(); 
 
 	}
 
 	void Emitter::Reset()
-	{
-	 
-			//std::cout << "execute reset" << std::endl;
-		 m_particle_reset_compute_shader->Bind();
-		 
-		 m_deadList_buffer->BindBase(0);
-		 m_counter_buffer->BindBase(1);
-		 m_indirect_dispatch_update_buffer->BindBase(2);
-		// m_indirect_draw_buffer->BindBase(3);
-		 
-		 //set uniforms
-		 m_particle_reset_compute_shader->SetInt("u_maxParticleCount", m_maxParticleCount);
-		 
-		 uint32_t dispatchX = static_cast<uint32_t>(
-		 	std::ceil((float)m_maxParticleCount / (float)m_local_size_x));
-		 glDispatchCompute(dispatchX, 1, 1);
-		 
-		 glDispatchCompute(dispatchX, 1, 1);
-		 glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-		 
-		 
-		 m_particle_reset_compute_shader->Unbind();
+	{ 
+		m_particle_reset_compute_shader->Bind(); 
+
+		m_counter_buffer->BindBase(0);
+		m_deadList_buffer->BindBase(1);
+		m_indirect_dispatch_update_buffer->BindBase(2);
+		m_indirect_dispatch_emission_buffer->BindBase(3);
+
+		//set uniforms
+		m_particle_reset_compute_shader->SetUInt("u_maxParticleCount", m_maxParticleCount);
+
+		uint32_t dispatchX = static_cast<uint32_t>(
+			std::ceil((float)m_maxParticleCount / (float)m_local_size_x));
+		glDispatchCompute(dispatchX, 1, 1);
+		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+		m_particle_reset_compute_shader->Unbind();
  
 	}
 
@@ -148,30 +140,124 @@ namespace Rudy
 	void Emitter::Update() { 
 
 
-	
+		//utility computation 
+	    // calculate emission count
+		//auto emissionCount = static_cast<uint32_t>(
+		//	ceil(m_deltaTime * m_emissionRate));
+
+		m_emissionAccumulator += m_deltaTime * m_emissionRate;
+		 
+		 //integer part,  eg: 1.5 -> 1
+		uint32_t emissionCount = static_cast<uint32_t>(
+			floor(m_emissionAccumulator));
+		
+		totalEmissionCount += emissionCount;
+		 totalEmissionTime += m_deltaTime ;
+		//fractional part is left in the accumulator
+		if(emissionCount > 0)
+	    m_emissionAccumulator -= static_cast<float>(emissionCount);
+		
+		//std::cout << "emission this frame: " << m_deltaTime * m_emissionRate << std::endl;
+		//std::cout << "emission accumulator: " << m_emissionAccumulator << std::endl;
+		//std::cout << "emission count: " << emissionCount << std::endl;
+
+		if(false)
+		if (totalEmissionCount > m_emissionRate)
+		{
+			RD_CORE_INFO( "total emission count:{0}", totalEmissionCount );
+			RD_CORE_INFO( "total emission time: {0} " ,totalEmissionTime  );
+			totalEmissionCount = 0;
+			totalEmissionTime = 0.0f;
+
+
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_counter_buffer->GetBufferID());
+			Counter* counter = (Counter*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
+				 
+			std::cout << "pre sim alive count: " << std::endl;
+			std::cout << counter->aliveCount[m_preSimIndex] << std::endl; 
+			glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+			 std::cout << std::endl;
+		}
+
+		 
 		//loop control
 		if(false)
 		{
 			 
-			//std::cout << "execute reset" << std::endl;
-			m_particle_reset_compute_shader->Bind();
-
-			m_deadList_buffer->BindBase(0);
-			m_counter_buffer->BindBase(1);
-			m_indirect_dispatch_update_buffer->BindBase(2);
-			//m_indirect_draw_buffer->BindBase(3);
-
-			//set uniforms
-			m_particle_reset_compute_shader->SetInt("u_maxParticleCount", 64);
-
-			glDispatchCompute(m_maxParticleCount / m_local_size_x, 1, 1);
-			glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-
-			m_particle_reset_compute_shader->Unbind();
-
+			 this->Reset(); 
  
 		}
 
+
+		//dispatch 
+		{ 
+
+			m_particle_dispatch_compute_shader->Bind();
+
+
+			m_particle_dispatch_compute_shader->SetUInt("u_local_size_x", m_local_size_x);
+			m_particle_dispatch_compute_shader->SetUInt("u_emission_count", emissionCount);
+			m_particle_dispatch_compute_shader->SetUInt("u_preSimIndex", m_preSimIndex);
+			m_particle_dispatch_compute_shader->SetUInt("u_postSimIndex", m_postSimIndex);
+
+			m_counter_buffer->BindBase(0);
+			m_indirect_dispatch_update_buffer->BindBase(1);
+			m_indirect_dispatch_emission_buffer->BindBase(2);
+
+
+			glDispatchCompute(1, 1, 1);
+			glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+			 
+
+			m_particle_dispatch_compute_shader->Unbind();
+		}
+
+
+
+		if (false)
+		{
+			std::cout << "after dispatch: " << std::endl;
+
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_counter_buffer->GetBufferID());
+			Counter* counter = (Counter*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
+			 
+			std::cout << "dead count: " << std::endl;
+			std::cout << counter->deadCount << std::endl;
+
+			std::cout << "pre sim alive count: " << std::endl;
+			std::cout << counter->aliveCount[m_preSimIndex] << std::endl;
+			
+			std::cout << "emission count: " << std::endl;
+			std::cout << counter->emissionCount << std::endl;
+
+			std::cout << "update count: " << std::endl;
+		    std::cout << counter->updateCount << std::endl;
+
+
+			glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_indirect_dispatch_emission_buffer->GetBufferID());
+			DispatchComputeIndirectCommand* emission= (DispatchComputeIndirectCommand*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
+
+			std::cout << "dispatch emission size X: " << std::endl;
+			std::cout << emission->numGroupsX << std::endl; 
+			glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_indirect_dispatch_update_buffer->GetBufferID());
+			DispatchComputeIndirectCommand* update = (DispatchComputeIndirectCommand*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
+
+			std::cout << "dispatch update size X: " << std::endl;
+			std::cout << update->numGroupsX << std::endl; 
+			glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+			std::cout << std::endl;
+
+		}
+
+		 
 
 		//emission
 		{
@@ -185,38 +271,36 @@ namespace Rudy
 				distribution(generator), distribution(generator));
 
 
-			//naive way to calculate emission count
-			auto emissionCount = static_cast<uint32_t>(
-				ceil(m_deltaTime * m_emissionRate) );  
+
 
 			m_particle_emission_compute_shader->Bind();
 
-			//set uniforms
+			//set uniforms  
+			// 
 			//emitter spawn
 			m_particle_emission_compute_shader->SetVec3("u_seeds", seeds);
-
-			m_particle_emission_compute_shader->SetInt("u_local_size_x", m_local_size_x	);
-            m_particle_emission_compute_shader->SetUInt("u_emission_count", emissionCount);
+			 
 
 			m_particle_emission_compute_shader->SetVec3("u_emitter_position", m_emitter_position);
 			m_particle_emission_compute_shader->SetFloat("u_sphereRadius", m_sphereRadius);
 
-			//emitter update
+
+			//====emitter update
             m_particle_emission_compute_shader->SetUInt("u_preSimIndex", m_preSimIndex);
 
-			//particle spawn
+			//====particle spawn
 			m_particle_emission_compute_shader->SetFloat("u_particle_minLifetime", m_particle_minLifetime);
 			m_particle_emission_compute_shader->SetFloat("u_particle_maxLifetime", m_particle_maxLifetime);
 			m_particle_emission_compute_shader->SetFloat("u_particle_minInitialSpeed", m_particle_minInitialSpeed);
 			m_particle_emission_compute_shader->SetFloat("u_particle_maxInitialSpeed", m_particle_maxInitialSpeed);
 
 
+
 			//buffer
-			m_deadList_buffer->BindBase(0);
-			m_aliveList_buffer[m_preSimIndex]->BindBase(1);
-			m_counter_buffer->BindBase(2);
-			m_indirect_dispatch_update_buffer->BindBase(3);
-			//m_indirect_draw_buffer ->BindBase(4);
+			m_counter_buffer->BindBase(0);
+			m_deadList_buffer->BindBase(1);
+			m_aliveList_buffer[m_preSimIndex]->BindBase(2);
+			 
 
 			m_particle_position_buffer->BindBase(5);
 			m_particle_velocity_buffer->BindBase(6);
@@ -225,14 +309,15 @@ namespace Rudy
 
 
 
-			uint32_t dispatchX = static_cast<uint32_t>(
-				std::ceil( (float)emissionCount / (float)m_local_size_x ) );
-			glDispatchCompute(dispatchX, 1, 1);
-			glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-
-			//debug:
+			//uint32_t dispatchX = static_cast<uint32_t>(
+			//	std::ceil( (float)emissionCount / (float)m_local_size_x ) );
+			//glDispatchCompute(dispatchX, 1, 1);
+			//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 			//RD_CORE_INFO("emission dispatch: {0}", dispatchX);
-
+			glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, m_indirect_dispatch_emission_buffer->GetBufferID());
+			glDispatchComputeIndirect(0);
+			glMemoryBarrier(GL_ALL_BARRIER_BITS);
+			glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, 0);
 			 
 			m_particle_emission_compute_shader->Unbind();
 
@@ -242,48 +327,47 @@ namespace Rudy
 		//debug here
 		if(false)
 		{// 
-			std::cout << "pre sim index: " << m_preSimIndex << std::endl;
-			std::cout << "post sim index: " << m_postSimIndex << std::endl;
-
-			 
-
-			glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_deadList_buffer->GetBufferID());
-			uint32_t* deadList = (uint32_t*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
-
-			std::cout << "deadlist : " << std::endl;
-			for(int i = 0; i < 10; i++)
-			{
-				std::cout << deadList[i] << " ";
-			}
-			std::cout << std::endl;
-
-			glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-
+		    std::cout << "after emission: " << std::endl;
+			//std::cout << "pre sim index: " << m_preSimIndex << std::endl;
+			//std::cout << "post sim index: " << m_postSimIndex << std::endl; 
 			//
-			glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_aliveList_buffer[0]->GetBufferID());
-			uint32_t* aliveList0 = (uint32_t*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
-
-			std::cout << "aliveList0: " << std::endl;
-			for (int i = 0; i < 10; i++)
-			{
-				std::cout << aliveList0[i] << " ";
-			}
-			std::cout << std::endl;
-
-			glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-
+			//glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_deadList_buffer->GetBufferID());
+			//uint32_t* deadList = (uint32_t*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
 			//
-			glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_aliveList_buffer[1]->GetBufferID());
-			uint32_t* aliveList1 = (uint32_t*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
-
-			std::cout << "aliveList1: " << std::endl;
-			for (int i = 0; i < 10; i++)
-			{
-				std::cout << aliveList1[i] << " ";
-			}
-			std::cout << std::endl;
-
-			glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+			//std::cout << "deadlist : " << std::endl;
+			//for(int i = 0; i < 10; i++)
+			//{
+			//	std::cout << deadList[i] << " ";
+			//}
+			//std::cout << std::endl;
+			//
+			//glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+			//
+			////
+			//glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_aliveList_buffer[0]->GetBufferID());
+			//uint32_t* aliveList0 = (uint32_t*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
+			//
+			//std::cout << "aliveList0: " << std::endl;
+			//for (int i = 0; i < 10; i++)
+			//{
+			//	std::cout << aliveList0[i] << " ";
+			//}
+			//std::cout << std::endl;
+			//
+			//glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+			//
+			////
+			//glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_aliveList_buffer[1]->GetBufferID());
+			//uint32_t* aliveList1 = (uint32_t*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
+			//
+			//std::cout << "aliveList1: " << std::endl;
+			//for (int i = 0; i < 10; i++)
+			//{
+			//	std::cout << aliveList1[i] << " ";
+			//}
+			//std::cout << std::endl;
+			//
+			//glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
 			//
 			glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_counter_buffer->GetBufferID());
@@ -292,11 +376,9 @@ namespace Rudy
 			std::cout << "deadcount: " << std::endl;
 			std::cout << counter->deadCount << std::endl;
 
-			std::cout << "alivecount0: " << std::endl;
-			std::cout << counter->aliveCount[0] << std::endl;
+			std::cout << "alivecount pre sim(should =update count): " << std::endl;
+			 std::cout << counter->aliveCount[m_preSimIndex] << std::endl; 
 
-			std::cout << "alivecount1: " << std::endl;
-			std::cout << counter->aliveCount[1] << std::endl; 
 
 			glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
@@ -330,8 +412,7 @@ namespace Rudy
 
 		//update
 		if(true)
-		{
-		
+		{ 
 			
 			m_particle_update_compute_shader->Bind();
 			//u_deltaTime; 
@@ -342,12 +423,11 @@ namespace Rudy
 			m_particle_update_compute_shader->SetUInt("u_postSimIndex", m_postSimIndex);
 
 
-			//buffers
-			m_deadList_buffer->BindBase(0);
-			m_aliveList_buffer[m_preSimIndex]->BindBase(1);
-			m_aliveList_buffer[m_postSimIndex]->BindBase(2);
-			m_counter_buffer->BindBase(3);
-			//m_indirect_draw_buffer->BindBase(4);
+			//buffers 
+			m_counter_buffer->BindBase(0);
+			m_deadList_buffer->BindBase(1);
+			m_aliveList_buffer[m_preSimIndex]->BindBase(2);
+			m_aliveList_buffer[m_postSimIndex]->BindBase(3); 
 
 			m_particle_position_buffer->BindBase(5);
 			m_particle_velocity_buffer->BindBase(6);
@@ -358,7 +438,7 @@ namespace Rudy
 			glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, m_indirect_dispatch_update_buffer->GetBufferID());
 			glDispatchComputeIndirect(0);   
 			glMemoryBarrier(GL_ALL_BARRIER_BITS); 
-			glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
+			glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, 0);
 
 			m_particle_update_compute_shader->Unbind();
 
@@ -369,30 +449,30 @@ namespace Rudy
 		{
 		 RD_CORE_INFO("after update: ");
 
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_aliveList_buffer[0]->GetBufferID());
-		uint32_t* aliveList0 = (uint32_t*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
-
-		std::cout << "aliveList0: " << std::endl;
-		for (int i = 0; i < 10; i++)
-		{
-			std::cout << aliveList0[i] << " ";
-		}
-		std::cout << std::endl;
-
-		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-
+		//glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_aliveList_buffer[0]->GetBufferID());
+		//uint32_t* aliveList0 = (uint32_t*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
 		//
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_aliveList_buffer[1]->GetBufferID());
-		uint32_t* aliveList1 = (uint32_t*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
-
-		std::cout << "aliveList1: " << std::endl;
-		for (int i = 0; i < 10; i++)
-		{
-			std::cout << aliveList1[i] << " ";
-		}
-		std::cout << std::endl;
-
-		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+		//std::cout << "aliveList0: " << std::endl;
+		//for (int i = 0; i < 10; i++)
+		//{
+		//	std::cout << aliveList0[i] << " ";
+		//}
+		//std::cout << std::endl;
+		//
+		//glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+		//
+		////
+		//glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_aliveList_buffer[1]->GetBufferID());
+		//uint32_t* aliveList1 = (uint32_t*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
+		//
+		//std::cout << "aliveList1: " << std::endl;
+		//for (int i = 0; i < 10; i++)
+		//{
+		//	std::cout << aliveList1[i] << " ";
+		//}
+		//std::cout << std::endl;
+		//
+		//glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
 
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_counter_buffer->GetBufferID());
@@ -401,11 +481,11 @@ namespace Rudy
 		std::cout << "deadcount: " << std::endl;
 		std::cout << counter->deadCount << std::endl;
 
-		std::cout << "alivecount0: " << std::endl;
-		std::cout << counter->aliveCount[0] << std::endl;
+		std::cout << "alivecount pre sim(should =update count): " << std::endl;
+		std::cout << counter->aliveCount[m_preSimIndex] << std::endl; 
 
-		std::cout << "alivecount1: " << std::endl;
-		std::cout << counter->aliveCount[1] << std::endl;
+		std::cout << "alivecount post sim: " << std::endl; 
+		std::cout << counter->aliveCount[m_postSimIndex] << std::endl;
 
 		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 

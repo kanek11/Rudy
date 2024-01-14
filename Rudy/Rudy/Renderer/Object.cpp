@@ -79,8 +79,7 @@ namespace Rudy
         //read data ,  optionally with some postprocessing
         const aiScene* scene = importer.ReadFile
         (path, aiProcess_GlobalScale | aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
-
-
+ 
         // check for errors, complete scene ,  with root node
         //assert(scene && scene->mRootNode);
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)  
@@ -265,7 +264,11 @@ namespace Rudy
         auto _mesh = Mesh::Create();
         _mesh->vertices = vertices;
         _mesh->indices = indices;
+
+        _mesh->name = mesh->mName.C_Str();
+        _mesh->globalIndex = mesh->mMaterialIndex;  //the index in the scene 
           
+        RD_CORE_INFO("Modelloading: mesh name:{0}, index:{1}", _mesh->name, _mesh->globalIndex);
          
         return _mesh; 
 
@@ -352,12 +355,15 @@ namespace Rudy
         aiMaterial* ai_material = scene->mMaterials[mesh->mMaterialIndex]; 
 
         //engine-specific material object
-        auto material = Material::Create(); 
+        auto material = PBRMaterial::Create();  
+        material->m_Name = ai_material->GetName().C_Str();
+        material->m_GlobalIndex = mesh->mMaterialIndex;  //the index in the scene
 
+        RD_CORE_INFO("Modelloading: material name:{0}, index:{1}", material->m_Name, material->m_GlobalIndex);
          
 
         auto loadTexture = [&](aiTextureType type, TextureType textureType) {
-            aiString str;  //filenname
+        aiString str;  //filenname
 
             if (ai_material->GetTexture(type, 0, &str) == AI_SUCCESS)
             {
@@ -392,8 +398,11 @@ namespace Rudy
                     RD_CORE_WARN("Modelloading: Texture type: {0} is added to material ", (int)textureType);
                 }
 
-
             }
+
+
+
+
         };
 
 
@@ -557,15 +566,10 @@ namespace Rudy
             meshObj->GetRendererComponent()->Draw(cam);
     }
 
-
-    void Model::SetMaterial(Ref<Material> mat)
-{
-        for (auto meshObj : this->meshObjects)
-            meshObj->GetRendererComponent()->SetMaterial(mat);
-	}
+ 
 
     void Model::SetShader(Ref<Shader> shader)
-{
+    {
 		for (auto meshObj : this->meshObjects)
             meshObj->GetRendererComponent()->SetShader(shader);
 	}

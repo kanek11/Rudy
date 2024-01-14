@@ -12,6 +12,7 @@
 namespace Rudy
 {
 
+	//indrect is discarded, it overcomplicates things 
 	struct DrawArraysIndirectCommand {
 		uint32_t  vertex_count = 0;
 		uint32_t  instance_count = 1;
@@ -84,8 +85,7 @@ namespace Rudy
 		MeshRendererComponent()
 		{
 			RD_CORE_INFO("MeshRendererComponent created:");
-			m_vertexArray = VertexArray::Create(); 
-
+			m_vertexArray = VertexArray::Create();  
 			m_vertexBuffer = VertexBuffer::Create();
 			m_indexBuffer = IndexBuffer::Create();
 		}
@@ -101,9 +101,11 @@ namespace Rudy
 
 		 
 		void SetMesh(Ref<Mesh> m);
-		Ref<Mesh> GetMesh() { return m_mesh; }  
-
+		Ref<Mesh> GetMesh() { return m_mesh; }   
 		bool hasMesh() { return m_mesh != nullptr; }
+
+
+
 		//system utilities
 	private:
 

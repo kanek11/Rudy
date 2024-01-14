@@ -16,33 +16,42 @@ layout(local_size_x = 32, local_size_y = 1, local_size_z = 1) in;
 // ------------------------------------------------------------------
 
 
-uniform int u_maxParticleCount;
-
-uniform int u_drawMode;
+uniform uint u_maxParticleCount; 
 
 
+layout(std430, binding = 0) buffer Counters_t
+{
+    uint dead_count;
+    uint alive_count[2];
+    uint emission_count;
+    uint update_count;
+}
+Counters;
 
-layout(std430, binding = 0) buffer ParticleDeadIndices_t
+layout(std430, binding = 1) buffer ParticleDeadIndices_t
 {
 	uint indices[];
 } 
 DeadIndices;
+ 
+ 
 
-layout(std430, binding = 1) buffer Counters_t
+layout(std430, binding = 2) buffer UpdateDispatchArgs_t
 {
-    uint dead_count;
-    uint alive_count[2]; 
+    uint num_groups_x;
+    uint num_groups_y;
+    uint num_groups_z;
 }
-Counters;
+UpdateDispatchArgs;
 
 
-layout(std430, binding = 2) buffer ParticleUpdateArgs_t
+layout(std430, binding = 3) buffer EmissionDispatchArgs_t
 {
-    uint numGroupsX;
-    uint numGroupsY;
-    uint numGroupsZ;
+    uint num_groups_x;
+    uint num_groups_y;
+    uint num_groups_z;
 }
-ParticleUpdateArgs;
+EmissionDispatchArgs;
 
  
 
@@ -62,17 +71,17 @@ void main()
         Counters.dead_count = u_maxParticleCount;
         Counters.alive_count[0] = 0;
         Counters.alive_count[1] = 0;
+        Counters.emission_count = 0;
 
 
-        ParticleUpdateArgs.numGroupsX = 0;
-        ParticleUpdateArgs.numGroupsY = 1;
-        ParticleUpdateArgs.numGroupsZ = 1;
+        UpdateDispatchArgs.num_groups_x = 0;
+        UpdateDispatchArgs.num_groups_y = 1;
+        UpdateDispatchArgs.num_groups_z = 1; 
          
-         
-        //reset instance_count
-        ParticleUpdateArgs.numGroupsX = 0;
-         
-      
+
+        EmissionDispatchArgs.num_groups_x = 0;
+        EmissionDispatchArgs.num_groups_y = 1;
+        EmissionDispatchArgs.num_groups_z = 1;
         
     }
 

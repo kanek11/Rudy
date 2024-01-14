@@ -46,11 +46,7 @@ namespace Rudy
         m_vertexArray->AddAttribute(3, 0, 3, BufferDataType::FLOAT32, offsetof(Vertex, Tangent));
         m_vertexArray->AddAttribute(4, 0, 4, BufferDataType::INT32, offsetof(Vertex, BoneIndices));
         m_vertexArray->AddAttribute(5, 0, 4, BufferDataType::FLOAT32, offsetof(Vertex, BoneWeights));
-
-
-
-      
-		 
+         
 
 
         RD_CORE_INFO("MeshObject::SetupBuffers: mesh buffers setup finished");
@@ -65,10 +61,12 @@ namespace Rudy
         if (!hasMesh())
         {
             RD_CORE_ERROR("MeshObject::Draw: no mesh attached");
+            return;
         }
         if (!hasMaterial())
         {
             RD_CORE_ERROR("MeshObject::Draw: no material attached");
+            return;
         }
 
         m_vertexArray->Bind();
@@ -111,10 +109,12 @@ namespace Rudy
         if (!hasMesh())
         {
             RD_CORE_ERROR("MeshObject::Draw: no mesh attached");
+            return;
         }
         if (!hasMaterial())
         {
             RD_CORE_ERROR("MeshObject::Draw: no material attached");
+            return;
         }
 
         m_vertexArray->Bind();

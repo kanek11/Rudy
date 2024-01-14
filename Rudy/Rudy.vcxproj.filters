@@ -153,6 +153,9 @@
     <ClInclude Include="Rudy\Renderer\RendererComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Rudy\Renderer\Kernel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Rudy\Core\Log.cpp">
@@ -248,7 +251,10 @@
     <ClCompile Include="Rudy\Renderer\RendererComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test_pipeline_pbr.cpp">
+    <ClCompile Include="Rudy\Renderer\Kernel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test_particles_new.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -306,5 +312,11 @@
     <None Include="Shaders\Particles\particle_render_sprite_VS.glsl" />
     <None Include="Shaders\Particles\particle_render_sprite_GS.glsl" />
     <None Include="Shaders\Particles\particle_render_sprite_FS.glsl" />
+    <None Include="Shaders\Shaders\Genshin_FS.glsl" />
+    <None Include="Shaders\Shaders\Genshin_VS.glsl" />
+    <None Include="Shaders\Deferred\Lambertian_FS.glsl" />
+    <None Include="Shaders\Shaders\show_normal_GS.glsl" />
+    <None Include="Shaders\Shaders\show_normal_FS.glsl" />
+    <None Include="Shaders\Particles\particle_dispatch_CS.glsl" />
   </ItemGroup>
 </Project>

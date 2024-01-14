@@ -27,6 +27,8 @@ namespace Rudy
 	{
 		uint32_t deadCount;
 		uint32_t aliveCount[2];  //pre-sim and post-sim
+		uint32_t emissionCount;  //depend on dynamic , avaliable #dead particles
+		uint32_t updateCount;    //depend on dynamic , avaliable #alive particles
 	};
 	 
 
@@ -78,19 +80,23 @@ public:
 		uint32_t m_local_size_x = 32;
 		uint32_t m_local_size_y = 1;
 		uint32_t m_local_size_z = 1; 
-		
 		 
-		uint32_t m_maxParticleCount = 512;
+		uint32_t m_maxParticleCount = 1024;
 
 		uint32_t m_currentAliveCount = 0;
 
+		float m_emissionAccumulator = 0.0f;
+
+		//debug
+		uint32_t totalEmissionCount = 0;
+		float totalEmissionTime = 0.0f;
 
 
 		//emitter spawn parameters
 
 		glm::vec3 m_emitter_position = { 0.0f, 0.0f, 0.0f };
 
-		uint32_t m_emissionRate = 16;
+		float m_emissionRate = 64;
 		float m_sphereRadius = 1.0f;
 		 
 
@@ -115,9 +121,9 @@ public:
 		//======shader programs======//
 	//each shader is a stage in the stack;
 		Ref<Shader> m_particle_reset_compute_shader;
+		Ref<Shader> m_particle_dispatch_compute_shader;
 		Ref<Shader> m_particle_emission_compute_shader;
-		Ref<Shader> m_particle_update_compute_shader;
-		Ref<Shader> m_particle_render_shader;
+		Ref<Shader> m_particle_update_compute_shader; 
 
 
 		//======buffers======//
@@ -135,6 +141,7 @@ public:
 
 		//indirect for dispatch of each stage ; for dynamic length updated by compute shader 
 		Ref<StorageBuffer> m_indirect_dispatch_update_buffer; 
+		Ref<StorageBuffer> m_indirect_dispatch_emission_buffer;
 
 		
 		

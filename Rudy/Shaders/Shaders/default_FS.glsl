@@ -2,7 +2,12 @@
 
 layout(location = 0) out vec4 out_FragColor;
 
-layout(location = 0) in vec3 v_normal;
+ in VS_OUT
+{
+	vec3 world_position;
+	vec3 normal;
+
+} fs_in;
 
 
 //uniform vec3 u_Color;
@@ -10,11 +15,11 @@ const vec3 inv_light_dir = vec3(0.3, 0.6, 0.9);
 
 void main()
 { 
-	float d = dot(normalize(v_normal), normalize(inv_light_dir));
-	float coeff = max(0.0, d);
+	float LdotN = dot(normalize(fs_in.normal), normalize(inv_light_dir));
+	float diff_coeff = max(0.0, LdotN);
 
 
     //dark pink suggests lack of color
-	out_FragColor = vec4( coeff * vec3 (1.0f, 0.1f, 1.0f), 1.0f);
+	out_FragColor = vec4(diff_coeff * vec3 (1.0f, 0.1f, 1.0f), 1.0f);
 
 }
