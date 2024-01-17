@@ -1,4 +1,4 @@
-//ver 2023.12.30
+//ver 2024.1.17
 #include "RudyPCH.h" 
 #include <Rudy.h>
 
@@ -17,26 +17,21 @@ const uint32_t BUFFER_HEIGHT = SCR_HEIGHT / 4;
 const uint32_t SHADOW_WIDTH = 2560, SHADOW_HEIGHT = 2560;
 
 
-const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 1.5f, 5.0f);
-
-//const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 0.0f, 3.0f);
-
+const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 1.5f, 5.0f); 
 
 //g_buffer spec:
 // 
 //the (int) corrsepond to GL_COLOR_ATTACHMENTi  ;
 //working with GPU,  we effectively needs the texture ID ;
 
-
-
+ 
 using namespace Rudy;
 
 
 int main() {
 
     Rudy::Log::Init();
-    RD_CORE_WARN("test:Initialized Log!");
-
+    RD_CORE_WARN("test:Initialized Log!"); 
 
     //========================================
     //=== initialize renderer
@@ -84,17 +79,15 @@ int main() {
 
     auto brdfLUTTexture = Texture2D::CreateEmpty(TextureSpec{ 512, 512, TextureInternalFormat::RGB32F });
 
-    auto brdfLUTFBO = FrameBuffer::Create(
-		        512, 512, FrameBufferType::Screen); 
+    auto brdfLUTFBO = FrameBuffer::Create( "brdfLUT FBO", 512, 512, FrameBufferType::Regular); 
 
     brdfLUTFBO->Bind();
-    brdfLUTFBO->SetColorAttachmentTexture(brdfLUTTexture, 0); 
+    brdfLUTFBO->SetColorTexture(TextureType::brdfLUTTexture, brdfLUTTexture, 0);
  
-    glClearColor(0.1f, 0.2f, 0.1f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
     glDisable(GL_DEPTH_TEST); 
-    glViewport(0, 0, 512, 512);
-
+    glViewport(0, 0, 512, 512); 
 
     auto brdfQuad = ScreenQuad::Create();
     brdfQuad->SetMaterial(brdfQuadMaterial); 
@@ -131,7 +124,7 @@ int main() {
 
     //Framebuffer;
     auto GBufferFBO = FrameBuffer::Create(
-    SCR_WIDTH, SCR_WIDTH, FrameBufferType::GBuffer, 8);
+        "GBuffer FBO",  SCR_WIDTH, SCR_WIDTH, FrameBufferType::GBuffer);
      
     //the framebuffer for gbuffer pass: 8;
     auto gPosition     = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F });
@@ -144,21 +137,18 @@ int main() {
     auto gScreenDepth  = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::DEPTH_COMPONENT24,
                              false, WrapMode::ClampToBorder, FilterMode::Nearest  });
 
-  
-  
-    GBufferFBO->Bind();
-    GBufferFBO->SetColorAttachmentTexture( gPosition,0);
-    GBufferFBO->SetColorAttachmentTexture( gAlbedo,  1);
-    GBufferFBO->SetColorAttachmentTexture( gWorldNormal, 2);
-    GBufferFBO->SetColorAttachmentTexture( gWorldTangent, 3);
-    GBufferFBO->SetColorAttachmentTexture( gSpecular, 4); 
-    GBufferFBO->SetColorAttachmentTexture( gMetallic, 5);
-    GBufferFBO->SetColorAttachmentTexture( gRoughness, 6); 
+   
+    GBufferFBO->SetColorTexture(TextureType::gPosition,     gPosition,     0);
+    GBufferFBO->SetColorTexture(TextureType::gAlbedo,       gAlbedo,       1);
+    GBufferFBO->SetColorTexture(TextureType::gWorldNormal,  gWorldNormal,  2);
+    GBufferFBO->SetColorTexture(TextureType::gWorldTangent, gWorldTangent, 3);
+    GBufferFBO->SetColorTexture(TextureType::gSpecular,     gSpecular,     4); 
+    GBufferFBO->SetColorTexture(TextureType::gMetallic,     gMetallic,     5);
+    GBufferFBO->SetColorTexture(TextureType::gRoughness,    gRoughness,    6); 
 
-    GBufferFBO->SetDepthAttachmentTexture( gScreenDepth);
+    GBufferFBO->SetDepthTexture(gScreenDepth);
 
-    GBufferFBO->CheckCompleteness(); 
-    GBufferFBO->Unbind();
+    GBufferFBO->FinishSetup();  
 
 
 
@@ -247,17 +237,16 @@ int main() {
     auto shadowMapSkinnedMaterial = Material::Create(shadowMapSkinnedShader);
 
 
-    auto shadowMapFBO = FrameBuffer::Create(
+    auto shadowMapFBO = FrameBuffer::Create("shadowMap FBO",
 		SHADOW_WIDTH, SHADOW_HEIGHT, FrameBufferType::DepthTexture);
 
     auto shadowMap = Texture2D::CreateEmpty(
 		TextureSpec{ SHADOW_WIDTH, SHADOW_HEIGHT, TextureInternalFormat::DEPTH_COMPONENT24,
-        					 false, WrapMode::ClampToBorder, FilterMode::Nearest });
+        			 false, WrapMode::ClampToBorder, FilterMode::Nearest });
 
-    shadowMapFBO->Bind();
-    shadowMapFBO->SetDepthAttachmentTexture(shadowMap);
-    shadowMapFBO->CheckCompleteness();
-    shadowMapFBO->Unbind();
+  
+    shadowMapFBO->SetDepthTexture(shadowMap);
+    shadowMapFBO->FinishSetup(); 
     
      
     //     
@@ -343,14 +332,14 @@ int main() {
     Material::SetMaterialProperties(lightingPassShader);
 
     //=== FBO
-    auto lightingPassFBO = FrameBuffer::Create(
-		     SCR_WIDTH, SCR_WIDTH, FrameBufferType::Screen);
+    auto lightingPassFBO = FrameBuffer::Create("lightingPass FBO",
+		     SCR_WIDTH, SCR_WIDTH, FrameBufferType::Regular);
 
     auto lightingPassScreenTexture = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F });
     
     lightingPassFBO->Bind();
-    lightingPassFBO->SetColorAttachmentTexture(lightingPassScreenTexture, 0);
-    lightingPassFBO->CheckCompleteness();
+    lightingPassFBO->SetColorTexture(TextureType::ScreenTexture, lightingPassScreenTexture, 0);
+    lightingPassFBO->FinishSetup();
     lightingPassFBO->Unbind();
 
 
@@ -403,8 +392,8 @@ int main() {
     auto ssaoShader = Shader::Create("ssao Shader", "Shaders/PostProcess/SSAO_VS.glsl", "Shaders/PostProcess/SSAO_FS.glsl");
     Material::SetMaterialProperties(ssaoShader);
 
-    auto ssaoFBO = FrameBuffer::Create(
-    SCR_WIDTH, SCR_WIDTH, FrameBufferType::Screen);
+    auto ssaoFBO = FrameBuffer::Create(" ssao FBO",
+    SCR_WIDTH, SCR_WIDTH, FrameBufferType::Regular);
 
     auto ssaoQuad = ScreenQuad::Create();
 
@@ -413,9 +402,7 @@ int main() {
                     false, WrapMode::ClampToBorder, FilterMode::Nearest });
 
     if (enableSSAO)
-    {
-      
-
+    { 
         //material: ssao takes worldpos, worldnormal, 
         //make sure use a consistent space for the depth;  
         // custom sampling kernel, rotation noise texture 
@@ -478,16 +465,15 @@ int main() {
 
         //FBO, one-channel;
        // auto ssaoFBO = FrameBuffer::Create(
-       //     SCR_WIDTH, SCR_WIDTH, FrameBufferType::Screen);
+       //     SCR_WIDTH, SCR_WIDTH, FrameBufferType::Regular);
 
         //auto ssaoScreenTexture = Texture2D::CreateEmpty(
         //    TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::R32F,
         //                 false, WrapMode::ClampToBorder, FilterMode::Nearest });
 
-        ssaoFBO->Bind();
-        ssaoFBO->SetColorAttachmentTexture(ssaoScreenTexture, 0);
-        ssaoFBO->CheckCompleteness();
-        ssaoFBO->Unbind();
+   
+        ssaoFBO->SetColorTexture(TextureType::ScreenTexture, ssaoScreenTexture, 0);
+        ssaoFBO->FinishSetup(); 
 
     }
    
@@ -501,8 +487,8 @@ int main() {
     auto ssrShader = Shader::Create("ssr Shader", "Shaders/PostProcess/SSR_VS.glsl", "Shaders/PostProcess/SSR_FS.glsl");
     Material::SetMaterialProperties(ssrShader); 
 
-    auto ssrFBO = FrameBuffer::Create(
-        SCR_WIDTH, SCR_WIDTH, FrameBufferType::Screen);
+    auto ssrFBO = FrameBuffer::Create(" ssr FBO",
+        SCR_WIDTH, SCR_WIDTH, FrameBufferType::Regular);
 
     auto ssrQuad = ScreenQuad::Create();
 
@@ -531,11 +517,9 @@ int main() {
         //auto ssrScreenTexture = Texture2D::CreateEmpty(
         //    TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F,
         //                 false, WrapMode::ClampToBorder, FilterMode::Linear });
-
-        ssrFBO->Bind();
-        ssrFBO->SetColorAttachmentTexture(ssrScreenTexture, 0);
-        ssrFBO->CheckCompleteness();
-        ssrFBO->Unbind();
+         
+        ssrFBO->SetColorTexture(TextureType::ScreenTexture, ssrScreenTexture, 0);
+        ssrFBO->FinishSetup(); 
 
     }
     
@@ -579,8 +563,6 @@ int main() {
         /* Render here */
         //glClearColor(0.2f, 0.2f, 0.2f, 1.0f); 
         //glClear(GL_COLOR_BUFFER_BIT);
-        //renderAPI->SetClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        //renderAPI->Clear();
 
 
         //======g buffer pass: render the scene to the gbuffer 

@@ -50,7 +50,7 @@ namespace Rudy {
 
 		//pass outputs named "[]Texture"
 		//lightingPass output  
-		ScreenQuadTexture,
+		ScreenTexture,
 		lightingPassTexture, 
 		SkyboxTexture,  //cubemap 
 
@@ -77,7 +77,7 @@ namespace Rudy {
 	//leverage the fact that shader differentiate names by type.
 	inline std::unordered_map<TextureType, std::string> TextureTypeNames =
 	{
-		{TextureType::ScreenQuadTexture, "u_ScreenQuadTexture"},
+		{TextureType::ScreenTexture, "u_ScreenTexture"},
 		//{TextureType::DiffuseMap, "u_DiffuseMap"},
 
 		{TextureType::AlbedoMap, "u_AlbedoMap"}, 

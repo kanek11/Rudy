@@ -148,7 +148,7 @@
     <ClCompile Include="Rudy\Renderer\Buffer.cpp" />
     <ClCompile Include="Rudy\Renderer\Kernel.cpp" />
     <ClCompile Include="Rudy\Renderer\RendererComponent.cpp" />
-    <ClCompile Include="test_cloth.cpp" />
+    <ClCompile Include="test_pipeline_pbr.cpp" />
     <None Include="Shaders\Cloth\default_cloth_FS.glsl" />
     <None Include="Shaders\Cloth\default_cloth_VS.glsl" />
     <None Include="Shaders\Cloth\normalize_normals_CS.glsl" />

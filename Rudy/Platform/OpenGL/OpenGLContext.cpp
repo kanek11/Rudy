@@ -62,6 +62,7 @@ namespace Rudy {
 	   else {
 		   RD_CORE_ERROR("GL_NV_shader_atomic_float is not supported");
 	   }
+	    
 
 
 	
@@ -90,6 +91,11 @@ namespace Rudy {
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LINE_SMOOTH);
+		glEnable(GL_POLYGON_SMOOTH);
+
+		glClearColor(0.0, 0.0, 0.0, 0.0);        
+		glClearStencil(0);                       
+		glClearDepth(1.0f);     
 
 		 
 	

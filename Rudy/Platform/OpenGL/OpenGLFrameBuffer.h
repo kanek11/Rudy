@@ -6,8 +6,7 @@
 
 
 namespace Rudy {
-
-
+	 
 
 	class OpenGLRenderBuffer : public RenderBuffer
 	{
@@ -46,76 +45,96 @@ namespace Rudy {
 			 glDeleteFramebuffers(1, &m_FrameBufferID);
 		}
 
-		//OpenGLFrameBuffer(FrameBufferSpec& spec);
-		OpenGLFrameBuffer(uint32_t width, uint32_t height, FrameBufferType type,
-			 uint32_t colorBufferNum);
+		OpenGLFrameBuffer(std::string name, uint32_t width, uint32_t height, FrameBufferType type);
 
 
-		virtual void Bind() override { glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferID); }
-		virtual void Unbind() override { glBindFramebuffer(GL_FRAMEBUFFER, 0); }
+		virtual void Bind() override { glBindFramebuffer(GL_FRAMEBUFFER, this->m_FrameBufferID); }
+		virtual void Unbind() override { glBindFramebuffer(GL_FRAMEBUFFER, 0); } 
+
+		virtual uint32_t GetFrameBufferID()  override { return this->m_FrameBufferID;} 
+ 
 
 
-		virtual uint32_t GetFrameBufferID()  override { return m_FrameBufferID;}
-		virtual uint32_t GetColorBufferNum()  override { return m_ColorBufferNum; }
-
-
-		//virtual uint32_t GetTextureBufferID(uint32_t index)  override { return m_TextureBuffers[index]->GetTextureID(); }
-		//virtual uint32_t GetRenderBufferID()  override { return m_RenderBuffer->GetRenderBufferID(); }
-
-		//virtual void SetTextureBuffers(std::unordered_map<TextureType, Ref<Texture>> TextureBuffers)  override
-		//{ m_TextureBuffers = TextureBuffers; }
-		//
-		//virtual Ref<Texture> GetTextureBufferByType(TextureType type) override 
-		//{  if (!m_TextureBuffers[type])
-		//     {
-		//     	RD_CORE_ERROR("framebuffer: texture type not found!");
-		//		return m_TextureBuffers[type];
-		//     }
-		//   else
-		//	return m_TextureBuffers[type];
-		//  
-		//}
-		//
-		//virtual std::unordered_map<TextureType, Ref<Texture>> GetTextureBuffers() override 
-		//{ return m_TextureBuffers; }
-
-
-
-		virtual void SetColorAttachmentTexture(Ref<Texture> texture, uint32_t slot) override
+		virtual void SetColorTexture(TextureType type, Ref<Texture> texture, uint32_t slot) override
 		{
-			if (slot > m_ColorBufferNum)
+			if (slot >= 8)
 			{
 				RD_CORE_ERROR("framebuffer: colorbuffer slot out of range!");
 				return;
 			}
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, texture->GetTextureID(), 0);
+			 
+			m_TextureBuffers[type] = texture;
+			//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, texture->GetTextureID(), 0);	
+			glNamedFramebufferTexture(this->m_FrameBufferID, GL_COLOR_ATTACHMENT0 + slot, 
+				                       texture->GetTextureID(), 0);
+			
 			RD_CORE_INFO("GBuffer: textureId:{0} is attached to colorbuffer{1}", texture->GetTextureID(), slot);
 	 
 		}
 
-		virtual void SetDepthAttachmentTexture(Ref<Texture> texture) override
+		virtual void SetDepthTexture(Ref<Texture> texture) override
 		{
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture->GetTextureID(), 0);
+			//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture->GetTextureID(), 0);
+			 
+			m_TextureBuffers[TextureType::DepthTexture] = texture;
+			glNamedFramebufferTexture(this->m_FrameBufferID, GL_DEPTH_ATTACHMENT, texture->GetTextureID(), 0);
 		}
+
+
+		virtual Ref<Texture> GetTextureByType(TextureType type) override
+		{
+			if (m_TextureBuffers.find(type) == m_TextureBuffers.end())
+			{
+				RD_CORE_ERROR("gl framebuffer: texture type not found!");
+				return nullptr;
+			}
+			return m_TextureBuffers[type]; 
+		} 
+	
+
+		virtual void SetDrawBuffers() override
+		{
+			//size of m_TextureBuffer
+			m_ColorBufferNum = m_TextureBuffers.size();
+
+			if(m_ColorBufferNum == 0)
+			{
+				RD_CORE_WARN(" no colorbuffer attrachment! be sure it's depth mapping fbo");
+				glNamedFramebufferDrawBuffer(this->m_FrameBufferID, GL_NONE);
+				return;
+			} 
+
+			std::vector<uint32_t> colorBuffers;
+			for (unsigned int slot = 0; slot < m_ColorBufferNum; slot++)
+			{
+				colorBuffers.push_back(GL_COLOR_ATTACHMENT0 + slot);
+			}  
+			glNamedFramebufferDrawBuffers(this-> m_FrameBufferID, m_ColorBufferNum, colorBuffers.data() );
+		
+		} 
+
 
 		virtual void CheckCompleteness() override
 		{
 		    RD_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
 		}
 
+		virtual void FinishSetup() override
+		{ 
+			this->SetDrawBuffers();
+			this->CheckCompleteness();
+		}
+
 
 		 
 	private:
+		std::string m_Name;
+		uint32_t m_FrameBufferID = 0;  
+		uint32_t m_ColorBufferNum = 0; 
+		uint32_t m_Width = 0, m_Height = 0;
 
-		uint32_t m_FrameBufferID = 0; 
-		uint32_t m_ColorBufferNum = 0;
-
-
-		//FrameBufferSpec m_Spec;
-
-		//std::unordered_map<TextureType, Ref<Texture>>  m_TextureBuffers;
-		Scope<RenderBuffer> m_RenderBuffer;   //renderbuffer
- 
+		std::unordered_map<TextureType, Ref<Texture>>  m_TextureBuffers;
+		Scope<RenderBuffer> m_RenderBuffer;   //only for depth/stencil  
 		 
 
 	};

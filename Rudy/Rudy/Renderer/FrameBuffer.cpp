@@ -23,12 +23,12 @@ namespace Rudy {
 	}
 
 
-	Ref<FrameBuffer> FrameBuffer::Create(uint32_t width, uint32_t height, FrameBufferType type, uint32_t colorBufferNum)
+	Ref<FrameBuffer> FrameBuffer::Create(std::string name, uint32_t width, uint32_t height, FrameBufferType type)
 	{
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		case RendererAPI::API::OpenGL:  return CreateScope<OpenGLFrameBuffer>(width, height, type, colorBufferNum);
+		case RendererAPI::API::OpenGL:  return CreateScope<OpenGLFrameBuffer>(name, width, height, type);
 		}
 
 		RD_CORE_ASSERT(false, "Unknown RendererAPI!");

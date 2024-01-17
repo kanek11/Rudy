@@ -81,17 +81,17 @@ int main() {
 
 
     GBufferFBO->Bind();
-    GBufferFBO->SetColorAttachmentTexture(gPosition, 0);
-    GBufferFBO->SetColorAttachmentTexture(gAlbedo, 1);
-    GBufferFBO->SetColorAttachmentTexture(gWorldNormal, 2);
-    GBufferFBO->SetColorAttachmentTexture(gWorldTangent, 3);
-    GBufferFBO->SetColorAttachmentTexture(gSpecular, 4);
-    GBufferFBO->SetColorAttachmentTexture(gMetallic, 5);
-    GBufferFBO->SetColorAttachmentTexture(gRoughness, 6);
+    GBufferFBO->SetColorTexture(gPosition, 0);
+    GBufferFBO->SetColorTexture(gAlbedo, 1);
+    GBufferFBO->SetColorTexture(gWorldNormal, 2);
+    GBufferFBO->SetColorTexture(gWorldTangent, 3);
+    GBufferFBO->SetColorTexture(gSpecular, 4);
+    GBufferFBO->SetColorTexture(gMetallic, 5);
+    GBufferFBO->SetColorTexture(gRoughness, 6);
 
-    GBufferFBO->SetDepthAttachmentTexture(gScreenDepth);
+    GBufferFBO->SetDepthTexture(gScreenDepth);
 
-    GBufferFBO->CheckCompleteness();
+    GBufferFBO->FinishSetup();
     GBufferFBO->Unbind();
 
 
@@ -174,15 +174,15 @@ int main() {
 
 
     auto shadowMapFBO = FrameBuffer::Create(
-        SHADOW_WIDTH, SHADOW_HEIGHT, FrameBufferType::DepthMap);
+        SHADOW_WIDTH, SHADOW_HEIGHT, FrameBufferType::DepthTexture);
 
     auto shadowMap = Texture2D::CreateEmpty(
         TextureSpec{ SHADOW_WIDTH, SHADOW_HEIGHT, TextureInternalFormat::DEPTH_COMPONENT24,
                              false, WrapMode::ClampToBorder, FilterMode::Nearest });
 
     shadowMapFBO->Bind();
-    shadowMapFBO->SetDepthAttachmentTexture(shadowMap);
-    shadowMapFBO->CheckCompleteness();
+    shadowMapFBO->SetDepthTexture(shadowMap);
+    shadowMapFBO->FinishSetup();
     shadowMapFBO->Unbind();
 
    
@@ -229,7 +229,7 @@ int main() {
 
     //=== FBO
     auto lightingPassFBO = FrameBuffer::Create(
-        SCR_WIDTH, SCR_WIDTH, FrameBufferType::Screen);
+        SCR_WIDTH, SCR_WIDTH, FrameBufferType::Regular);
 
     auto lightingPassScreenTexture = Texture2D::CreateEmpty(
         TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F });
@@ -242,10 +242,10 @@ int main() {
 							 false, WrapMode::ClampToBorder, FilterMode::Nearest });
 
     lightingPassFBO->Bind();
-    lightingPassFBO->SetColorAttachmentTexture(lightingPassScreenTexture, 0);
-    //lightingPassFBO->SetColorAttachmentTexture(viewNormalTexture, 1);
-    //lightingPassFBO->SetDepthAttachmentTexture(depthTexture);
-    lightingPassFBO->CheckCompleteness();
+    lightingPassFBO->SetColorTexture(lightingPassScreenTexture, 0);
+    //lightingPassFBO->SetColorTexture(viewNormalTexture, 1);
+    //lightingPassFBO->SetDepthTexture(depthTexture);
+    lightingPassFBO->FinishSetup();
     lightingPassFBO->Unbind();
 
 

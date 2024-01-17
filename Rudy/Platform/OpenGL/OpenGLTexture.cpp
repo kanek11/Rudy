@@ -58,11 +58,17 @@ namespace Rudy {
 		    case TextureInternalFormat::RG8: return GL_RG8;
 		    case TextureInternalFormat::RG32F: return GL_RG32F;
 			case TextureInternalFormat::RGB8:  return GL_RGB8; 
+            case TextureInternalFormat::RGB16F: return GL_RGB16F;
 			case TextureInternalFormat::RGB32F: return GL_RGB32F;
 			case TextureInternalFormat::RGBA8: return GL_RGBA8;
+			case TextureInternalFormat::RGBA16F: return GL_RGBA16F;
 			case TextureInternalFormat::RGBA32F: return GL_RGBA32F;
 
 			case TextureInternalFormat::DEPTH_COMPONENT24: return GL_DEPTH_COMPONENT24;
+			case TextureInternalFormat::DEPTH_COMPONENT32F : return GL_DEPTH_COMPONENT32F;
+			case TextureInternalFormat::DEPTH24_STENCIL8 : return GL_DEPTH24_STENCIL8;
+			
+			case TextureInternalFormat::STENCIL_INDEX8 : return GL_STENCIL_INDEX8;
 			}
 
 			RD_CORE_ASSERT(false);
@@ -82,9 +88,14 @@ namespace Rudy {
 			case TextureInternalFormat::RGB16F: return GL_RGB;
 			case TextureInternalFormat::RGB32F: return GL_RGB;
 			case TextureInternalFormat::RGBA8: return GL_RGBA;
+			case TextureInternalFormat::RGBA16F: return GL_RGBA;
 		    case TextureInternalFormat::RGBA32F: return GL_RGBA;
 
 			case TextureInternalFormat::DEPTH_COMPONENT24: return GL_DEPTH_COMPONENT;
+			case TextureInternalFormat::DEPTH_COMPONENT32F: return GL_DEPTH_COMPONENT;
+			case TextureInternalFormat::DEPTH24_STENCIL8: return GL_DEPTH_STENCIL;
+
+			
 			}
 
 			RD_CORE_ASSERT(false);
@@ -500,7 +511,7 @@ namespace Rudy {
 		{
 			rectToCubeShader->Bind();
 			rectToCubeShader->SetMat4("u_projection", captureProjection);
-rectToCubeShader->SetMat4("u_view", captureViews[i]); 
+            rectToCubeShader->SetMat4("u_view", captureViews[i]); 
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, m_TextureID, 0); 
 
 			glClearColor(0.0f, 0.5f, 0.0f, 1.0f);
@@ -602,7 +613,7 @@ rectToCubeShader->SetMat4("u_view", captureViews[i]);
 
 					prefilterShader->Bind();
 					prefilterShader->SetMat4("u_projection", captureProjection);
-prefilterShader->SetMat4("u_view", captureViews[i]);
+                    prefilterShader->SetMat4("u_view", captureViews[i]);
 
 					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 
 					prefilterEnvMap->GetTextureID(), mip);
@@ -659,18 +670,15 @@ prefilterShader->SetMat4("u_view", captureViews[i]);
 			// pbr: run a quasi monte-carlo simulation on the environment lighting to create a prefilter (cube)map.
 			// ----------------------------------------------------------------------------------------------------
  
-
-
-			glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+		    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 
 			glViewport(0, 0, 32, 32); 
 			for (uint32_t i = 0; i < 6; ++i)
 			{
 				prefilterShader->Bind();
 				prefilterShader->SetMat4("u_projection",  captureProjection);
-prefilterShader->SetMat4("u_view", captureViews[i]);
+                prefilterShader->SetMat4("u_view", captureViews[i]);
 			 
-
 				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterEnvMap->GetTextureID(), 0);
 
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -684,8 +692,7 @@ prefilterShader->SetMat4("u_view", captureViews[i]);
 
 
 		}
-
-
+		 
 
 		}
 

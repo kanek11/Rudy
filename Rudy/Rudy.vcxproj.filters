@@ -260,7 +260,7 @@
     <ClCompile Include="Rudy\Physics\cloth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test_cloth.cpp">
+    <ClCompile Include="test_pipeline_pbr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

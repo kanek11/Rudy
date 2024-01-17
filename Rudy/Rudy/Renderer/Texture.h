@@ -22,6 +22,7 @@ namespace Rudy {
 	{
 		None = 0,
 
+		//colors
 		R8, 
 		R32F,
 
@@ -32,12 +33,16 @@ namespace Rudy {
 		RGB16F,
 		RGB32F,
 
-		RGBA8,
-		RGBA32F,
+		RGBA8,  
+		RGBA16F, //HDR
+		RGBA32F, 
 		 
-		//we standardize the depth format to be 24 bit, to be compatible.
+		//other framebuffers buffers
+		//for now standardize the depth to be 24 bit, to be compatible with default depth24_stencil8 
+		DEPTH24_STENCIL8,  
+		STENCIL_INDEX8, 
 		DEPTH_COMPONENT24,
-		DGL_DEPTH24_STENCIL8,
+		DEPTH_COMPONENT32F,
 	};
 	 
 

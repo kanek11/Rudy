@@ -64,9 +64,7 @@ struct DirLight {
 
 uniform DirLight u_DirLight;
 
-uniform vec3 u_CameraPos;
-
-
+uniform vec3 u_CameraPos; 
 
 uniform mat4 u_view;
 
