@@ -36,7 +36,8 @@ namespace Rudy {
 
     //the "topo" is needed by drawcall;
     enum class MeshTopology {
-		TRIANGLES,   //triangle is THE default for games; 
+		
+        TRIANGLES,   //triangle is THE default for games; 
         POINTS, 
         LINES, 
         STRIP,
@@ -44,6 +45,7 @@ namespace Rudy {
 	};
 
     enum class MeshDrawCommand { 
+
         INDEXED,
 		ARRAYS,
 	};

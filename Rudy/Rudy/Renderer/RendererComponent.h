@@ -31,7 +31,7 @@ namespace Rudy
 	}; 
 
 
-	//for now, it simply impose a draw function
+	//for now, it impose a draw function,  
 	//every draw call must use a shader program/ material
 	//vertex array is somehow not limited to mesh, but also useful for instanced rendering etc
 
@@ -63,8 +63,7 @@ namespace Rudy
  
 
 	protected:
-		Ref<Material> m_material = nullptr;
-
+		Ref<Material> m_material = nullptr; 
 		//optional
 		Ref<VertexArray> m_vertexArray = nullptr; 
 		
@@ -102,8 +101,7 @@ namespace Rudy
 		 
 		void SetMesh(Ref<Mesh> m);
 		Ref<Mesh> GetMesh() { return m_mesh; }   
-		bool hasMesh() { return m_mesh != nullptr; }
-
+		bool hasMesh() { return m_mesh != nullptr; } 
 
 
 		//system utilities
@@ -115,10 +113,52 @@ namespace Rudy
 		Ref<Mesh> m_mesh = nullptr;
 
 		Ref<VertexBuffer> m_vertexBuffer = nullptr;
-		Ref<IndexBuffer> m_indexBuffer = nullptr;
-
+		Ref<IndexBuffer> m_indexBuffer = nullptr; 
 
 	};
+
+
+
+	//<<terminal>>
+	//only supply the mesh , all other things are handled by the class for now;
+	//class PhysicalMeshRendererComponent : public RendererComponent
+	//{
+	//public:
+	//	~PhysicalMeshRendererComponent() = default;
+	//	PhysicalMeshRendererComponent()
+	//	{
+	//		RD_CORE_INFO("Cloth RendererComponent created:");
+	//		m_vertexArray = VertexArray::Create(); 
+	//	}
+
+	//	static Ref<PhysicalMeshRendererComponent> Create()
+	//	{
+	//		return CreateRef<PhysicalMeshRendererComponent>();
+	//	}
+
+	//	virtual void Draw(Ref<Camera> cam) override;
+
+
+	//public: 
+	//	void SetMesh(Ref<Mesh> m);
+	//	Ref<Mesh> GetMesh() { return m_mesh; }
+	//	bool hasMesh() { return m_mesh != nullptr; } 
+
+	//public:
+	//	Ref<Mesh> m_mesh = nullptr; 
+	//};
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

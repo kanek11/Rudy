@@ -4,7 +4,9 @@
 #include "RudyPCH.h" 
 
 #include "Rudy.h"
- 
+
+
+#include "Rudy/Physics/Cloth.h"
 
 
 //2560:1440 = 16:9
@@ -52,29 +54,58 @@ int main() {
 
 
     //=================================================================================================
-  
+    //=== initialize the resources
+ 
+
+
     //=====the scene 
 
     //Scene
-    auto scene = Scene::Create();
+    auto scene = Scene::Create();  
 
-   
+    auto plane = Plane::Create(20); 
+    auto plane_mesh = plane->GetRendererComponent()->GetMesh();  
+
+    auto defaultShader = Shader::Create("default Shader", "Shaders/Shaders/default_VS.glsl", 
+        "Shaders/Shaders/default_FS.glsl"); 
+    auto defaultMaterial = Material::Create(defaultShader);
+    plane->SetMaterial(defaultMaterial);
+
+
+    auto cloth = new Cloth(); 
+    cloth ->m_mesh = plane_mesh;
+
+    auto defaultClothShader = Shader::Create("default Shader", 
+        "Shaders/Cloth/default_cloth_VS.glsl",
+        "Shaders/Cloth/default_cloth_FS.glsl");
+    auto defaultClothMaterial = Material::Create(defaultClothShader);
+     
+
+    auto showNormalShader = Shader::Create("normal Shader",
+        "Shaders/Shaders/default_VS.glsl", "Shaders/Shaders/show_normal_FS.glsl",
+        "Shaders/Shaders/show_normal_GS.glsl");
+     auto showNormalMaterial = Material::Create(showNormalShader);
+ 
+    cloth ->m_material = defaultClothMaterial;
+    cloth->Init();
+
 
     //=================================================================================================
     //======lighting pass 
 
-    std::vector<uint32_t> indices = { 0,1,2 };
-    auto id0 = indices[0];          
-    auto id1= indices[1];
+    //=== material
 
-    std::cout << ( id0-id1)  << std::endl;
+
+    //--render quad;
+
+
+    //=====skybox pass  
+
+
 
 
     //=================================================================================================
-
-    auto defaultShader = Shader::Create("default Shader", "Shaders/Shaders/Default_VS.glsl", "Shaders/Shaders/Default_Flat_FS.glsl");
-    WorldGrid grid = WorldGrid(20);
-    grid.material = Material::Create(defaultShader);
+ 
 
 
     auto lineShader = Shader::Create("vertex color Shader", "Shaders/Shaders/Vertex_Color_VS.glsl", "Shaders/Shaders/Vertex_Color_FS.glsl");
@@ -105,8 +136,6 @@ int main() {
         timer += deltaTime;
 
         /* Render here */ 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // make sure clear the framebuffer's content  
@@ -115,12 +144,22 @@ int main() {
 
 
         //====== buffer pass: render the scene to the gbuffer 
-        { 
+        {
         }
-         
+
 
         //======= lighting pass: render the quad;
-        { 
+        {
+            //plane->Draw(main_camera);
+
+            cloth->m_system_dt = deltaTime;
+            cloth->Update();  
+            cloth->m_material = defaultClothMaterial;
+            cloth->Draw(main_camera);
+
+            //cloth->m_material =  showNormalMaterial;
+            //cloth->Draw(main_camera);
+
         }
 
 
@@ -131,27 +170,12 @@ int main() {
         //===========debug: visualize any texture; 
         //todo: make a good filter for ss pass;  
         // add a "composer"  or design the blend mode;
-
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glDisable(GL_DEPTH_TEST);
-
-        glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-        screenQuadShader->Bind();
- 
-
-        glDisable(GL_BLEND);
-        glEnable(GL_DEPTH_TEST);
-
+         
 
 
         //=======skybox overlay; on final default framebuffer; 
         //compare the depth with gbuffer;  make sure enable the depth test; 
- 
-  
-  
-
-
+         
 
         //=======overlay: world grid; 
         // grid.Draw();  

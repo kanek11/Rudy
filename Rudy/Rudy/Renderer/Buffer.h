@@ -134,7 +134,7 @@ public:
 		virtual void Unbind() const = 0;
 
 		virtual void AttachIndexBuffer  (uint32_t buffer_id) = 0;
-		virtual void AttachVertexBuffer(uint32_t buffer_id, uint32_t binding_index, uint32_t stride, uint32_t offset = 0)= 0;
+		virtual void AttachBuffer(uint32_t buffer_id, uint32_t binding_index, uint32_t stride, uint32_t offset = 0)= 0;
 		virtual void AddAttribute         (uint32_t attr_index, uint32_t binding_index, uint32_t size, BufferDataType type, uint32_t offset)                           = 0;
 		virtual void AddInstancedAttribute(uint32_t attr_index, uint32_t binding_index, uint32_t size, BufferDataType type, uint32_t offset = 0, uint32_t divisor = 1) = 0;
 		 

@@ -116,8 +116,7 @@ namespace Rudy {
         void SetMaterial(Ref<Material> mat)
 		{
 			this->rendererComponent->SetMaterial(mat);
-		}
-
+		} 
         void SetShader(Ref<Shader> shader)
         { 
             this->rendererComponent->SetShader(shader);

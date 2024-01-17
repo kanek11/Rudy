@@ -222,7 +222,7 @@ namespace Rudy {
     {
         GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
         if (location == -1) {
-            RD_CORE_WARN("OpenGLShader: SetUInt: uniform {0} not properly found", name);
+            RD_CORE_WARN("OpenGLShader: SetUInt: uniform {0} not found", name);
             return;
         }  
         glUniform1ui(location, value);

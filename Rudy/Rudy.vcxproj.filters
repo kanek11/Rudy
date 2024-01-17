@@ -156,6 +156,9 @@
     <ClInclude Include="Rudy\Renderer\Kernel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Rudy\Physics\cloth.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Rudy\Core\Log.cpp">
@@ -254,7 +257,10 @@
     <ClCompile Include="Rudy\Renderer\Kernel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test_particles_new.cpp">
+    <ClCompile Include="Rudy\Physics\cloth.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test_cloth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -318,5 +324,17 @@
     <None Include="Shaders\Shaders\show_normal_GS.glsl" />
     <None Include="Shaders\Shaders\show_normal_FS.glsl" />
     <None Include="Shaders\Particles\particle_dispatch_CS.glsl" />
+    <None Include="Shaders\Cloth\compute_rest_length_CS.glsl" />
+    <None Include="Shaders\Particles\template_CS.glsl" />
+    <None Include="Shaders\Cloth\pre_integrate_CS.glsl" />
+    <None Include="Shaders\Cloth\post_correction_CS.glsl" />
+    <None Include="Shaders\Cloth\solve_stretchConst_CS.glsl" />
+    <None Include="Shaders\Cloth\compute_normals_CS.glsl" />
+    <None Include="Shaders\Cloth\default_cloth_VS.glsl" />
+    <None Include="Shaders\Cloth\default_cloth_FS.glsl" />
+    <None Include="Shaders\Cloth\post_update_vel_CS.glsl" />
+    <None Include="Shaders\Cloth\solve_distConst_legacy_CS.glsl" />
+    <None Include="Shaders\Cloth\solve_bendConst_CS.glsl" />
+    <None Include="Shaders\Cloth\normalize_normals_CS.glsl" />
   </ItemGroup>
 </Project>

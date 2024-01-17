@@ -12,8 +12,7 @@ out VS_OUT
 
  
 uniform mat4 u_projection;
-uniform mat4 u_view;
-
+uniform mat4 u_view; 
 uniform mat4 u_model;
  
 

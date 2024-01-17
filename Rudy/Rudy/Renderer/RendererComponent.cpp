@@ -36,7 +36,7 @@ namespace Rudy
         m_indexBuffer ->SetData(m_mesh->indices.data(), m_mesh->indices.size() * sizeof(uint32_t), BufferUsage::STATIC_DRAW);
 
         //attach
-        m_vertexArray->AttachVertexBuffer(m_vertexBuffer->GetBufferID(), 0, sizeof(Vertex));
+        m_vertexArray->AttachBuffer(m_vertexBuffer->GetBufferID(), 0, sizeof(Vertex));
         m_vertexArray->AttachIndexBuffer (m_indexBuffer->GetBufferID());
 
 
@@ -46,8 +46,7 @@ namespace Rudy
         m_vertexArray->AddAttribute(3, 0, 3, BufferDataType::FLOAT32, offsetof(Vertex, Tangent));
         m_vertexArray->AddAttribute(4, 0, 4, BufferDataType::INT32, offsetof(Vertex, BoneIndices));
         m_vertexArray->AddAttribute(5, 0, 4, BufferDataType::FLOAT32, offsetof(Vertex, BoneWeights));
-         
-
+          
 
         RD_CORE_INFO("MeshObject::SetupBuffers: mesh buffers setup finished");
 
@@ -91,9 +90,10 @@ namespace Rudy
         {
         case MeshDrawCommand::INDEXED:
             Renderer::GetRendererAPI()->DrawIndexed(m_mesh->topology, m_mesh->GetIndexCount());
-
+            break;
         case MeshDrawCommand::ARRAYS:
             Renderer::GetRendererAPI()->DrawArrays (m_mesh->topology, m_mesh->GetVertexCount());
+            break;
         }
 
 
@@ -139,9 +139,10 @@ namespace Rudy
         {
         case MeshDrawCommand::INDEXED:
             Renderer::GetRendererAPI()->DrawIndexedInstanced(m_mesh->topology, m_mesh->GetIndexCount(), instanceCount);
-
+            break;
         case MeshDrawCommand::ARRAYS:
             Renderer::GetRendererAPI()->DrawArraysInstanced(m_mesh->topology, m_mesh->GetVertexCount(), instanceCount);
+            break;
         }
 
 

@@ -54,7 +54,16 @@ namespace Rudy {
 		RD_CORE_INFO("#invocations in a work group that may be dispatched to a compute shader: {0} ", max_compute_work_group_invocations);
 
 	
-	
+	   //query extensions
+		const char* extensions = glGetString(GL_EXTENSIONS); 
+	   if (strstr(extensions, "GL_NV_shader_atomic_float") != NULL) {
+		   RD_CORE_INFO("GL_NV_shader_atomic_float is supported");
+	   }
+	   else {
+		   RD_CORE_ERROR("GL_NV_shader_atomic_float is not supported");
+	   }
+
+
 	
 
 		//some default settings

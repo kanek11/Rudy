@@ -111,7 +111,7 @@ virtual void BindBase(uint32_t index) const override;
 		virtual void Unbind() const override;
 
 		virtual void AttachIndexBuffer(uint32_t buffer_id) override;
-		virtual void AttachVertexBuffer(uint32_t buffer_id, uint32_t binding_index, uint32_t stride, uint32_t offset = 0) override;
+		virtual void AttachBuffer(uint32_t buffer_id, uint32_t binding_index, uint32_t stride, uint32_t offset = 0) override;
 
 		virtual void AddAttribute(uint32_t attr_index, uint32_t binding_index, uint32_t size, BufferDataType type, uint32_t offset) override;
 		virtual void AddInstancedAttribute(uint32_t attr_index, uint32_t binding_index, uint32_t size, BufferDataType type, uint32_t offset = 0, uint32_t divisor = 1) override;

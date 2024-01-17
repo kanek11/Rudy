@@ -190,7 +190,7 @@ namespace Rudy
 
 
 
-    void OpenGLVertexArray::AttachVertexBuffer(uint32_t buffer_id, uint32_t binding_index, uint32_t stride, uint32_t offset)
+    void OpenGLVertexArray::AttachBuffer(uint32_t buffer_id, uint32_t binding_index, uint32_t stride, uint32_t offset)
     {
         glVertexArrayVertexBuffer(m_VertexArrayID, binding_index, buffer_id, offset, stride);
         //if that slot already has a binding,  throw warn
