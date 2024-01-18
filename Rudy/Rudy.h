@@ -20,8 +20,8 @@
 
 #include "Rudy/Renderer/Scene.h"
 
-#include "Primitives/Sphere.hpp"
-#include "Primitives/Plane.hpp"
-#include "Primitives/ScreenQuad.hpp"
+#include "Primitives/Sphere.h"
+#include "Primitives/Plane.h"
+#include "Primitives/ScreenQuad.h"
 #include "Primitives/Cube.h" 
-#include "Primitives/Overlay.hpp"
+#include "Primitives/Overlay.h"

@@ -166,9 +166,14 @@ namespace Rudy
 		//m_BoneTransforms.resize(100);  //TODO: adjust the size from the avatar;
 	}
 
+	std::vector<glm::mat4> Animator::GetBoneTransforms()
+	{
+		return m_BoneTransforms;
+	}
+
 
 	//basically forward kinematics; traverse the hierarchy;
-	std::vector<glm::mat4> Animator::GetBoneTransforms(float time)
+	void Animator::UpdateBoneTransforms(float time)
 	{
 
 		//simple loop mode;
@@ -220,8 +225,7 @@ namespace Rudy
 
 		}
 		//SetBoneTransformsRecursive(time, m_AnimationClip->rootNode, glm::mat4(1.0f));
-
-		return m_BoneTransforms;
+ 
 
 	}
 

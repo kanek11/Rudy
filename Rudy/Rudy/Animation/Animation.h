@@ -173,7 +173,9 @@ namespace Rudy
 
 		//the animation data;
 		std::vector<glm::mat4> m_BoneTransforms = std::vector<glm::mat4>(100, glm::mat4(1.0f));
-		std::vector<glm::mat4> GetBoneTransforms(float time);
+		
+		void UpdateBoneTransforms(float time);  
+		std::vector<glm::mat4> GetBoneTransforms();
 
 		//scene
 		glm::mat4 GetGlobalTransform(const std::string& name);

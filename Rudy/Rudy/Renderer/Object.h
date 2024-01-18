@@ -13,9 +13,11 @@
 #include <Rudy/Renderer/Material.h> 
 
 #include <Rudy/Renderer/Camera.h> 
-#include <Rudy/Renderer/Animation.h> 
 #include <Rudy/Renderer/Transform.h> 
 #include <Rudy/Renderer/Buffer.h>
+
+
+#include <Rudy/Animation/Animation.h> 
 
 #include <Rudy/Renderer/RendererComponent.h>
 

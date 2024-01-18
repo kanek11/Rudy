@@ -1,40 +1,25 @@
-#pragma once
 #include "RudyPCH.h"
-#include <glad/glad.h>
 
- 
-#include "Rudy/Renderer/Object.h"
-#include "Rudy/Renderer/Renderer.h"
- 
-//for now, i want the pre-defined model to be self-contained. not relying on object class design.
-
-//all public, free to set;
-
-namespace Rudy {
+#include "Sphere.h"
 
 
-	class Sphere: public MeshObject {
+namespace Rudy
+{
 
-	public:
-        ~Sphere() = default;
-        Sphere(uint32_t subdivision) : MeshObject(),
-            m_subdivision(subdivision)
-        {
-           this->GetRendererComponent()->SetMesh( CreateMeshGeometry(subdivision) ); 
-        }
+    Sphere::Sphere(uint32_t subdivision) : MeshObject(),
+        m_subdivision(subdivision)
+    {
+        this->GetRendererComponent()->SetMesh(CreateMeshGeometry(subdivision));
+    }
 
-        static Ref<Sphere> Create(uint32_t subdivision) 
-        { return CreateRef<Sphere>(subdivision); }
-         
-        Ref<Mesh> CreateMeshGeometry(uint32_t subdivision);
-  
-        uint32_t m_subdivision = 20;
-	};
- 
-    
+    Ref<Sphere> Sphere::Create(uint32_t subdivision)
+    {
+        return CreateRef<Sphere>(subdivision);
+    }
 
 
-	//static Scope<Mesh> Create(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
+
+    //static Scope<Mesh> Create(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
 
     //based on spherical coordinate
     //opengl y is up,  elevation or theta,  vary from 0 to pi
@@ -43,10 +28,10 @@ namespace Rudy {
     //subdivision say 4 , means 4 facets; 
     //say theta varys   [0,..4]* pi/4
     Ref<Mesh> Sphere::CreateMeshGeometry(uint32_t subdivision)
-	{
+    {
 
-         std::vector<Vertex> Vertices;
-         std::vector<uint32_t> Indices; 
+        std::vector<Vertex> Vertices;
+        std::vector<uint32_t> Indices;
 
 
         const uint32_t X_SEGMENTS = subdivision;
@@ -57,13 +42,13 @@ namespace Rudy {
         for (uint32_t x = 0; x <= X_SEGMENTS; ++x)
         {
             for (uint32_t y = 0; y <= Y_SEGMENTS; ++y)
-            { 
+            {
 
                 //normalized
                 float xSegment = (float)x / (float)X_SEGMENTS;
                 float ySegment = (float)y / (float)Y_SEGMENTS;
                 float xPhi = xSegment * 2.0f * PI;
-                float yTheta = ySegment * PI ;
+                float yTheta = ySegment * PI;
 
                 //y being up
                 float yPos = std::cos(yTheta);
@@ -77,16 +62,16 @@ namespace Rudy {
                 vertex.Normal = glm::vec3(xPos, yPos, zPos);
                 vertex.UV = glm::vec2(xSegment, ySegment);
 
-  
+
                 //tangent ,always on xz plane
                 //as derivative to normal , dN/dphi = (-sin(phi), 0, cos(phi)) * sin(theta)
 
                 //note at poles, sintheta = 0, tangent is undefined;
-                if (yTheta  == 0)
+                if (yTheta == 0)
                 {
-					vertex.Tangent = glm::vec3(1.0f, 0.0f, 0.0f);
-					//vertex.Bitangent = glm::vec3(0.0f, 0.0f, 1.0f); 
-				}
+                    vertex.Tangent = glm::vec3(1.0f, 0.0f, 0.0f);
+                    //vertex.Bitangent = glm::vec3(0.0f, 0.0f, 1.0f); 
+                }
                 else if (yTheta == PI)
                 {
                     vertex.Tangent = glm::vec3(-1.0f, 0.0f, 0.0f);
@@ -103,9 +88,9 @@ namespace Rudy {
                     //optional bitangent
                     //vertex.Bitangent = glm::normalize(glm::cross(glm::vec3(xPos, yPos, zPos), Tangent));
                 }
-               
-                 
-                Vertices.push_back(vertex); 
+
+
+                Vertices.push_back(vertex);
 
             }
         }
@@ -114,7 +99,7 @@ namespace Rudy {
         // draw "strip" mode ; +2 indices for each new triangle
 
         for (uint32_t y = 0; y < Y_SEGMENTS; ++y)
-        { 
+        {
             for (uint32_t x = 0; x <= X_SEGMENTS; ++x)
             {
                 Indices.push_back(y * (X_SEGMENTS + 1) + x);
@@ -122,23 +107,20 @@ namespace Rudy {
             }
 
         }
-         
+
         //generate mesh
-         auto _mesh = Mesh::Create();
-         _mesh->vertices = Vertices;
-         _mesh->indices = Indices;
-         _mesh->topology = MeshTopology::STRIP;
-         _mesh->drawCommand = MeshDrawCommand::INDEXED;
+        auto _mesh = Mesh::Create();
+        _mesh->vertices = Vertices;
+        _mesh->indices = Indices;
+        _mesh->topology = MeshTopology::STRIP;
+        _mesh->drawCommand = MeshDrawCommand::INDEXED;
 
-         return _mesh;
+        return _mesh;
 
- 
-	}
 
-      
+    }
+
 
 
 
 }
-
-

@@ -88,8 +88,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Apps\Application.h" />
+    <ClInclude Include="Apps\PBR.h" />
     <ClInclude Include="Primitives\Cube.h" />
-    <ClInclude Include="Primitives\Overlay.hpp" />
+    <ClInclude Include="Primitives\Overlay.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Rudy.h" />
     <ClInclude Include="Rudy\Core\Assert.h" />
@@ -105,8 +107,10 @@
     <ClInclude Include="Rudy\Events\KeyCodes.h" />
     <ClInclude Include="Rudy\Events\MouseCodes.h" />
     <ClInclude Include="Rudy\Particles\ParticleSystem.h" />
+    <ClInclude Include="Rudy\Passes\Pass.h" />
+    <ClInclude Include="Rudy\Passes\SSAO.h" />
     <ClInclude Include="Rudy\Physics\cloth.h" />
-    <ClInclude Include="Rudy\Renderer\Animation.h" />
+    <ClInclude Include="Rudy\Animation\Animation.h" />
     <ClInclude Include="Rudy\Renderer\Buffer.h" />
     <ClInclude Include="Rudy\Renderer\Camera.h" />
     <ClInclude Include="Rudy\Renderer\FrameBuffer.h" />
@@ -122,7 +126,7 @@
     <ClInclude Include="Rudy\Renderer\RendererAPI.h" />
     <ClInclude Include="Rudy\Renderer\Texture.h" />
     <ClInclude Include="Rudy\Renderer\Transform.h" />
-    <ClInclude Include="Primitives\Plane.hpp" />
+    <ClInclude Include="Primitives\Plane.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLFrameBuffer.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLRendererAPI.h" />
@@ -134,21 +138,27 @@
     <ClInclude Include="Rudy\Events\KeyEvent.h" />
     <ClInclude Include="Rudy\Events\MouseEvent.h" />
     <ClInclude Include="RudyPCH.h" />
-    <ClInclude Include="Primitives\ScreenQuad.hpp" />
-    <ClInclude Include="Primitives\Sphere.hpp" />
+    <ClInclude Include="Primitives\ScreenQuad.h" />
+    <ClInclude Include="Primitives\Sphere.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\dependencies\stb_image\stb_image.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Apps\main.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp" />
+    <ClCompile Include="Primitives\Overlay.cpp" />
+    <ClCompile Include="Primitives\plane.cpp" />
+    <ClCompile Include="Primitives\ScreenQuad.cpp" />
+    <ClCompile Include="Primitives\Sphere.cpp" />
     <ClCompile Include="Rudy\Particles\ParticleSystem.cpp" />
+    <ClCompile Include="Rudy\Passes\SSAO.cpp" />
     <ClCompile Include="Rudy\Physics\cloth.cpp" />
     <ClCompile Include="Rudy\Renderer\Buffer.cpp" />
     <ClCompile Include="Rudy\Renderer\Kernel.cpp" />
     <ClCompile Include="Rudy\Renderer\RendererComponent.cpp" />
-    <ClCompile Include="test_pipeline_pbr.cpp" />
+    <ClCompile Include="Apps\PBR.cpp" />
     <None Include="Shaders\Cloth\default_cloth_FS.glsl" />
     <None Include="Shaders\Cloth\default_cloth_VS.glsl" />
     <None Include="Shaders\Cloth\normalize_normals_CS.glsl" />
@@ -186,7 +196,7 @@
     </ClCompile>
     <ClCompile Include="Rudy\Core\Log.cpp" />
     <ClCompile Include="Rudy\Core\WIndow.cpp" />
-    <ClCompile Include="Rudy\Renderer\Animation.cpp" />
+    <ClCompile Include="Rudy\Animation\Animation.cpp" />
     <ClCompile Include="Rudy\Renderer\Transform.cpp" />
     <ClCompile Include="Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="Rudy\Renderer\Camera.cpp" />

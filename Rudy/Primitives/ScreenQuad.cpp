@@ -1,32 +1,20 @@
-#pragma once
-
 #include "RudyPCH.h"
 
-#include "Rudy/Renderer/Renderer.h"
-#include "Rudy/Renderer/Mesh.h"
-#include "Rudy/Renderer/Material.h"
-#include "Rudy/Renderer/Object.h"
+#include "ScreenQuad.h"
 
 
 
-namespace Rudy {
+namespace Rudy
+{
+
+    ScreenQuad::ScreenQuad() : MeshObject()
+    {
+        this->GetRendererComponent()->SetMesh(CreateMeshGeometry());
+    }
+
+    Ref<ScreenQuad> ScreenQuad::Create() { return std::make_shared<ScreenQuad>(); }
 
 
-    class ScreenQuad : public MeshObject {
-    public:
-        ~ScreenQuad() = default;
-
-        ScreenQuad() : MeshObject() 
-        { 
-            this->GetRendererComponent()->SetMesh( CreateMeshGeometry() );
-        }
-
-        Ref<Mesh> CreateMeshGeometry(); 
-
-        static Ref<ScreenQuad> Create() { return std::make_shared<ScreenQuad>(); }
-         
-    };
-     
 
     //static Scope<Mesh> Create(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
 
@@ -60,14 +48,13 @@ namespace Rudy {
          glm::vec2(1.0f, 1.0f),
          glm::vec2(1.0f, 0.0f)
 
-		}; 
-         
+        };
+
         return _mesh;
 
- 
+
     }
 
- 
 
 
 

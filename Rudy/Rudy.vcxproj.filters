@@ -87,7 +87,7 @@
     <ClInclude Include="Rudy\Renderer\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Primitives\Sphere.hpp">
+    <ClInclude Include="Primitives\Sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy\Renderer\Texture.h">
@@ -114,10 +114,10 @@
     <ClInclude Include="Platform\OpenGL\OpenGLFrameBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Primitives\Plane.hpp">
+    <ClInclude Include="Primitives\Plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Primitives\ScreenQuad.hpp">
+    <ClInclude Include="Primitives\ScreenQuad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Primitives\Cube.h">
@@ -129,10 +129,10 @@
     <ClInclude Include="Rudy\Renderer\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\Animation.h">
+    <ClInclude Include="Rudy\Animation\Animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Primitives\Overlay.hpp">
+    <ClInclude Include="Primitives\Overlay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy\Core\FileSystem.h">
@@ -157,6 +157,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy\Physics\cloth.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Apps\Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Apps\PBR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Passes\Pass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Passes\SSAO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -236,7 +248,7 @@
     <ClCompile Include="Rudy\Renderer\Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\Animation.cpp">
+    <ClCompile Include="Rudy\Animation\Animation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Rudy\Core\FileSystem.cpp">
@@ -260,7 +272,25 @@
     <ClCompile Include="Rudy\Physics\cloth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test_pipeline_pbr.cpp">
+    <ClCompile Include="Apps\PBR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Primitives\Sphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Primitives\plane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Primitives\ScreenQuad.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Primitives\Overlay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Apps\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Passes\SSAO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

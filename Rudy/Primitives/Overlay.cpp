@@ -1,41 +1,13 @@
-#pragma once
 
 #include "RudyPCH.h"
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include "Rudy/Renderer/Mesh.h"
-#include "Rudy/Renderer/Material.h"
-
-#include "Rudy/Renderer/Renderer.h"
-
+#include "Overlay.h"
 
 
 namespace Rudy
 {
 
-     
-	class WorldGrid {
-
-	public:
-		WorldGrid(int size) { CreateGeometry(size); }
-		~WorldGrid() = default;
-
-		void CreateGeometry(int size);
-		void Draw(); 
-
-		uint32_t gridVAO, gridVBO;
-
-		//address geometry differently
-		std::vector<float> gridVertices; // 10 vertical and 10 horizontal lines, each requiring 4 vertices
-
-		//Transform  Transform;
-
-		Ref<Material>  material;
-
-	};
-
+	WorldGrid::WorldGrid(int size) { CreateGeometry(size); }
 
 
     //only geometry.  no material, no shader;
@@ -61,7 +33,7 @@ namespace Rudy
         {
             //horizontal lines,  along x axis;  vary z;
             float hx = (float)size;
-            float hz = (float)i; 
+            float hz = (float)i;
 
             //left  
             gridVertices.push_back(-hx);
@@ -111,8 +83,6 @@ namespace Rudy
 
     }
 
-     
-
 
     void WorldGrid::Draw()
     {
@@ -121,41 +91,25 @@ namespace Rudy
         glBindVertexArray(gridVAO);
 
 
-        glm::mat4 model = glm::mat4(1.0f);   
-        glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix(); 
-glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix();
+        glm::mat4 model = glm::mat4(1.0f);
+        glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix();
+        glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix();
 
         material->GetShader()->SetMat4("u_model", model);
-        material->GetShader()->SetMat4("u_projection",  projection);
-material->GetShader()->SetMat4("u_view", view);
+        material->GetShader()->SetMat4("u_projection", projection);
+        material->GetShader()->SetMat4("u_view", view);
 
 
-        glDrawArrays(GL_LINES, 0, gridVertices.size()/3);  // 3 because each vertex has 3 floats.
- 
-        glBindVertexArray(0); 
+        glDrawArrays(GL_LINES, 0, gridVertices.size() / 3);  // 3 because each vertex has 3 floats.
+
+        glBindVertexArray(0);
         material->Unbind();
 
     }
 
 
+    Navigation::Navigation() { CreateGeometry(); }
 
-
-    //x red , y green, z blue ; 
-    class Navigation {
-
-    public:
-        Navigation() { CreateGeometry(); }
-        ~Navigation() = default;
-
-        void CreateGeometry();
-        void Draw();
-
-        uint32_t vao, vbo; 
-        std::vector<float> vertices; // 10 vertical and 10 horizontal lines, each requiring 4 vertices
-         
-        Ref<Material>  material;
-
-    };
 
 
 
@@ -163,11 +117,11 @@ material->GetShader()->SetMat4("u_view", view);
     {
         // Vertices for the axes: (x, y, z, r, g, b)
         vertices = {
-            
+
             0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,  // X-axis (Red)
             1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
             0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,  // Y-axis (Green)
-            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 
+            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
             0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,   // Z-axis (Blue)
             0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
         };
@@ -195,35 +149,34 @@ material->GetShader()->SetMat4("u_view", view);
 
 
     void Navigation::Draw()
-    { 
+    {
         glDisable(GL_DEPTH_TEST);
 
-        material->Bind(); 
-        glBindVertexArray(vao); 
+        material->Bind();
+        glBindVertexArray(vao);
 
-        glm::mat4 model = glm::mat4(1.0f); 
+        glm::mat4 model = glm::mat4(1.0f);
         material->GetShader()->SetMat4("u_model", model);
 
-         
+
 
         glm::mat4  view = Renderer::GetMainCamera()->GetViewMatrix();
         //view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
         glm::mat4  projection = Renderer::GetMainCamera()->GetProjectionMatrix();
-        
-        material->GetShader()->SetMat4("u_projection", projection);
-material->GetShader()->SetMat4("u_view", view);
 
-        glViewport(0,0, 2560/4, 1440/4);
+        material->GetShader()->SetMat4("u_projection", projection);
+        material->GetShader()->SetMat4("u_view", view);
+
+        glViewport(0, 0, 2560 / 4, 1440 / 4);
         glDrawArrays(GL_LINES, 0, 6);
-         
+
         glBindVertexArray(0);
-        material->Unbind(); 
+        material->Unbind();
 
         glEnable(GL_DEPTH_TEST);
     }
 
-     
+
+
 
 }
-
- 
