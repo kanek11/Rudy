@@ -118,7 +118,7 @@ namespace Rudy
 	
 		//for rendering, vertex normals
 		Ref<StorageBuffer> m_particle_normal_buffer; 
-		Ref<StorageBuffer> m_indices_ssao_buffer;
+		Ref<StorageBuffer> m_indices_WorldToView_buffer;
 
 		Ref<StorageBuffer> m_stretchConst_rest_length_buffer;
 		Ref<StorageBuffer> m_bendConst_rest_length_buffer;

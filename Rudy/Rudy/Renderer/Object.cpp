@@ -362,7 +362,7 @@ namespace Rudy
         RD_CORE_INFO("Modelloading: material name:{0}, index:{1}", material->m_Name, material->m_GlobalIndex);
          
 
-        auto loadTexture = [&](aiTextureType type, TextureType textureType) {
+        auto loadTexture = [&](aiTextureType type, TexType TexType) {
         aiString str;  //filenname
 
             if (ai_material->GetTexture(type, 0, &str) == AI_SUCCESS)
@@ -378,7 +378,7 @@ namespace Rudy
                 {
                     if (texture->GetPath() == fileDir)
                     {
-                        material->SetTexture(textureType, texture); // set reference directly.
+                        material->SetTexture(TexType, texture); // set reference directly.
                         skip = true;
 
                         RD_CORE_INFO("Modelloading: Texture at: {0} is already loaded ", fileDir);
@@ -391,11 +391,11 @@ namespace Rudy
                     // Load your texture here using directory, and set it to your material
                     Ref<Texture2D> texture = Texture2D::LoadFile(fileDir);
                     
-                    material->SetTexture(textureType, texture); // Assuming you have a setter for textures in your Material class
+                    material->SetTexture(TexType, texture); // Assuming you have a setter for textures in your Material class
                     m_Loaded_Textures.push_back(texture);  //opt
 
                     
-                    RD_CORE_WARN("Modelloading: Texture type: {0} is added to material ", (int)textureType);
+                    RD_CORE_WARN("Modelloading: Texture type: {0} is added to material ", (int)TexType);
                 }
 
             }
@@ -410,18 +410,18 @@ namespace Rudy
         //refer to the used version source code of assimp;
 
        //RD_CORE_INFO("Modelloading: BlinnPhong is used");
-        loadTexture(aiTextureType_DIFFUSE, TextureType::AlbedoMap);
-        loadTexture(aiTextureType_BASE_COLOR, TextureType::AlbedoMap);
+        loadTexture(aiTextureType_DIFFUSE, TexType::AlbedoMap);
+        loadTexture(aiTextureType_BASE_COLOR, TexType::AlbedoMap);
 
-        loadTexture(aiTextureType_SPECULAR, TextureType::SpecularMap);
+        loadTexture(aiTextureType_SPECULAR, TexType::SpecularMap);
 
         //tangent space
-        loadTexture(aiTextureType_NORMALS, TextureType::NormalMap);
+        loadTexture(aiTextureType_NORMALS, TexType::NormalMap);
 
-        loadTexture(aiTextureType_DIFFUSE_ROUGHNESS, TextureType::RoughnessMap);
+        loadTexture(aiTextureType_DIFFUSE_ROUGHNESS, TexType::RoughnessMap);
 
-        loadTexture(aiTextureType_METALNESS, TextureType::MetallicMap);
-        loadTexture(aiTextureType_AMBIENT_OCCLUSION, TextureType::AOMap);
+        loadTexture(aiTextureType_METALNESS, TexType::MetallicMap);
+        loadTexture(aiTextureType_AMBIENT_OCCLUSION, TexType::AOMap);
 
 
         // Load other properties here if needed, like colors, roughness, etc.

@@ -47,7 +47,7 @@ namespace Rudy {
 		virtual const TextureSpec& GetTextureSpec() const override { return m_TextureSpec; }  
 		virtual uint32_t GetWidth() const override { return m_Width;  }
 		virtual uint32_t GetHeight() const override { return m_Height; }
-		virtual uint32_t GetTextureID() const override { return m_TextureID; }
+		virtual uint32_t GetID() const override { return m_TextureID; }
 		virtual const std::string& GetPath() const override { return m_Path; }  
 	
 	 
@@ -113,7 +113,7 @@ namespace Rudy {
 		virtual const TextureSpec& GetTextureSpec() const override { return m_TextureSpec; }
 		virtual uint32_t GetWidth() const override { return m_Width; }
 		virtual uint32_t GetHeight() const override { return m_Height; }
-		virtual uint32_t GetTextureID() const override { return m_TextureID; }
+		virtual uint32_t GetID() const override { return m_TextureID; }
 		virtual const std::string& GetPath() const override { return m_Path; }
 
 
@@ -123,7 +123,7 @@ namespace Rudy {
 
 		//virtual bool operator==(const Texture& other) const override
 		//{
-		//	return m_TextureID == other.GetTextureID();
+		//	return m_TextureID == other.GetID();
 		//}
 	public:
 

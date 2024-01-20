@@ -1,98 +1,124 @@
 #version 460 core
 
-//https ://learnopengl.com/Advanced-Lighting/SSAO
- 
-out float FragColor;
+layout(location = 0) out float out_FragColor;
 
 in vec2 TexCoords;
 
-uniform sampler2D gPosition;
-uniform sampler2D gWorldNormal;
+
+
+uniform sampler2D gViewPosition;
+uniform sampler2D gViewNormal;
+
 uniform sampler2D gWorldTangent;
-//uniform sampler2D gNormal;
-
 uniform sampler2D gScreenDepth;
-
+ 
 uniform sampler2D u_NoiseTexture;
 
 uniform vec3 samples[64];
 
+uniform mat4 u_view;
 uniform mat4 u_projection;
-uniform mat4 u_view; 
+
+
 
 // parameters (you'd probably want to use them as uniforms to more easily tweak the effect)
-int kernelSize = 64;
-float radius = 0.2;
-float bias = 0.3;
+uniform int u_kernelSize = 64;
+uniform float u_radius ;
+uniform float u_bias ;
+
+uniform float u_range_bias;
+
 
 // tile noise texture over screen based on screen dimensions divided by noise size
-const vec2 noiseScale = vec2(800.0 / 4.0, 600.0 / 4.0);
+// not have to be based on actual screen size;
+uint width = 800;
+uint height = 600;
+const vec2 noiseScale = vec2(width / 4.0, height / 4.0);
 
 
 
 void main()
 {
+    //ignore background fragments
+    float depth = texture(gScreenDepth, TexCoords).r;
+    if (depth == 1.0) //if the depth is 1.0, it's outside the screen
+    {
+        out_FragColor = 1.0;  return;  //discard if want it to be black
+    } 
+  
     //uniform inputs:
     //both position and normal comes in world;
-    vec3 fragPos = texture(gPosition, TexCoords).xyz;
-    vec3 normal = normalize(texture(gWorldNormal, TexCoords).rgb * 2.0 - 1.0); //from [0,1] to [-1,1]
-    vec3 randomVec = normalize(texture(u_NoiseTexture, TexCoords * noiseScale).xyz);
+    vec3 ViewFragPos = texture(gViewPosition, TexCoords).rgb; 
+    vec3 ViewNormal = normalize( texture(gViewNormal, TexCoords).rgb * 2.0 - 1.0); //from [0,1] to [-1,1]
 
+  
+    //adjust the bias ; camera is at the origin
+    vec3 viewDir = normalize(vec3(0.0f) - ViewFragPos);
+    //bias = max(u_max_bias * (1.0 - dot( ViewNormal, viewDir)), u_min_bias);
+    float bias = u_bias;
+    
     //the sample vectors are defined in tangent space;
-    //create TBN from tangent-space to world space;  //or view space
-    //the random vector is to create a random rotation matrix of the tangent space/sample vectors
+    //create TBN from tangent-space to view space;  
+   //the random vector is to create a random rotation matrix of the tangent space/sample vectors
 
-    //vec3 tangent = normalize(randomVec - normal * dot(randomVec, normal));
-    //vec3 bitangent = cross(normal, tangent);
-    //mat3 TBN = mat3(tangent, bitangent, normal);
+    vec3 randomVec = normalize( texture(u_NoiseTexture, TexCoords * noiseScale).xyz);
+    //exclude normal component by gram-schmidt process
+    vec3 ViewTangent = normalize(randomVec - ViewNormal * dot(randomVec, ViewNormal));
+    
+    //test: use tangent from gbuffer
+    // vec3 tangent = texture(gWorldTangent, TexCoords).rgb;
+     //vec3 ViewTangent = normalize(vec3(u_view * vec4(tangent, 0.0)));
 
-
-     //turn into view space
-     vec3 fragPosView = vec3(u_view * vec4(fragPos, 1.0));
-     vec3 normalView = normalize(vec3(u_view * vec4(normal, 0.0)));
-      
-     //test: use tangent from gbuffer
-     vec3 tangent = texture(gWorldTangent, TexCoords).rgb;
-     vec3 tangentView = normalize(vec3(u_view * vec4(tangent, 0.0)));
-
-     vec3 bitangentView = cross(normalView, tangentView);
-     mat3 TBNView = mat3(tangentView, bitangentView, normalView);
+     vec3 ViewBitangent = normalize( cross(ViewNormal, ViewTangent) );
+     mat3 ViewTBN= mat3(ViewTangent, ViewBitangent, ViewNormal);
 
 
 
-     float occlusionNum = 0.0;
-     for (int i = 0; i < kernelSize; ++i)
+     float occlusionNum = 0.0; 
+     for (int i = 0; i < u_kernelSize; ++i)
      {
          //sample position ;  from tangent to world
-         vec3 samplePos = TBNView * samples[i];
-         samplePos = fragPosView + samplePos * radius;
+         vec3 sampleOffset = ViewTBN * samples[i];
+         vec3 samplePos = ViewFragPos + sampleOffset * u_radius;
           
          float sampleDepth = samplePos.z;
 
-         //project to view
-         vec4 offset = vec4(samplePos, 1.0); 
-         offset = u_projection * offset; // from view to clip-space
-         offset.xyz /= offset.w; // perspective divide
-         offset.xyz = offset.xyz * 0.5 + 0.5; // transform to range 0.0 - 1.0
+         //get the depth of fragment
+         //project to view 
+         vec4 sampleNDC = u_projection * vec4(samplePos, 1.0); // from view to clip-space
+         sampleNDC.xyz /= sampleNDC.w; // perspective divide
+         sampleNDC.xyz = sampleNDC.xyz * 0.5 + 0.5; // transform to range 0.0 - 1.0
 
-         // get sample depth
-         vec3 sampleFragWorldPos = texture(gPosition, offset.xy).rgb;
+         //ignore samples that are outside the screen
+         float sampleZ = texture(gScreenDepth, sampleNDC.xy).r; //depth from screen space
+         if (sampleZ == 1.0) //if the depth is 1.0, it's outside the scene
+         { 
+             continue;
+         }
+         // 
+         vec3 sampleFragPos = texture(gViewPosition, sampleNDC.xy).rgb;
+         float sampleFragDepth = sampleFragPos.z;
 
-         //to view
-         vec3 sampleFragViewPos = vec3(u_view * vec4(sampleFragWorldPos, 1.0));
-         float sampleFragDepth = sampleFragViewPos.z; 
+         //testOutput = samples[i].x;
+          // range check & accumulate
+         //float rangeCheck = smoothstep(0.0, 1.0, u_radius / abs(ViewFragPos.z - sampleFragDepth));
+        
+   
+         //float rangeCheck = smoothstep(0.0, 1.0, length(samples[i]) / length(ViewFragPos - sampleFragPos));
+         float rangeCheck = step(1.0 - u_range_bias, length(samples[i]) / length(ViewFragPos - sampleFragPos));
 
-         // range check & accumulate
-          float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPosView.z - sampleDepth));
-          occlusionNum += (sampleFragDepth >= sampleDepth + bias ? 1.0 : 0.0) * rangeCheck;  
+         occlusionNum += (sampleFragDepth > sampleDepth + bias ? 1.0 : 0.0)  * rangeCheck;
+     
      }
 
-     float occlusion = 1.0 - (occlusionNum / kernelSize);
 
-     FragColor = occlusion;
+     float occlusion = 1.0 - (occlusionNum / u_kernelSize);
+
+     out_FragColor = occlusion;
 
 
-
+     //testOutput = fragPos.z; 
+     //FragColor = 0.5;
   
 
 }

@@ -29,10 +29,24 @@ layout(std430, binding = 0) buffer buffer_t
 
 } buffer0;
 
+// ------------------------------------------------------------------
+// Images ---------------------------------------------------------
+// ------------------------------------------------------------------
+
+layout(binding = 0, rgba32f) uniform image2D image0;
+
 
 
 void main()
 {
 	uint index = gl_GlobalInvocationID.x;
 	buffer0.buffer_data[index] = 0.0f;
+
+	//or
+	ivec2 pixel_index = ivec2(gl_GlobalInvocationID.xy);
+	
+	vec4 imageValue = imageLoad(image0, pixel_index);
+    imageValue = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	imageStore(image0, pixel_index, imageValue);
+	
 }

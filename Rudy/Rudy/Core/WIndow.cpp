@@ -9,7 +9,7 @@
 
 namespace Rudy
 {
-	Scope<Window> Window::Create(const WindowProps& props)
+	Ref<Window> Window::Create(const WindowProps& props)
 	{
 #ifdef RD_PLATFORM_WINDOWS
 		return CreateScope<WindowsWindow>(props);
@@ -18,5 +18,8 @@ namespace Rudy
 		return nullptr;
 #endif
 	}
+
+
+
 
 }

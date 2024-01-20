@@ -3,27 +3,32 @@
 #include <Rudy.h>
 
 
-bool  visualize_buffer = false;
-bool  enableSkyBox = true;
-bool  enableSSAO = false;
-bool  enableSSR = false;
 
 
-//2560:1440 = 16:9
-const uint32_t SCR_WIDTH = 2560;
-const uint32_t SCR_HEIGHT = 1440;
-const uint32_t BUFFER_WIDTH = SCR_WIDTH / 4;
-const uint32_t BUFFER_HEIGHT = SCR_HEIGHT / 4;
-const uint32_t SHADOW_WIDTH = 2560, SHADOW_HEIGHT = 2560;
+
+void Start() {
+
+    bool  visualize_buffer = false;
+    bool  enableSkyBox = true;
+    bool  enableSSAO = false;
+    bool  enableSSR = false;
 
 
-const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 2.0f, 2.0f);
- 
+    //2560:1440 = 16:9
+    const uint32_t SCR_WIDTH = 2560;
+    const uint32_t SCR_HEIGHT = 1440;
+    const uint32_t BUFFER_WIDTH = SCR_WIDTH / 4;
+    const uint32_t BUFFER_HEIGHT = SCR_HEIGHT / 4;
+    const uint32_t SHADOW_WIDTH = 2560, SHADOW_HEIGHT = 2560;
 
-using namespace Rudy;
+
+    const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 2.0f, 2.0f);
 
 
-int main() {
+    using namespace Rudy;
+
+
+
 
     Rudy::Log::Init();
     RD_CORE_WARN("test:Initialized Log!");
@@ -40,7 +45,7 @@ int main() {
     Renderer::Init(SCR_WIDTH, SCR_HEIGHT);
     Renderer::SetMainCamera(main_camera);
 
-    auto renderAPI = Renderer::s_RendererAPI;
+    auto renderAPI =  Renderer::GetAPI();
 
 
 
@@ -132,10 +137,10 @@ int main() {
     auto plane_metallicMap = Texture2D::LoadFile("D:/CG_resources/PBRTextures/Floor_brown_ue/metallic.png");
 
 
-   // plane_Material->SetTexture(TextureType::AlbedoMap, plane_albedoMap);
-    plane_Material->SetTexture(TextureType::NormalMap, plane_normalMap);
-    plane_Material->SetTexture(TextureType::RoughnessMap, plane_roughnessMap);
-    plane_Material->SetTexture(TextureType::MetallicMap, plane_metallicMap);
+   // plane_Material->SetTexture(TexType::AlbedoMap, plane_albedoMap);
+    plane_Material->SetTexture(TexType::NormalMap, plane_normalMap);
+    plane_Material->SetTexture(TexType::RoughnessMap, plane_roughnessMap);
+    plane_Material->SetTexture(TexType::MetallicMap, plane_metallicMap);
 
 
     auto floor = Plane::Create(30);
@@ -261,8 +266,8 @@ int main() {
     for (auto meshObj : test_model->meshObjects)
     {
         auto _material = meshObj->GetRendererComponent()->GetMaterial();
-        _material->SetTexture(TextureType::FaceSDFTexture, faceSDF);
-        _material->SetTexture(TextureType::ToonTexture, toonTexture); 
+        _material->SetTexture(TexType::FaceSDFTexture, faceSDF);
+        _material->SetTexture(TexType::ToonTexture, toonTexture); 
         _material->SetBool("u_face", false);
         meshObj->transform->rotation = glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
    
@@ -274,20 +279,20 @@ int main() {
 
     auto lightingPassMaterial = Material::Create(lightingPassShader);
 
-     //lightingPassMaterial->SetTexture(TextureType::gPosition, gPosition);
-     //lightingPassMaterial->SetTexture(TextureType::gAlbedo, gAlbedo);
-     //lightingPassMaterial->SetTexture(TextureType::gWorldNormal, gWorldNormal);
-     //lightingPassMaterial->SetTexture(TextureType::gWorldTangent, gWorldTangent);
-     //lightingPassMaterial->SetTexture(TextureType::gSpecular, gSpecular);
-     //lightingPassMaterial->SetTexture(TextureType::gMetallic, gMetallic);
-     //lightingPassMaterial->SetTexture(TextureType::gRoughness, gRoughness);
-     //lightingPassMaterial->SetTexture(TextureType::gScreenDepth, gScreenDepth);
+     //lightingPassMaterial->SetTexture(TexType::gPosition, gPosition);
+     //lightingPassMaterial->SetTexture(TexType::gAlbedo, gAlbedo);
+     //lightingPassMaterial->SetTexture(TexType::gWorldNormal, gWorldNormal);
+     //lightingPassMaterial->SetTexture(TexType::gWorldTangent, gWorldTangent);
+     //lightingPassMaterial->SetTexture(TexType::gSpecular, gSpecular);
+     //lightingPassMaterial->SetTexture(TexType::gMetallic, gMetallic);
+     //lightingPassMaterial->SetTexture(TexType::gRoughness, gRoughness);
+     //lightingPassMaterial->SetTexture(TexType::gScreenDepth, gScreenDepth);
      
-     //lightingPassMaterial->SetTexture(TextureType::diffuseEnvMap, diffuseEnvMap);
-     //lightingPassMaterial->SetTexture(TextureType::specularEnvMap, specularEnvMap);
-     //lightingPassMaterial->SetTexture(TextureType::brdfLUTMap, brdfLUTMap);
+     //lightingPassMaterial->SetTexture(TexType::diffuseEnvMap, diffuseEnvMap);
+     //lightingPassMaterial->SetTexture(TexType::specularEnvMap, specularEnvMap);
+     //lightingPassMaterial->SetTexture(TexType::brdfLUTMap, brdfLUTMap);
      
-     //lightingPassMaterial->SetTexture(TextureType::DepthMap, shadowMap);
+     //lightingPassMaterial->SetTexture(TexType::DepthMap, shadowMap);
 
 
       
@@ -479,16 +484,16 @@ int main() {
         //  glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
         //
         // //screenQuadShader->SetBool("u_IsGrayScale", true);
-        //  glBindTextureUnit(0, ssrScreenTexture->GetTextureID());  //replace the texture2D here;
+        //  glBindTextureUnit(0, ssrScreenTexture->GetID());  //replace the texture2D here;
         //  screenQuad.Draw(nullptr);
 
           //screenQuadShader->SetBool("u_IsGrayScale", true);
-          //glBindTextureUnit(0, shadowMap->GetTextureID());  //replace the texture 2D here; 
-        glBindTextureUnit(0, lightingPassScreenTexture->GetTextureID());  //replace the texture 2D here; 
+          //glBindTextureUnit(0, shadowMap->GetID());  //replace the texture 2D here; 
+        glBindTextureUnit(0, lightingPassScreenTexture->GetID());  //replace the texture 2D here; 
         screenQuad->Draw(nullptr);
 
         //screenQuadShader->SetBool("u_IsGrayScale", true);
-        //glBindTextureUnit(0, ssrScreenTexture->GetTextureID());  //replace the texture2D here;
+        //glBindTextureUnit(0, ssrScreenTexture->GetID());  //replace the texture2D here;
          
         glDisable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
@@ -551,8 +556,8 @@ int main() {
                 screenQuadShader->Bind();
 
                 glViewport(leftBottom[index].first * BUFFER_WIDTH, leftBottom[index].second * BUFFER_HEIGHT, BUFFER_WIDTH, BUFFER_HEIGHT);
-                glBindTextureUnit(0, g_texture.second->GetTextureID());
-                if (g_texture.first == TextureType::gMetallic || g_texture.first == TextureType::gRoughness || g_texture.first == TextureType::gSpecular)
+                glBindTextureUnit(0, g_texture.second->GetID());
+                if (g_texture.first == TexType::gMetallic || g_texture.first == TexType::gRoughness || g_texture.first == TexType::gSpecular)
                 {
                     screenQuadShader->SetBool("u_IsGrayScale", true);
                     // HZ_CORE_WARN("gray scale");
@@ -592,9 +597,7 @@ int main() {
 
     //====shutdown
 
-    glfwTerminate();
-    return 0;
-
+    glfwTerminate(); 
 
 }
 

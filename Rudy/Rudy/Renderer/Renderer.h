@@ -13,10 +13,11 @@
 
 namespace Rudy {
 	 
-
+	//mainly serve as a state organizer
+	//especially the  API, window;
 	class Renderer
 	{
-	//me: to implement more rendering engines in the future, leave it now.
+	
 	enum class RenderingEngine {
 
 		Renderer2D = 0, Renderer3D = 1,
@@ -35,7 +36,7 @@ namespace Rudy {
 
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); } 
 		static Ref<RendererAPI> GetRendererAPI() { return s_RendererAPI; }
-
+		static Ref<Window> GetWindow() { return s_Window; }
 
 		static Ref<Camera> GetMainCamera() { return s_MainCamera; }
 		static void SetMainCamera(Ref<Camera> camera) { s_MainCamera = camera; }
@@ -51,17 +52,13 @@ namespace Rudy {
 		}
 
 
-	//static variables
-		static Ref<RendererAPI> s_RendererAPI;
-		 
+	
 
 	private:
-	 
-		//camera
-		static Ref<Camera> s_MainCamera;
-
-		//the window ;
-		static Scope<Window> s_Window;
+		//static variables
+		static Ref<RendererAPI> s_RendererAPI; 
+		static Ref<Camera> s_MainCamera; 
+		static Ref<Window> s_Window;
 
 	 
 	};

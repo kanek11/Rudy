@@ -1,8 +1,8 @@
 #version 460 core  
-layout(location = 0) out vec3 gPosition; 
-layout(location = 1) out vec3 gAlbedo;
-layout(location = 2) out vec3 gWorldNormal;
-layout(location = 3) out vec3 gWorldTangent;
+layout(location = 0) out vec4 gWorldPosition; 
+layout(location = 1) out vec4 gAlbedo;
+layout(location = 2) out vec4 gWorldNormal;
+layout(location = 3) out vec4 gWorldTangent;
 layout(location = 4) out float gSpecular;
 layout(location = 5) out float gMetallic;
 layout(location = 6) out float gRoughness; 
@@ -46,37 +46,40 @@ uniform bool Use_u_RoughnessMap;
 void main()
 {
    
-    gPosition = fs_in.WorldPos;   
+    gWorldPosition.xyz = fs_in.WorldPos;
 
-    gAlbedo = u_Albedo;
-    if(Use_u_AlbedoMap)
-	  gAlbedo *= pow( texture(u_AlbedoMap, fs_in.TexCoords).rgb, vec3(2.2) ); //gamma correction
-	 
-    gSpecular = u_Specular;
+    gAlbedo.rgb = u_Albedo;
+    if (Use_u_AlbedoMap)
+    {
+        gAlbedo *= texture(u_AlbedoMap, fs_in.TexCoords).rgba;
+        //gAlbedo = pow( texture(u_AlbedoMap, fs_in.TexCoords).rgb, vec3(2.2) ); //gamma correction
+ 
+    }
+	     
+
+    gSpecular.r = u_Specular;
    if(Use_u_SpecularMap)
-		gSpecular *= texture(u_SpecularMap, fs_in.TexCoords).r;
+	 gSpecular *= texture(u_SpecularMap, fs_in.TexCoords).r;
 
-	gMetallic = u_Metallic;
+	gMetallic.r = u_Metallic;
     if(Use_u_MetallicMap)
 		gMetallic *= texture(u_MetallicMap, fs_in.TexCoords).r;
 
-	gRoughness = u_Roughness;
+	gRoughness.r = u_Roughness;
     if(Use_u_RoughnessMap)
 		gRoughness *= texture(u_RoughnessMap, fs_in.TexCoords).r;
 
-    gWorldNormal = normalize(fs_in.WorldNormal); 
+    gWorldNormal.rgb = normalize(fs_in.WorldNormal); 
     if (Use_u_NormalMap)
     {
         vec3 localNormal = texture(u_NormalMap, fs_in.TexCoords).rgb * 2.0 - 1.0; //from [0,1] to [-1,1] 
-        gWorldNormal = normalize(fs_in.WorldTBN * localNormal) ;   //convert from tangent space to world space
+        gWorldNormal.rgb = normalize(fs_in.WorldTBN * localNormal) ;   //convert from tangent space to world space
     }
   
 
     //gfs_in.WorldNormal = vec3( 1.0,0.0,0.0);  //test normal map
-    gWorldNormal = gWorldNormal * 0.5 + 0.5; //from [-1,1] to [0,1] ;
-
-    gWorldTangent = normalize(fs_in.WorldTangent) * 0.5 + 0.5; //from [-1,1] to [0,1] 
-
-  
+    gWorldNormal.rgb = gWorldNormal.rgb * 0.5 + 0.5; //from [-1,1] to [0,1] ; 
+    gWorldTangent.rgb = normalize(fs_in.WorldTangent) * 0.5 + 0.5; //from [-1,1] to [0,1] 
+     
 
 }

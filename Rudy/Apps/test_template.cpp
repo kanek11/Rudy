@@ -7,15 +7,7 @@
  
 
 
-//2560:1440 = 16:9
-const uint32_t SCR_WIDTH = 2560;
-const uint32_t SCR_HEIGHT = 1440;
-const uint32_t BUFFER_WIDTH = SCR_WIDTH / 4;
-const uint32_t BUFFER_HEIGHT = SCR_HEIGHT / 4;
-const uint32_t SHADOW_WIDTH = 2560, SHADOW_HEIGHT = 2560;
 
-
-const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 2.0f, 5.0f);
 
 //const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 0.0f, 3.0f);
 
@@ -30,7 +22,19 @@ const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 2.0f, 5.0f);
 using namespace Rudy;
 
 
-int main() {
+void StartTemp() {
+
+    //2560:1440 = 16:9
+    const uint32_t SCR_WIDTH = 2560;
+    const uint32_t SCR_HEIGHT = 1440;
+    const uint32_t BUFFER_WIDTH = SCR_WIDTH / 4;
+    const uint32_t BUFFER_HEIGHT = SCR_HEIGHT / 4;
+    const uint32_t SHADOW_WIDTH = 2560, SHADOW_HEIGHT = 2560;
+
+
+    const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 2.0f, 5.0f);
+
+
 
     Rudy::Log::Init();
     RD_CORE_WARN("test:Initialized Log!");
@@ -47,7 +51,7 @@ int main() {
     Renderer::Init(SCR_WIDTH, SCR_HEIGHT);
     Renderer::SetMainCamera(main_camera);
 
-    auto renderAPI = Renderer::s_RendererAPI;
+    auto renderAPI = Renderer::GetAPI();
 
 
 
@@ -173,8 +177,7 @@ int main() {
 
     //====shutdown
 
-    glfwTerminate();
-    return 0;
+    glfwTerminate(); 
 
 
 }

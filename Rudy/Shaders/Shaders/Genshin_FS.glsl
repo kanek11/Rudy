@@ -75,7 +75,7 @@ void main()
 
 	//===========preprocess================
 	//this is copied from gbuffer shader; we leave it the way it is.  may be optimized later
-	vec3 gPosition;
+	vec3 gWorldPosition;
 	vec3 gAlbedo;
 	vec3 gWorldNormal;
 	vec3 gWorldTangent;
@@ -83,7 +83,7 @@ void main()
 	float gMetallic;
 	float gRoughness; 
 
-	gPosition = fs_in.WorldPos;   
+	gWorldPosition = fs_in.WorldPos;   
 
 	gAlbedo = u_Albedo;
 	if (Use_u_AlbedoMap)
@@ -119,7 +119,7 @@ void main()
 	out_ViewNormal = u_view * vec4(gWorldNormal, 1.0f);
 
 	//=====sample the gbuffer
-	//vec3 worldPos =    texture(gPosition, fs_in.TexCoords).xyz;
+	//vec3 worldPos =    texture(gWorldPosition, fs_in.TexCoords).xyz;
 	//vec3 albedo =      texture(gAlbedo, fs_in.TexCoords).xyz; 
 	//float specular =   texture(gSpecular, fs_in.TexCoords).r;  
 	//vec3 worldNormal = texture(gWorldNormal, fs_in.TexCoords).xyz;
@@ -127,7 +127,7 @@ void main()
 	//vec3 normal = normalize(worldNormal * 2.0 - 1.0);
 
 	//new:
-	 vec3 worldPos  = gPosition; 
+	 vec3 worldPos  = gWorldPosition; 
 	 vec3 albedo    = gAlbedo; 
 	 float specular = gSpecular; 
  

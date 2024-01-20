@@ -372,8 +372,8 @@ namespace Rudy
 		m_particle_normal_buffer = StorageBuffer::Create();
 		m_particle_normal_buffer->SetData(m_normals.data(),m_normals.size() * sizeof(glm::vec4));
 
-		m_indices_ssao_buffer =  StorageBuffer::Create();
-		m_indices_ssao_buffer->SetData(indices.data(), indices.size() * sizeof(uint32_t));
+		m_indices_WorldToView_buffer =  StorageBuffer::Create();
+		m_indices_WorldToView_buffer->SetData(indices.data(), indices.size() * sizeof(uint32_t));
 		 
 		//legacy
 		if(useLegacyShader)
@@ -745,7 +745,7 @@ namespace Rudy
 
 			m_particle_position_buffer->BindBase(0);
 			m_particle_normal_buffer->BindBase(1);
-			m_indices_ssao_buffer->BindBase(2);
+			m_indices_WorldToView_buffer->BindBase(2);
 
 
 			uint32_t dispatchX = static_cast<uint32_t>(

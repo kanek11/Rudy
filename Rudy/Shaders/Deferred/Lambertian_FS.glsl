@@ -13,7 +13,7 @@ in VS_OUT
 } fs_in;
 
 
-uniform sampler2D gPosition;
+uniform sampler2D gWorldPosition;
 uniform sampler2D gAlbedo;
 uniform sampler2D gWorldNormal;
 uniform sampler2D gSpecular;
@@ -42,7 +42,7 @@ void main()
 
 
     //gbuffers;
-    vec3 worldPos = texture(gPosition, fs_in.TexCoords).rgb;
+    vec3 worldPos = texture(gWorldPosition, fs_in.TexCoords).rgb;
     vec3 worldNormal = texture(gWorldNormal, fs_in.TexCoords).rgb;
     if (length(worldNormal) < 0.1) discard;  //discard background
     vec3 N = normalize(worldNormal * 2.0 - 1.0);

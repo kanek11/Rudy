@@ -15,20 +15,23 @@ namespace Rudy {
 	//Scope<Renderer::SceneData> Renderer::s_SceneData = CreateScope<Renderer::SceneData>();
 
 	Ref<Camera> Renderer::s_MainCamera = CreateRef<Camera>();
-	Scope<Window> Renderer::s_Window ;
+	Ref<Window> Renderer::s_Window ;
 	Ref<RendererAPI> Renderer::s_RendererAPI;   
 
 	void Renderer::Init(uint32_t width, uint32_t height)
 	{
 		//RD_PROFILE_FUNCTION();
  
-		//fixed dependency of all:
+		//fixed dependency of everything: so must go through the renderer for a window
+		//camera though, is just a data structure.
 	    RendererAPI::SetAPI( RendererAPI::API::OpenGL );
 
 		s_RendererAPI = RendererAPI::Create(); 
 
 		s_Window = Window::Create( WindowProps{ width, height ,"Rudy Engine"});
 		Input::SetWindowContext(s_Window->GetNativeWindow());
+
+		s_Window->SetVSync(false);
 		 
 
 		RD_CORE_WARN("Renderer: Init");

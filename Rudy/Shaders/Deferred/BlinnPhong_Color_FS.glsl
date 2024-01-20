@@ -13,7 +13,7 @@ out vec4 FragColor;
 
 in vec2 TexCoords;
 
-uniform sampler2D gPosition;
+uniform sampler2D gWorldPosition;
 //uniform sampler2D gAlbedo;
 uniform sampler2D gWorldNormal;
 uniform sampler2D gSpecular;
@@ -75,7 +75,7 @@ void main()
 { 
 
 
-    vec3 WorldPos = texture(gPosition, TexCoords).rgb; 
+    vec3 WorldPos = texture(gWorldPosition, TexCoords).rgb; 
 
     vec3 normal = normalize(texture(gWorldNormal, TexCoords).rgb * 2.0 - 1.0);
 

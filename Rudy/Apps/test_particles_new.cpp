@@ -9,24 +9,28 @@
 using namespace Rudy; 
 using namespace glm;
 
-bool  visualize_buffer = true; 
 
-
-//2560:1440 = 16:9
-const uint32_t SCR_WIDTH = 2560;
-const uint32_t SCR_HEIGHT = 1440;
-const uint32_t BUFFER_WIDTH = SCR_WIDTH / 4;
-const uint32_t BUFFER_HEIGHT = SCR_HEIGHT / 4;
-const uint32_t SHADOW_WIDTH = 2560, SHADOW_HEIGHT = 2560;
-
-
-const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 2.0f, 5.0f);
 
  
  
 
 
-int main() {
+void StartPa() {
+
+    bool  visualize_buffer = true;
+
+
+    //2560:1440 = 16:9
+    const uint32_t SCR_WIDTH = 2560;
+    const uint32_t SCR_HEIGHT = 1440;
+    const uint32_t BUFFER_WIDTH = SCR_WIDTH / 4;
+    const uint32_t BUFFER_HEIGHT = SCR_HEIGHT / 4;
+    const uint32_t SHADOW_WIDTH = 2560, SHADOW_HEIGHT = 2560;
+
+
+    const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 2.0f, 5.0f);
+
+
 
     Rudy::Log::Init();
     RD_CORE_WARN("test:Initialized Log!");
@@ -43,7 +47,7 @@ int main() {
     Renderer::Init(SCR_WIDTH, SCR_HEIGHT);
     Renderer::SetMainCamera(main_camera);
 
-    auto renderAPI = Renderer::s_RendererAPI;
+    auto renderAPI = Renderer::Renderer::GetAPI();
 
 
 
@@ -60,7 +64,7 @@ int main() {
 
     m_particle_sprite_shader->Bind();
     m_particle_sprite_shader->SetInt("u_sprite", 0);
-    glBindTextureUnit(0, radial_sprite->GetTextureID());
+    glBindTextureUnit(0, radial_sprite->GetID());
 
     m_particle_sprite_shader->SetVec4("u_color", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)); //red 
     m_particle_sprite_shader->SetFloat("u_sprite_size", 0.6f);
@@ -159,8 +163,7 @@ glDisable(GL_BLEND);
 
     //====shutdown 
     Renderer::Shutdown();
-    //glfwTerminate();
-    return 0;
+    //glfwTerminate(); 
 
 
 }

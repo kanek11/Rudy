@@ -9,16 +9,8 @@ namespace Rudy
 {
 
      
-    //2560:1440 = 16:9
-    const uint32_t SCR_WIDTH = 2560;
-    const uint32_t SCR_HEIGHT = 1440;
-    const uint32_t BUFFER_WIDTH = SCR_WIDTH / 4;
-    const uint32_t BUFFER_HEIGHT = SCR_HEIGHT / 4;
-    const uint32_t SHADOW_WIDTH = 2560, SHADOW_HEIGHT = 2560;
-
-
-    const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 1.5f, 5.0f);
-
+  
+  
 
     PBR::PBR() : Application()
     {
@@ -34,7 +26,7 @@ namespace Rudy
     void PBR::Init()
     {
 
-     }
+    }
   
     void PBR::Start()
     { 
@@ -48,14 +40,17 @@ namespace Rudy
             //Input::SetWindowContext(window->GetNativeWindow());
 
 
-            auto main_camera = Camera::Create(MAIN_CAMERA_POS);
+            main_camera = Camera::Create(MAIN_CAMERA_POS);
 
             Renderer::Init(SCR_WIDTH, SCR_HEIGHT);
-            Renderer::SetMainCamera(main_camera);
+            Renderer::SetMainCamera(main_camera); 
+          
+            window = Renderer::GetWindow(); 
+            auto renderAPI = Renderer::GetAPI();
 
-            auto renderAPI = Renderer::s_RendererAPI;
 
-
+            //gui
+            this->InitGUI();
 
             //=================================================================================================
             //=== initialize the resources
@@ -91,7 +86,7 @@ namespace Rudy
             auto brdfLUTFBO = FrameBuffer::Create("brdfLUT FBO", 512, 512, FrameBufferType::Regular);
 
             brdfLUTFBO->Bind();
-            brdfLUTFBO->SetColorTexture(TextureType::brdfLUTTexture, brdfLUTTexture, 0);
+            brdfLUTFBO->SetColorTexture(TexType::brdfLUTTexture, brdfLUTTexture, 0);
 
             glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -136,24 +131,37 @@ namespace Rudy
                 "GBuffer FBO", SCR_WIDTH, SCR_WIDTH, FrameBufferType::GBuffer);
 
             //the framebuffer for gbuffer pass: 8;
-            auto gPosition = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F });
-            auto gAlbedo = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F });
-            auto gWorldNormal = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F });
-            auto gWorldTangent = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F });
+            auto gWorldPosition = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGBA32F });
+            auto gWorldNormal = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGBA32F });
+            auto gWorldTangent = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGBA32F });
+           
+            //new:
+            auto gViewPosition = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGBA32F });
+            auto gViewNormal = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGBA32F });
+
+      
+            auto gAlbedo = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGBA32F });
             auto gSpecular = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::R32F });
             auto gMetallic = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::R32F });
             auto gRoughness = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::R32F });
             auto gScreenDepth = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::DEPTH_COMPONENT24,
-                                     false, WrapMode::ClampToBorder, FilterMode::Nearest });
+                                   false, WrapMode::ClampToBorder, FilterMode::Nearest });
 
 
-            GBufferFBO->SetColorTexture(TextureType::gPosition, gPosition, 0);
-            GBufferFBO->SetColorTexture(TextureType::gAlbedo, gAlbedo, 1);
-            GBufferFBO->SetColorTexture(TextureType::gWorldNormal, gWorldNormal, 2);
-            GBufferFBO->SetColorTexture(TextureType::gWorldTangent, gWorldTangent, 3);
-            GBufferFBO->SetColorTexture(TextureType::gSpecular, gSpecular, 4);
-            GBufferFBO->SetColorTexture(TextureType::gMetallic, gMetallic, 5);
-            GBufferFBO->SetColorTexture(TextureType::gRoughness, gRoughness, 6);
+
+
+            //set the border color for the depth texture;
+            gScreenDepth->Bind();
+            float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+            glTextureParameterfv(gScreenDepth->GetID(), GL_TEXTURE_BORDER_COLOR, borderColor);
+
+            GBufferFBO->SetColorTexture(TexType::gWorldPosition, gWorldPosition, 0);
+            GBufferFBO->SetColorTexture(TexType::gAlbedo, gAlbedo, 1);
+            GBufferFBO->SetColorTexture(TexType::gWorldNormal, gWorldNormal, 2);
+            GBufferFBO->SetColorTexture(TexType::gWorldTangent, gWorldTangent, 3);
+            GBufferFBO->SetColorTexture(TexType::gSpecular, gSpecular, 4);
+            GBufferFBO->SetColorTexture(TexType::gMetallic, gMetallic, 5);
+            GBufferFBO->SetColorTexture(TexType::gRoughness, gRoughness, 6);
 
             GBufferFBO->SetDepthTexture(gScreenDepth);
 
@@ -169,6 +177,7 @@ namespace Rudy
 
             //lighting
             auto sunlight = DirectionalLight::Create();
+            sunlight->intensity = 10.0f;
             sunlight->direction = glm::vec3(0.5f, -0.5f, -1.0f);
 
             //info for shadowmap:
@@ -193,17 +202,21 @@ namespace Rudy
             auto plane_metallicMap = Texture2D::LoadFile("D:/CG_resources/PBRTextures/Floor_brown_ue/metallic.png");
 
 
-            plane_gMaterial->SetTexture(TextureType::AlbedoMap, plane_albedoMap);
-            plane_gMaterial->SetTexture(TextureType::NormalMap, plane_normalMap);
-            plane_gMaterial->SetTexture(TextureType::RoughnessMap, plane_roughnessMap);
-            plane_gMaterial->SetTexture(TextureType::MetallicMap, plane_metallicMap);
+            plane_gMaterial->SetTexture(TexType::AlbedoMap, plane_albedoMap);
+            plane_gMaterial->SetTexture(TexType::NormalMap, plane_normalMap);
+            plane_gMaterial->SetTexture(TexType::RoughnessMap, plane_roughnessMap);
+            plane_gMaterial->SetTexture(TexType::MetallicMap, plane_metallicMap);
+
+             
+            auto floor1 = Plane::Create(10);
+            floor1->transform->scale = glm::vec3(10.0f);
+            floor1->SetMaterial(plane_gMaterial);
 
 
-
-
-            auto floor = Plane::Create(30);
-            //floor->transform->position = glm::vec3(0.0f, -1.0f, 0.0f);
-            floor->SetMaterial(plane_gMaterial);
+            auto floor2 = Plane::Create(10);
+            floor2->transform->scale = glm::vec3(10.0f);
+            floor2->transform->rotation = glm::angleAxis(glm::radians(+90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
+            floor2->transform->position = glm::vec3(0.0f, 0.0f, -5.0f);
 
 
             //
@@ -216,10 +229,10 @@ namespace Rudy
             auto sphere_metallicMap = Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/metallic.png");
 
 
-            //sphere_gMaterial->SetTexture(TextureType::AlbedoMap,    sphere_albedoMap);
-            sphere_gMaterial->SetTexture(TextureType::NormalMap, sphere_normalMap);
-            sphere_gMaterial->SetTexture(TextureType::RoughnessMap, sphere_roughnessMap);
-            sphere_gMaterial->SetTexture(TextureType::MetallicMap, sphere_metallicMap);
+            sphere_gMaterial->SetTexture(TexType::AlbedoMap,    sphere_albedoMap);
+            sphere_gMaterial->SetTexture(TexType::NormalMap, sphere_normalMap);
+            sphere_gMaterial->SetTexture(TexType::RoughnessMap, sphere_roughnessMap);
+            sphere_gMaterial->SetTexture(TexType::MetallicMap, sphere_metallicMap);
 
 
             auto sphere = Sphere::Create(20);
@@ -252,7 +265,10 @@ namespace Rudy
             auto shadowMap = Texture2D::CreateEmpty(
                 TextureSpec{ SHADOW_WIDTH, SHADOW_HEIGHT, TextureInternalFormat::DEPTH_COMPONENT24,
                              false, WrapMode::ClampToBorder, FilterMode::Nearest });
-
+            //set the border color for the depth texture;
+            gScreenDepth->Bind();
+            float borderColor2[] = { 1.0, 1.0, 1.0, 1.0 };
+            glTextureParameterfv(shadowMap->GetID(), GL_TEXTURE_BORDER_COLOR, borderColor2);
 
             shadowMapFBO->SetDepthTexture(shadowMap);
             shadowMapFBO->FinishSetup();
@@ -348,7 +364,7 @@ namespace Rudy
             auto lightingPassScreenTexture = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F });
 
             lightingPassFBO->Bind();
-            lightingPassFBO->SetColorTexture(TextureType::ScreenTexture, lightingPassScreenTexture, 0);
+            lightingPassFBO->SetColorTexture(TexType::ScreenTexture, lightingPassScreenTexture, 0);
             lightingPassFBO->FinishSetup();
             lightingPassFBO->Unbind();
 
@@ -357,20 +373,20 @@ namespace Rudy
 
             auto lightingPassMaterial = Material::Create(lightingPassShader);
 
-            lightingPassMaterial->SetTexture(TextureType::gPosition, gPosition);
-            lightingPassMaterial->SetTexture(TextureType::gAlbedo, gAlbedo);
-            lightingPassMaterial->SetTexture(TextureType::gWorldNormal, gWorldNormal);
-            lightingPassMaterial->SetTexture(TextureType::gWorldTangent, gWorldTangent);
-            lightingPassMaterial->SetTexture(TextureType::gSpecular, gSpecular);
-            lightingPassMaterial->SetTexture(TextureType::gMetallic, gMetallic);
-            lightingPassMaterial->SetTexture(TextureType::gRoughness, gRoughness);
-            lightingPassMaterial->SetTexture(TextureType::gScreenDepth, gScreenDepth);
+            lightingPassMaterial->SetTexture(TexType::gWorldPosition, gWorldPosition);
+            lightingPassMaterial->SetTexture(TexType::gAlbedo, gAlbedo);
+            lightingPassMaterial->SetTexture(TexType::gWorldNormal, gWorldNormal);
+            lightingPassMaterial->SetTexture(TexType::gWorldTangent, gWorldTangent);
+            lightingPassMaterial->SetTexture(TexType::gSpecular, gSpecular);
+            lightingPassMaterial->SetTexture(TexType::gMetallic, gMetallic);
+            lightingPassMaterial->SetTexture(TexType::gRoughness, gRoughness);
+            lightingPassMaterial->SetTexture(TexType::gScreenDepth, gScreenDepth);
 
-            lightingPassMaterial->SetTexture(TextureType::diffuseEnvMap, diffuseEnvMap);
-            lightingPassMaterial->SetTexture(TextureType::specularEnvMap, specularEnvMap);
-            lightingPassMaterial->SetTexture(TextureType::brdfLUTTexture, brdfLUTTexture);
+            lightingPassMaterial->SetTexture(TexType::diffuseEnvMap, diffuseEnvMap);
+            lightingPassMaterial->SetTexture(TexType::specularEnvMap, specularEnvMap);
+            lightingPassMaterial->SetTexture(TexType::brdfLUTTexture, brdfLUTTexture);
 
-            lightingPassMaterial->SetTexture(TextureType::DepthTexture, shadowMap);
+            lightingPassMaterial->SetTexture(TexType::DepthTexture, shadowMap);
 
 
             ////HZ_CORE_ERROR("size of lightingpass material textures: {0}", lightingPassMaterial->GetTextures().size());
@@ -389,7 +405,7 @@ namespace Rudy
 
             //material 
             auto skyboxMaterial = Material::Create(skyboxShader);
-            skyboxMaterial->SetTexture(TextureType::SkyboxTexture, envMap);
+            skyboxMaterial->SetTexture(TexType::SkyboxTexture, envMap);
 
             Cube skybox;
             skybox.SetMaterial(skyboxMaterial);
@@ -397,22 +413,34 @@ namespace Rudy
 
 
 
-            //========postprocess: SSAO pass;
+
+
+            //world to view
+            {
+                
+                WorldToViewInputs[TexType::gWorldPosition] = gWorldPosition;
+                WorldToViewInputs[TexType::gWorldNormal] = gWorldNormal;
+
+                WorldToViewOutputs[TexType::gViewPosition] = gViewPosition;
+                WorldToViewOutputs[TexType::gViewNormal] = gViewNormal;
+            
+                WorldToViewPass = CreateRef<WorldToView>(SCR_WIDTH, SCR_HEIGHT, WorldToViewInputs, WorldToViewOutputs);
+            
+            }
+
+
+
+             
+
+            // SSAO pass;
             {
 
-                ssaoInputs[TextureType::gPosition] = gPosition;
-                ssaoInputs[TextureType::gWorldNormal] = gWorldNormal;
-                ssaoInputs[TextureType::gWorldTangent] = gWorldTangent;
-                ssaoInputs[TextureType::gScreenDepth] = gScreenDepth;
+                SSAOInputs[TexType::gViewPosition] = gViewPosition;
+                SSAOInputs[TexType::gViewNormal]   = gViewNormal;
+                SSAOInputs[TexType::gWorldTangent] = gWorldTangent;
+                SSAOInputs[TexType::gScreenDepth]  = gScreenDepth; 
 
-
-                auto ssaoScreenTexture = Texture2D::CreateEmpty(
-                    TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::R32F,
-                                 false, WrapMode::ClampToBorder, FilterMode::Nearest });
-
-               ssaoOutputs[TextureType::ScreenTexture] = ssaoScreenTexture;
-
-               ssaoPass = SSAO::Create(SCR_WIDTH, SCR_HEIGHT, ssaoInputs, ssaoOutputs);
+                SSAOPass = CreateRef<SSAO>(SCR_WIDTH, SCR_HEIGHT, SSAOInputs, SSAOOutputs);
 	 
 
 
@@ -446,10 +474,10 @@ namespace Rudy
                 ssrShader->SetVec3("u_CameraPos", main_camera->GetPosition());
 
                 auto ssrMaterial = Material::Create(ssrShader);
-                ssrMaterial->SetTexture(TextureType::gPosition, gPosition);
-                ssrMaterial->SetTexture(TextureType::gWorldNormal, gWorldNormal);
-                ssrMaterial->SetTexture(TextureType::gScreenDepth, gScreenDepth);
-                ssrMaterial->SetTexture(TextureType::lightingPassTexture, lightingPassScreenTexture);
+                ssrMaterial->SetTexture(TexType::gWorldPosition, gWorldPosition);
+                ssrMaterial->SetTexture(TexType::gWorldNormal, gWorldNormal);
+                ssrMaterial->SetTexture(TexType::gScreenDepth, gScreenDepth);
+                ssrMaterial->SetTexture(TexType::lightingPassTexture, lightingPassScreenTexture);
 
 
                 //auto ssrQuad = Quad();
@@ -459,7 +487,7 @@ namespace Rudy
                 //    TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGB32F,
                 //                 false, WrapMode::ClampToBorder, FilterMode::Linear });
 
-                ssrFBO->SetColorTexture(TextureType::ScreenTexture, ssrScreenTexture, 0);
+                ssrFBO->SetColorTexture(TexType::ScreenTexture, ssrScreenTexture, 0);
                 ssrFBO->FinishSetup();
 
             }
@@ -495,11 +523,20 @@ namespace Rudy
             RD_CORE_WARN("App: Entering the loop");
             while (!Renderer::ShouldClose())
             {
+
+                //RD_PROFILE_SCOPE("the game loop");
+
                 //get the time of each frame
                 float time = (float)glfwGetTime();
                 float deltaTime = time - lastFrameTime;
                 lastFrameTime = time;
                 timer += deltaTime;
+
+
+                //'gui'
+                this->PrepareGUI();
+
+            
 
                 {
                     animator->UpdateBoneTransforms(timer);
@@ -522,10 +559,14 @@ namespace Rudy
 
                     //get scene camera info 
                     //scene->Render(main_camera);
-                    floor->SetMaterial(plane_gMaterial);
+                    floor1->SetMaterial(plane_gMaterial); 
+                    floor1->Draw(main_camera);
+                    floor2->SetMaterial(plane_gMaterial);
+                    floor2->Draw(main_camera);
+
                     sphere->SetMaterial(sphere_gMaterial);
-                    floor->Draw(main_camera);
                     sphere->Draw(main_camera);
+                    
 
                     int index = 0;
                     for (auto meshObj : test_model->meshObjects)
@@ -547,6 +588,21 @@ namespace Rudy
                 }
 
 
+
+
+                { 
+                   WorldToViewPass->Render(main_camera);
+                }
+
+
+
+
+
+
+
+
+
+
                 //====== shadowMap pass: render the scene to the shadowMap;
                 if (false)
                 {
@@ -560,10 +616,11 @@ namespace Rudy
                     glEnable(GL_DEPTH_TEST);
 
                     //render the scene to the shadowMap; 
-                    floor->SetMaterial(shadowMapMaterial);
-                    sphere->SetMaterial(shadowMapMaterial);
+                    floor1->SetMaterial(shadowMapMaterial);
+                    floor1->Draw(lightSpaceCamera);
 
-                    floor->Draw(lightSpaceCamera);
+
+                    sphere->SetMaterial(shadowMapMaterial);  
                     sphere->Draw(lightSpaceCamera);
 
 
@@ -631,7 +688,8 @@ namespace Rudy
                 //=====SSAO
                 if (enableSSAO)
                 {
-                    ssaoPass->Render(main_camera);
+                    //RD_PROFILE_SCOPE("SSAO pass");
+                    SSAOPass->Render(main_camera);
                 }
 
 
@@ -665,17 +723,18 @@ namespace Rudy
 
                 //==========on default framebuffer;
 
-                glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                
 
                 //===========debug: visualize any texture; 
                 //todo: make a good filter for ss pass;  
                 // add a "composer"  or design the blend mode;
 
+                glBindFramebuffer(GL_FRAMEBUFFER, 0);
                 glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                glDisable(GL_DEPTH_TEST);
-
+                glDisable(GL_DEPTH_TEST); 
                 glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+
                 screenQuadShader->Bind();
 
 
@@ -683,16 +742,24 @@ namespace Rudy
                 //  glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
                 //
                 screenQuadShader->SetBool("u_IsGrayScale", true);
-                glBindTextureUnit(0, ssaoOutputs[TextureType::ScreenTexture]->GetTextureID());  //replace the texture2D here;
+                glBindTextureUnit(0, SSAOOutputs[TexType::ScreenTexture]->GetID());  //replace the texture2D here;
+                
+
+              //screenQuadShader->SetBool("u_IsGrayScale", false);
+              //glBindTextureUnit(0, WorldToViewOutputs[TexType::gViewPosition]->GetID());  //replace the texture2D here;
+
+                 
+               //screenQuadShader->SetBool("u_IsGrayScale", false);
+               //glBindTextureUnit(0, WorldToViewInputs[TexType::gWorldNormal]->GetID());  //replace the texture2D here;
+
+
+                //screenQuadShader->SetBool("u_IsGrayScale", false);
+                //glBindTextureUnit(0, lightingPassScreenTexture->GetID());  //replace the texture2D here;
+
                 screenQuad->Draw(nullptr);
+            
 
-                  //screenQuadShader->SetBool("u_IsGrayScale", true);
-                  //glBindTextureUnit(0, gAlbedo->GetTextureID());  //replace the texture 2D here; 
-               //glBindTextureUnit(0, lightingPassScreenTexture->GetTextureID());  //replace the texture 2D here; 
               
-
-                //screenQuadShader->SetBool("u_IsGrayScale", true);
-                //glBindTextureUnit(0, ssrScreenTexture->GetTextureID());  //replace the texture2D here;
 
 
 
@@ -753,8 +820,8 @@ namespace Rudy
                         screenQuadShader->Bind();
 
                         glViewport(leftBottom[index].first * BUFFER_WIDTH, leftBottom[index].second * BUFFER_HEIGHT, BUFFER_WIDTH, BUFFER_HEIGHT);
-                        glBindTextureUnit(0, g_texture.second->GetTextureID());
-                        if (g_texture.first == TextureType::gMetallic || g_texture.first == TextureType::gRoughness || g_texture.first == TextureType::gSpecular)
+                        glBindTextureUnit(0, g_texture.second->GetID());
+                        if (g_texture.first == TexType::gMetallic || g_texture.first == TexType::gRoughness || g_texture.first == TexType::gSpecular)
                         {
                             screenQuadShader->SetBool("u_IsGrayScale", true);
                             // HZ_CORE_WARN("gray scale");
@@ -781,6 +848,10 @@ namespace Rudy
 
                 main_camera->OnUpdate(deltaTime);
 
+
+
+                //======gui
+                this->RenderGUI();
                 Renderer::WindowOnUpdate();
                 /* Swap front and back buffers */
                // glfwSwapBuffers(window); 
@@ -793,11 +864,119 @@ namespace Rudy
 
 
             //====shutdown
-
+            this->ShutDownGUI();
             glfwTerminate(); 
 
 
     }
+
+
+
+
+
+
+
+
+
+
+
+    void PBR::InitGUI()
+    {
+        // 初始化ImGui
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        // 设置ImGui的样式
+        ImGui::StyleColorsDark();
+        // 绑定后端
+        ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)this->window->GetNativeWindow(), true);
+        ImGui_ImplOpenGL3_Init("#version 130");
+
+
+        //other settings
+        ImGui::SetNextWindowSize(ImVec2(500, 400)); // 设置窗口大小为 500x400
+
+        //initial position on the right top corner;
+        //ImGui::SetNextWindowPos(ImVec2(SCR_WIDTH - 500, 0)); // 设置窗口位置为 (SCR_WIDTH - 500, 0)
+        
+
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        ImFontConfig fontConfig;
+        fontConfig.SizePixels = 18.0f; // 设置字体大小为 18 像素
+        io.Fonts->AddFontDefault(&fontConfig);
+
+
+    }
+
+    void PBR::ShutDownGUI()
+    {
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
+    }
+
+    void PBR::PrepareGUI()
+    {
+        // 开始新的一帧
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+     
+        
+        //  
+        this->DrawGUI();
+    }
+
+    void PBR::DrawGUI()
+    {
+        // 渲染GUI
+        ImGui::Begin("Rudy Engine");
+        ImGui::Text("Hello World"); 
+
+
+        ImGui::Checkbox("enableSSAO", &enableSSAO);
+        ImGui::Checkbox("enableSSAOBlur", &(SSAOPass->enableBlur));
+
+
+        ImGui::SliderFloat("SSAO radius", &(SSAOPass->radius), 0.0f, 1.0f);
+        ImGui::SliderFloat("SSAO bias", &(SSAOPass->bias), 0.0f, 1.0f);
+       ImGui::SliderFloat("SSAO range bias", &(SSAOPass->range_bias), 0.0f, 1.0f);
+
+
+        ImGui::SliderInt ("SSAO kernel size", &(SSAOPass->kernelSize), 0, 64);
+
+
+
+
+        ImGui::End();
+    }
+
+    void PBR::RenderGUI()
+    {
+        // 渲染GUI
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
 

@@ -20,7 +20,7 @@ namespace Rudy {
 	//including output of a quad, cubemap, and other custom textures.
 
 
-	enum class TextureType
+	enum class TexType
 	{
 
 		//named []Map, that 
@@ -38,7 +38,7 @@ namespace Rudy {
 		//LightMap,    //global illumination
 
 		//for gbuffer geometry pass named g[]
-		gPosition,   
+		gWorldPosition,   
 		gAlbedo,     
 		gWorldNormal,  
 		gWorldTangent,
@@ -46,6 +46,9 @@ namespace Rudy {
 		gMetallic,   
 		gRoughness,  
 		gScreenDepth,
+
+		gViewPosition,
+		gViewNormal,
 
 
 		//pass outputs named "[]Texture"
@@ -75,42 +78,47 @@ namespace Rudy {
 	//this map mirrors the shaders.  
 	//to set slots, to default values .
 	//leverage the fact that shader differentiate names by type.
-	inline std::unordered_map<TextureType, std::string> TextureTypeNames =
+	inline std::unordered_map<TexType, std::string> TexTypeNames =
 	{
-		{TextureType::ScreenTexture, "u_ScreenTexture"},
-		//{TextureType::DiffuseMap, "u_DiffuseMap"},
+		{TexType::ScreenTexture, "u_ScreenTexture"},
+		//{TexType::DiffuseMap, "u_DiffuseMap"},
 
-		{TextureType::AlbedoMap, "u_AlbedoMap"}, 
-		{TextureType::SpecularMap, "u_SpecularMap"},
-		{TextureType::NormalMap, "u_NormalMap"},
-		{TextureType::RoughnessMap, "u_RoughnessMap"}, 
-		{TextureType::MetallicMap, "u_MetallicMap"},
-		{TextureType::AOMap, "u_AOMap"}, 
-		{TextureType::EnvironmentMap, "u_EnvironmentMap"},
+		{TexType::AlbedoMap, "u_AlbedoMap"}, 
+		{TexType::SpecularMap, "u_SpecularMap"},
+		{TexType::NormalMap, "u_NormalMap"},
+		{TexType::RoughnessMap, "u_RoughnessMap"}, 
+		{TexType::MetallicMap, "u_MetallicMap"},
+		{TexType::AOMap, "u_AOMap"}, 
+		{TexType::EnvironmentMap, "u_EnvironmentMap"},
 
-		{TextureType::DepthTexture, "u_DepthTexture"},
+		{TexType::DepthTexture, "u_DepthTexture"},
 
-		{TextureType::gPosition,    "gPosition"},
-		{TextureType::gAlbedo,      "gAlbedo"},
-		{TextureType::gWorldNormal, "gWorldNormal"},
-		{TextureType::gWorldTangent,"gWorldTangent"},
-	 	{TextureType::gSpecular,    "gSpecular"},
-		{TextureType::gMetallic,    "gMetallic"},
-		{TextureType::gRoughness,   "gRoughness"},
-		{TextureType::gScreenDepth, "gScreenDepth"},
+		{TexType::gWorldPosition,    "gWorldPosition"},
+		{TexType::gAlbedo,      "gAlbedo"},
+		{TexType::gWorldNormal, "gWorldNormal"},
+		{TexType::gWorldTangent,"gWorldTangent"},
+	 	{TexType::gSpecular,    "gSpecular"},
+		{TexType::gMetallic,    "gMetallic"},
+		{TexType::gRoughness,   "gRoughness"},
 
-		{TextureType::lightingPassTexture, "u_LightingPassTexture"}, 
-		{TextureType::SkyboxTexture, "u_SkyboxTexture"},
+		{TexType::gViewPosition, "gViewPosition"},
+		{TexType::gViewNormal, "gViewNormal"},
 
 
-		{TextureType::diffuseEnvMap, "u_DiffuseEnvMap"},
-		{TextureType::specularEnvMap, "u_SpecularEnvMap"},
-		{TextureType::brdfLUTTexture, "u_brdfLUTTexture"},
+		{TexType::gScreenDepth, "gScreenDepth"},
 
-		{TextureType::NoiseTexture, "u_NoiseTexture"},
+		{TexType::lightingPassTexture, "u_LightingPassTexture"}, 
+		{TexType::SkyboxTexture, "u_SkyboxTexture"},
 
-		{TextureType::ToonTexture, "u_ToonTexture"},
-        {TextureType::FaceSDFTexture, "u_FaceSDFTexture"},
+
+		{TexType::diffuseEnvMap, "u_DiffuseEnvMap"},
+		{TexType::specularEnvMap, "u_SpecularEnvMap"},
+		{TexType::brdfLUTTexture, "u_brdfLUTTexture"},
+
+		{TexType::NoiseTexture, "u_NoiseTexture"},
+
+		{TexType::ToonTexture, "u_ToonTexture"},
+        {TexType::FaceSDFTexture, "u_FaceSDFTexture"},
 		 
 	};
 
@@ -134,17 +142,25 @@ namespace Rudy {
 		void SetShader(Ref<Shader> shader) { m_Shader = shader; } 
 	    Ref<Shader> GetShader() const { return m_Shader; } 
 
-		void SetTexture(TextureType type, Ref<Texture> texture)  { 
+		void SetTexture(TexType type, Ref<Texture> texture)  { 
+			if (texture == nullptr)
+			{
+				RD_CORE_ERROR("Material::Texture is null");
+				return;  //if texture is null, do nothing
+			}
+
 			m_Texture_map[type] = texture;  
+
 			//set uniform bool used for texture, if exists
-			std::string BoolName = "Use_" + TextureTypeNames[type]; 
+			std::string BoolName = "Use_" + TexTypeNames[type]; 
 			auto ite = m_Bool_map.find(BoolName);
 			if (ite != m_Bool_map.end()) {
 				m_Bool_map[BoolName] = true;
 			} 
            
 		}
-		std::unordered_map<TextureType, Ref<Texture>> GetTextures() const { return m_Texture_map; }
+
+		std::unordered_map<TexType, Ref<Texture>> GetTextures() const { return m_Texture_map; }
 
 
 
@@ -186,7 +202,7 @@ void SetBoolMap(const std::unordered_map<std::string, bool>& map)
 		uint32_t m_GlobalIndex = 0;  //unique id for each material
 
 		//used for binding textures
-		std::unordered_map<TextureType, Ref<Texture>> m_Texture_map;
+		std::unordered_map<TexType, Ref<Texture>> m_Texture_map;
 		std::unordered_map<std::string, glm::vec3>  m_Vec3_map  ;
 		std::unordered_map<std::string, float>      m_Float_map  ;
 		std::unordered_map<std::string, bool>       m_Bool_map  ;
@@ -213,9 +229,6 @@ void SetBoolMap(const std::unordered_map<std::string, bool>& map)
 	inline std::unordered_map<std::string, glm::vec3> PBRDefaultVec3Map
 	{
 		{"u_Albedo", glm::vec3(1.0,1.0,1.0)},
-
-		{"u_litColor", glm::vec3(1.0,1.0,1.0)},
-		{"u_shadowColor", glm::vec3(1.0,1.0,1.0)},
 
 	};
 
@@ -254,6 +267,8 @@ void SetBoolMap(const std::unordered_map<std::string, bool>& map)
 
 
 
+	//{"u_litColor", glm::vec3(1.0, 1.0, 1.0)},
+	//{ "u_shadowColor", glm::vec3(1.0,1.0,1.0) },
 
 
 
@@ -283,8 +298,8 @@ void SetBoolMap(const std::unordered_map<std::string, bool>& map)
 
 //TODO: specify the workflow for model loading, and error checking.
 //no fixed workflow,for now.
-//std::vector<TextureType> MetallicTextures =
-//{ TextureType::AlbedoMap, TextureType::NormalMap, TextureType::MetallicMap, TextureType::RoughnessMap, TextureType::AOMap };
+//std::vector<TexType> MetallicTextures =
+//{ TexType::AlbedoMap, TexType::NormalMap, TexType::MetallicMap, TexType::RoughnessMap, TexType::AOMap };
 //
-//std::vector<TextureType> BlinnPhongTextures =
-//{ TextureType::DiffuseMap, TextureType::SpecularMap, TextureType::NormalMap };
+//std::vector<TexType> BlinnPhongTextures =
+//{ TexType::DiffuseMap, TexType::SpecularMap, TexType::NormalMap };

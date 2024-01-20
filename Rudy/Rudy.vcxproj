@@ -50,7 +50,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\dev\dependencies\assimp\include;D:\dev\dependencies\stb_image;D:\dev\dependencies\GLM;D:\dev\dependencies\spdlog-1.x\include;D:\dev\dependencies\glfw-3.3.8.bin.WIN64\include;D:\dev\dependencies\Glad\include; </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\dev\dependencies\imgui-1.89.8;D:\dev\dependencies\assimp\include;D:\dev\dependencies\stb_image;D:\dev\dependencies\GLM;D:\dev\dependencies\spdlog-1.x\include;D:\dev\dependencies\glfw-3.3.8.bin.WIN64\include;D:\dev\dependencies\Glad\include; </AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>RudyPCH.h </PrecompiledHeaderFile>
@@ -109,6 +109,7 @@
     <ClInclude Include="Rudy\Particles\ParticleSystem.h" />
     <ClInclude Include="Rudy\Passes\Pass.h" />
     <ClInclude Include="Rudy\Passes\SSAO.h" />
+    <ClInclude Include="Rudy\Passes\WorldToView.h" />
     <ClInclude Include="Rudy\Physics\cloth.h" />
     <ClInclude Include="Rudy\Animation\Animation.h" />
     <ClInclude Include="Rudy\Renderer\Buffer.h" />
@@ -140,6 +141,15 @@
     <ClInclude Include="RudyPCH.h" />
     <ClInclude Include="Primitives\ScreenQuad.h" />
     <ClInclude Include="Primitives\Sphere.h" />
+    <ClInclude Include="Rudy\Vendor\imgui\imconfig.h" />
+    <ClInclude Include="Rudy\Vendor\imgui\imgui.h" />
+    <ClInclude Include="Rudy\Vendor\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="Rudy\Vendor\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="Rudy\Vendor\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="Rudy\Vendor\imgui\imgui_internal.h" />
+    <ClInclude Include="Rudy\Vendor\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Rudy\Vendor\imgui\imstb_textedit.h" />
+    <ClInclude Include="Rudy\Vendor\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\dependencies\stb_image\stb_image.cpp">
@@ -147,6 +157,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Apps\main.cpp" />
+    <ClCompile Include="Apps\test_cloth.cpp" />
+    <ClCompile Include="Apps\test_particles_new.cpp" />
+    <ClCompile Include="Apps\test_template.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="Primitives\Overlay.cpp" />
     <ClCompile Include="Primitives\plane.cpp" />
@@ -154,11 +167,33 @@
     <ClCompile Include="Primitives\Sphere.cpp" />
     <ClCompile Include="Rudy\Particles\ParticleSystem.cpp" />
     <ClCompile Include="Rudy\Passes\SSAO.cpp" />
+    <ClCompile Include="Rudy\Passes\WorldToView.cpp" />
     <ClCompile Include="Rudy\Physics\cloth.cpp" />
     <ClCompile Include="Rudy\Renderer\Buffer.cpp" />
     <ClCompile Include="Rudy\Renderer\Kernel.cpp" />
     <ClCompile Include="Rudy\Renderer\RendererComponent.cpp" />
     <ClCompile Include="Apps\PBR.cpp" />
+    <ClCompile Include="Rudy\Vendor\imgui\imgui.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Rudy\Vendor\imgui\imgui_demo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Rudy\Vendor\imgui\imgui_draw.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Rudy\Vendor\imgui\imgui_impl_glfw.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Rudy\Vendor\imgui\imgui_impl_opengl3.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Rudy\Vendor\imgui\imgui_tables.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Rudy\Vendor\imgui\imgui_widgets.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <None Include="Shaders\Cloth\default_cloth_FS.glsl" />
     <None Include="Shaders\Cloth\default_cloth_VS.glsl" />
     <None Include="Shaders\Cloth\normalize_normals_CS.glsl" />
@@ -172,6 +207,10 @@
     <None Include="Shaders\Cloth\post_correction_CS.glsl" />
     <None Include="Shaders\Cloth\pre_integrate_CS.glsl" />
     <None Include="Shaders\Cloth\solve_stretchConst_CS.glsl" />
+    <None Include="Shaders\PostProcess\AverageBlur_CS.glsl" />
+    <None Include="Shaders\PostProcess\GaussianBlur_CS.glsl" />
+    <None Include="Shaders\PostProcess\SSAO_CS.glsl" />
+    <None Include="Shaders\PostProcess\WorldToView_CS.glsl" />
     <None Include="Shaders\Shaders\Genshin_FS.glsl" />
     <None Include="Shaders\Shaders\Genshin_VS.glsl" />
     <None Include="Shaders\Deferred\Lambertian_FS.glsl" />

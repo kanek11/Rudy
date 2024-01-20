@@ -210,12 +210,22 @@ namespace Rudy {
     // ------------------------------------------------------------------------
     void OpenGLShader::SetBool(const std::string& name, bool value) const
     {
-        glUniform1i(glGetUniformLocation(m_ShaderID, name.c_str()), value);
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            RD_CORE_ERROR("glShader: SetBool: uniform {0} not found", name);
+            return;
+        }
+        glUniform1i(location, value);
     }
     // ------------------------------------------------------------------------
     void OpenGLShader::SetInt(const std::string& name, int value) const
     {
-        glUniform1i(glGetUniformLocation(m_ShaderID, name.c_str()), value);
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            //RD_CORE_ERROR("glShader: SetInt: uniform {0} not found", name);  //for now we have a lot unused texture slots;
+            return;
+        }
+        glUniform1i(location, value);
     }
 
     void OpenGLShader::SetUInt(const std::string& name, int value) const
@@ -231,25 +241,48 @@ namespace Rudy {
     // ------------------------------------------------------------------------
     void OpenGLShader::SetFloat(const std::string& name, float value) const
     {
-        glUniform1f(glGetUniformLocation(m_ShaderID, name.c_str()), value);
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            RD_CORE_ERROR("glShader: SetFloat: uniform {0} not found", name);
+            return;
+        } 
+        glUniform1f(location, value);
     }
     // ------------------------------------------------------------------------
     void OpenGLShader::SetVec2(const std::string& name, const glm::vec2& value) const
     {
-        glUniform2fv(glGetUniformLocation(m_ShaderID, name.c_str()), 1, &value[0]);
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            RD_CORE_ERROR("glShader: SetVec2: uniform {0} not found", name);
+            return;
+        }
+        glUniform2fv(location, 1, &value[0]);
     }
+
     void OpenGLShader::SetVec2(const std::string& name, float x, float y) const
     {
         glUniform2f(glGetUniformLocation(m_ShaderID, name.c_str()), x, y);
     }
+
     // ------------------------------------------------------------------------
     void OpenGLShader::SetVec3(const std::string& name, const glm::vec3& value) const
     { 
-        glUniform3fv(glGetUniformLocation(m_ShaderID, name.c_str()), 1, &value[0]);
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            RD_CORE_ERROR("glShader: SetVec3: uniform {0} not found", name);
+            return;
+        }
+        glUniform3fv(location, 1, &value[0]);
     }
+
     void OpenGLShader::SetVec3(const std::string& name, float x, float y, float z) const
     {
-        glUniform3f(glGetUniformLocation(m_ShaderID, name.c_str()), x, y, z);
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            RD_CORE_ERROR("glShader: SetVec3: uniform {0} not found", name);
+            return;
+        }
+        glUniform3f(location, x, y, z);
     }
 
     // ------------------------------------------------------------------------
@@ -265,19 +298,23 @@ namespace Rudy {
     // ------------------------------------------------------------------------
     void OpenGLShader::SetMat3(const std::string& name, const glm::mat3& mat) const
     {
-        glUniformMatrix3fv(glGetUniformLocation(m_ShaderID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            RD_CORE_ERROR("glShader: SetMat3: uniform {0} not found", name);
+            return;
+        }
+        glUniformMatrix3fv(location, 1, GL_FALSE, &mat[0][0]);
     }
     // ------------------------------------------------------------------------
     void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& mat) const
     {  
         GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
         if (location == -1) {
-            // Log error or warning
+            RD_CORE_ERROR("glShader: SetMat4: uniform {0} not found", name);
             return;
         }
         glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
-
-        //glUniformMatrix4fv(glGetUniformLocation(m_ShaderID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+         
 
     }
 
@@ -294,7 +331,9 @@ namespace Rudy {
             if (!success)
             {
                 glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-                std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                std::cout << "Shader name: " << m_Name << std::endl;
+                std::cout << "APP GET ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                
             }
         }
         else
@@ -303,7 +342,7 @@ namespace Rudy {
             if (!success)
             {
                 glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-                std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                std::cout << "APP GET ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
             }
         }
     }

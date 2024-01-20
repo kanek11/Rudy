@@ -5,7 +5,7 @@ out vec4 FragColor;
 in vec2 TexCoords;
 
 
-uniform sampler2D gPosition;
+uniform sampler2D gWorldPosition;
 uniform sampler2D gWorldNormal;
 uniform sampler2D gScreenDepth; 
 
@@ -29,7 +29,7 @@ uniform vec3 u_CameraPos;
 
 void main()
 { 
-    vec3 WorldPos = texture(gPosition, TexCoords).rgb;
+    vec3 WorldPos = texture(gWorldPosition, TexCoords).rgb;
     //vec3 screenColor = texture(u_LightingPassTexture, TexCoords).rgb;
     vec3 normal = texture(gWorldNormal, TexCoords).rgb * 2.0 - 1.0;
     float screenDepth = texture(gScreenDepth, TexCoords).r;
@@ -71,7 +71,7 @@ void main()
             if (currentFragDepth == 1.0)  //invalid fragment background 
 				break; 
 
-            vec3 FragPos = texture(gPosition, sampleUV).rgb;
+            vec3 FragPos = texture(gWorldPosition, sampleUV).rgb;
             vec3 FragViewPos = (u_view * vec4(FragPos, 1.0)).xyz;
             float FragDepth =  FragViewPos.z;
 

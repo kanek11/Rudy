@@ -484,7 +484,7 @@ namespace Rudy {
 	    
 		//material 
 		auto rectToCubeMaterial = Material::Create(rectToCubeShader);
-		rectToCubeMaterial->SetTexture(TextureType::EnvironmentMap, hdrTexture);
+		rectToCubeMaterial->SetTexture(TexType::EnvironmentMap, hdrTexture);
 
 
 		Cube cube;
@@ -563,7 +563,7 @@ namespace Rudy {
 			 	  true, WrapMode::ClampToEdge, FilterMode::LinearMipmapLinear, FilterMode::Linear });
 
 			auto cubeMaterial = Material::Create(prefilterShader);
-			cubeMaterial->SetTexture(TextureType::EnvironmentMap, envMap);
+			cubeMaterial->SetTexture(TexType::EnvironmentMap, envMap);
 
 
 			//the background cube;
@@ -616,7 +616,7 @@ namespace Rudy {
                     prefilterShader->SetMat4("u_view", captureViews[i]);
 
 					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 
-					prefilterEnvMap->GetTextureID(), mip);
+					prefilterEnvMap->GetID(), mip);
 
 					glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 					cube.Draw(nullptr);
@@ -646,7 +646,7 @@ namespace Rudy {
 
 
 			auto cubeMaterial = Material::Create(prefilterShader);
-			cubeMaterial->SetTexture(TextureType::EnvironmentMap, envMap);
+			cubeMaterial->SetTexture(TexType::EnvironmentMap, envMap);
 
 
 			//the background cube;
@@ -679,7 +679,7 @@ namespace Rudy {
 				prefilterShader->SetMat4("u_projection",  captureProjection);
                 prefilterShader->SetMat4("u_view", captureViews[i]);
 			 
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterEnvMap->GetTextureID(), 0);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterEnvMap->GetID(), 0);
 
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 				cube.Draw(nullptr);

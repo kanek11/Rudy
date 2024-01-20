@@ -36,7 +36,7 @@ namespace Rudy
 	    //loop through all textures and set the slot number;
 	    //for unordered map, .first is the key, .second is the value  
 		//texture use enum as key, textureName as value, 
-	    for (auto& texture : TextureTypeNames)
+	    for (auto& texture : TexTypeNames)
 	    { 
 			 shader->SetInt(texture.second, (int)texture.first); 
 	    }
@@ -64,7 +64,7 @@ namespace Rudy
 		for (auto& texture : m_Texture_map)
 		{
 			texture.second->Bind((int)texture.first);
-			//RD_CORE_INFO("Material: textureid: {0} is bound to shader slot {1}", texture.second->GetTextureID(), (int)texture.first);
+			//RD_CORE_INFO("Material: textureid: {0} is bound to shader slot {1}", texture.second->GetID(), (int)texture.first);
 		} 
 
          for (auto& value : m_Float_map)

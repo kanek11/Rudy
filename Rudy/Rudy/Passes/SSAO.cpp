@@ -4,28 +4,20 @@
 
 namespace  Rudy
 {
-
-	Ref<SSAO> SSAO::Create(
-		uint32_t m_width, uint32_t m_height,
-		std::map< TextureType, Ref<Texture2D>> m_ssaoInputs,
-		std::map< TextureType, Ref<Texture2D>> m_ssaoOutputs)
-	{
-		return CreateRef<SSAO>( m_width,  m_height, m_ssaoInputs, m_ssaoOutputs);
-	}
-
+ 
 	SSAO::SSAO(
 		uint32_t m_width, uint32_t m_height,
-		std::map< TextureType, Ref<Texture2D>> m_ssaoInputs,
-		std::map< TextureType, Ref<Texture2D>> m_ssaoOutputs)
+		std::map< TexType, Ref<Texture2D>>& m_SSAOInputs,
+		std::map< TexType, Ref<Texture2D>>& m_SSAOOutputs)
 	 :m_width(m_width), m_height(m_height), 
-	 m_ssaoInputs(m_ssaoInputs), m_ssaoOutputs(m_ssaoOutputs)
+	 m_SSAOInputs(m_SSAOInputs), m_SSAOOutputs(m_SSAOOutputs)
 	{
 		Init();
 	}
 
 
 
-    //material: ssao takes worldpos, worldnormal, 
+    //material: SSAO takes worldpos, worldnormal, 
     //make sure use a consistent space for the depth;  
     // custom sampling kernel, rotation noise texture 
 
@@ -34,35 +26,70 @@ namespace  Rudy
     void SSAO::Init()
     {
 
-        ssaoShader = Shader::Create("ssao Shader", "Shaders/PostProcess/SSAO_VS.glsl", "Shaders/PostProcess/SSAO_FS.glsl");
-        Material::SetMaterialProperties(ssaoShader); 
+        SSAOShader = Shader::Create("SSAO Shader",
+            "Shaders/PostProcess/SSAO_VS.glsl", 
+            "Shaders/PostProcess/SSAO_FS.glsl");
+        Material::SetMaterialProperties(SSAOShader);  
 
-        ssaoFBO = FrameBuffer::Create(" ssao FBO",
+
+        SSAOFBO = FrameBuffer::Create(" SSAO FBO",
             m_width, m_height, FrameBufferType::Regular); 
 
 
-        ssaoFBO->SetColorTexture(TextureType::ScreenTexture, m_ssaoOutputs[TextureType::ScreenTexture], 0);
-        ssaoFBO->FinishSetup();
+        SSAOOnlyTex = Texture2D::CreateEmpty(TextureSpec{
+			m_width, m_height, TextureInternalFormat::R32F,
+			false, WrapMode::ClampToEdge, FilterMode::Nearest });
+
+
+        SSAOOutputTexture = Texture2D::CreateEmpty(
+            TextureSpec{ m_width, m_height, TextureInternalFormat::R32F,
+                         false, WrapMode::ClampToBorder, FilterMode::Nearest });
+
+
+        m_SSAOOutputs[TexType::ScreenTexture] = SSAOOutputTexture;
+
+
+        SSAOFBO->SetColorTexture(TexType::ScreenTexture, SSAOOnlyTex, 0);
+        SSAOFBO->FinishSetup();
          
 
 
-        auto ssaoMaterial = Material::Create(ssaoShader);
-        ssaoMaterial->SetTexture(TextureType::gPosition,     m_ssaoInputs[TextureType::gPosition]);
-        ssaoMaterial->SetTexture(TextureType::gWorldNormal,  m_ssaoInputs[TextureType::gWorldNormal ]);
-        ssaoMaterial->SetTexture(TextureType::gWorldTangent, m_ssaoInputs[TextureType::gWorldTangent ]);
-        ssaoMaterial->SetTexture(TextureType::gScreenDepth,  m_ssaoInputs[TextureType::gScreenDepth]);
+        SSAOMaterial = Material::Create(SSAOShader);
+        SSAOMaterial->SetTexture(TexType::gViewPosition, m_SSAOInputs[TexType::gViewPosition]);
+        SSAOMaterial->SetTexture(TexType::gViewNormal,   m_SSAOInputs[TexType::gViewNormal ]);
+        SSAOMaterial->SetTexture(TexType::gWorldTangent, m_SSAOInputs[TexType::gWorldTangent ]);
+        SSAOMaterial->SetTexture(TexType::gScreenDepth,  m_SSAOInputs[TexType::gScreenDepth]);
+
+
+
+        std::unordered_map<std::string, float> FloatMap = {
+			{"u_radius", radius},
+			{"u_bias", bias}, 
+		};
+
+        SSAOMaterial->SetFloatMap(FloatMap);
 
 
 
         auto m_Lerp = [](float a, float b, float f) -> float {
             return a + f * (b - a);   };
 
+
         std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0); // generates random floats between 0.0 and 1.0
-        std::default_random_engine generator;
-        std::vector<glm::vec3> ssaoKernel;
+        std::mt19937 generator(std::random_device{}());
+        //random_device rd;  //generate true random seed for the random engine;
+        //thend sample the distribution;
+
+
+        std::vector<glm::vec3> SSAOKernel;
         for (unsigned int i = 0; i < 64; ++i)
         {
-            glm::vec3 sample(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, randomFloats(generator));
+            glm::vec3 sample(
+                randomFloats(generator) * 2.0 - 1.0,
+                randomFloats(generator) * 2.0 - 1.0,
+                randomFloats(generator) * 0.99 + 0.01);  //reduce self-occlusion of planes.
+                //randomFloats(generator));
+
             sample = glm::normalize(sample);
             sample *= randomFloats(generator);
             float scale = float(i) / 64.0f;
@@ -70,40 +97,48 @@ namespace  Rudy
             // scale samples s.t. they're more aligned to center of kernel
             scale = m_Lerp(0.1f, 1.0f, scale * scale);
             sample *= scale;
-            ssaoKernel.push_back(sample);
+            SSAOKernel.push_back(sample);
+            //std::cout << sample.x << " " << sample.y << " " << sample.z << std::endl;
         }
 
 
         //used by all fragments;
-        ssaoShader->Bind();
         for (unsigned int i = 0; i < 64; ++i)
-            ssaoShader->SetVec3("samples[" + std::to_string(i) + "]", ssaoKernel[i]);
+            SSAOShader->SetVec3("samples[" + std::to_string(i) + "]", SSAOKernel[i]);
 
 
         // generate noise texture
         // ----------------------
-        std::vector<glm::vec3> ssaoNoise;
+        std::vector<glm::vec3> SSAONoise;
         for (unsigned int i = 0; i < 16; i++)
         {
-            glm::vec3 noise(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0f); // rotate around z-axis (in tangent space)
-            ssaoNoise.push_back(noise);
+            glm::vec3 noise(randomFloats(generator) * 2.0 - 1.0, 
+                            randomFloats(generator) * 2.0 - 1.0, 
+                            0.0f); // rotate around z-axis (in tangent space)
+            SSAONoise.push_back(noise);
         }
 
-        auto ssaoNoiseTexture = Texture2D::CreateEmpty(TextureSpec{
+
+        auto SSAONoiseTexture = Texture2D::CreateEmpty(TextureSpec{
                 4, 4, TextureInternalFormat::RGB32F,
                 false, WrapMode::Repeat, FilterMode::Nearest });
 
-        ssaoNoiseTexture->SubData(ssaoNoise.data(), 4, 4);
+        SSAONoiseTexture->SubData(SSAONoise.data(), 4, 4); 
 
 
+        SSAOMaterial->SetTexture(TexType::NoiseTexture, SSAONoiseTexture);
 
-        ssaoMaterial->SetTexture(TextureType::NoiseTexture, ssaoNoiseTexture);
 
+        //-------the quad for SSAO pass;
+       // Quad SSAOQuad = Quad();
+        SSAOQuad = ScreenQuad::Create();
+        SSAOQuad->SetMaterial(SSAOMaterial); 
 
-        //-------the quad for ssao pass;
-       // Quad ssaoQuad = Quad();
-        ssaoQuad = ScreenQuad::Create();
-        ssaoQuad->SetMaterial(ssaoMaterial);
+         
+        //blur
+        BlurShader = Shader::CreateComputeShader("Blur Shader",
+            //"Shaders/PostProcess/GaussianBlur_CS.glsl");
+            "Shaders/PostProcess/AverageBlur_CS.glsl");
 
  
 
@@ -113,21 +148,60 @@ namespace  Rudy
 
 	void SSAO::Render(Ref<Camera> main_camera)
 	{
-         
-        ssaoShader->SetMat4("u_View", main_camera->GetViewMatrix());
-        ssaoShader->SetMat4("u_Projection", main_camera->GetProjectionMatrix());
+        //auto view = main_camera->GetViewMatrix();
+        //std:: cout << "view matrix: " << std::endl;
+        //std::cout << view[0][0] << " " << view[0][1] << " " << view[0][2] << " " << view[0][3] << std::endl;
+        //std::cout << view[1][0] << " " << view[1][1] << " " << view[1][2] << " " << view[1][3] << std::endl;
+        //std::cout << view[2][0] << " " << view[2][1] << " " << view[2][2] << " " << view[2][3] << std::endl;
+        //std::cout << view[3][0] << " " << view[3][1] << " " << view[3][2] << " " << view[3][3] << std::endl;
+
+        SSAOShader->Bind();
+       // SSAOShader->SetMat4("u_view",       main_camera->GetViewMatrix());
+        SSAOShader->SetMat4("u_projection", main_camera->GetProjectionMatrix()); 
+
+        SSAOMaterial->SetFloat("u_radius", radius);
+        SSAOMaterial->SetFloat("u_bias", bias); 
+
+        SSAOMaterial->SetFloat("u_range_bias", range_bias);
+
+        SSAOShader->SetInt("u_kernelSize", kernelSize);
 
 
-        ssaoFBO->Bind();
+        SSAOFBO->Bind();
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glDisable(GL_DEPTH_TEST);
         glViewport(0, 0, m_width, m_height); 
      
 
-        ssaoQuad->Draw(nullptr);
+        SSAOQuad->Draw(nullptr);
+        SSAOShader->Unbind();
 
-        ssaoFBO->Unbind();
+        SSAOFBO->Unbind();
+
+
+
+        //blur
+        if (enableBlur)
+        {
+
+			BlurShader->Bind(); 
+			BlurShader->SetInt("u_radius", ave_radius);
+			//BlurShader->SetFloat("u_sigma", 7.0f);
+
+            glBindImageTexture(0, SSAOOnlyTex->GetID(), 0, GL_FALSE, 0, GL_READ_WRITE, GL_R32F);
+			glBindImageTexture(1, m_SSAOOutputs[TexType::ScreenTexture]->GetID(), 0, GL_FALSE, 0, GL_READ_WRITE, GL_R32F);
+
+			glDispatchCompute(m_width / 16, m_height / 16, 1);
+			glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+			BlurShader->Unbind();
+		} 
+        else
+        { 
+            m_SSAOOutputs[TexType::ScreenTexture] = SSAOOnlyTex;
+           
+        }
+          
 
 	}
 

@@ -55,7 +55,7 @@ namespace Rudy {
  
 
 
-		virtual void SetColorTexture(TextureType type, Ref<Texture> texture, uint32_t slot) override
+		virtual void SetColorTexture(TexType type, Ref<Texture> texture, uint32_t slot) override
 		{
 			if (slot >= 8)
 			{
@@ -64,24 +64,24 @@ namespace Rudy {
 			}
 			 
 			m_TextureBuffers[type] = texture;
-			//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, texture->GetTextureID(), 0);	
+			//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, texture->GetID(), 0);	
 			glNamedFramebufferTexture(this->m_FrameBufferID, GL_COLOR_ATTACHMENT0 + slot, 
-				                       texture->GetTextureID(), 0);
+				                       texture->GetID(), 0);
 			
-			RD_CORE_INFO("GBuffer: textureId:{0} is attached to colorbuffer{1}", texture->GetTextureID(), slot);
+			RD_CORE_INFO("GBuffer: textureId:{0} is attached to colorbuffer{1}", texture->GetID(), slot);
 	 
 		}
 
 		virtual void SetDepthTexture(Ref<Texture> texture) override
 		{
-			//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture->GetTextureID(), 0);
+			//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture->GetID(), 0);
 			 
-			m_TextureBuffers[TextureType::DepthTexture] = texture;
-			glNamedFramebufferTexture(this->m_FrameBufferID, GL_DEPTH_ATTACHMENT, texture->GetTextureID(), 0);
+			m_TextureBuffers[TexType::DepthTexture] = texture;
+			glNamedFramebufferTexture(this->m_FrameBufferID, GL_DEPTH_ATTACHMENT, texture->GetID(), 0);
 		}
 
 
-		virtual Ref<Texture> GetTextureByType(TextureType type) override
+		virtual Ref<Texture> GetTextureByType(TexType type) override
 		{
 			if (m_TextureBuffers.find(type) == m_TextureBuffers.end())
 			{
@@ -133,7 +133,7 @@ namespace Rudy {
 		uint32_t m_ColorBufferNum = 0; 
 		uint32_t m_Width = 0, m_Height = 0;
 
-		std::unordered_map<TextureType, Ref<Texture>>  m_TextureBuffers;
+		std::unordered_map<TexType, Ref<Texture>>  m_TextureBuffers;
 		Scope<RenderBuffer> m_RenderBuffer;   //only for depth/stencil  
 		 
 

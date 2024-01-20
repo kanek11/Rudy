@@ -12,12 +12,14 @@ in VS_OUT
 } fs_in; 
 
  
-uniform sampler2D gPosition;
-uniform sampler2D gAlbedo;
+uniform sampler2D gWorldPosition;
 uniform sampler2D gWorldNormal;
+
+uniform sampler2D gAlbedo; 
 uniform sampler2D gSpecular;
 uniform sampler2D gMetallic;
 uniform sampler2D gRoughness;
+
 
 
 //IBL 
@@ -53,7 +55,7 @@ float ShadowCalculation(vec4 WorldFragPos)
 { 
     // transform to [0,1] range
  
-   vec4 lightSpaceFragPos = u_LightSpaceMatrix * WorldFragPos;
+    vec4 lightSpaceFragPos = u_LightSpaceMatrix * WorldFragPos;
 
     vec3 projCoords = lightSpaceFragPos.xyz / lightSpaceFragPos.w;   //perspective division
     projCoords = projCoords * 0.5 + 0.5;
@@ -133,7 +135,7 @@ void main()
   
 
     //gbuffers;
-    vec3 worldPos = texture(gPosition, fs_in.TexCoords).rgb; 
+    vec3 worldPos = texture(gWorldPosition, fs_in.TexCoords).rgb; 
 
     vec3 worldNormal = texture(gWorldNormal, fs_in.TexCoords).rgb;
     if (length(worldNormal) < 0.2) discard;  //discard background

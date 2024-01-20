@@ -263,9 +263,8 @@ namespace Rudy
 		{
 			//random generator
 		
-			std::uniform_real_distribution<float> distribution(0.1f, 1000.0f);
-			std::random_device m_random;
-			std::mt19937 generator(m_random());
+			std::uniform_real_distribution<float> distribution(0.1f, 1000.0f); 
+			std::mt19937 generator(std::random_device{}());
 
 			auto seeds = glm::vec3(distribution(generator),
 				distribution(generator), distribution(generator));

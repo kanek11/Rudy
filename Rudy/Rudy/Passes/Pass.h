@@ -1,3 +1,4 @@
+#pragma once
 #include "RudyPCH.h"   
 #include <Rudy.h>
 
@@ -15,13 +16,6 @@ namespace Rudy
 	    
 		virtual void Render(Ref<Camera>) = 0;
 
-	};
-
-
-
-
-
-
-
+	}; 
 
 }

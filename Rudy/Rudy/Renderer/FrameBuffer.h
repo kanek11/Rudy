@@ -82,10 +82,10 @@ namespace Rudy {
 			uint32_t width, uint32_t height, 
 			FrameBufferType type = FrameBufferType::Regular); 
 
-		virtual void SetColorTexture(TextureType type, Ref<Texture> texture, uint32_t slot) = 0;
+		virtual void SetColorTexture(TexType type, Ref<Texture> texture, uint32_t slot) = 0;
 		virtual void SetDepthTexture(Ref<Texture> texture) = 0;
 
-		virtual Ref<Texture> GetTextureByType(TextureType type) = 0; 
+		virtual Ref<Texture> GetTextureByType(TexType type) = 0; 
 		
 		virtual void SetDrawBuffers() = 0;
 		virtual void CheckCompleteness() = 0; 
