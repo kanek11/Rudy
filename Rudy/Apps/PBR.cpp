@@ -1,8 +1,6 @@
-//ver 2024.1.17
+//update 2024.1.22
 #include "RudyPCH.h" 
-#include "PBR.h"
-
-
+#include "PBR.h" 
 
 
 namespace Rudy
@@ -62,19 +60,16 @@ namespace Rudy
 
             auto envMap = TextureCube::LoadHDRI("D:/CG_resources/HDRI/GrandCanyon_C_YumaPoint/GCanyon_C_YumaPoint_3k.hdr");
 
+
+            //if no precomputed envmap available
             auto diffuseEnvMap = TextureCube::LoadHDRI("D:/CG_resources/HDRI/GrandCanyon_C_YumaPoint/GCanyon_C_YumaPoint_Env.hdr");
 
             //lod 5 for specular envmap;
             auto specularEnvMap = envMap->CreatePrefilteredEnvMap(envMap,
                 ConvolutionType::Specular, 5);
+ 
 
-            //if no precomputed envmap available
-            //auto diffuseEnvMap = envMap->CreatePrefilteredEnvMap(envMap,
-            //    ConvolutionType::Diffuse); 
-
-
-
-            //the LUT for BRDF
+            //BRDF integration map
             auto brdfLUTShader = Shader::Create("brdfLUT Shader", "Shaders/Shaders/BrdfLUT_VS.glsl", "Shaders/Shaders/BrdfLUT_FS.glsl");
             Material::SetMaterialProperties(brdfLUTShader);
 
@@ -100,25 +95,6 @@ namespace Rudy
             brdfLUTFBO->Unbind();
 
 
-            //test for separate  
-           /*
-           Texture2D::SetFlipYOnLoad(false);
-           std::string cubeMapPath = "D:/CG_resources/skybox/";
-           std::vector<std::string> paths =
-           {
-              cubeMapPath + "right.jpg",
-              cubeMapPath + "left.jpg",
-              cubeMapPath + "top.jpg",
-              cubeMapPath + "bottom.jpg",
-              cubeMapPath + "front.jpg",
-              cubeMapPath + "back.jpg"
-           };
-
-           auto test_envCubeMap = TextureCube::LoadImages(paths);
-            */
-
-
-
 
             //======gbuffer pass;
 
@@ -136,8 +112,7 @@ namespace Rudy
             auto gWorldNormal = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGBA32F });
             auto gWorldTangent = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGBA32F });
           
-      
-            auto gAlbedo =    Texture2D::CreateEmpty( TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGBA32F });
+            auto gAlbedo  =    Texture2D::CreateEmpty( TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGBA32F });
             auto gSpecular =  Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::R32F });
             auto gMetallic =  Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::R32F });
             auto gRoughness = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::R32F });
@@ -166,9 +141,7 @@ namespace Rudy
 
             GBufferFBO->SetDepthTexture(gViewDepth);
 
-            GBufferFBO->FinishSetup();
-
-
+            GBufferFBO->FinishSetup();  
 
 
             //=====the scene 
@@ -247,6 +220,76 @@ namespace Rudy
 
             sphere->transform->position = glm::vec3(1.0f, +1.0f, 0.0f);
 
+             
+            //model
+
+             //auto test_model = Model::LoadModel("D:/CG_resources/backpack/backpack.obj");
+            auto gBufferPassSkinnedShader = Shader::Create("gBuffer Shader",
+                "Shaders/Deferred/GBufferSkinned_VS.glsl",
+                "Shaders/Deferred/GBuffer_FS.glsl");
+
+            Material::SetMaterialProperties(gBufferPassSkinnedShader);
+
+
+            Texture2D::SetFlipYOnLoad(true); //eg: for .png;
+
+            Model::s_scaleFactor = 0.01f;
+            auto test_model = Model::LoadModel("D:/CG_resources/dae/vampire/dancing_vampire.dae");
+
+
+            std::vector< Ref<Material> > model_materials;
+
+
+            for (auto meshObj : test_model->meshObjects)
+            {
+                auto _material = meshObj->GetRendererComponent()->GetMaterial();
+                _material->SetShader(gBufferPassSkinnedShader);
+                model_materials.push_back(_material);
+
+                _material->SetFloat("u_Metallic", 0.0f);
+                _material->SetFloat("u_Roughness", 0.0f);
+            }
+
+            //Model::ScaleFactor = 0.01f;
+           // auto test_model = Model::LoadModel("D:/CG_resources/animation/Catwalk Walk Turn 180 Tight.dae"); 
+
+            //test: update the global transform of the model; according to the transform of bones;
+            //Transform::UpdateWorldTransformRecursive(test_model->rootNode->transform, glm::mat4(1.0f));  
+
+
+            auto transforms = std::vector<glm::mat4>(100, glm::mat4(1.0f));
+
+            //test if the animation works;
+            auto test_animation_clip = test_model->animationClip;
+            auto animator = Animator::Create();
+            if (test_animation_clip != nullptr)
+            { 
+                //animation_clip->CalculateKeyframe(0);
+              //auto transform = animation_clip->GetGlobalTransform("Hips");
+
+            //pose it to the first frame; 
+                animator->model = test_model;
+                animator->animationClip = test_model->animationClip;
+
+                animator->UpdateBoneTransforms(0.0f);
+                transforms = animator->GetBoneTransforms();
+
+            }
+
+
+            gBufferPassSkinnedShader->Bind();
+
+            //RD_CORE_INFO("get transforms of size{0}", transforms.size());
+            for (int i = 0; i < 100; ++i)
+                gBufferPassSkinnedShader->SetMat4("u_BoneTransforms[" + std::to_string(i) + "]", transforms[i]);
+            //  gBufferPassSkinnedShader->SetMat4("u_BoneTransforms[" + std::to_string(i) + "]", glm::mat4(1.0f));
+            gBufferPassSkinnedShader->SetMat4("u_TestIdentity", glm::mat4(1.0f));
+
+
+            gBufferPassSkinnedShader->Unbind();
+
+
+
 
 
 
@@ -281,83 +324,11 @@ namespace Rudy
             shadowMapFBO->FinishSetup();
 
 
-            //     
-            //===========new: animated model
-
-             //auto test_model = Model::LoadModel("D:/CG_resources/backpack/backpack.obj");
-            auto gBufferPassSkinnedShader = Shader::Create("gBuffer Shader",
-                "Shaders/Deferred/GBufferSkinned_VS.glsl",
-                "Shaders/Deferred/GBuffer_FS.glsl");
-
-            Material::SetMaterialProperties(gBufferPassSkinnedShader);
-
-
-            Texture2D::SetFlipYOnLoad(true); //eg: for .png;
-
-            Model::s_scaleFactor = 0.01f;
-            auto test_model = Model::LoadModel("D:/CG_resources/dae/vampire/dancing_vampire.dae");
-
-
-            std::vector< Ref<Material> > model_materials;
-
-
-            for (auto meshObj : test_model->meshObjects)
-            {
-                auto _material = meshObj->GetRendererComponent()->GetMaterial();
-                _material->SetShader(gBufferPassSkinnedShader);
-                model_materials.push_back(_material);
-
-                _material->SetFloat("u_Metallic", 0.0f);
-                _material->SetFloat("u_Roughness", 0.0f);
-            }
-
-            //Model::ScaleFactor = 0.01f;
-           // auto test_model = Model::LoadModel("D:/CG_resources/animation/Catwalk Walk Turn 180 Tight.dae"); 
-
-            //test: update the global transform of the model; according to the transform of bones;
-            //Transform::UpdateWorldTransformRecursive(test_model->rootNode->transform, glm::mat4(1.0f)); 
-
-
-
-            auto transforms = std::vector<glm::mat4>(100, glm::mat4(1.0f));
-
-            //test if the animation works;
-            auto test_animation_clip = test_model->animationClip;
-            auto animator = Animator::Create();
-            if (test_animation_clip != nullptr)
-            {
-
-                //animation_clip->CalculateKeyframe(0);
-              //auto transform = animation_clip->GetGlobalTransform("Hips");
-
-            //pose it to the first frame; 
-                animator->model = test_model;
-                animator->animationClip = test_model->animationClip;
-
-                animator->UpdateBoneTransforms(0.0f);
-                transforms = animator->GetBoneTransforms();
-
-            }
-
-
-            gBufferPassSkinnedShader->Bind();
-
-            //RD_CORE_INFO("get transforms of size{0}", transforms.size());
-            for (int i = 0; i < 100; ++i)
-                gBufferPassSkinnedShader->SetMat4("u_BoneTransforms[" + std::to_string(i) + "]", transforms[i]);
-            //  gBufferPassSkinnedShader->SetMat4("u_BoneTransforms[" + std::to_string(i) + "]", glm::mat4(1.0f));
-            gBufferPassSkinnedShader->SetMat4("u_TestIdentity", glm::mat4(1.0f));
-
-
-            gBufferPassSkinnedShader->Unbind();
-
-
-
 
 
 
             //=================================================================================================
-            //======lighting pass
+            //======lit pass
 
             //auto litPassShader = Shader::Create("blinnPhong Shader", "Shaders/Shaders/BlinnPhong_VS.glsl", "Shaders/Shaders/BlinnPhong_FS.glsl");
             auto litPassShader = Shader::Create("pbr Shader", "Shaders/Deferred/PBR_VS.glsl", "Shaders/Deferred/PBR_FS.glsl");
@@ -424,6 +395,7 @@ namespace Rudy
             Cube skybox;
             skybox.SetMaterial(skyboxMaterial); 
 
+             
 
 
             //world to view
@@ -439,10 +411,9 @@ namespace Rudy
                 WorldToViewPass = CreateRef<WorldToView>(SCR_WIDTH, SCR_HEIGHT, WorldToViewInputs, WorldToViewOutputs);
             
             }
+  
 
-             
-
-            // SSAO pass;
+            // SSAO 
             {
 
                 SSAOInputs[TexType::gViewPosition] = gViewPosition;
@@ -452,13 +423,10 @@ namespace Rudy
 
                 SSAOPass = CreateRef<SSAO>(SCR_WIDTH, SCR_HEIGHT, SSAOInputs, SSAOOutputs);
 	 
-
-
             }
 
 
-
-            //Bloom Pass
+            //Bloom
             {
 
                 BloomInputs[TexType::ScreenTexture] = litPassScreenTexture;
@@ -468,7 +436,7 @@ namespace Rudy
             }
 
 
-            
+            //Outline
             {
 
                 OutlineInputs[TexType::gViewPosition] = gViewPosition;
@@ -478,13 +446,8 @@ namespace Rudy
 
             }
 
-
-            //=================================================================================================
-
-
-
-            //==========SSR; 
-
+  
+            //SSR
             {
 
                 SSRInputs[TexType::gViewPosition] = gViewPosition;
@@ -497,8 +460,6 @@ namespace Rudy
                 SSRPass =  CreateRef<SSR>(SCR_WIDTH, SCR_HEIGHT, SSRInputs, SSROutputs);
             }
             
-
-
 
             //=================================================================================================
 
@@ -536,24 +497,18 @@ namespace Rudy
                 float time = (float)glfwGetTime();
                 float deltaTime = time - lastFrameTime;
                 lastFrameTime = time;
-                timer += deltaTime;
-
+                timer += deltaTime; 
 
                 //'gui'
                 this->PrepareGUI();
-
-            
-
+                 
+                //animations
                 {
                     animator->UpdateBoneTransforms(timer);
                 }
 
-                /* Render here */
-                //glClearColor(0.2f, 0.2f, 0.2f, 1.0f); 
-                //glClear(GL_COLOR_BUFFER_BIT);
-
-
-                //======g buffer pass: render the scene to the gbuffer 
+    
+                //======gBuffer pass: render the scene to the gbuffer 
                 {
                     GBufferFBO->Bind();
 
@@ -609,11 +564,9 @@ namespace Rudy
                 {
                     shadowMapFBO->Bind();
 
-                    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+                    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                     glClear(GL_DEPTH_BUFFER_BIT);  // make sure clear the framebuffer's content 
-
                     glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-
                     glEnable(GL_DEPTH_TEST);
 
                     //render the scene to the shadowMap; 
@@ -683,9 +636,7 @@ namespace Rudy
                 }
 
 
-                //=======postprocessing
-
-                //=====SSAO
+                //=======postprocessing 
                 if (enableSSAO)
                 {
                     //RD_PROFILE_SCOPE("SSAO pass");
@@ -701,27 +652,21 @@ namespace Rudy
                 {
 					OutlinePass->Render(main_camera);
                 }
-
-
-                //=====SSR
-                if (enableSSR)
-
+                  
+                if (enableSSR) 
                 {
-                    SSRPass->Render(main_camera);
-
+                    SSRPass->Render(main_camera); 
                 }
 
 
 
                 //==========on default framebuffer;
-
-                
+                glBindFramebuffer(GL_FRAMEBUFFER, 0); 
 
                 //===========debug: visualize any texture; 
                 //todo: make a good filter for ss pass;  
-                // add a "composer"  or design the blend mode;
-
-                glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                // add a "composer"  or design the blend mode; 
+                
                 glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 glDisable(GL_DEPTH_TEST); 
@@ -740,19 +685,15 @@ namespace Rudy
 
                 }
 
-                 screenQuad->Draw(nullptr);
+                screenQuad->Draw(nullptr);
                 screenQuadShader->Unbind(); 
-        
-
+         
 
                 //=======skybox overlay; on final default framebuffer; 
                 //compare the depth with gbuffer;  make sure enable the depth test; 
 
                 if (enableSkyBox)
-                {
-
-                    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+                {  
                     glEnable(GL_DEPTH_TEST);
                     glBindFramebuffer(GL_READ_FRAMEBUFFER, GBufferFBO->GetFrameBufferID());
                     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -764,10 +705,7 @@ namespace Rudy
 
                     skyboxShader->Unbind();
 
-                }
-
-
-
+                } 
 
 
                 //=======optional : visualize the buffers；
@@ -776,7 +714,7 @@ namespace Rudy
                 if (visualize_gbuffer)
                 {
                     //render the buffers to the screen, for debugging 
-               //WARN: don't clear the buffer if you want overlay;
+                    //WARN: don't clear the buffer for overlay;
                     glDisable(GL_DEPTH_TEST);
 
                     std::vector<std::pair<int, int>> leftBottom =
@@ -787,8 +725,7 @@ namespace Rudy
                       {0, 3},
                       {1, 3},
                       {2, 3},
-                      {3, 3}, }; 
-
+                      {3, 3}, };  
 
                     std::vector<Ref<Texture>> bufferTextures = {
 						 gWorldPosition, 
@@ -840,18 +777,14 @@ namespace Rudy
                 /* Swap front and back buffers */
                 // glfwSwapBuffers(window); 
                 /* Poll for and process events */
-                //glfwPollEvents();
-
-
+                //glfwPollEvents(); 
 
             }
 
 
             //====shutdown
             this->ShutDownGUI();
-            glfwTerminate(); 
-
-
+            glfwTerminate();  
     } 
 
 
@@ -865,16 +798,14 @@ namespace Rudy
         ImGui::StyleColorsDark();
         // 绑定后端
         ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)this->window->GetNativeWindow(), true);
-        ImGui_ImplOpenGL3_Init("#version 130");
-
+        ImGui_ImplOpenGL3_Init("#version 130"); 
 
         //other settings
         ImGui::SetNextWindowSize(ImVec2(500, 400)); // 设置窗口大小为 500x400
 
         //initial position on the right top corner;
-        //ImGui::SetNextWindowPos(ImVec2(SCR_WIDTH - 500, 0)); // 设置窗口位置为 (SCR_WIDTH - 500, 0)
+        ImGui::SetNextWindowPos(ImVec2(SCR_WIDTH - 500, 0)); // 设置窗口位置为 (SCR_WIDTH - 500, 0)
         
-
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO();
         ImFontConfig fontConfig;
@@ -896,9 +827,7 @@ namespace Rudy
         // 开始新的一帧
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-     
+        ImGui::NewFrame(); 
         
         //  
         this->DrawGUI();
@@ -911,6 +840,7 @@ namespace Rudy
         ImGui::Text("Hello World"); 
         ImGui::Checkbox("enableSkybox", &enableSkyBox);
 
+
         ImGui::Checkbox("enableSSAO", &enableSSAO);
         ImGui::Checkbox("enableSSAOBlur", &(SSAOPass->enableBlur));
         ImGui::Checkbox("enableBloom", &enableBloom);
@@ -918,28 +848,31 @@ namespace Rudy
         ImGui::Checkbox("enableSSR", &enableSSR);
 
 
+        //group: SSAO
+
+        ImGui::Spacing();
         ImGui::SliderFloat("SSAO radius", &(SSAOPass->radius), 0.0f, 1.0f);
         ImGui::SliderFloat("SSAO bias", &(SSAOPass->bias), 0.0f, 1.0f);
         ImGui::SliderFloat("SSAO range bias", &(SSAOPass->range_bias), 0.0f, 1.0f);
+        ImGui::SliderInt ("SSAO kernel size", &(SSAOPass->kernelSize), 0, 64); 
 
-        ImGui::SliderInt ("SSAO kernel size", &(SSAOPass->kernelSize), 0, 64);
-
+        ImGui::Spacing();
         ImGui::SliderFloat("Bloom threshold", &(BloomPass->threshold), 0.0f, 1.0f);
         ImGui::SliderFloat("Bloom Strength", &(BloomPass->bloom_strength), 0.0f, 3.0f);
-        ImGui::SliderFloat("Bloom radius", &(BloomPass->bloom_radius), 0.0f, 1.0f);
+        ImGui::SliderFloat("Bloom radius", &(BloomPass->bloom_radius), 0.0f, 1.0f); 
 
-
-
+        ImGui::Spacing();
         ImGui::SliderFloat("outline_width", &(OutlinePass->outline_width) ,1.0f  , 5.0f);
         ImGui::SliderFloat("outline depth_thres", &(OutlinePass->depth_thres) , 0.001f , 1.0f);
         ImGui::SliderFloat("outline depth_thres_scale", &(OutlinePass->depth_thres_scale) , 0.001f , 20.0f);
         ImGui::SliderFloat("outline depth_NdotV_threshold", &(OutlinePass->depth_NdotV_threshold) ,0.0f  ,1.0f );
         ImGui::SliderFloat("outline normal_threshold", &(OutlinePass->normal_threshold) , 0.01f , 1.0f);
 
-
         ImGui::Checkbox("outline enable depth",  &(OutlinePass->enable_depth));
         ImGui::Checkbox("outline enable normal", &(OutlinePass->enable_normal));
 
+
+        ImGui::Spacing();
         ImGui::SliderFloat("SSR depth_bias", &(SSRPass->depth_bias), 0.0f, 0.04f);
         ImGui::SliderFloat("SSR step_size", &(SSRPass-> step_size), 0.01f, 0.3f);
         ImGui::SliderInt("SSR max_steps", &(SSRPass->max_steps),  50 , 300);
@@ -951,9 +884,9 @@ namespace Rudy
         std::unordered_map<std::string, Ref<Texture>> bufferList = { 
         
          {"Outline output", OutlineOutputs[TexType::ScreenTexture]},
-         {"Bloom output", BloomOutputs[TexType::ScreenTexture]},
-         {"SSR output", SSROutputs[TexType::ScreenTexture]},
-         {"SSAO output", SSAOOutputs[TexType::ScreenTexture]},
+         {"Bloom output",   BloomOutputs[TexType::ScreenTexture]},
+         {"SSR output",     SSROutputs[TexType::ScreenTexture]},
+         {"SSAO output",    SSAOOutputs[TexType::ScreenTexture]},
 
          {"Lit Pass output", litOutputs[TexType::ScreenTexture]},
 
@@ -990,32 +923,22 @@ namespace Rudy
             }
 
             
-        }
+        } 
 
-       
 
         ImGui::End();
-
     }
 
 
 
     void PBR::RenderGUI()
-    {
-        // 渲染GUI
+    { 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 
 
-
      
-
-
-
-
-
-
 
 }
 

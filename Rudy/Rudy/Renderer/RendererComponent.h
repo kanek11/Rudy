@@ -12,14 +12,13 @@
 namespace Rudy
 {
 
-	//indrect is discarded, it overcomplicates things 
+	//indrect is discarded, it overcomplicates things.
 	struct DrawArraysIndirectCommand {
 		uint32_t  vertex_count = 0;
 		uint32_t  instance_count = 1;
 		uint32_t  first = 0;
 		uint32_t  base_instance = 0;
-	};
-
+	}; 
 
 	struct DrawIndexedIndirectCommand
     {
@@ -35,7 +34,7 @@ namespace Rudy
 	//every draw call must use a shader program/ material
 	//vertex array is somehow not limited to mesh, but also useful for instanced rendering etc
 
-	//<<abstract base>>
+	//<<abstract>>
 	class RendererComponent
 	{
 	public:
@@ -51,6 +50,7 @@ namespace Rudy
 		Ref<Material> GetMaterial() { return m_material; }
 
 		void SetShader(Ref<Shader> shader) { m_material->SetShader(shader); }
+		void GetShader() { m_material->GetShader(); }
 		 
 
 		void SetVertexArray(Ref<VertexArray> va) { m_vertexArray = va; }

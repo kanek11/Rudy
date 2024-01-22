@@ -94,8 +94,7 @@ namespace Rudy
         case MeshDrawCommand::ARRAYS:
             Renderer::GetRendererAPI()->DrawArrays (m_mesh->topology, m_mesh->GetVertexCount());
             break;
-        }
-
+        } 
 
         m_material->Unbind();
         m_vertexArray->Unbind();
@@ -163,8 +162,7 @@ namespace Rudy
             return;
 		}
          
-		m_material->Bind();
-
+		m_material->Bind(); 
 
         if (cam != nullptr)
         {

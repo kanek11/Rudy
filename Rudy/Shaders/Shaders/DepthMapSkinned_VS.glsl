@@ -9,8 +9,7 @@ layout(location = 5) in vec4 aBoneWeights;
 
 uniform mat4 u_model;
 uniform mat4 u_projection;
-uniform mat4 u_view;
-
+uniform mat4 u_view; 
 
 uniform mat4 u_BoneTransforms[100];
 

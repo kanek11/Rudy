@@ -1,25 +1,18 @@
-#pragma once
-
-#include "RudyPCH.h"
-
-#include <glm/glm.hpp>
-
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
- 
+#pragma once 
+#include "RudyPCH.h" 
 
 #include <Rudy/Renderer/Mesh.h>
 #include <Rudy/Renderer/Material.h> 
 
 #include <Rudy/Renderer/Camera.h> 
 #include <Rudy/Renderer/Transform.h> 
-#include <Rudy/Renderer/Buffer.h>
-
+#include <Rudy/Renderer/Buffer.h> 
 
 #include <Rudy/Animation/Animation.h> 
 
 #include <Rudy/Renderer/RendererComponent.h>
+
+
 
 namespace Rudy {
 

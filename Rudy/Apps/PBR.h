@@ -42,10 +42,7 @@ namespace Rudy
 
 		//
 		Ref<Camera> main_camera;
-		Ref<Window> window;
-
-
-
+		Ref<Window> window; 
 
 		//
 		Ref<Pass> WorldToViewPass;
