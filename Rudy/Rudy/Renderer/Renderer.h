@@ -15,7 +15,7 @@ namespace Rudy {
 	 
 	//mainly serve as a state organizer
 	//especially the  API, window;
-	class Renderer
+	class RendererApp
 	{
 	
 	enum class RenderingEngine {

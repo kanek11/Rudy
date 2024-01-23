@@ -12,7 +12,7 @@
 namespace Rudy {
 
 
-    class ScreenQuad : public MeshObject {
+    class ScreenQuad : public StaticMeshObject {
     public:
         ~ScreenQuad() = default; 
         ScreenQuad();

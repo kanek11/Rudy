@@ -6,9 +6,9 @@
 namespace Rudy
 {
 
-    Plane::Plane(uint32_t subdivison) : MeshObject()
+    Plane::Plane(uint32_t subdivison) : StaticMeshObject()
     {
-        this->GetRendererComponent()->SetMesh(CreateMeshGeometry(subdivison));
+        this->GetRenderer()->SetMesh(CreateMeshGeometry(subdivison));
     }
 
 

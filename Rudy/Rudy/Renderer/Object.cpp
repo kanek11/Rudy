@@ -6,9 +6,6 @@
 #include <Rudy/Renderer/Renderer.h>
 
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 
 
@@ -148,8 +145,8 @@ namespace Rudy
             aiMesh* ai_mesh = scene->mMeshes[ai_node->mMeshes[i]];
 
             //engine-specific mesh object
-            auto meshObject = MeshObject::Create();
-            auto meshRenderer = meshObject->GetRendererComponent();
+            auto meshObject = StaticMeshObject::Create();
+            auto meshRenderer = meshObject->GetRenderer();
         
             RD_CORE_INFO("model: process mesh");
             meshRenderer->SetMesh( processMesh(ai_mesh, scene) );
@@ -553,11 +550,29 @@ namespace Rudy
 
 
 
-
-    void Model::Draw(Ref<Camera> cam)
+    //assume model use same shader for all meshes,  this works for now
+    //otherwise the buffer should be handled for each mesh ;
+    void Model::Draw(Ref<Camera> cam, uint32_t count, Ref<Material> mat)
     {
+         //legacy way:
+        //for (int i = 0; i < 100; ++i)
+        //    gBufferPassSkinnedShader->SetMat4("u_BoneTransforms[" + std::to_string(i) + "]", transforms[i]);
+ 
+        if (this->animator != nullptr)
+        {
+           if(this->shader != nullptr)
+           this->shader->Bind();
+           boneTransformBuffer->BindBase(0); 
+
+           if(mat !=nullptr)
+           mat->GetShader()->Bind();
+           boneTransformBuffer->BindBase(0); 
+
+		}   
+
         for (auto meshObj : this->meshObjects)
-            meshObj->GetRendererComponent()->Draw(cam);
+            meshObj->GetRenderer()->Draw(cam, count, mat);
+
     }
 
  
@@ -565,7 +580,7 @@ namespace Rudy
     void Model::SetShader(Ref<Shader> shader)
     {
 		for (auto meshObj : this->meshObjects)
-            meshObj->GetRendererComponent()->SetShader(shader);
+            meshObj->GetRenderer()->SetShader(shader);
 	}
 
 

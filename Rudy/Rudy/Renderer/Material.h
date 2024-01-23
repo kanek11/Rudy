@@ -4,7 +4,7 @@
 
 #include "Rudy/Renderer/Shader.h"
 #include "Rudy/Renderer/Texture.h"
-
+#include "Rudy/Renderer/Buffer.h"
 //turns out if shader and texture is ready,  the concept of material should be independent of renderer API.
 
 
@@ -177,7 +177,7 @@ namespace Rudy {
 	   {
 		    m_Vec3_map[name] = value;
 	   }
-void SetVec3Map(const std::unordered_map<std::string, glm::vec3>& map)
+       void SetVec3Map(const std::unordered_map<std::string, glm::vec3>& map)
 	   {
 		    m_Vec3_map = map;
 	   }
@@ -185,9 +185,20 @@ void SetVec3Map(const std::unordered_map<std::string, glm::vec3>& map)
 	   {
 		    m_Bool_map[name] = value;
 	   }
-void SetBoolMap(const std::unordered_map<std::string, bool>& map)
+       void SetBoolMap(const std::unordered_map<std::string, bool>& map)
 	   {
 		    m_Bool_map = map;
+	   }
+
+
+	   void SetSSBO(uint32_t bindingPoint, Ref<StorageBuffer> SSBO)
+	   {
+		   m_StorageBuffer_map[bindingPoint] = SSBO;
+	   }
+
+	   Ref<StorageBuffer> GetSSBO(uint32_t bindingPoint)
+	   {
+		   return m_StorageBuffer_map[bindingPoint];
 	   }
  
 
@@ -208,16 +219,21 @@ void SetBoolMap(const std::unordered_map<std::string, bool>& map)
 		std::unordered_map<std::string, float>      m_Float_map  ;
 		std::unordered_map<std::string, bool>       m_Bool_map  ;
 		 
-
+		//new: <binding point, SSBO>, mainly for compute shader
+		 std::unordered_map<uint32_t, Ref<StorageBuffer>> m_StorageBuffer_map;
 	};
 
 
 	//==========PBR
 
 
-	inline std::unordered_map<std::string, float> PBRDefaultFloatMap
+	inline std::unordered_map<std::string, glm::vec3> PBRDefaultVec3Map
 	{
+		{"u_Albedo", glm::vec3(1.0,1.0,1.0)},
+	};
 
+	inline std::unordered_map<std::string, float> PBRDefaultFloatMap
+	{ 
 		{"u_Metallic",    1.0f},
 		{"u_Roughness",   1.0f},
 		{"u_Specular",    1.0f},
@@ -227,11 +243,6 @@ void SetBoolMap(const std::unordered_map<std::string, bool>& map)
 		//{"u_AO",          1.0f},
 	};
 
-	inline std::unordered_map<std::string, glm::vec3> PBRDefaultVec3Map
-	{
-		{"u_Albedo", glm::vec3(1.0,1.0,1.0)},
-
-	};
 
 	inline std::unordered_map<std::string, bool> PBRDefaultBoolMap
 	{

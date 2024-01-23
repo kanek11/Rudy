@@ -48,10 +48,10 @@ void StartTemp() {
 
     auto main_camera = Camera::Create(MAIN_CAMERA_POS);
 
-    Renderer::Init(SCR_WIDTH, SCR_HEIGHT);
-    Renderer::SetMainCamera(main_camera);
+    RendererApp::Init(SCR_WIDTH, SCR_HEIGHT);
+    RendererApp::SetMainCamera(main_camera);
 
-    auto renderAPI = Renderer::GetAPI();
+    auto renderAPI = RendererApp::GetAPI();
 
 
 
@@ -100,7 +100,7 @@ void StartTemp() {
     float lastFrameTime = (float)glfwGetTime();
     float timer = 0.0f;
     RD_CORE_WARN("App: Entering the loop");
-    while (!Renderer::ShouldClose())
+    while (!RendererApp::ShouldClose())
     {
         //get the time of each frame
         float time = (float)glfwGetTime();
@@ -164,7 +164,7 @@ void StartTemp() {
 
         main_camera->OnUpdate(deltaTime);
 
-        Renderer::WindowOnUpdate();
+        RendererApp::WindowOnUpdate();
         /* Swap front and back buffers */
        // glfwSwapBuffers(window); 
         /* Poll for and process events */

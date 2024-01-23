@@ -13,6 +13,10 @@
 #include <Rudy/Renderer/RendererComponent.h>
 
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 
 namespace Rudy {
 
@@ -59,13 +63,13 @@ namespace Rudy {
        RenderableObject() : Object() { isRenderable = true; } 
      
 
-        void SetRendererComponent(Ref<RendererComponent> rendererComponent) 
+        void SetRendererComponent(Ref<Renderer> rendererComponent) 
 		{ 
             rendererComponent->SetTransform(this->transform);
 			this->rendererComponent = rendererComponent; 
 		}
 
-        Ref<RendererComponent> GetRendererComponent() 
+        Ref<Renderer> GetRendererComponent() 
         { return rendererComponent; }
          
   
@@ -75,7 +79,7 @@ namespace Rudy {
 
         virtual void Draw(Ref<Camera> cam) = 0;
 
-        Ref<RendererComponent> rendererComponent = nullptr;
+        Ref<Renderer> rendererComponent = nullptr;
     };
  
 
@@ -84,48 +88,48 @@ namespace Rudy {
 
     //<<terminal>>
     //simply assume mesh renderer component; come with a mesh component;
-    class MeshObject : public Object
+    class StaticMeshObject : public Object
     {
     public:
-        virtual ~MeshObject()  = default;
-        MeshObject() : Object() {
+        virtual ~StaticMeshObject()  = default;
+        StaticMeshObject() : Object() {
             isRenderable = true;
-            rendererComponent = MeshRendererComponent::Create();
-            rendererComponent->SetTransform(this->transform);
+            renderer = StaticMeshRenderer::Create();
+            renderer ->SetTransform(this->transform);
         }   
 
-        static Ref<MeshObject> Create() 
-		{ return CreateRef<MeshObject>(); }
+        static Ref<StaticMeshObject> Create() 
+		{ return CreateRef<StaticMeshObject>(); }
 
 
-        void SetRendererComponent(Ref<MeshRendererComponent> rendererComponent)
+        void SetRenderer(Ref<StaticMeshRenderer> rendererComponent)
         { 
-            this->rendererComponent = rendererComponent;
+            this->renderer = rendererComponent;
         }
 
-        Ref<MeshRendererComponent> GetRendererComponent()
+        Ref<StaticMeshRenderer> GetRenderer()
         {
-            return this->rendererComponent;
+            return this->renderer;
         }  
+
 
         void SetMaterial(Ref<Material> mat)
 		{
-			this->rendererComponent->SetMaterial(mat);
+			this->renderer->SetMaterial(mat);
 		} 
         void SetShader(Ref<Shader> shader)
         { 
-            this->rendererComponent->SetShader(shader);
-		}
-
+            this->renderer->SetShader(shader);
+		} 
 
     public:
         //override draw command if needed;
         virtual void Draw(Ref<Camera> cam)
         {
-            this->rendererComponent->Draw(cam);
+            this->renderer->Draw(cam);
         }
          
-        Ref<MeshRendererComponent> rendererComponent = nullptr;
+        Ref<StaticMeshRenderer> renderer = nullptr;
 
     };
 
@@ -134,11 +138,10 @@ namespace Rudy {
 
      //a model contains... whatever the model contains;  
      //expect multiple mesh objects;
-     class Model    
+     class Model: public Object    
      {
      public:
-         //global setting ; statics
-
+         //global settings 
          static float s_scaleFactor;  
  
      public:  
@@ -150,15 +153,28 @@ namespace Rudy {
 
  
      public:
-         std::vector< Ref<MeshObject> >  meshObjects;
+         std::vector< Ref<StaticMeshObject> >  meshObjects;
+
+         Ref<Shader> shader = nullptr;
+         Ref<StorageBuffer> boneTransformBuffer = StorageBuffer::Create();
 
 
-         std::string directory;
+         Ref<Animator> animator = nullptr;
+
+         void SetAnimator(Ref<Animator> animator)
+         {
+			 this->animator = animator; 
+             if (this->hasAnimation())
+             animator->animationClip = this->animationClip;
+             else
+             RD_CORE_WARN("Model:: model has no animation for the animator");
+		 }
+
 
 
          //animation and bound bones are could-be-separate;
          //might need retarget;
-         Ref<AnimationClip> animationClip;
+         Ref<AnimationClip> animationClip = nullptr;
           
          //retreive the bound bones defined in the mesh;     //aiBone->mName; aiBone->mOffsetMatrix 
          //ordered map,  key = name to facilate searching by name in animation keyframe; 
@@ -166,9 +182,12 @@ namespace Rudy {
           
 
 	 public:  
-         void Draw(Ref<Camera> cam); 
+         void Draw(Ref<Camera> cam, uint32_t count = 1, Ref<Material> mat = nullptr);
           
          void SetShader(Ref<Shader> shader) ;
+
+
+         bool hasAnimation() { return animationClip != nullptr ; }
 
 
  //========system 
@@ -185,13 +204,17 @@ namespace Rudy {
 
          void processNode(const aiScene* scene, aiNode* ai_node, Ref<Object> scene_node);
 
-         Ref<Mesh> processMesh(aiMesh* mesh, const aiScene* scene);
+         Ref<Mesh>     processMesh(aiMesh* mesh, const aiScene* scene);
          Ref<Material> processMaterial(aiMesh* mesh, const aiScene* scene);
           
          void processBones(const aiScene* scene, aiMesh* mesh, std::vector<Vertex>& vertices);
          void processAnimation(const aiScene* scene);
 
 
+
+
+     public: 
+         std::string directory;
      };
      
  

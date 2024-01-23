@@ -327,10 +327,9 @@ namespace Rudy {
             //RD_CORE_ERROR("glShader: SetMat4: uniform {0} not found", name);
             return;
         }
-        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
-         
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat)); 
 
-    }
+    } 
 
 
     //routine utility function for checking shader compilation/linking errors.
@@ -358,6 +357,7 @@ namespace Rudy {
             if (!success)
             {
                 glGetProgramInfoLog(shader, 1024, NULL, infoLog);
+                std::cout << "Shader name: " << m_Name << " ;directory:" << m_FilePath << std::endl;
                 std::cout << "APP GET ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
             }
         }

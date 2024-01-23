@@ -19,7 +19,7 @@ namespace Rudy
 
 	void Emitter::Draw(Ref<Camera> cam)
 	{ 
-		this->GetRendererComponent()->DrawInstanced(cam, m_currentAliveCount);
+		this->GetRendererComponent()->Draw(cam, m_currentAliveCount);
 	}
 
 

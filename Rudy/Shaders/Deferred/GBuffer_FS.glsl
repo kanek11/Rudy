@@ -25,7 +25,7 @@ uniform sampler2D u_NormalMap;
 uniform sampler2D u_MetallicMap;  
 uniform sampler2D u_RoughnessMap;
  
-uniform vec3 u_Albedo;  
+uniform vec3  u_Albedo;  
 uniform float u_Specular;
 uniform float u_Metallic;
 uniform float u_Roughness; 

@@ -1,5 +1,3 @@
-#pragma once
-
 #include "RudyPCH.h"
 #include "Animation.h"
 
@@ -161,7 +159,9 @@ namespace Rudy
 
 	//get the data-oriented array from the avatar;
 	//
-	Animator::Animator() {
+	Animator::Animator(Ref<Model> model)
+		: model(model)
+	{
 
 		//m_BoneTransforms.resize(100);  //TODO: adjust the size from the avatar;
 	}
@@ -179,7 +179,8 @@ namespace Rudy
 		//simple loop mode;
 		if (!this->animationClip)
 		{
-			RD_CORE_ERROR("no animation found");
+			RD_CORE_ERROR("animator: no animation found");
+			return;
 		}
 	
 		auto duration = this->animationClip->duration;
@@ -235,14 +236,11 @@ namespace Rudy
 
 		RD_CORE_INFO("animationclip print: node name:{0}", node->gameObject->name);
 
-		for (const auto& child : node->children) { 
-		
-			printHierarchy(child);
-
+		for (const auto& child : node->children) {  
+			printHierarchy(child); 
 		}
 
-		RD_CORE_INFO("return");
-
+		RD_CORE_INFO("return"); 
 
 	}
 

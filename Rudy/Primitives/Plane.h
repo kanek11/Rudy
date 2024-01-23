@@ -20,7 +20,7 @@
 namespace Rudy {
 
 
-    class Plane : public MeshObject {
+    class Plane : public StaticMeshObject {
     public: 
         ~Plane() = default;
 

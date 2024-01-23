@@ -1,12 +1,15 @@
 #pragma once
 
-#include "RudyPCH.h"   
-
-
-//#include "Rudy/Renderer/Object.h"
+#include "RudyPCH.h"     
 
 #include "Rudy/renderer/Transform.h"
 #include <glm/gtx/quaternion.hpp>
+
+
+//animator is created and linked to a model ;
+//manually set animator to model, and link the animtion clips.
+
+
 
 //an animator basically  composed of two parts:
 //for character animation,  
@@ -137,10 +140,7 @@ namespace Rudy
 
 	  void printHierarchy(const Ref<Transform> node);
 
-	};
-
-
-
+	}; 
  
 	
 
@@ -152,28 +152,19 @@ namespace Rudy
 	// the bone data of animated model;
 	
 
-	
+	//todo: multiple animation clips;
 	class Animator {
 
 	public:
 
 		~Animator()= default;
-		Animator();
+		Animator( Ref<Model> model);
 
-		
+		static Ref<Animator> Create( Ref<Model> model = nullptr)
+		{
+			return CreateRef<Animator>( model);
+		}
 
-		//as engine asset;
-		Ref<AnimationClip> animationClip; 
-
-		//in the model; todo:  make it for gameobject instead of model asset;
-		Ref<Model> model = CreateRef<Model>();
-
-		//std::map<std::string, Bone> bindPoseBoneMap;  
-		//Ref<Object> rootNode;
-
-		//the animation data;
-		std::vector<glm::mat4> m_BoneTransforms = std::vector<glm::mat4>(100, glm::mat4(1.0f));
-		
 		void UpdateBoneTransforms(float time);  
 		std::vector<glm::mat4> GetBoneTransforms();
 
@@ -181,10 +172,19 @@ namespace Rudy
 		glm::mat4 GetGlobalTransform(const std::string& name);
 
 
-		static Ref<Animator> Create()
-		{
-			return CreateRef<Animator>();
-		}
+		
+
+
+		//as engine asset;
+		Ref<AnimationClip> animationClip = nullptr;
+
+		//in the model; todo:  make it for gameobject instead of model asset;
+		Ref<Model> model = nullptr;
+
+		//std::map<std::string, Bone> bindPoseBoneMap;  
+		//Ref<Object> rootNode; 
+
+		std::vector<glm::mat4> m_BoneTransforms = std::vector<glm::mat4>(100, glm::mat4(1.0f));
 	};
 
 

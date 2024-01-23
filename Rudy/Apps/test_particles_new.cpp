@@ -44,10 +44,10 @@ void StartPa() {
 
     auto main_camera = Camera::Create(MAIN_CAMERA_POS);
 
-    Renderer::Init(SCR_WIDTH, SCR_HEIGHT);
-    Renderer::SetMainCamera(main_camera);
+    RendererApp::Init(SCR_WIDTH, SCR_HEIGHT);
+    RendererApp::SetMainCamera(main_camera);
 
-    auto renderAPI = Renderer::Renderer::GetAPI();
+    auto renderAPI = RendererApp::RendererApp::GetAPI();
 
 
 
@@ -72,7 +72,7 @@ void StartPa() {
     auto particle_sprite_material = Material::Create(m_particle_sprite_shader);
    
 
-    auto particle_sprite_renderer = ParticleSpriteRendererComponent::Create();
+    auto particle_sprite_renderer = ParticleSpriteRenderer::Create();
     particle_sprite_renderer->SetMaterial(particle_sprite_material);
 
 
@@ -89,7 +89,7 @@ void StartPa() {
     Emitter* test_particle = new Emitter(); 
 
 
-    auto particle_mesh_renderer = MeshRendererComponent::Create(); 
+    auto particle_mesh_renderer = StaticMeshRenderer::Create(); 
     particle_mesh_renderer->SetMaterial(particle_mesh_material);
  
 
@@ -97,10 +97,10 @@ void StartPa() {
     auto defaultShader = Shader::Create("default Shader", 
         "Shaders/Shaders/default_VS.glsl", "Shaders/Shaders/default_FS.glsl");
     auto defaultMaterial = Material::Create(defaultShader);
-    cube->GetRendererComponent()->SetMaterial(defaultMaterial);
+    cube->GetRenderer()->SetMaterial(defaultMaterial);
 
 
-    particle_mesh_renderer->SetMesh(cube->GetRendererComponent()->GetMesh()); 
+    particle_mesh_renderer->SetMesh(cube->GetRenderer()->GetMesh()); 
 
      
     //test_particle ->SetRendererComponent(particle_mesh_renderer);
@@ -123,7 +123,7 @@ void StartPa() {
     float lastFrameTime = (float)glfwGetTime();
     float timer = 0.0f;
     RD_CORE_WARN("App: Entering the loop");
-    while (!Renderer::ShouldClose())
+    while (!RendererApp::ShouldClose())
     {
         //get the time of each frame
         float time = (float)glfwGetTime();
@@ -152,7 +152,7 @@ glDisable(GL_BLEND);
         nav.Draw();
 
         main_camera->OnUpdate(deltaTime);
-        Renderer::WindowOnUpdate();
+        RendererApp::WindowOnUpdate();
         // glfwSwapBuffers(window);  
          //glfwPollEvents();
 
@@ -162,7 +162,7 @@ glDisable(GL_BLEND);
 
 
     //====shutdown 
-    Renderer::Shutdown();
+    RendererApp::Shutdown();
     //glfwTerminate(); 
 
 

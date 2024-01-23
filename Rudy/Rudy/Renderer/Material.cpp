@@ -50,7 +50,7 @@ namespace Rudy
 	void Material::Bind()
 	{ 
 		if (m_Shader != nullptr)
-		m_Shader->Bind(); 
+		    m_Shader->Bind(); 
 		else
 		{ 
 			RD_CORE_ERROR("Material: no shader bound");
@@ -83,13 +83,19 @@ namespace Rudy
 			//RD_CORE_INFO("Material: bool {0} is set to {1}", value.first, value.second);
 		 }
 
+
+		 for (auto& SSBO : m_StorageBuffer_map)
+		 {
+		 	SSBO.second->BindBase(SSBO.first);
+		 } 
+
 	}
 	 
 
 	void Material::Unbind()
 	{ 
 		if (m_Shader != nullptr)
-			m_Shader->Bind();
+			m_Shader->Unbind();
 		else
 		{
 			RD_CORE_ERROR("Material: no shader bound");

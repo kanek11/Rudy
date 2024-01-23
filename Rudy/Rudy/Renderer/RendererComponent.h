@@ -12,7 +12,7 @@
 namespace Rudy
 {
 
-	//indrect is discarded, it overcomplicates things.
+	//for now indrect is discarded, it overcomplicates things.
 	struct DrawArraysIndirectCommand {
 		uint32_t  vertex_count = 0;
 		uint32_t  instance_count = 1;
@@ -35,14 +35,13 @@ namespace Rudy
 	//vertex array is somehow not limited to mesh, but also useful for instanced rendering etc
 
 	//<<abstract>>
-	class RendererComponent
+	class Renderer
 	{
 	public:
-		virtual ~RendererComponent() = default; 
+		virtual ~Renderer() = default; 
 
 
-		virtual void Draw(Ref<Camera> cam) = 0; 
-		virtual void DrawInstanced(Ref<Camera> cam, uint32_t count) = 0; 
+		virtual void Draw(Ref<Camera> cam, uint32_t count = 1, Ref<Material> mat = nullptr) = 0; 
 
 
 		//set/get
@@ -66,6 +65,8 @@ namespace Rudy
 		Ref<Material> m_material = nullptr; 
 		//optional
 		Ref<VertexArray> m_vertexArray = nullptr; 
+
+		uint32_t m_instanceCount = 1;
 		
 
 	public:
@@ -77,11 +78,11 @@ namespace Rudy
 
 
 	//<<terminal>>
-	class MeshRendererComponent : public RendererComponent
+	class StaticMeshRenderer : public Renderer
 	{
 	public: 
-		~MeshRendererComponent() = default;
-		MeshRendererComponent()
+		~StaticMeshRenderer() = default;
+		StaticMeshRenderer()
 		{
 			RD_CORE_INFO("MeshRendererComponent created:");
 			m_vertexArray = VertexArray::Create();  
@@ -89,14 +90,13 @@ namespace Rudy
 			m_indexBuffer = IndexBuffer::Create();
 		}
 
-		static Ref<MeshRendererComponent> Create()
+		static Ref<StaticMeshRenderer> Create()
 		{
-			return CreateRef<MeshRendererComponent>();
+			return CreateRef<StaticMeshRenderer>();
 		}
 
 	public:
-		virtual void Draw(Ref<Camera> cam) override;
-		virtual void DrawInstanced(Ref<Camera> cam, uint32_t count) override;
+		virtual void Draw(Ref<Camera> cam, uint32_t count = 1, Ref<Material> mat = nullptr) override;
 
 		 
 		void SetMesh(Ref<Mesh> m);
@@ -163,24 +163,22 @@ namespace Rudy
 
 
 
-	class ParticleSpriteRendererComponent : public RendererComponent
+	class ParticleSpriteRenderer : public Renderer
 	{
 	public:
-		~ParticleSpriteRendererComponent() = default;
-		ParticleSpriteRendererComponent()
+		~ParticleSpriteRenderer() = default;
+		ParticleSpriteRenderer()
 		{
 			RD_CORE_INFO(" ParticleSpriteRendererComponent created:"); 
 		}
 
-		static Ref<ParticleSpriteRendererComponent> Create()
+		static Ref<ParticleSpriteRenderer> Create()
 		{
-			return CreateRef<ParticleSpriteRendererComponent>();
+			return CreateRef<ParticleSpriteRenderer>();
 		}
 
 	public:
-		virtual void Draw(Ref<Camera> cam) override;
-		virtual void DrawInstanced(Ref<Camera> cam, uint32_t count) override;
-  
+		virtual void Draw(Ref<Camera> cam, uint32_t count = 1, Ref<Material> mat = nullptr) override;
 
 	};
 

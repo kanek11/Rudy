@@ -44,6 +44,23 @@ namespace Rudy
 		Ref<Camera> main_camera;
 		Ref<Window> window; 
 
+
+
+		//
+		std::vector< Ref<StaticMeshObject> >  staticMeshObjects;
+		std::vector< Ref<Model> >  models;
+
+
+
+		Ref<Shader> gBufferPassShader;
+		Ref<FrameBuffer> GBufferFBO;
+
+
+		//float shadow_bias = 0.005f;
+		float min_shadow_bias = 0.001f;
+		float max_shadow_bias = 0.01f;
+
+
 		//
 		Ref<Pass> WorldToViewPass;
 		std::unordered_map< TexType, Ref<Texture>> WorldToViewInputs;
@@ -108,24 +125,27 @@ namespace Rudy
 
 		const uint32_t BUFFER_WIDTH = SCR_WIDTH / 4;
 		const uint32_t BUFFER_HEIGHT = SCR_HEIGHT / 4;
-		const uint32_t SHADOW_WIDTH = 512, SHADOW_HEIGHT = 512;
+		const uint32_t SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
 		const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 1.5f, 5.0f);
 
 
 
 	public: 
-		bool  enableSSR = true;
+		bool  enableSSR = false;
 		bool  enableOutline = false;
 		bool  enableBloom = false;
 		bool  enableSSAO = false; 
 
 		bool  visualize_gbuffer = true;
-		bool  enableSkyBox = true;
+		bool  enableSkyBox = false;
 
 		Ref<Texture> visualizeBuffer;
 		float bufferMipLevel = 0; 
 
+
+
+		Ref<Texture2D> shadowMap;
 
 	};
 

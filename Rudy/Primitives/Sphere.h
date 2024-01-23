@@ -12,7 +12,7 @@
 namespace Rudy {
 
 
-	class Sphere: public MeshObject {
+	class Sphere: public StaticMeshObject {
 
 	public:
         ~Sphere() = default;

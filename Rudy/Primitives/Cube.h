@@ -10,13 +10,13 @@
 namespace Rudy {
 
     //<<terminal>>
-    class Cube : public MeshObject {
+    class Cube : public StaticMeshObject {
     public:
         ~Cube() = default;
 
-        Cube() : MeshObject()
+        Cube() : StaticMeshObject()
         { 
-            this->GetRendererComponent()->SetMesh( CreateMeshGeometry() );
+            this->GetRenderer()->SetMesh( CreateMeshGeometry() );
         }
       
 

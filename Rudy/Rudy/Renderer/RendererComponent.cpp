@@ -9,7 +9,7 @@ namespace Rudy
 {
 	 
 
-	void MeshRendererComponent::SetMesh(Ref<Mesh> m)
+	void StaticMeshRenderer::SetMesh(Ref<Mesh> m)
 	{
 		RD_CORE_INFO("MeshObject: SetMesh:");
 		m_mesh = m;
@@ -20,7 +20,7 @@ namespace Rudy
 	}
 
 	
-    void MeshRendererComponent::SetupBuffers()
+    void StaticMeshRenderer::SetupBuffers()
     {
         //RD_PROFILE_FUNCTION(); 
 
@@ -44,7 +44,7 @@ namespace Rudy
         m_vertexArray->AddAttribute(1, 0, 2, BufferDataType::FLOAT32, offsetof(Vertex, UV));
         m_vertexArray->AddAttribute(2, 0, 3, BufferDataType::FLOAT32, offsetof(Vertex, Normal));
         m_vertexArray->AddAttribute(3, 0, 3, BufferDataType::FLOAT32, offsetof(Vertex, Tangent));
-        m_vertexArray->AddAttribute(4, 0, 4, BufferDataType::INT32, offsetof(Vertex, BoneIndices));
+        m_vertexArray->AddAttribute(4, 0, 4, BufferDataType::INT32,   offsetof(Vertex, BoneIndices));
         m_vertexArray->AddAttribute(5, 0, 4, BufferDataType::FLOAT32, offsetof(Vertex, BoneWeights));
           
 
@@ -55,21 +55,38 @@ namespace Rudy
 
 
      
-    void MeshRendererComponent::Draw(Ref<Camera> cam)
+    void StaticMeshRenderer::Draw(Ref<Camera> cam, uint32_t count, Ref<Material> mat) 
     {
+        
         if (!hasMesh())
         {
             RD_CORE_ERROR("MeshObject::Draw: no mesh attached");
             return;
         }
-        if (!hasMaterial())
+
+        if (!this->hasMaterial())
         {
             RD_CORE_ERROR("MeshObject::Draw: no material attached");
             return;
         }
 
+        Ref<Material> _mat = nullptr;
+        //use paramter material if not null
+      //else use the material attached to the object, this implements cases like shadow map
+        if (mat != nullptr)
+        {
+            _mat = mat;
+        }
+        else
+        {
+            _mat = m_material;
+        }
+      
+         
         m_vertexArray->Bind();
-        m_material->Bind();
+        _mat ->Bind();
+
+
 
         if (cam != nullptr)
         {  
@@ -80,80 +97,56 @@ namespace Rudy
             }
             glm::mat4 model = this->m_transform->GetWorldTransform(); 
 
-            m_material->GetShader()->SetMat4("u_model", model);
-            m_material->GetShader()->SetMat4("u_projection", cam->GetProjectionMatrix());
-            m_material->GetShader()->SetMat4("u_view", cam->GetViewMatrix());
-
-        }
-
-        switch (m_mesh->drawCommand)
-        {
-        case MeshDrawCommand::INDEXED:
-            Renderer::GetRendererAPI()->DrawIndexed(m_mesh->topology, m_mesh->GetIndexCount());
-            break;
-        case MeshDrawCommand::ARRAYS:
-            Renderer::GetRendererAPI()->DrawArrays (m_mesh->topology, m_mesh->GetVertexCount());
-            break;
-        } 
-
-        m_material->Unbind();
-        m_vertexArray->Unbind();
-
-    }
-
-
-
-    void MeshRendererComponent::DrawInstanced(Ref<Camera> cam, uint32_t instanceCount)
-    {
-        if (!hasMesh())
-        {
-            RD_CORE_ERROR("MeshObject::Draw: no mesh attached");
-            return;
-        }
-        if (!hasMaterial())
-        {
-            RD_CORE_ERROR("MeshObject::Draw: no material attached");
-            return;
-        }
-
-        m_vertexArray->Bind();
-        m_material->Bind();
-
-        if (cam != nullptr)
-        {
-            if (this->m_transform == nullptr)
+            if(_mat->GetShader() ==nullptr)
             {
-                RD_CORE_ERROR("MeshObject::Draw: no transform attached");
+				RD_CORE_ERROR("MeshObject::Draw: no shader attached"); 
                 return;
-            }
-            glm::mat4 model = this->m_transform->GetWorldTransform();
+			}
 
-            m_material->GetShader()->SetMat4("u_model", model);
-            m_material->GetShader()->SetMat4("u_projection", cam->GetProjectionMatrix());
-            m_material->GetShader()->SetMat4("u_view", cam->GetViewMatrix());
+            _mat->GetShader()->SetMat4("u_model", model);
+            _mat->GetShader()->SetMat4("u_projection", cam->GetProjectionMatrix());
+            _mat->GetShader()->SetMat4("u_view", cam->GetViewMatrix());
 
         }
 
-        switch (m_mesh->drawCommand)
+        if (count == 1)
         {
-        case MeshDrawCommand::INDEXED:
-            Renderer::GetRendererAPI()->DrawIndexedInstanced(m_mesh->topology, m_mesh->GetIndexCount(), instanceCount);
-            break;
-        case MeshDrawCommand::ARRAYS:
-            Renderer::GetRendererAPI()->DrawArraysInstanced(m_mesh->topology, m_mesh->GetVertexCount(), instanceCount);
-            break;
-        }
 
+            switch (m_mesh->drawCommand)
+            {
+            case MeshDrawCommand::INDEXED:
+                RendererApp::GetRendererAPI()->DrawIndexed(m_mesh->topology, m_mesh->GetIndexCount());
+                break;
+            case MeshDrawCommand::ARRAYS:
+                RendererApp::GetRendererAPI()->DrawArrays(m_mesh->topology, m_mesh->GetVertexCount());
+                break;
+            } 
+        } 
+        else if (count > 1)
+        {
 
-        m_material->Unbind();
+            switch (m_mesh->drawCommand)
+            {
+            case MeshDrawCommand::INDEXED:
+                RendererApp::GetRendererAPI()->DrawIndexedInstanced(m_mesh->topology, m_mesh->GetIndexCount(), count);
+                break;
+            case MeshDrawCommand::ARRAYS:
+                RendererApp::GetRendererAPI()->DrawArraysInstanced(m_mesh->topology, m_mesh->GetVertexCount(), count);
+                break;
+            } 
+
+        }   
+       
+        _mat->Unbind(); 
         m_vertexArray->Unbind();
 
     }
+     
 
 
 
     
-    void ParticleSpriteRendererComponent::Draw(Ref<Camera> cam)
+    void ParticleSpriteRenderer::Draw(Ref<Camera> cam, uint32_t count, Ref<Material> mat)
     {
 
 		if (!hasMaterial())
@@ -179,48 +172,13 @@ namespace Rudy
 
         }
 
-		Renderer::GetRendererAPI()->DrawArrays(MeshTopology::POINTS, 1);
+		RendererApp::GetRendererAPI()->DrawArrays(MeshTopology::POINTS, 1);
 
 		m_material->Unbind(); 
 
 	}
 
-
-    void ParticleSpriteRendererComponent::DrawInstanced(Ref<Camera> cam, uint32_t instanceCount)
-    {
-
-        if (!hasMaterial())
-        {
-            RD_CORE_ERROR("SpriteObject::Draw: no material attached");
-            return;
-        }
-
-        m_material->Bind();
-
-
-        if (cam != nullptr)
-        {
-            if (this->m_transform == nullptr)
-            {
-                RD_CORE_ERROR("MeshObject::Draw: no transform attached");
-                return;
-            }
-            glm::mat4 model = this->m_transform->GetWorldTransform();
-
-            m_material->GetShader()->SetMat4("u_model", model);
-            m_material->GetShader()->SetMat4("u_projection", cam->GetProjectionMatrix());
-            m_material->GetShader()->SetMat4("u_view", cam->GetViewMatrix());
-
-        }
-
-
-        Renderer::GetRendererAPI()->DrawArraysInstanced(MeshTopology::POINTS, 1, instanceCount);
-
-        m_material->Unbind(); 
-
-    }
-
-
+ 
 
 
 }

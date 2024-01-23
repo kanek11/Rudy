@@ -31,6 +31,9 @@ uniform sampler2D u_DepthTexture;  //shadow map
 uniform bool u_EnableSkyBox;
 
 
+
+
+
 struct DirLight { 
     vec3 color;
     vec3 direction;
@@ -44,31 +47,49 @@ uniform mat4 u_LightSpaceMatrix;  //for shadow map
 uniform vec3 u_CameraPos;
  
 
+uniform float u_min_shadow_bias;
+uniform float u_max_shadow_bias;
 
 
 //---shadow map
 //return 1 if in shadow, 0 otherwise;
-float ShadowCalculation(vec4 WorldFragPos)
+float ShadowCalculation(vec4 WorldFragPos, float NdotL)
 { 
-    // transform to [0,1] range
+    // transform to NDC;
  
-    vec4 lightSpaceFragPos = u_LightSpaceMatrix * WorldFragPos;
-
+    vec4 lightSpaceFragPos = u_LightSpaceMatrix * WorldFragPos; 
     vec3 projCoords = lightSpaceFragPos.xyz / lightSpaceFragPos.w;   //perspective division
-    projCoords = projCoords * 0.5 + 0.5;
+    projCoords = projCoords * 0.5 + 0.5;   
+    //robust check eg: outof range, return 0 means not in shadow; 
+    if (projCoords.z < 0.0 || projCoords.z > 1.0)
+		return 0.0;
+
+
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
     float closestDepth = texture(u_DepthTexture, projCoords.xy).r;
 
     // get depth of current fragment from light's perspective
-    float currentDepth = projCoords.z;
+    float currentDepth = projCoords.z; 
 
-    //tolerate some bias 
-    //float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);   //todo: tune it better;
     // check whether current frag pos is in shadow
 
-    float bias = 0.005;
-    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
-
+    //bias = u_shadow_bias;
+    //tolerate some bias 
+    float bias = max(u_max_shadow_bias * (1.0 - NdotL), u_min_shadow_bias);   //todo: tune it better;  
+    
+    
+    //float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+    //simple 3x3 PCF for AA
+    float shadow = 0.0;
+    vec2 texelSize = 1.0 / textureSize(u_DepthTexture, 0); 
+    for(int x = -1; x <= 1; ++x) 
+		for(int y = -1; y <= 1; ++y)
+		{
+			float sampleDepth = texture(u_DepthTexture, projCoords.xy + vec2(x, y) * texelSize).r; 
+			shadow += currentDepth - bias > sampleDepth ? 1.0 : 0.0;
+		}    
+    shadow /= 9.0;  //9 samples
+	  
 
     return shadow;
 }
@@ -154,7 +175,7 @@ void main()
     vec3 Lo = vec3(0.0);
 
 
-    //======Scene lighting
+    //======Scene direct lighting
      
         vec3 radiance = u_DirLight.color * u_DirLight.intensity;
         vec3 L = - normalize(u_DirLight.direction);   //minus, from shading point
@@ -163,8 +184,8 @@ void main()
 
         //shadow  //disable for now
         float shadow = 0.0;
-        if(false)
-        shadow = ShadowCalculation(vec4(worldPos, 1.0));
+        //if(true)
+        shadow = ShadowCalculation(vec4(worldPos, 1.0) , dot(N, L));
 
 
         float NDF = DistributionGGX(N, H, roughness);
@@ -179,7 +200,6 @@ void main()
 
         float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero ,also eps
         vec3 specular = numerator / denominator;
-        specular *= (1 - shadow);  //todo: better performance; 
 
         vec3 kS = F;
         vec3 kD = vec3(1.0) - kS;
@@ -187,7 +207,7 @@ void main()
 
 
         float NdotL = max(dot(N, L), 0.0);
-        Lo += (kD * albedo / PI + specular) * radiance * NdotL;
+        Lo += (1-shadow) * (kD * albedo / PI + specular) * radiance * NdotL;
 
     
 

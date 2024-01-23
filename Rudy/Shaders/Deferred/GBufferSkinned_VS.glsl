@@ -6,8 +6,7 @@ layout(location = 3) in vec3 aTangent;
 //bitangent to be compute by cross product; this saves a buffer slot
 
 layout(location = 4) in vec4 aBoneIndices;
-layout(location = 5) in vec4 aBoneWeights;
-
+layout(location = 5) in vec4 aBoneWeights; 
 
 
 out VS_OUT
@@ -30,7 +29,12 @@ uniform mat4 u_view;
 //new to skinned mesh , only change the vertex shader
 //the holder of the bone transforms,
 //it combines the  ToWorld and ToBoneLocal transforms
-uniform mat4 u_BoneTransforms[100]; 
+//uniform mat4 u_BoneTransforms[100]; 
+
+layout(std430, binding = 0) buffer BoneTransforms_t{
+    mat4 BoneTransforms[100];
+};
+
 
 int MAX_BONE_INFLUENCE = 4;
 
@@ -45,7 +49,7 @@ void main()
         if (index < 100 && index >= 0)
         {
             // boneMatrix  += u_TestIdentity * aBoneWeights[i];
-            boneMatrix += u_BoneTransforms[index] * aBoneWeights[i];
+            boneMatrix += BoneTransforms[index] * aBoneWeights[i];
         }
 
     }

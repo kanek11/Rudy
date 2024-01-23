@@ -410,8 +410,6 @@
     <None Include="Shaders\PostProcess\SSR_FS.glsl" />
     <None Include="Shaders\Deferred\GBufferSkinned_VS.glsl" />
     <None Include="Shaders\Shaders\Default_Flat_FS.glsl" />
-    <None Include="Shaders\Shaders\Vertex_Color_VS.glsl" />
-    <None Include="Shaders\Shaders\Vertex_Color_FS.glsl" />
     <None Include="Shaders\Deferred\BlinnPhong_Color_FS.glsl" />
     <None Include="Shaders\Shaders\DepthMapSkinned_VS.glsl">
       <Filter>Source Files</Filter>
@@ -453,5 +451,7 @@
     <None Include="Shaders\PostProcess\outline_CS.glsl" />
     <None Include="Shaders\PostProcess\SSR_CS.glsl" />
     <None Include="Shaders\PostProcess\SSR_aveFilter_CS.glsl" />
+    <None Include="Shaders\Shaders\Vertex_Color_FS.glsl" />
+    <None Include="Shaders\Shaders\Vertex_Color_VS.glsl" />
   </ItemGroup>
 </Project>

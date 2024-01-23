@@ -7,9 +7,9 @@
 namespace Rudy
 {
 
-    ScreenQuad::ScreenQuad() : MeshObject()
+    ScreenQuad::ScreenQuad() : StaticMeshObject()
     {
-        this->GetRendererComponent()->SetMesh(CreateMeshGeometry());
+        this->GetRenderer()->SetMesh(CreateMeshGeometry());
     }
 
     Ref<ScreenQuad> ScreenQuad::Create() { return std::make_shared<ScreenQuad>(); }

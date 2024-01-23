@@ -936,11 +936,11 @@ namespace Rudy
 		switch (m_mesh->drawCommand)
 		{
 		case MeshDrawCommand::INDEXED:
-			Renderer::GetRendererAPI()->DrawIndexed(m_mesh->topology, m_mesh->GetIndexCount());
+			RendererApp::GetRendererAPI()->DrawIndexed(m_mesh->topology, m_mesh->GetIndexCount());
 			break;
 		case MeshDrawCommand::ARRAYS:
 		{
-			Renderer::GetRendererAPI()->DrawArrays(m_mesh->topology, m_mesh->GetVertexCount());
+			RendererApp::GetRendererAPI()->DrawArrays(m_mesh->topology, m_mesh->GetVertexCount());
 			break;
 		}
 

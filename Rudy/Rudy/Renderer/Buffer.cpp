@@ -12,7 +12,7 @@ namespace Rudy
 	Ref<VertexBuffer> VertexBuffer::Create()
 
 	{
-		switch (Renderer::GetAPI())
+		switch (RendererApp::GetAPI())
 		{
 		case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLVertexBuffer>();
@@ -24,7 +24,7 @@ namespace Rudy
 
 	Ref<IndexBuffer> IndexBuffer::Create() 
 	{
-		switch (Renderer::GetAPI())
+		switch (RendererApp::GetAPI())
 		{
 		case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLIndexBuffer>();
@@ -37,7 +37,7 @@ namespace Rudy
 
 	Ref<StorageBuffer>  StorageBuffer::Create()
 	{
-		switch (Renderer::GetAPI())
+		switch (RendererApp::GetAPI())
 		{
 		case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLStorageBuffer>();
@@ -49,7 +49,7 @@ namespace Rudy
 
 	Ref< VertexArray> VertexArray::Create()
 	{
-		switch (Renderer::GetAPI())
+		switch (RendererApp::GetAPI())
 		{
 		case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLVertexArray>();

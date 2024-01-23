@@ -11,11 +11,13 @@ uniform mat4 u_model;
 uniform mat4 u_projection;
 uniform mat4 u_view; 
 
-uniform mat4 u_BoneTransforms[100];
-
-uniform mat4 u_TestIdentity;
-
+ 
 int MAX_BONE_INFLUENCE = 4;
+
+
+layout(std430, binding = 0) buffer BoneTransforms_t {
+    mat4 BoneTransforms[100];
+};
 
 
 void main()
@@ -28,7 +30,7 @@ void main()
 
         if (index < 100 && index >= 0)
         { 
-            boneMatrix += u_BoneTransforms[index] * aBoneWeights[i];
+            boneMatrix +=  BoneTransforms[index] * aBoneWeights[i];
         }
          
     } 

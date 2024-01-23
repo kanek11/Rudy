@@ -6,10 +6,10 @@
 namespace Rudy
 {
 
-    Sphere::Sphere(uint32_t subdivision) : MeshObject(),
+    Sphere::Sphere(uint32_t subdivision) : StaticMeshObject(),
         m_subdivision(subdivision)
     {
-        this->GetRendererComponent()->SetMesh(CreateMeshGeometry(subdivision));
+        this->GetRenderer()->SetMesh(CreateMeshGeometry(subdivision));
     }
 
     Ref<Sphere> Sphere::Create(uint32_t subdivision)

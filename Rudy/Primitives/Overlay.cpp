@@ -92,8 +92,8 @@ namespace Rudy
 
 
         glm::mat4 model = glm::mat4(1.0f);
-        glm::mat4 projection = Renderer::GetMainCamera()->GetProjectionMatrix();
-        glm::mat4 view = Renderer::GetMainCamera()->GetViewMatrix();
+        glm::mat4 projection = RendererApp::GetMainCamera()->GetProjectionMatrix();
+        glm::mat4 view = RendererApp::GetMainCamera()->GetViewMatrix();
 
         material->GetShader()->SetMat4("u_model", model);
         material->GetShader()->SetMat4("u_projection", projection);
@@ -160,9 +160,9 @@ namespace Rudy
 
 
 
-        glm::mat4  view = Renderer::GetMainCamera()->GetViewMatrix();
+        glm::mat4  view = RendererApp::GetMainCamera()->GetViewMatrix();
         //view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
-        glm::mat4  projection = Renderer::GetMainCamera()->GetProjectionMatrix();
+        glm::mat4  projection = RendererApp::GetMainCamera()->GetProjectionMatrix();
 
         material->GetShader()->SetMat4("u_projection", projection);
         material->GetShader()->SetMat4("u_view", view);

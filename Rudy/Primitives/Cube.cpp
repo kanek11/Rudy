@@ -140,7 +140,7 @@ glm::vec3(0.0f, 1.0f, 0.0f),
 
    void Cube::DrawSkybox(Ref<Camera> cam)
    {
-       auto renderer = this->GetRendererComponent();
+       auto renderer = this->GetRenderer();
 
        if (!renderer->hasMaterial())
        { 
@@ -170,7 +170,7 @@ glm::vec3(0.0f, 1.0f, 0.0f),
      // change depth function so depth test passes when values are equal to depth buffer's content
      
       glDepthFunc(GL_LEQUAL);
-      Renderer::GetRendererAPI()->DrawArrays(MeshTopology::TRIANGLES, renderer->GetMesh()->vertices.size());
+      RendererApp::GetRendererAPI()->DrawArrays(MeshTopology::TRIANGLES, renderer->GetMesh()->vertices.size());
       
       glDepthFunc(GL_LESS); // set depth function back to default 
       

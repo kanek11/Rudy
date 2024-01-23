@@ -40,7 +40,8 @@ namespace Rudy {
 	}
 
 
-	OpenGLFrameBuffer::OpenGLFrameBuffer(std::string name, uint32_t width, uint32_t height, FrameBufferType type)
+	OpenGLFrameBuffer::OpenGLFrameBuffer(
+		std::string name, uint32_t width, uint32_t height, FrameBufferType type)
 		: m_Name(name), m_Width(width), m_Height(height) 
 	{
 		switch (type)
@@ -54,7 +55,7 @@ namespace Rudy {
 			m_RenderBuffer = RenderBuffer::Create(width, height, RenderBufferFormat::DEPTH24STENCIL8);
 			glNamedFramebufferRenderbuffer(this->m_FrameBufferID, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_RenderBuffer->GetRenderBufferID());
 
-			RD_CORE_INFO("Regular FrameBuffer {0} ,ID:{1} is created", m_Name, m_FrameBufferID);
+			RD_CORE_INFO("Regular FBO {0} ,ID:{1} is created", m_Name, m_FrameBufferID);
 
 			break;
 
@@ -65,23 +66,15 @@ namespace Rudy {
 		{
 
 			//create and bind framebuffer
-			glCreateFramebuffers(1, &m_FrameBufferID);
-			glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferID);
-
-			//special needs for depth map.
-			//float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-			//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor); 
+			glCreateFramebuffers(1, &m_FrameBufferID);  
 
 			//disable color buffer
-			glDrawBuffer(GL_NONE);
-			glReadBuffer(GL_NONE);
+			glNamedFramebufferDrawBuffer(m_FrameBufferID, GL_NONE);
+			glNamedFramebufferReadBuffer(m_FrameBufferID, GL_NONE);
 
-			//donot check framebuffer status
+			//donot check framebuffer status 
 
-			//unbind framebuffer
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-			RD_CORE_INFO("DepthTexture FrameBufferid:{0} is created", m_FrameBufferID);
+			RD_CORE_INFO("DepthTexture FBO {0} ,id:{1} is created", m_Name, m_FrameBufferID);
 
 			break;
 
@@ -92,10 +85,9 @@ namespace Rudy {
 			//create and bind framebuffer
 			glCreateFramebuffers(1, &m_FrameBufferID);
 
-			RD_CORE_INFO("GBuffer id:{0} is created, color buffer size :{1} ", m_FrameBufferID, m_ColorBufferNum);
 
-			break;
-
+			RD_CORE_INFO("Gbuffer FBO {0} ,id:{1} is created", m_Name, m_FrameBufferID);
+			break; 
 		}
 
 
