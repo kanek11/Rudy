@@ -6,7 +6,7 @@
 namespace Rudy
 {
 
-    NPR::NPR() : Application()
+    NPR::NPR(): Application()
     {
         //this->GetWindow()->SetVSync(false);
     }
@@ -167,7 +167,7 @@ namespace Rudy
 
         floor_gMaterial -> SetVec3("u_Albedo",  glm::vec3(0.5));
         //auto floor_albedoMap =    Texture2D::LoadFile("D:/CG_resources/PBRTextures/Floor_brown_ue/albedo.png");
-        auto floor_normalMap =    Texture2D::LoadFile("D:/CG_resources/PBRTextures/Floor_brown_ue/normal.png");
+        auto floor_normalMap =    Texture2D::LoadFile("Resources/PBRTextures/Floor_brown_ue/normal.png");
         //auto floor_roughnessMap = Texture2D::LoadFile("D:/CG_resources/PBRTextures/Floor_brown_ue/roughness.png");
         //auto floor_metallicMap =  Texture2D::LoadFile("D:/CG_resources/PBRTextures/Floor_brown_ue/metallic.png");
 
@@ -190,14 +190,15 @@ namespace Rudy
         auto sphere_gMaterial = NPRMaterial::Create(litPassShader);
         //sphere_gMaterial->SetVec3("u_Albedo", glm::vec3(1.0f, 0.0f, 0.0f));
 
+
         sphere_gMaterial->SetVec3("u_Albedo", glm::vec3(1.0f, 0.0f, 1.0f));
 
         sphere_gMaterial->SetBool("u_receive_shadow", false);
 
-       // auto sphere_albedoMap =    Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/albedo.png");
-        //auto sphere_normalMap =    Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/normal.png");
-        //auto sphere_roughnessMap = Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/roughness.png");
-        //auto sphere_metallicMap =  Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/metallic.png");
+       // auto sphere_albedoMap =    Texture2D::LoadFile("Resources/PBRTextures/rusted_iron_ue/albedo.png");
+        //auto sphere_normalMap =    Texture2D::LoadFile("Resources/PBRTextures/rusted_iron_ue/normal.png");
+        //auto sphere_roughnessMap = Texture2D::LoadFile("Resources/PBRTextures/rusted_iron_ue/roughness.png");
+        //auto sphere_metallicMap =  Texture2D::LoadFile("Resources/PBRTextures/rusted_iron_ue/metallic.png");
 
        //sphere_gMaterial->SetTexture(TexType::AlbedoMap,    sphere_albedoMap);
        //sphere_gMaterial->SetTexture(TexType::NormalMap,    sphere_normalMap);
@@ -210,7 +211,7 @@ namespace Rudy
         sphere->SetMaterial(sphere_gMaterial);
         sphere->transform->position = glm::vec3(2.0f, +1.0f, 0.0f);
 
-        staticMeshObjects.push_back(sphere);
+       // staticMeshObjects.push_back(sphere);
 
 
 
@@ -227,8 +228,8 @@ namespace Rudy
 
         //====material
         Texture2D::SetFlipYOnLoad(true); //eg: for .png;   
-        auto faceSDF = Texture2D::LoadFile("D:/CG_resources/faceSDF/Avatar_Girl_Tex_FaceLightmap.png");
-        auto toonTexture = Texture2D::LoadFile("D:/CG_resources/byMihoyo/player/toon.png");
+        auto faceSDF = Texture2D::LoadFile("Resources/faceLightMap/Avatar_Girl_Tex_FaceLightmap.png");
+        auto toonTexture = Texture2D::LoadFile("Resources/Models/byMihoyo/player/toon.png");
 
          
 
@@ -253,7 +254,7 @@ namespace Rudy
         {
            
             auto old_material = meshObj->GetRenderer()->GetMaterial(); 
-            old_material->SetTexture(TexType::FaceSDFTexture, faceSDF);
+            old_material->SetTexture(TexType::FaceLightMap, faceSDF);
             old_material->SetTexture(TexType::ToonTexture, toonTexture); 
             old_material->SetTexture(TexType::DepthTexture, shadowMap);
 
@@ -266,6 +267,7 @@ namespace Rudy
             new_material->SetBool("u_receive_shadow", false);
 
             meshObj->transform->rotation = glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+            meshObj->transform->position =  glm::vec3(0.0f, 0.0f, 2.0f);
 
         } 
 
@@ -362,7 +364,7 @@ namespace Rudy
         ////skyboxMaterial->SetTexture(TexType::SkyboxTexture,envMap);
 
 
-        //Cube skybox;
+        //sphere skybox;
         //skybox.SetMaterial(skyboxMaterial);
 
 
@@ -449,7 +451,7 @@ namespace Rudy
             { 
                 litPassFBO->Bind();  
 
-                glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+                glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // make sure clear the framebuffer's content  
                 glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
                 glEnable(GL_DEPTH_TEST); 
@@ -459,7 +461,7 @@ namespace Rudy
                 litPassShader->Bind();
 
                 //light info
-                litPassShader->SetVec3("u_DirLight.direction", sunlight->direction);
+                litPassShader->SetVec3("u_DirLight.direction", direct_light_dir);   //sunlight->direction);
                 litPassShader->SetVec3("u_DirLight.color", sunlight->color);
                 litPassShader->SetFloat("u_DirLight.intensity", direct_light_intensity);   //sunlight->intensity);
 
@@ -674,49 +676,9 @@ namespace Rudy
 
 
 
-    void NPR::InitGUI()
-    {
-        // 初始化ImGui
-        IMGUI_CHECKVERSION();
-        ImGui::CreateContext();
-        // 设置ImGui的样式
-        ImGui::StyleColorsDark();
-        // 绑定后端
-        ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)this->window->GetNativeWindow(), true);
-        ImGui_ImplOpenGL3_Init("#version 130");
-
-        //other settings
-        ImGui::SetNextWindowSize(ImVec2(500, 400)); // 设置窗口大小为 500x400
-
-        //initial position on the right top corner;
-        ImGui::SetNextWindowPos(ImVec2(SCR_WIDTH - 500, 0)); // 设置窗口位置为 (SCR_WIDTH - 500, 0)
-
-        ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO();
-        ImFontConfig fontConfig;
-        fontConfig.SizePixels = 18.0f; // 设置字体大小为 18 像素
-        io.Fonts->AddFontDefault(&fontConfig);
 
 
-    }
-
-    void NPR::ShutDownGUI()
-    {
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplGlfw_Shutdown();
-        ImGui::DestroyContext();
-    }
-
-    void NPR::PrepareGUI()
-    {
-        // 开始新的一帧
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        //  
-        this->DrawGUI();
-    }
+ 
 
     void NPR::DrawGUI()
     {
@@ -835,7 +797,7 @@ namespace Rudy
         ImGui::Spacing(); 
         ImGui::SliderFloat("ambient_coeff", &(ambient_coeff), 0.0f, 5.0f);
         ImGui::SliderFloat("dirlight_intensity", &(direct_light_intensity), 0.0f, 5.0f);
-
+        ImGui::InputFloat3("dirLight_direction", glm::value_ptr(direct_light_dir));
          
         ImGui::InputFloat3("lit color", glm::value_ptr(litColor)); 
         ImGui::InputFloat3("shadow color", glm::value_ptr(shadowColor)); 
@@ -855,16 +817,34 @@ namespace Rudy
         ImGui::End();
     }
 
-
-
-    void NPR::RenderGUI()
+     
+ 
+    void NPR::InitGUI()
     {
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        // 初始化ImGui
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        // 设置ImGui的样式
+        ImGui::StyleColorsDark();
+        // 绑定后端
+        ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)this->window->GetNativeWindow(), true);
+        ImGui_ImplOpenGL3_Init("#version 130");
+
+        //other settings
+        ImGui::SetNextWindowSize(ImVec2(500, 400)); // 设置窗口大小为 500x400
+
+        //initial position on the right top corner;
+        ImGui::SetNextWindowPos(ImVec2(SCR_WIDTH - 500, 0)); // 设置窗口位置为 (SCR_WIDTH - 500, 0)
+
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        ImFontConfig fontConfig;
+        fontConfig.SizePixels = 18.0f; // 设置字体大小为 18 像素
+        io.Fonts->AddFontDefault(&fontConfig);
+
+
     }
-
-
-
+     
 
 }
 

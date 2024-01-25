@@ -4540,7 +4540,7 @@ static int stbtt__compute_crossings_x(float x, float y, int nverts, stbtt_vertex
    return winding;
 }
 
-static float stbtt__cuberoot( float x )
+static float stbtt__sphereroot( float x )
 {
    if (x<0)
       return -(float) STBTT_pow(-x,1.0f/3.0f);
@@ -4560,8 +4560,8 @@ static int stbtt__solve_cubic(float a, float b, float c, float* r)
       float z = (float) STBTT_sqrt(d);
       float u = (-q + z) / 2;
       float v = (-q - z) / 2;
-      u = stbtt__cuberoot(u);
-      v = stbtt__cuberoot(v);
+      u = stbtt__sphereroot(u);
+      v = stbtt__sphereroot(v);
       r[0] = s + u + v;
       return 1;
    } else {

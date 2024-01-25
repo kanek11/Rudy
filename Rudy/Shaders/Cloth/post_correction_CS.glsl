@@ -73,7 +73,7 @@ void main()
 	}
 	
 	//add the correction to the position
-	Positions.positions[index].xyz += Corrections.corrections[index].xyz * 0.2;// *u_jacobiScale;
+	Positions.positions[index].xyz += Corrections.corrections[index].xyz  * u_jacobiScale;
 	
 	//compute the velocity
 	Velocities.velocities[index].xyz = (Positions.positions[index].xyz - PrevPositions.prev_positions[index].xyz) / u_deltaTime;

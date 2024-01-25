@@ -36,7 +36,7 @@ uniform sampler2D u_DepthTexture;
 
 //NPR:
 uniform sampler2D u_ToonTexture;
-uniform sampler2D u_FaceSDFTexture;
+uniform sampler2D u_FaceLightMap;
 
 uniform vec3 u_litColor;
 uniform vec3 u_shadowColor; 
@@ -203,7 +203,7 @@ void main()
 
 	//========face shadow handling========
 
-	 float test_sdf = texture(u_FaceSDFTexture, fs_in.TexCoords).r;
+	 float test_sdf = texture(u_FaceLightMap, fs_in.TexCoords).r;
 	//if (u_face)
 	 if(u_face)
 	 {
@@ -231,11 +231,12 @@ void main()
 
 		//step(threshold, sdf) returns 0 if threshold > sdf
 		//uv_face = fs_in.TexCoords;
-		float sdf = texture(u_FaceSDFTexture, uv_face).r;
+		float sdf = texture(u_FaceLightMap, uv_face).r;
 	 
 		// threshold = 0.2f;
 		//same as LdotN,  0 means unlit, 1 means lit
-		 lit_level = step(threshold, sdf) * LdotN;
+		lit_level = smoothstep(threshold, threshold+0.05, sdf) * LdotN;
+		// lit_level = step(threshold, sdf) * LdotN;
 
 		//lit_level = sdf;
 	 }

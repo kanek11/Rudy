@@ -54,11 +54,11 @@ namespace Rudy
             Texture2D::SetFlipYOnLoad(true);
             // auto testHDRI = Texture2D::LoadFile("D:/CG_resources/HDRI/GrandCanyon_C_YumaPoint/GCanyon_C_YumaPoint_3k.hdr");
 
-            auto envMap = TextureCube::LoadHDRI("D:/CG_resources/HDRI/GrandCanyon_C_YumaPoint/GCanyon_C_YumaPoint_3k.hdr");
+            auto envMap = TextureCube::LoadHDRI("Resources/HDRI/GrandCanyon_C_YumaPoint/GCanyon_C_YumaPoint_3k.hdr");
 
 
             //if no precomputed envmap available
-            auto diffuseEnvMap = TextureCube::LoadHDRI("D:/CG_resources/HDRI/GrandCanyon_C_YumaPoint/GCanyon_C_YumaPoint_Env.hdr");
+            auto diffuseEnvMap = TextureCube::LoadHDRI("Resources/HDRI/GrandCanyon_C_YumaPoint/GCanyon_C_YumaPoint_Env.hdr");
 
             //lod 5 for specular envmap;
             auto specularEnvMap = envMap->CreatePrefilteredEnvMap(envMap,
@@ -267,10 +267,10 @@ namespace Rudy
 
             auto floor_gMaterial = PBRMaterial::Create(gBufferPassShader); 
 
-            auto floor_albedoMap = Texture2D::LoadFile("D:/CG_resources/PBRTextures/Floor_brown_ue/albedo.png");
-            auto floor_normalMap = Texture2D::LoadFile("D:/CG_resources/PBRTextures/Floor_brown_ue/normal.png");
-            auto floor_roughnessMap = Texture2D::LoadFile("D:/CG_resources/PBRTextures/Floor_brown_ue/roughness.png");
-            auto floor_metallicMap = Texture2D::LoadFile("D:/CG_resources/PBRTextures/Floor_brown_ue/metallic.png");
+            auto floor_albedoMap    = Texture2D::LoadFile("Resources/PBRTextures/Floor_brown_ue/albedo.png");
+            auto floor_normalMap    = Texture2D::LoadFile("Resources/PBRTextures/Floor_brown_ue/normal.png");
+            auto floor_roughnessMap = Texture2D::LoadFile("Resources/PBRTextures/Floor_brown_ue/roughness.png");
+            auto floor_metallicMap  = Texture2D::LoadFile("Resources/PBRTextures/Floor_brown_ue/metallic.png");
 
 
             floor_gMaterial->SetTexture(TexType::AlbedoMap,    floor_albedoMap);
@@ -282,10 +282,11 @@ namespace Rudy
 
             auto floor1 = Plane::Create(10);
             floor1->SetMaterial(floor_gMaterial);
-            floor1->transform->scale = glm::vec3(10.0f);
+            floor1->transform->scale = glm::vec3(20.0f);
             staticMeshObjects.push_back(floor1); 
            
-             
+            if(false)
+            {
             auto floor2 = Plane::Create(10);
             floor2->SetMaterial(floor_gMaterial);
 
@@ -302,34 +303,78 @@ namespace Rudy
             floor3->transform->rotation = glm::angleAxis(glm::radians(+90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
             floor3->transform->position = glm::vec3(0.0f, -2.0f, -4.0f);
             staticMeshObjects.push_back(floor3);
-             
+
+            }
 
             //
-            auto sphere_gMaterial = PBRMaterial::Create(gBufferPassShader);
-
-            auto sphere_albedoMap =    Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/albedo.png");
-            //sphere_gMaterial->SetVec3("u_Albedo", glm::vec3(1.0f, 0.0f, 0.0f));
-            auto sphere_normalMap = Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/normal.png");
-            auto sphere_roughnessMap = Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/roughness.png");
-            auto sphere_metallicMap = Texture2D::LoadFile("D:/CG_resources/PBRTextures/rusted_iron_ue/metallic.png");
-
-            sphere_gMaterial->SetTexture(TexType::AlbedoMap,    sphere_albedoMap);
-            sphere_gMaterial->SetTexture(TexType::NormalMap, sphere_normalMap);
-            sphere_gMaterial->SetTexture(TexType::RoughnessMap, sphere_roughnessMap);
-            sphere_gMaterial->SetTexture(TexType::MetallicMap, sphere_metallicMap);
+            //color of gold 
+            glm::vec3 gold_color = glm::vec3(1.0f, 0.766f, 0.336f);
 
 
-            auto sphere = Sphere::Create(20);
-            sphere->SetMaterial(sphere_gMaterial);
-            sphere->transform->position = glm::vec3(1.0f, +1.0f, 0.0f);
+            //draw five spheres each with different roughness 
+            for  (int i = 0; i < 6; i++)
+			{
+				auto sphere_gMaterial = PBRMaterial::Create(gBufferPassShader); 
+			  	 
+				sphere_gMaterial->SetVec3("u_Albedo", gold_color);
+				sphere_gMaterial->SetFloat("u_Metallic", 1.0f);
+				sphere_gMaterial->SetFloat("u_Roughness", (float)i / 5.0f);
 
-            staticMeshObjects.push_back(sphere);
+				auto sphere = Sphere::Create(20); 
+				sphere->SetMaterial(sphere_gMaterial);
+				sphere->transform->position = glm::vec3(-3.0f + i * 2.0f, +1.0f, 0.0f);
+
+				staticMeshObjects.push_back(sphere);
+			}
+
+
+            for (int i = 0; i < 6; i++)
+            {
+                auto sphere_gMaterial = PBRMaterial::Create(gBufferPassShader);
+
+                sphere_gMaterial->SetVec3("u_Albedo", gold_color);
+                sphere_gMaterial->SetFloat("u_Metallic", (float)i / 5.0f);
+                sphere_gMaterial->SetFloat("u_Roughness", 1.0);
+
+                auto sphere = Sphere::Create(20);
+                sphere->SetMaterial(sphere_gMaterial);
+                sphere->transform->position = glm::vec3(-3.0f + i * 2.0f, +1.0f, -3.0f);
+
+                staticMeshObjects.push_back(sphere);
+            }
+
+
+
+            if (false)
+            {
+                auto sphere_gMaterial = PBRMaterial::Create(gBufferPassShader);
+
+                //sphere_gMaterial->SetVec3("u_Albedo", glm::vec3(1.0f, 0.0f, 0.0f));
+                auto sphere_albedoMap    = Texture2D::LoadFile("Resources/PBRTextures/rusted_iron_ue/albedo.png"); 
+                auto sphere_normalMap    = Texture2D::LoadFile("Resources/PBRTextures/rusted_iron_ue/normal.png");
+                auto sphere_roughnessMap = Texture2D::LoadFile("Resources/PBRTextures/rusted_iron_ue/roughness.png");
+                auto sphere_metallicMap  = Texture2D::LoadFile("Resources/PBRTextures/rusted_iron_ue/metallic.png");
+
+                sphere_gMaterial->SetTexture(TexType::AlbedoMap,    sphere_albedoMap);
+                sphere_gMaterial->SetTexture(TexType::NormalMap,    sphere_normalMap);
+                sphere_gMaterial->SetTexture(TexType::RoughnessMap, sphere_roughnessMap);
+                sphere_gMaterial->SetTexture(TexType::MetallicMap,  sphere_metallicMap);
+
+
+                auto sphere = Sphere::Create(20);
+                sphere->SetMaterial(sphere_gMaterial);
+                sphere->transform->position = glm::vec3(1.0f, +1.0f, 0.0f);
+
+                staticMeshObjects.push_back(sphere);
+            }
 
               
             //model 
             //Model::ScaleFactor = 0.01f;
             // auto test_model = Model::LoadModel("D:/CG_resources/animation/Catwalk Walk Turn 180 Tight.dae"); 
 
+            if(false)
+            { 
              //auto test_model = Model::LoadModel("D:/CG_resources/backpack/backpack.obj");
             auto gBufferPassSkinnedShader = Shader::Create("gBuffer Shader",
                 "Shaders/Deferred/GBufferSkinned_VS.glsl",
@@ -342,7 +387,7 @@ namespace Rudy
             Texture2D::SetFlipYOnLoad(true); //eg: for .png;   
             Model::s_scaleFactor = 0.01f;
 
-            auto model = Model::LoadModel("D:/CG_resources/dae/vampire/dancing_vampire.dae");
+            auto model = Model::LoadModel("Resources/Models/dae/vampire/dancing_vampire.dae");
             this->models.push_back(model);
 
             //for now: assume model use same shader.
@@ -369,7 +414,7 @@ namespace Rudy
                 _material->SetFloat("u_Roughness", 0.0f);
             }
              
-             
+            }
 
 
 
@@ -487,12 +532,15 @@ namespace Rudy
                 //routined updates
                 //animations
                 {
-                    if (model->animator != nullptr)
+                    for (auto& _model : models)
                     {
-                        model->animator->UpdateBoneTransforms(timer);
-                        auto transforms = model->animator->GetBoneTransforms(); 
-                        model->boneTransformBuffer->SetData(transforms.data(), transforms.size() * sizeof(glm::mat4));
+                        if (_model->animator != nullptr)
+                        {
+                            _model->animator->UpdateBoneTransforms(timer);
+                            auto transforms = _model->animator->GetBoneTransforms();
+                            _model->boneTransformBuffer->SetData(transforms.data(), transforms.size() * sizeof(glm::mat4));
 
+                        }
                     }
 
                 }
@@ -589,8 +637,7 @@ namespace Rudy
                     // glDepthMask(GL_TRUE); 
                     glEnable(GL_DEPTH_TEST); 
 
-                    litPassFBO->Unbind();
-
+                    litPassFBO->Unbind(); 
 
                 }
 
@@ -692,14 +739,14 @@ namespace Rudy
                     std::vector<Ref<Texture>> bufferTextures = {
 						 gWorldPosition, 
 						 gWorldNormal,
-						 //gWorldTangent,
+						 gWorldTangent,
                          gAlbedo,
 						// gSpecular,
-						// gMetallic,
+						 gMetallic,
 						 gRoughness,
 						 gViewDepth,
-						 gViewPosition,
-						 gViewNormal,
+						 //gViewPosition,
+						 //gViewNormal,
 						 //litPassScreenTexture, 
                          shadowMap,
 					};
@@ -780,23 +827,7 @@ namespace Rudy
 
     }
 
-    void PBR::ShutDownGUI()
-    {
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplGlfw_Shutdown();
-        ImGui::DestroyContext();
-    }
-
-    void PBR::PrepareGUI()
-    {
-        // 开始新的一帧
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame(); 
-        
-        //  
-        this->DrawGUI();
-    }
+     
 
     void PBR::DrawGUI()
     {
@@ -804,6 +835,61 @@ namespace Rudy
         ImGui::Begin("Rudy Engine");
         ImGui::Text("Hello World"); 
         ImGui::Checkbox("enableSkybox", &enableSkyBox);
+
+
+        std::unordered_map<std::string, Ref<Texture>> bufferList = {
+       { "Lit Pass output",  litOutputs[TexType::ScreenTexture]},
+       { "SSR output",       SSROutputs[TexType::ScreenTexture]},
+       { "SSAO output",      SSAOOutputs[TexType::ScreenTexture]},
+       { "Outline output",   OutlineOutputs[TexType::ScreenTexture]},
+       //{ "Composer output",  ComposerOutputs[TexType::ScreenTexture]},
+       { "Bloom output",     BloomOutputs[TexType::ScreenTexture]},
+       { "tone map output",  ToneMapOutputs[TexType::ScreenTexture]},
+
+        { "sunlight shadowmap", shadowMap},
+        };
+
+
+        // 创建一个保存所有键的字符串数组
+        std::vector<std::string> keys =
+        {
+          "Lit Pass output",
+          "SSR output",
+          "SSAO output",
+          "Outline output",
+          //"Composer output",
+          "Bloom output",
+          "tone map output",
+          "sunlight shadowmap",
+        }; 
+
+        static int item_current_idx = 0; // 如果你有一个可以从外部访问的默认项，也可以在这里设置它的索引
+        std::string item_current = ""; // 用于显示和选择当前项
+
+        if (bufferList.size() > 0) {
+            // 获取当前选中项的键
+            item_current = keys[item_current_idx];
+            visualizeBuffer = bufferList[item_current];
+
+            if (ImGui::BeginCombo("Visualize Buffer", item_current.c_str())) {
+                for (int n = 0; n < keys.size(); n++) {
+                    const bool is_selected = (item_current_idx == n);
+                    if (ImGui::Selectable(keys[n].c_str(), is_selected)) {
+                        item_current_idx = n;
+                        visualizeBuffer = bufferList[keys[n]];
+                    }
+
+                    // 设置初始焦点项
+                    if (is_selected) {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+
+
+        }
+
 
 
         ImGui::Checkbox("enableSSAO", &enableSSAO);
@@ -851,61 +937,17 @@ namespace Rudy
 
        
         ImGui::SliderFloat("Buffer miplevel", &bufferMipLevel, 0, 10);
-
-        std::unordered_map<std::string, Ref<Texture>> bufferList = {  
-         {"Lit Pass output", litOutputs[TexType::ScreenTexture]}, 
-         {"sunlight shadowmap", shadowMap}, 
-         {"Outline output", OutlineOutputs[TexType::ScreenTexture]},
-         {"Bloom output",   BloomOutputs[TexType::ScreenTexture]},
-         {"SSR output",     SSROutputs[TexType::ScreenTexture]},
-         {"SSAO output",    SSAOOutputs[TexType::ScreenTexture]},
-        };
-
-        static int item_current_idx = 0; // 如果你有一个可以从外部访问的默认项，也可以在这里设置它的索引
-        std::string item_current = ""; // 用于显示和选择当前项
-
-        if (bufferList.size() > 0) {
-            // 创建一个保存所有键的字符串数组
-            std::vector<std::string> keys;
-            for (const auto& kv : bufferList) {
-                keys.push_back(kv.first);
-            }
-
-            // 获取当前选中项的键
-            item_current = keys[item_current_idx];
-            visualizeBuffer = bufferList[item_current];
-
-            if (ImGui::BeginCombo("Visualize Buffer", item_current.c_str())) {
-                for (int n = 0; n < keys.size(); n++) {
-                    const bool is_selected = (item_current_idx == n);
-                    if (ImGui::Selectable(keys[n].c_str(), is_selected)) {
-                        item_current_idx = n;
-                        visualizeBuffer = bufferList[keys[n]];
-                    }
-
-                    // 设置初始焦点项
-                    if (is_selected) {
-                        ImGui::SetItemDefaultFocus();
-                    }
-                }
-                ImGui::EndCombo();
-            }
-
+ 
+        
             
-        } 
+         
 
 
         ImGui::End();
     }
 
 
-
-    void PBR::RenderGUI()
-    { 
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    }
-
+ 
 
      
 

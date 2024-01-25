@@ -19,6 +19,7 @@ namespace Rudy
 
 	void Emitter::Draw(Ref<Camera> cam)
 	{ 
+		//std::cout << "m_currentAliveCount: " << m_currentAliveCount << std::endl;
 		this->GetRendererComponent()->Draw(cam, m_currentAliveCount);
 	}
 
@@ -91,23 +92,6 @@ namespace Rudy
 			m_particle_update_compute_shader   = Shader::CreateComputeShader("particle update", "Shaders/Particles/particle_update_CS.glsl");
 			
 			m_particle_dispatch_compute_shader = Shader::CreateComputeShader("particle dispatch", "Shaders/Particles/particle_dispatch_CS.glsl");
-
-			////----------------------------------
-			//m_particle_reset_compute_shader->Bind(); 
-            //m_particle_reset_compute_shader->Unbind();
-			//
-			//
-		 	//
-			//// ------------------------------
-			//m_particle_emission_compute_shader->Bind();  
-			//m_particle_emission_compute_shader->Unbind();
-			//
-			//
-            ////----------------------------------
-			//
-			//m_particle_update_compute_shader->Bind(); 
-			//m_particle_update_compute_shader->Unbind();
- 
 			  
 		} 
 		//reset once
@@ -161,7 +145,7 @@ namespace Rudy
 		//std::cout << "emission accumulator: " << m_emissionAccumulator << std::endl;
 		//std::cout << "emission count: " << emissionCount << std::endl;
 
-		if(false)
+		if(true)
 		if (totalEmissionCount > m_emissionRate)
 		{
 			RD_CORE_INFO( "total emission count:{0}", totalEmissionCount );
@@ -177,7 +161,7 @@ namespace Rudy
 			std::cout << counter->aliveCount[m_preSimIndex] << std::endl; 
 			glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
-			 std::cout << std::endl;
+			std::cout << std::endl;
 		}
 
 		 
@@ -260,16 +244,15 @@ namespace Rudy
 		 
 
 		//emission
+		if(true)
 		{
 			//random generator
 		
-			std::uniform_real_distribution<float> distribution(0.1f, 1000.0f); 
+			std::uniform_real_distribution<float> distribution(0.1f, 100.0f); 
 			std::mt19937 generator(std::random_device{}());
 
 			auto seeds = glm::vec3(distribution(generator),
-				distribution(generator), distribution(generator));
-
-
+				distribution(generator), distribution(generator)); 
 
 
 			m_particle_emission_compute_shader->Bind();

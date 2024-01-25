@@ -1,3 +1,4 @@
+#pragma once
 #include "RudyPCH.h"
 
 #include <Rudy.h>
@@ -27,11 +28,8 @@ namespace Rudy
 		void Start() override; 
 
 
-		void InitGUI();
-		void ShutDownGUI();
-		void PrepareGUI();
-		void DrawGUI();
-		void RenderGUI();
+		virtual void InitGUI() override;
+		virtual void DrawGUI() override;
 
 
 		//
@@ -149,10 +147,7 @@ namespace Rudy
 		Ref<Texture2D> shadowMap;
 
 	};
-
-
-
-
+	  
 	
 
 

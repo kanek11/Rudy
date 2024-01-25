@@ -154,8 +154,22 @@ namespace Rudy
 			RD_CORE_ERROR("SpriteObject::Draw: no material attached");
             return;
 		}
+
+        Ref<Material> _mat = nullptr;
+        //use paramter material if not null
+      //else use the material attached to the object, this implements cases like shadow map
+        if (mat != nullptr)
+        {
+            _mat = mat;
+        }
+        else
+        {
+            _mat = m_material;
+        }
+
          
-		m_material->Bind(); 
+        _mat->Bind();
+         
 
         if (cam != nullptr)
         {
@@ -166,15 +180,27 @@ namespace Rudy
             }
             glm::mat4 model = this->m_transform->GetWorldTransform();
 
-            m_material->GetShader()->SetMat4("u_model", model);
-            m_material->GetShader()->SetMat4("u_projection", cam->GetProjectionMatrix());
-            m_material->GetShader()->SetMat4("u_view", cam->GetViewMatrix());
+            _mat->GetShader()->SetMat4("u_model", model);
+            _mat->GetShader()->SetMat4("u_projection", cam->GetProjectionMatrix());
+            _mat->GetShader()->SetMat4("u_view", cam->GetViewMatrix());
 
         }
 
-		RendererApp::GetRendererAPI()->DrawArrays(MeshTopology::POINTS, 1);
+        if (count == 1)
+        {
+            RendererApp::GetRendererAPI()->DrawArrays(MeshTopology::POINTS, 1);
+        }
+        else if (count > 1)
+        { 
+            RendererApp::GetRendererAPI()->DrawArraysInstanced(MeshTopology::POINTS, 1, count);
 
-		m_material->Unbind(); 
+        }
+
+
+
+
+
+		_mat->Unbind(); 
 
 	}
 

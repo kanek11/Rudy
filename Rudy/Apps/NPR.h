@@ -1,11 +1,7 @@
-#include "RudyPCH.h"
+#pragma once
 
-#include <Rudy.h>
-
-#include "Vendor/imgui/imgui.h"
-#include "Vendor/imgui/imgui_impl_glfw.h"
-#include "Vendor/imgui/imgui_impl_opengl3.h"
-
+#include "RudyPCH.h" 
+#include <Rudy.h> 
 
 #include "Application.h"
 
@@ -66,10 +62,7 @@ namespace Rudy
 	};  
 
 
-
-
-
-
+	 
 
 	class NPR : public Application
 	{
@@ -80,19 +73,13 @@ namespace Rudy
 
 		void Init() override;
 		void Start() override;
-
-
-		void InitGUI();
-		void ShutDownGUI();
-		void PrepareGUI();
-		void DrawGUI();
-		void RenderGUI();
-
+		 
+		virtual void InitGUI() override;
+		virtual void DrawGUI() override;
 
 		//
 		Ref<Camera> main_camera;
-		Ref<Window> window;
-
+		Ref<Window> window; 
 
 
 		//
@@ -104,9 +91,7 @@ namespace Rudy
 		//float shadow_bias = 0.005f;
 		float min_shadow_bias = 0.001f;
 		float max_shadow_bias = 0.01f;
-
- 
-
+		 
 
 		//==========================================
 		//Lit
@@ -204,7 +189,9 @@ namespace Rudy
 		Ref<Texture2D> shadowMap;  
 
 
-		float direct_light_intensity = 1.0f; 
+		float direct_light_intensity = 0.9f; 
+		glm::vec3 direct_light_dir = glm::vec3(0.3f, -0.5f, -1.0f);
+
 		float ambient_coeff = 0.2f;
 
 
@@ -215,8 +202,6 @@ namespace Rudy
 		float diffuse_cutoff = 0.3f;
 
 	};
-
-
 
 
 

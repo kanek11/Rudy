@@ -69,7 +69,7 @@ namespace Rudy {
 
 		//NPR
          ToonTexture,
-		 FaceSDFTexture, 
+		 FaceLightMap, 
 
 
 		 //new postprocessing
@@ -125,7 +125,7 @@ namespace Rudy {
 		{TexType::NoiseTexture, "u_NoiseTexture"},
 
 		{TexType::ToonTexture, "u_ToonTexture"},
-        {TexType::FaceSDFTexture, "u_FaceSDFTexture"},
+        {TexType::FaceLightMap, "u_FaceLightMap"},
 		 
 	};
 

@@ -430,7 +430,7 @@ namespace Rudy {
 
 
 
-	//convert hdri image to cubemap
+	//convert hdri image to Cubemap
 	OpenGLTextureCube::OpenGLTextureCube(const std::string& path)
 	{
 		//RD_PROFILE_FUNCTION();
@@ -462,7 +462,7 @@ namespace Rudy {
 		 
 
 		//shader
-		auto rectToCubeShader = Shader::Create("equirectangular to cubemap Shader", "Shaders/Shaders/RectToCube_VS.glsl", "Shaders/Shaders/RectToCube_FS.glsl");
+		auto rectToCubeShader = Shader::Create("equirectangular to Cubemap Shader", "Shaders/Shaders/RectToCube_VS.glsl", "Shaders/Shaders/RectToCube_FS.glsl");
 		Material::SetMaterialProperties(rectToCubeShader); 
 	    
 		//material 
@@ -470,8 +470,8 @@ namespace Rudy {
 		rectToCubeMaterial->SetTexture(TexType::EnvironmentMap, hdrTexture);
 
 
-		Cube cube;
-		cube.SetMaterial(rectToCubeMaterial); 
+		Cube Cube;
+		Cube.SetMaterial(rectToCubeMaterial); 
 
 
 		uint32_t captureFBO;
@@ -501,7 +501,7 @@ namespace Rudy {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glEnable(GL_DEPTH_TEST);
 			 
-			cube.Draw(nullptr);
+			Cube.Draw(nullptr);
 		}
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0); 
@@ -531,20 +531,20 @@ namespace Rudy {
 			Material::SetMaterialProperties(prefilterShader);
 
 
-			//the output prefilter cube map;
+			//the output prefilter Cube map;
 			auto prefilterEnvMap = TextureCube::CreateEmpty
 			(TextureSpec{ 32,32,TextureInternalFormat::RGB32F,
 				  false, WrapMode::ClampToEdge, 
 				FilterMode::Linear, FilterMode::Linear });
 
 
-			auto cubeMaterial = Material::Create(prefilterShader);
-			cubeMaterial->SetTexture(TexType::EnvironmentMap, envMap);
+			auto CubeMaterial = Material::Create(prefilterShader);
+			CubeMaterial->SetTexture(TexType::EnvironmentMap, envMap);
 
 
-			//the background cube;
-			Cube cube;
-			cube.SetMaterial(cubeMaterial);
+			//the background Cube;
+			Cube Cube;
+			Cube.SetMaterial(CubeMaterial);
 
 			//framebuffer
 			uint32_t captureFBO;
@@ -560,7 +560,7 @@ namespace Rudy {
 
  
 
-			// pbr: run a quasi monte-carlo simulation on the environment lighting to create a prefilter (cube)map.
+			// pbr: run a quasi monte-carlo simulation on the environment lighting to create a prefilter (Cube)map.
 			// ----------------------------------------------------------------------------------------------------
  
 		    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
@@ -575,7 +575,7 @@ namespace Rudy {
 				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterEnvMap->GetID(), 0);
 
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-				cube.Draw(nullptr);
+				Cube.Draw(nullptr);
 			}
 
 
@@ -597,7 +597,7 @@ namespace Rudy {
 			auto prefilterShader = Shader::Create("Prefilter specular Shader", "Shaders/Shaders/SpecularEnvMap_VS.glsl", "Shaders/Shaders/SpecularEnvMap_FS.glsl");
 			Material::SetMaterialProperties(prefilterShader);
 
-			//the output prefilter cube map;
+			//the output prefilter Cube map;
 			auto prefilterEnvMap = TextureCube::CreateEmpty(
 				TextureSpec{ 128,128,TextureInternalFormat::RGB32F,
 				true, WrapMode::ClampToEdge,
@@ -608,12 +608,12 @@ namespace Rudy {
 			//glTextureStorage2D(prefilterEnvMap->GetID(), 5, GL_RGB32F, 128, 128);
 
 
-			auto cubeMaterial = Material::Create(prefilterShader);
-			cubeMaterial->SetTexture(TexType::EnvironmentMap, envMap); 
+			auto CubeMaterial = Material::Create(prefilterShader);
+			CubeMaterial->SetTexture(TexType::EnvironmentMap, envMap); 
 
-			//the background cube;
-			Cube cube;
-			cube.SetMaterial(cubeMaterial); 
+			//the background Cube;
+			Cube Cube;
+			Cube.SetMaterial(CubeMaterial); 
 
 			//framebuffer
 			uint32_t captureFBO;
@@ -628,7 +628,7 @@ namespace Rudy {
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO); 
 		 
 
-			// pbr: run a quasi monte-carlo simulation on the environment lighting to create a prefilter (cube)map.
+			// pbr: run a quasi monte-carlo simulation on the environment lighting to create a prefilter (Cube)map.
 			// ----------------------------------------------------------------------------------------------------
 		    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 
@@ -657,7 +657,7 @@ namespace Rudy {
 						GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterEnvMap->GetID(), mip);
 
 					glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-					cube.Draw(nullptr);
+					Cube.Draw(nullptr);
 				}
 			}
 

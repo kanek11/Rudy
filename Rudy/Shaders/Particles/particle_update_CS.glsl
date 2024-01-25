@@ -98,6 +98,20 @@ ParticleAges;
 // FUNCTIONS --------------------------------------------------------
 // ------------------------------------------------------------------
 
+
+//add a simple collision detection with a xz plane
+//if the particle is below the plane, bounce it back up
+
+ void collision_detection(vec4 position, vec4 velocity)
+ {
+	
+}
+
+
+
+
+
+
 void push_dead_index(uint index)
 {
     uint insert_Index = atomicAdd(Counters.dead_count, 1);
@@ -156,8 +170,16 @@ void main()
             age += u_deltaTime;
 
             //hardcode graivity for now
-            velocity.xyz += -9.8 * u_deltaTime;
+            velocity.y += -9.8 * u_deltaTime;
             position +=  velocity  * u_deltaTime;
+
+
+            //very simple collision detection
+            if (position.y < +0.5)
+			{
+				position.y = +0.5;
+				velocity.y = -velocity.y * 0.8;
+			}
 
               
             // Update particle data

@@ -47,7 +47,7 @@ namespace Rudy
 		const int kernelRadiusArray[6] = { 1,3,5,7,9,11 };
 
 		//to adjust the strength of each mip
-		const float bloomFactors[6] = {1.2f, 1.2f, 1.2f, 0.6f, 0.4f, 0.2f};
+		const float bloomFactors[6] = {1.2f, 1.2f, 1.2f, 1.2f, 0.3f, 0.2f};
 
 		//the code is :  so 1.2 =no addition of current level ; large radius lean to lower level;
 		//float mirrorFactor = 1.2 - factor;

@@ -94,9 +94,9 @@ public:
 
 		//emitter spawn parameters
 
-		glm::vec3 m_emitter_position = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 m_emitter_position = { 0.0f, 10.0f, 0.0f };
 
-		float m_emissionRate = 64;
+		float m_emissionRate = 32;
 		float m_sphereRadius = 1.0f;
 		 
 
@@ -107,7 +107,7 @@ public:
 
 		//particle spawn parameters  
 		float m_particle_minLifetime = 3.0f;
-		float m_particle_maxLifetime = 5.0f;
+		float m_particle_maxLifetime = 10.0f;
 		float m_particle_minInitialSpeed = 5.0f;
 		float m_particle_maxInitialSpeed = 10.0f;
  
@@ -144,9 +144,7 @@ public:
 		Ref<StorageBuffer> m_indirect_dispatch_emission_buffer;
 
 		
-		
 		 
-
 	public:
 		//meta data
 		std::string m_name = "Unnamed";

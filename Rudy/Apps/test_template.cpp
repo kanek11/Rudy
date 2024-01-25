@@ -1,22 +1,7 @@
-//ver 2023.12.30
-
-
+//ver 2024.1.26
 #include "RudyPCH.h" 
 
-#include "Rudy.h"
- 
-
-
-
-
-//const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 0.0f, 3.0f);
-
-
-//g_buffer spec:
-// 
-//the (int) corrsepond to GL_COLOR_ATTACHMENTi  ;
-//working with GPU,  we effectively needs the texture ID ;
-
+#include "Rudy.h"  
 
 
 using namespace Rudy;
@@ -33,9 +18,7 @@ void StartTemp() {
 
 
     const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 2.0f, 5.0f);
-
-
-
+     
     Rudy::Log::Init();
     RD_CORE_WARN("test:Initialized Log!");
 
@@ -152,10 +135,7 @@ void StartTemp() {
         //=======skybox overlay; on final default framebuffer; 
         //compare the depth with gbuffer;  make sure enable the depth test; 
  
-  
-  
-
-
+   
 
         //=======overlay: world grid; 
         // grid.Draw();  

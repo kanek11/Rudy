@@ -21,7 +21,7 @@ namespace Rudy
 	{
 	public:
 		~Cloth() = default;
-         Cloth();
+        Cloth();
 
 		void Init();
 		void Update();

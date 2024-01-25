@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Rudy/Core/Window.h" 
+#include "Rudy/Events/KeyCodes.h"
 
 #include "Rudy/Renderer/Renderer.h"
 #include "Rudy/Renderer/Mesh.h"

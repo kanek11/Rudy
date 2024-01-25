@@ -33,7 +33,7 @@ namespace Rudy
 		Ref<Shader> ComposerShader; 
 
 
-		float outline_scale = 0.1f;
+		float outline_scale = 0.3f;
 		float SSR_scale = 1.0f;
 
 	};

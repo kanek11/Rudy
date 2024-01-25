@@ -84,7 +84,7 @@ void main()
 		return;
 	}
 	
-	Velocities.velocities[index].y += -9.8f * u_deltaTime;
+	Velocities.velocities[index].y += u_gravity * u_deltaTime;
 	Velocities.velocities[index] *= 0.999f;
 	Positions.positions[index].xyz += Velocities.velocities[index].xyz * u_deltaTime;
 

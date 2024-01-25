@@ -156,7 +156,7 @@
     <ClInclude Include="Rudy\Renderer\Kernel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Physics\cloth.h">
+    <ClInclude Include="Rudy\Physics\Cloth.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Apps\Application.h">
@@ -217,6 +217,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy\Passes\Composer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Apps\Particles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Apps\ClothApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -317,7 +323,7 @@
     <ClCompile Include="Rudy\Renderer\Kernel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Physics\cloth.cpp">
+    <ClCompile Include="Rudy\Physics\Cloth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Rudy\Primitives\Sphere.cpp">
@@ -344,10 +350,10 @@
     <ClCompile Include="Apps\test_template.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Apps\test_particles_new.cpp">
+    <ClCompile Include="Apps\Particles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Apps\test_cloth.cpp">
+    <ClCompile Include="Apps\ClothApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Vendor\imgui\imgui_widgets.cpp">
@@ -390,6 +396,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Rudy\Passes\Composer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Apps\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

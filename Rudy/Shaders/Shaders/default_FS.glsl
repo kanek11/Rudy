@@ -10,6 +10,10 @@ layout(location = 0) out vec4 out_FragColor;
 } fs_in;
 
 
+ uniform bool u_custom_color;
+ uniform vec3 u_color;
+
+
 //uniform vec3 u_Color;
 const vec3 inv_light_dir = vec3(0.3, 0.6, 0.9);
 
@@ -19,7 +23,10 @@ void main()
 	float diff_coeff = max(0.0, LdotN); 
 
     //dark pink suggests lack of color
-	out_FragColor = vec4(diff_coeff * vec3 (1.0f, 0.1f, 1.0f), 1.0f);
-
+	if (u_custom_color)
+		out_FragColor = vec4(diff_coeff * u_color, 1.0f);
+	else
+	    //out_FragColor = vec4(diff_coeff * vec3 (1.0f, 0.1f, 1.0f), 1.0f);
+		out_FragColor = vec4(diff_coeff * vec3(0.5f), 1.0f);
 
 }
