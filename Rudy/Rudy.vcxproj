@@ -14,7 +14,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{be952e64-8b74-406f-8898-6ad40bcf0da8}</ProjectGuid>
-    <RootNamespace>Ether</RootNamespace>
+    <RootNamespace>Rudy</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>Rudy</ProjectName>
   </PropertyGroup>
@@ -37,15 +37,9 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)/Rudy;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Rudy;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(SolutionDir)/Ether;$(IncludePath)</IncludePath>
@@ -56,7 +50,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\dev\dependencies\assimp\include;D:\dev\dependencies\stb_image;D:\dev\dependencies\GLM;D:\dev\dependencies\spdlog-1.x\include;D:\dev\dependencies\glfw-3.3.8.bin.WIN64\include;D:\dev\dependencies\Glad\include; </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Rudy\Vendor\imgui;D:\dev\dependencies\assimp\include;D:\dev\dependencies\stb_image;D:\dev\dependencies\GLM;D:\dev\dependencies\spdlog-1.x\include;D:\dev\dependencies\glfw-3.3.8.bin.WIN64\include;D:\dev\dependencies\Glad\include; </AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>RudyPCH.h </PrecompiledHeaderFile>
@@ -64,7 +58,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\dev\dependencies\assimp\lib;D:\dev\dependencies\Glad\lib; D:\dev\dependencies\glfw-3.3.8.bin.WIN64\lib-vc2022;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Rudy\Vendor\assimp\lib;$(SolutionDir)Rudy\Vendor\Glad\lib;$(SolutionDir)Rudy\Vendor\glfw-3.3.8.bin.WIN64\lib-vc2022</AdditionalLibraryDirectories>
       <AdditionalDependencies>assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib ;glad.lib;User32.lib;Gdi32.lib;Shell32.lib ;</AdditionalDependencies>
       <Profile>false</Profile>
       <StackReserveSize>5242880</StackReserveSize>
@@ -94,10 +88,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Cube.h" />
-    <ClInclude Include="Overlay.hpp" />
+    <ClInclude Include="Apps\Application.h" />
+    <ClInclude Include="Apps\NPR.h" />
+    <ClInclude Include="Apps\PBR.h" />
+    <ClInclude Include="Rudy\Primitives\Cube.h" />
+    <ClInclude Include="Rudy\Primitives\Overlay.h" />
+    <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h" />
+    <ClInclude Include="Rudy.h" />
     <ClInclude Include="Rudy\Core\Assert.h" />
     <ClInclude Include="Rudy\Core\Base.h" />
+    <ClInclude Include="Rudy\Core\FileSystem.h" />
     <ClInclude Include="Rudy\Core\Timer.h" />
     <ClInclude Include="Rudy\Core\Timestep.h" />
     <ClInclude Include="Rudy\Debug\Instrumentor.h" />
@@ -107,23 +107,33 @@
     <ClInclude Include="Rudy\Core\Window.h" />
     <ClInclude Include="Rudy\Events\KeyCodes.h" />
     <ClInclude Include="Rudy\Events\MouseCodes.h" />
-    <ClInclude Include="Rudy\Renderer\Animation.h" />
+    <ClInclude Include="Rudy\Particles\ParticleSystem.h" />
+    <ClInclude Include="Rudy\Passes\Bloom.h" />
+    <ClInclude Include="Rudy\Passes\Composer.h" />
+    <ClInclude Include="Rudy\Passes\Pass.h" />
+    <ClInclude Include="Rudy\Passes\SSAO.h" />
+    <ClInclude Include="Rudy\Passes\SSR.h" />
+    <ClInclude Include="Rudy\Passes\ToneMap.h" />
+    <ClInclude Include="Rudy\Passes\WorldToView.h" />
+    <ClInclude Include="Rudy\Physics\cloth.h" />
+    <ClInclude Include="Rudy\Animation\Animation.h" />
+    <ClInclude Include="Rudy\Renderer\Buffer.h" />
     <ClInclude Include="Rudy\Renderer\Camera.h" />
     <ClInclude Include="Rudy\Renderer\FrameBuffer.h" />
     <ClInclude Include="Rudy\Renderer\GraphicsContext.h" />
+    <ClInclude Include="Rudy\Renderer\Kernel.h" />
     <ClInclude Include="Rudy\Renderer\Material.h" />
     <ClInclude Include="Rudy\Renderer\Mesh.h" />
     <ClInclude Include="Rudy\Renderer\Object.h" />
+    <ClInclude Include="Rudy\Renderer\RendererComponent.h" />
     <ClInclude Include="Rudy\Renderer\Scene.h" />
     <ClInclude Include="Rudy\Renderer\Shader.h" />
     <ClInclude Include="Rudy\Renderer\Renderer.h" />
     <ClInclude Include="Rudy\Renderer\RendererAPI.h" />
-    <ClInclude Include="Rudy\Renderer\Skeleton.h" />
     <ClInclude Include="Rudy\Renderer\Texture.h" />
     <ClInclude Include="Rudy\Renderer\Transform.h" />
-    <ClInclude Include="Plane.hpp" />
+    <ClInclude Include="Rudy\Primitives\Plane.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLFrameBuffer.h" />
-    <ClInclude Include="Platform\OpenGL\OpenGLMesh.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLShader.h" />
@@ -134,24 +144,117 @@
     <ClInclude Include="Rudy\Events\KeyEvent.h" />
     <ClInclude Include="Rudy\Events\MouseEvent.h" />
     <ClInclude Include="RudyPCH.h" />
-    <ClInclude Include="Quad.hpp" />
-    <ClInclude Include="Sphere.hpp" />
+    <ClInclude Include="Rudy\Primitives\ScreenQuad.h" />
+    <ClInclude Include="Rudy\Primitives\Sphere.h" />
+    <ClInclude Include="Vendor\imgui\imconfig.h" />
+    <ClInclude Include="Vendor\imgui\imgui.h" />
+    <ClInclude Include="Vendor\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="Vendor\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="Vendor\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="Vendor\imgui\imgui_internal.h" />
+    <ClInclude Include="Vendor\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Vendor\imgui\imstb_textedit.h" />
+    <ClInclude Include="Vendor\imgui\imstb_truetype.h" />
+    <ClInclude Include="Rudy\Passes\Outline.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\dependencies\stb_image\stb_image.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <None Include="Resources\Shaders\DepthMapSkinned_VS.glsl">
+    <ClCompile Include="Apps\main.cpp" />
+    <ClCompile Include="Apps\NPR.cpp" />
+    <ClCompile Include="Apps\PBR.cpp" />
+    <ClCompile Include="Apps\test_cloth.cpp" />
+    <ClCompile Include="Apps\test_particles_new.cpp" />
+    <ClCompile Include="Apps\test_template.cpp" />
+    <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp" />
+    <ClCompile Include="Rudy\Primitives\Overlay.cpp" />
+    <ClCompile Include="Rudy\Primitives\plane.cpp" />
+    <ClCompile Include="Rudy\Primitives\ScreenQuad.cpp" />
+    <ClCompile Include="Rudy\Primitives\Sphere.cpp" />
+    <ClCompile Include="Rudy\Particles\ParticleSystem.cpp" />
+    <ClCompile Include="Rudy\Passes\Bloom.cpp" />
+    <ClCompile Include="Rudy\Passes\Composer.cpp" />
+    <ClCompile Include="Rudy\Passes\Outline.cpp" />
+    <ClCompile Include="Rudy\Passes\SSAO.cpp" />
+    <ClCompile Include="Rudy\Passes\SSR.cpp" />
+    <ClCompile Include="Rudy\Passes\ToneMap.cpp" />
+    <ClCompile Include="Rudy\Passes\WorldToView.cpp" />
+    <ClCompile Include="Rudy\Physics\cloth.cpp" />
+    <ClCompile Include="Rudy\Renderer\Buffer.cpp" />
+    <ClCompile Include="Rudy\Renderer\Kernel.cpp" />
+    <ClCompile Include="Rudy\Renderer\RendererComponent.cpp" />
+    <ClCompile Include="Vendor\imgui\imgui.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vendor\imgui\imgui_demo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vendor\imgui\imgui_draw.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vendor\imgui\imgui_impl_glfw.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vendor\imgui\imgui_impl_opengl3.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vendor\imgui\imgui_tables.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Vendor\imgui\imgui_widgets.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <None Include="Shaders\Cloth\default_cloth_FS.glsl" />
+    <None Include="Shaders\Cloth\default_cloth_VS.glsl" />
+    <None Include="Shaders\Cloth\normalize_normals_CS.glsl" />
+    <None Include="Shaders\Cloth\post_update_vel_CS.glsl" />
+    <None Include="Shaders\Cloth\solve_bendConst_CS.glsl" />
+    <None Include="Shaders\Cloth\solve_distConst_legacy_CS.glsl" />
+    <None Include="Shaders\Particles\particle_dispatch_CS.glsl" />
+    <None Include="Shaders\Particles\template_CS.glsl" />
+    <None Include="Shaders\Cloth\compute_normals_CS.glsl" />
+    <None Include="Shaders\Cloth\compute_rest_length_CS.glsl" />
+    <None Include="Shaders\Cloth\post_correction_CS.glsl" />
+    <None Include="Shaders\Cloth\pre_integrate_CS.glsl" />
+    <None Include="Shaders\Cloth\solve_stretchConst_CS.glsl" />
+    <None Include="Shaders\PostProcess\averageBlur_CS.glsl" />
+    <None Include="Shaders\PostProcess\bloom_add_CS.glsl" />
+    <None Include="Shaders\PostProcess\composer_CS.glsl" />
+    <None Include="Shaders\PostProcess\GaussianBlur_CS.glsl" />
+    <None Include="Shaders\PostProcess\outline_CS.glsl" />
+    <None Include="Shaders\PostProcess\outline_FDM_CS.glsl" />
+    <None Include="Shaders\PostProcess\SSR_aveFilter_CS.glsl" />
+    <None Include="Shaders\PostProcess\SSR_CS.glsl" />
+    <None Include="Shaders\PostProcess\threshold_CS.glsl" />
+    <None Include="Shaders\PostProcess\toneMapping_CS.glsl" />
+    <None Include="Shaders\PostProcess\WorldToView_CS.glsl" />
+    <None Include="Shaders\Shaders\Genshin_FS.glsl" />
+    <None Include="Shaders\Shaders\Genshin_VS.glsl" />
+    <None Include="Shaders\Deferred\Lambertian_FS.glsl" />
+    <None Include="Shaders\Particles\particle_render_sprite_FS.glsl" />
+    <None Include="Shaders\Particles\particle_render_sprite_GS.glsl" />
+    <None Include="Shaders\Particles\particle_render_sprite_VS.glsl" />
+    <None Include="Shaders\PostProcess\downSample_CS.glsl" />
+    <None Include="Shaders\Particles\particle_emission_CS.glsl" />
+    <None Include="Shaders\Particles\particle_reset_CS.glsl" />
+    <None Include="Shaders\Particles\particle_update_CS.glsl" />
+    <None Include="Shaders\Particles\particle_render_mesh_VS.glsl" />
+    <None Include="Shaders\Particles\Particle_CS.glsl" />
+    <None Include="Shaders\Particles\particle_render_mesh_FS.glsl" />
+    <None Include="Shaders\PostProcess\upSample_CS.glsl" />
+    <None Include="Shaders\Shaders\DepthMapSkinned_VS.glsl">
       <FileType>Document</FileType>
     </None>
+    <ClCompile Include="Rudy\Core\FileSystem.cpp" />
     <ClCompile Include="RudyPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Rudy\Core\Log.cpp" />
     <ClCompile Include="Rudy\Core\WIndow.cpp" />
-    <ClCompile Include="Rudy\Renderer\Animation.cpp" />
+    <ClCompile Include="Rudy\Animation\Animation.cpp" />
     <ClCompile Include="Rudy\Renderer\Transform.cpp" />
     <ClCompile Include="Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="Rudy\Renderer\Camera.cpp" />
@@ -167,58 +270,56 @@
     <ClCompile Include="Rudy\Renderer\Shader.cpp" />
     <ClCompile Include="Rudy\Renderer\Texture.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp" />
-    <ClCompile Include="Cube.cpp" />
-    <ClCompile Include="test_pipeline_pbr.cpp" />
-    <None Include="Resources\Shaders\BlinnPhong_FS.glsl">
+    <ClCompile Include="Rudy\Primitives\Cube.cpp" />
+    <None Include="Shaders\Deferred\BlinnPhong_FS.glsl">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <FileType>Document</FileType>
     </None>
     <ClCompile Include="Platform\OpenGL\OpenGLFrameBuffer.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
-    <ClCompile Include="Platform\OpenGL\OpenGLMesh.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="Platform\Windows\WindowsWindow.cpp" />
-    <None Include="Resources\Shaders\BlinnPhong_Color_FS.glsl" />
-    <None Include="Resources\Shaders\BrdfLUT_FS.glsl" />
-    <None Include="Resources\Shaders\BrdfLUT_VS.glsl" />
-    <None Include="Resources\Shaders\Default_Flat_FS.glsl" />
-    <None Include="Resources\Shaders\DepthMap_VS.glsl" />
-    <None Include="Resources\Shaders\DepthMap_FS.glsl" />
-    <None Include="Resources\Shaders\DepthQuad_FS.glsl" />
-    <None Include="Resources\Shaders\DepthQuad_VS.glsl" />
-    <None Include="Resources\Shaders\DiffuseEnvMap_FS.glsl" />
-    <None Include="Resources\Shaders\DiffuseEnvMap_VS.glsl" />
-    <None Include="Resources\Shaders\GBufferSkinned_VS.glsl" />
-    <None Include="Resources\Shaders\GBuffer_FS.glsl" />
-    <None Include="Resources\Shaders\GBuffer_VS.glsl" />
-    <None Include="Resources\Shaders\TextureOnly_VS.glsl" />
-    <None Include="Resources\Shaders\PBR_FS.glsl" />
-    <None Include="Resources\Shaders\PBR_VS.glsl" />
-    <None Include="Resources\Shaders\RectToCube_VS.glsl" />
-    <None Include="Resources\Shaders\RectToCube_FS.glsl" />
-    <None Include="Resources\Shaders\TextureOnly_FS.glsl" />
-    <None Include="Resources\Shaders\SpecularEnvMap_FS.glsl" />
-    <None Include="Resources\Shaders\SpecularEnvMap_VS.glsl" />
-    <None Include="Resources\Shaders\ScreenQuad_FS.glsl" />
-    <None Include="Resources\Shaders\ScreenQuad_VS.glsl" />
-    <None Include="Resources\Shaders\Skybox_FS.glsl" />
-    <None Include="Resources\Shaders\Skybox_VS.glsl" />
-    <None Include="Resources\Shaders\SSAO_FS.glsl" />
-    <None Include="Resources\Shaders\SSAO_VS.glsl" />
-    <None Include="Resources\Shaders\SSR_FS.glsl" />
-    <None Include="Resources\Shaders\SSR_VS.glsl" />
-    <None Include="Resources\Shaders\Vertex_Color_FS.glsl" />
-    <None Include="Resources\Shaders\Vertex_Color_VS.glsl" />
+    <None Include="Shaders\Deferred\BlinnPhong_Color_FS.glsl" />
+    <None Include="Shaders\Shaders\BrdfLUT_FS.glsl" />
+    <None Include="Shaders\Shaders\BrdfLUT_VS.glsl" />
+    <None Include="Shaders\Shaders\Default_Flat_FS.glsl" />
+    <None Include="Shaders\Shaders\DepthMap_VS.glsl" />
+    <None Include="Shaders\Shaders\DepthMap_FS.glsl" />
+    <None Include="Shaders\Shaders\DepthQuad_FS.glsl" />
+    <None Include="Shaders\Shaders\DepthQuad_VS.glsl" />
+    <None Include="Shaders\Shaders\DiffuseEnvMap_FS.glsl" />
+    <None Include="Shaders\Shaders\DiffuseEnvMap_VS.glsl" />
+    <None Include="Shaders\Deferred\GBufferSkinned_VS.glsl" />
+    <None Include="Shaders\Deferred\GBuffer_FS.glsl" />
+    <None Include="Shaders\Deferred\GBuffer_VS.glsl" />
+    <None Include="Shaders\PostProcess\TestImage_CS.glsl" />
+    <None Include="Shaders\Deferred\PBR_FS.glsl" />
+    <None Include="Shaders\Deferred\PBR_VS.glsl" />
+    <None Include="Shaders\Shaders\show_normal_FS.glsl" />
+    <None Include="Shaders\Shaders\show_normal_GS.glsl" />
+    <None Include="Shaders\Shaders\RectToCube_VS.glsl" />
+    <None Include="Shaders\Shaders\RectToCube_FS.glsl" />
+    <None Include="Shaders\Shaders\SpecularEnvMap_FS.glsl" />
+    <None Include="Shaders\Shaders\SpecularEnvMap_VS.glsl" />
+    <None Include="Shaders\Shaders\ScreenQuad_FS.glsl" />
+    <None Include="Shaders\Shaders\ScreenQuad_VS.glsl" />
+    <None Include="Shaders\Shaders\Skybox_FS.glsl" />
+    <None Include="Shaders\Shaders\Skybox_VS.glsl" />
+    <None Include="Shaders\PostProcess\SSAO_FS.glsl" />
+    <None Include="Shaders\PostProcess\SSAO_VS.glsl" />
+    <None Include="Shaders\PostProcess\SSR_FS.glsl" />
+    <None Include="Shaders\Shaders\Vertex_Color_FS.glsl" />
+    <None Include="Shaders\Shaders\Vertex_Color_VS.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="dependencies.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\Default_FS.glsl" />
-    <None Include="Resources\Shaders\Default_VS.glsl" />
-    <None Include="Resources\Shaders\BlinnPhong_VS.glsl" />
+    <None Include="Shaders\Shaders\default_FS.glsl" />
+    <None Include="Shaders\Shaders\default_VS.glsl" />
+    <None Include="Shaders\Deferred\BlinnPhong_VS.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

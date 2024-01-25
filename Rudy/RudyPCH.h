@@ -8,15 +8,17 @@
 
 #include "Rudy/Core/Assert.h"
 
+#include "Rudy/Core/FileSystem.h"
+
 #include "Rudy/Debug/Instrumentor.h"
 
 
 //third party 
 
-//#include <glad/glad.h>
-//#include <GLFW/glfw3.h> 
-//#include <glm/glm.hpp>
- 
+#include <glad/glad.h>  //before glfw3.h
+#include <GLFW/glfw3.h> 
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>  //for glm::value_ptr
 
 //standard library
 
@@ -36,4 +38,4 @@
 #include <utility>
 
 
-
+#include <random> 

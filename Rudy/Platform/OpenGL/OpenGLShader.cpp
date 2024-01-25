@@ -1,42 +1,87 @@
 #include "RudyPCH.h"
 
 #include "OpenGLShader.h"
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
-
-#include <glm/gtc/type_ptr.hpp>
+ 
 
 namespace Rudy {
 
 
     OpenGLShader::OpenGLShader(const std::string& filepath)
         : m_FilePath(filepath)
-    {
-
+    { 
     }
 
-    //refering to learnopengl.com
-    //disable geometry shader for now.
 
-    OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+    OpenGLShader::OpenGLShader(const std::string& name, const std::string& computeSrc)
+        : m_Name(name)
+    {
+
+//RD_PROFILE_FUNCTION();
+         
+		std::string computeCode; 
+		std::ifstream cShaderFile;
+         
+		cShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+        try
+        { 
+            cShaderFile.open(computeSrc);
+            std::stringstream cShaderStream; 
+            cShaderStream << cShaderFile.rdbuf(); 
+            cShaderFile.close(); 
+            computeCode = cShaderStream.str();
+        }
+
+        catch (std::ifstream::failure& e)
+        {
+            std::cout << "ERROR::CUMPUTE SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+            std::cout << "Exception message: " << e.what() << std::endl;
+
+        }
+         
+
+       const char* cShaderCode = computeCode.c_str();
+ 
+		uint32_t compute; 
+		compute = glCreateShader(GL_COMPUTE_SHADER);
+		glShaderSource(compute, 1, &cShaderCode, NULL);
+		glCompileShader(compute);
+		checkCompileErrors(compute, "COMPUTE");
+         
+		m_ShaderID = glCreateProgram(); 
+		glAttachShader(m_ShaderID, compute); 
+		glLinkProgram(m_ShaderID); 
+		checkCompileErrors(m_ShaderID, "PROGRAM");
+ 
+        glDeleteShader(compute);
+
+		RD_CORE_INFO("OpenGLShader: compute shaderName: {0} is created, ID:{1}", m_Name, m_ShaderID);
+
+         
+    }
+
+ 
+    OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc,
+        const std::string& fragmentSrc,
+        const std::string& geometrySrc)
         : m_Name(name)
     {
         //RD_PROFILE_FUNCTION();
 
-        // 1. retrieve the vertex/fragment source code from filePath
+        // 1. retrieve the source code from filePath,  just strings.
         std::string vertexCode;
         std::string fragmentCode;
-        //std::string geometryCode;
+        std::string geometryCode;
+
+        //ifstream: input file stream
         std::ifstream vShaderFile;
         std::ifstream fShaderFile;
-        //std::ifstream gShaderFile;
+        std::ifstream gShaderFile;
 
         // ensure ifstream objects can throw exceptions:
         vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
         fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-        //gShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        gShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
         try
         {
@@ -44,6 +89,7 @@ namespace Rudy {
             vShaderFile.open(vertexSrc);
             fShaderFile.open(fragmentSrc);
             std::stringstream vShaderStream, fShaderStream;
+
             // read file's buffer contents into streams
             vShaderStream << vShaderFile.rdbuf();
             fShaderStream << fShaderFile.rdbuf();
@@ -56,22 +102,26 @@ namespace Rudy {
             fragmentCode = fShaderStream.str();
 
             // if geometry shader path is present, also load a geometry shader
-        /*    if (geometryPath != nullptr)
+            if (!geometrySrc.empty())
             {
-                gShaderFile.open(geometryPath);
+                gShaderFile.open(geometrySrc);
                 std::stringstream gShaderStream;
                 gShaderStream << gShaderFile.rdbuf();
                 gShaderFile.close();
                 geometryCode = gShaderStream.str();
             }
-        */
+        
 
         }
 
         catch (std::ifstream::failure& e)
         {
             std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+            std::cout << "Exception message: " << e.what() << std::endl;
+
         }
+
+        //cast into C-string that OpenGL accepts
         const char* vShaderCode = vertexCode.c_str();
         const char* fShaderCode = fragmentCode.c_str();
 
@@ -90,27 +140,27 @@ namespace Rudy {
         checkCompileErrors(fragment, "FRAGMENT");
 
 
-        // if geometry shader is given, compile geometry shader
-  /*      uint32_t geometry;
-        if (geometryPath != nullptr)
+ 
+        uint32_t geometry;
+        if (!geometrySrc.empty())
         {
+            RD_CORE_WARN("OpenGLShader: geometrySrc exist");
             const char* gShaderCode = geometryCode.c_str();
             geometry = glCreateShader(GL_GEOMETRY_SHADER);
             glShaderSource(geometry, 1, &gShaderCode, NULL);
             glCompileShader(geometry);
             checkCompileErrors(geometry, "GEOMETRY");
-        }*/
+        } 
 
-
-
+         
         // output of the creation.
         m_ShaderID = glCreateProgram();
 
         glAttachShader(m_ShaderID, vertex);
         glAttachShader(m_ShaderID, fragment);
 
-        /* if (geometryPath != nullptr)
-             glAttachShader(ID, geometry);*/
+        if (!geometrySrc.empty())
+             glAttachShader(m_ShaderID, geometry);
 
         glLinkProgram(m_ShaderID);
 
@@ -120,10 +170,10 @@ namespace Rudy {
         glDeleteShader(vertex);
         glDeleteShader(fragment);
 
-        /*  if (geometryPath != nullptr)
-              glDeleteShader(geometry);*/
+        if (!geometrySrc.empty())
+              glDeleteShader(geometry);
 
-        RD_CORE_INFO("OpenGLShader: shaderName: {0} is created, id:{1}", m_Name,m_ShaderID);
+        RD_CORE_INFO("OpenGLShader: shaderProgram Name: {0} is created, ID:{1}", m_Name,m_ShaderID);
     }
 
 
@@ -131,8 +181,8 @@ namespace Rudy {
 
     OpenGLShader::~OpenGLShader()
     {
-        //RD_PROFILE_FUNCTION();
-
+        //RD_PROFILE_FUNCTION(); 
+        RD_CORE_INFO("OpenGLShader: shaderName: {0} is deleted, ID:{1}", m_Name, m_ShaderID);
         glDeleteProgram(m_ShaderID);
     }
 
@@ -142,20 +192,13 @@ namespace Rudy {
     // activate the shader
    // ------------------------------------------------------------------------
     void OpenGLShader::Bind() const
-    {
-        //RD_PROFILE_FUNCTION();
-
-        glUseProgram(m_ShaderID);
-
-        //RD_CORE_INFO("OpenGLShader: ShaderID:{0} is bound", m_ShaderID);
+    { 
+        glUseProgram(m_ShaderID); 
     }
 
     void OpenGLShader::Unbind() const
-    {
-        //RD_PROFILE_FUNCTION();
-
-        glUseProgram(0);
-        //RD_CORE_INFO("OpenGLShader:Shader is unbound");
+    { 
+        glUseProgram(0); 
     }
 
 
@@ -163,35 +206,97 @@ namespace Rudy {
     // ------------------------------------------------------------------------
     void OpenGLShader::SetBool(const std::string& name, bool value) const
     {
-        glUniform1i(glGetUniformLocation(m_ShaderID, name.c_str()), value);
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            RD_CORE_ERROR("glShader {0}: SeBool: uniform {1} not found", m_Name, name);
+            return;
+        }
+        glUniform1i(location, value);
     }
     // ------------------------------------------------------------------------
     void OpenGLShader::SetInt(const std::string& name, int value) const
     {
-        glUniform1i(glGetUniformLocation(m_ShaderID, name.c_str()), value);
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            //RD_CORE_ERROR("glShader: SetInt: uniform {0} not found", name);  //for now we have a lot unused texture slots;
+            return;
+        }
+        glUniform1i(location, value);
     }
+
+    void OpenGLShader::SetUInt(const std::string& name, int value) const
+    {
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            RD_CORE_WARN("OpenGLShader: SetUInt: uniform {0} not found", name);
+            return;
+        }  
+        glUniform1ui(location, value);
+    }
+
     // ------------------------------------------------------------------------
     void OpenGLShader::SetFloat(const std::string& name, float value) const
     {
-        glUniform1f(glGetUniformLocation(m_ShaderID, name.c_str()), value);
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            RD_CORE_ERROR("glShader {0}: SetFloat: uniform {1} not found", m_Name, name);
+            return;
+        } 
+        glUniform1f(location, value);
     }
     // ------------------------------------------------------------------------
     void OpenGLShader::SetVec2(const std::string& name, const glm::vec2& value) const
     {
-        glUniform2fv(glGetUniformLocation(m_ShaderID, name.c_str()), 1, &value[0]);
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            RD_CORE_ERROR("glShader: SetVec2: uniform {0} not found", name);
+            return;
+        }
+        glUniform2fv(location, 1, &value[0]);
     }
+
     void OpenGLShader::SetVec2(const std::string& name, float x, float y) const
     {
         glUniform2f(glGetUniformLocation(m_ShaderID, name.c_str()), x, y);
     }
+
+
+    void OpenGLShader::SetIVec2(const std::string& name, const glm::ivec2& value) const
+    {
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            RD_CORE_ERROR("glShader: SetVec2: uniform {0} not found", name);
+            return;
+        }
+        glUniform2iv(location, 1, &value[0]);
+    }
+
+    void OpenGLShader::SetIVec2(const std::string& name, int x, int y) const
+    {
+        glUniform2i(glGetUniformLocation(m_ShaderID, name.c_str()), x, y);
+    }
+
+
+
     // ------------------------------------------------------------------------
     void OpenGLShader::SetVec3(const std::string& name, const glm::vec3& value) const
     { 
-        glUniform3fv(glGetUniformLocation(m_ShaderID, name.c_str()), 1, &value[0]);
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            RD_CORE_ERROR("glShader {0}: SetVec3: uniform {1} not found", m_Name, name);
+            return;
+        }
+        glUniform3fv(location, 1, &value[0]);
     }
+
     void OpenGLShader::SetVec3(const std::string& name, float x, float y, float z) const
     {
-        glUniform3f(glGetUniformLocation(m_ShaderID, name.c_str()), x, y, z);
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            RD_CORE_ERROR("glShader {0}: SetVec3: uniform {1} not found", m_Name, name);
+            return;
+        }
+        glUniform3f(location, x, y, z);
     }
 
     // ------------------------------------------------------------------------
@@ -207,21 +312,24 @@ namespace Rudy {
     // ------------------------------------------------------------------------
     void OpenGLShader::SetMat3(const std::string& name, const glm::mat3& mat) const
     {
-        glUniformMatrix3fv(glGetUniformLocation(m_ShaderID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            RD_CORE_ERROR("glShader: SetMat3: uniform {0} not found", name);
+            return;
+        }
+        glUniformMatrix3fv(location, 1, GL_FALSE, &mat[0][0]);
     }
     // ------------------------------------------------------------------------
     void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& mat) const
     {  
         GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
         if (location == -1) {
-            // Log error or warning
+            //RD_CORE_ERROR("glShader: SetMat4: uniform {0} not found", name);
             return;
         }
-        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat)); 
 
-        //glUniformMatrix4fv(glGetUniformLocation(m_ShaderID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
-
-    }
+    } 
 
 
     //routine utility function for checking shader compilation/linking errors.
@@ -235,17 +343,22 @@ namespace Rudy {
             glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
             if (!success)
             {
-                glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-                std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                //shader compilation error
+                //glGetShaderInfoLog(shader, 1024, NULL, infoLog);
+                //std::cout << "Shader name: " << m_Name << std::endl;
+                //std::cout << "APP GET ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                
             }
         }
         else
         {
+            //program linking error, usually returns shader compilation error as well
             glGetProgramiv(shader, GL_LINK_STATUS, &success);
             if (!success)
             {
                 glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-                std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                std::cout << "Shader name: " << m_Name << " ;directory:" << m_FilePath << std::endl;
+                std::cout << "APP GET ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
             }
         }
     }

@@ -7,12 +7,13 @@
 
 
 
+
+
 namespace Rudy 
 
 {   
     //static declaration
-    float Model::ScaleFactor = 1.0f;
-
+    float Model::s_scaleFactor  = 1.0f; 
 
     namespace AssimpGLMHelpers
     { 
@@ -40,51 +41,11 @@ namespace Rudy
 
     };
 
-
-    
-    Ref<MeshObject> MeshObject::Create()
-    {
-		return CreateRef<MeshObject>();
-	}
-     
      
 
-    void MeshObject::Draw(Ref<Camera> cam)
-    { 
-         mesh->Bind();
-         material->Bind(); 
+    //-------------------------
+    //---model----------------- 
 
-         if (!cam)  //if the camera is not null,  update the shader uniforms
-         {
-             //RD_CORE_WARN("MeshObject::no camera specified");
-         }
-          else
-         { 
-             this->transform->UpdateWorldTransform();
-             glm::mat4 model = this->transform->GetWorldTransform();
-
-             glm::mat4 projection_view = cam->GetProjectionViewMatrix();
-
-             material->GetShader()->SetMat4("u_Model", model);
-             material->GetShader()->SetMat4("u_ProjectionView", projection_view);
-         } 
-
-         Renderer::GetRendererAPI()->DrawElement(mesh->GetIndexCount(), mesh->topology);
-           
-         material->Unbind();
-         mesh->Unbind();
-
-	}
-
-
-
-    void Model::Draw(Ref<Camera> cam)
-    {
-       for (auto meshObj : this->meshObjects)
-            meshObj->Draw( cam);
-	} 
-
-     
     Ref<Model> Model::LoadModel(std::string const& path)
 
     {
@@ -104,13 +65,12 @@ namespace Rudy
         //it's kinda weird logic that bone and mesh can be in different scale initially;
         //so i will override this in the root node transform;
 
-        importer.SetPropertyFloat("GLOBAL_SCALE_FACTOR",  this->ScaleFactor); 
+        importer.SetPropertyFloat("GLOBAL_SCALE_FACTOR",  this->s_scaleFactor ); 
 
         //read data ,  optionally with some postprocessing
         const aiScene* scene = importer.ReadFile
         (path, aiProcess_GlobalScale | aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
-
-
+ 
         // check for errors, complete scene ,  with root node
         //assert(scene && scene->mRootNode);
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)  
@@ -175,8 +135,7 @@ namespace Rudy
         scene_node->transform->localTransform = AssimpGLMHelpers::ConvertMatrixToGLMFormat(ai_node->mTransformation);
         scene_node->transform->gameObject = scene_node;  //important
 
-
-
+         
         //process meshes in the node if any
         //they are separated by one-material-per-mesh when imported
         RD_CORE_INFO("modelloader: find {0} meshes in the node: {1}", ai_node->mNumMeshes, name);
@@ -186,13 +145,14 @@ namespace Rudy
             aiMesh* ai_mesh = scene->mMeshes[ai_node->mMeshes[i]];
 
             //engine-specific mesh object
-            auto meshObject = MeshObject::Create();
+            auto meshObject = StaticMeshObject::Create();
+            auto meshRenderer = meshObject->GetRenderer();
+        
+            RD_CORE_INFO("model: process mesh");
+            meshRenderer->SetMesh( processMesh(ai_mesh, scene) );
 
-            RD_CORE_INFO("process mesh");
-            meshObject->mesh = processMesh(ai_mesh, scene);
-
-            RD_CORE_INFO("process material");
-            meshObject->material = processMaterial(ai_mesh, scene);
+            RD_CORE_INFO("model: process material");
+            meshRenderer->SetMaterial( processMaterial(ai_mesh, scene) );
 
 
             this->meshObjects.push_back(meshObject);  
@@ -295,9 +255,12 @@ namespace Rudy
         auto _mesh = Mesh::Create();
         _mesh->vertices = vertices;
         _mesh->indices = indices;
-          
 
-        _mesh->LoadToGPU();
+        _mesh->name = mesh->mName.C_Str();
+        _mesh->globalIndex = mesh->mMaterialIndex;  //the index in the scene 
+          
+        RD_CORE_INFO("Modelloading: mesh name:{0}, index:{1}", _mesh->name, _mesh->globalIndex);
+         
         return _mesh; 
 
 
@@ -313,7 +276,7 @@ namespace Rudy
         int boneCounter = bindPoseBoneMap.size();  //the current number of bones in the map;
 
         RD_CORE_INFO("Modelloading: {0} bound bones detected for the mesh", mesh->mNumBones);
-        for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+        for (unsigned int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
         {
             int boneID = -1;
             std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
@@ -383,12 +346,15 @@ namespace Rudy
         aiMaterial* ai_material = scene->mMaterials[mesh->mMaterialIndex]; 
 
         //engine-specific material object
-        auto material = Material::Create(); 
+        auto material = Material::Create();  
+        material->m_Name = ai_material->GetName().C_Str();
+        material->m_GlobalIndex = mesh->mMaterialIndex;  //the index in the scene
 
+        RD_CORE_INFO("Model loading: material name:{0}, index:{1}", material->m_Name, material->m_GlobalIndex);
          
 
-        auto loadTexture = [&](aiTextureType type, TextureType textureType) {
-            aiString str;  //filenname
+        auto loadTexture = [&](aiTextureType type, TexType TexType) {
+        aiString str;  //filenname
 
             if (ai_material->GetTexture(type, 0, &str) == AI_SUCCESS)
             {
@@ -403,7 +369,7 @@ namespace Rudy
                 {
                     if (texture->GetPath() == fileDir)
                     {
-                        material->SetTexture(textureType, texture); // set reference directly.
+                        material->SetTexture(TexType, texture); // set reference directly.
                         skip = true;
 
                         RD_CORE_INFO("Modelloading: Texture at: {0} is already loaded ", fileDir);
@@ -416,15 +382,18 @@ namespace Rudy
                     // Load your texture here using directory, and set it to your material
                     Ref<Texture2D> texture = Texture2D::LoadFile(fileDir);
                     
-                    material->SetTexture(textureType, texture); // Assuming you have a setter for textures in your Material class
+                    material->SetTexture(TexType, texture); // Assuming you have a setter for textures in your Material class
                     m_Loaded_Textures.push_back(texture);  //opt
 
                     
-                    RD_CORE_WARN("Modelloading: Texture type: {0} is added to material ", (int)textureType);
+                    RD_CORE_WARN("Modelloading: Texture type: {0} is added to material ", (int)TexType);
                 }
 
-
             }
+
+
+
+
         };
 
 
@@ -432,18 +401,18 @@ namespace Rudy
         //refer to the used version source code of assimp;
 
        //RD_CORE_INFO("Modelloading: BlinnPhong is used");
-        loadTexture(aiTextureType_DIFFUSE, TextureType::AlbedoMap);
-        loadTexture(aiTextureType_BASE_COLOR, TextureType::AlbedoMap);
+        loadTexture(aiTextureType_DIFFUSE, TexType::AlbedoMap);
+        loadTexture(aiTextureType_BASE_COLOR, TexType::AlbedoMap);
 
-        loadTexture(aiTextureType_SPECULAR, TextureType::SpecularMap);
+        loadTexture(aiTextureType_SPECULAR, TexType::SpecularMap);
 
         //tangent space
-        loadTexture(aiTextureType_NORMALS, TextureType::NormalMap);
+        loadTexture(aiTextureType_NORMALS, TexType::NormalMap);
 
-        loadTexture(aiTextureType_DIFFUSE_ROUGHNESS, TextureType::RoughnessMap);
+        loadTexture(aiTextureType_DIFFUSE_ROUGHNESS, TexType::RoughnessMap);
 
-        loadTexture(aiTextureType_METALNESS, TextureType::MetallicMap);
-        loadTexture(aiTextureType_AMBIENT_OCCLUSION, TextureType::AOMap);
+        loadTexture(aiTextureType_METALNESS, TexType::MetallicMap);
+        loadTexture(aiTextureType_AMBIENT_OCCLUSION, TexType::AOMap);
 
 
         // Load other properties here if needed, like colors, roughness, etc.
@@ -510,7 +479,7 @@ namespace Rudy
 
             //retreive properties in the channel
             //RD_CORE_WARN("Modelloading: mNumPositionKeysfound:{0}", channel->mNumPositionKeys);
-            for (int j = 0; j < channel->mNumPositionKeys; j++)
+            for (unsigned int j = 0; j < channel->mNumPositionKeys; j++)
             {
                 aiVectorKey key = channel->mPositionKeys[j];
                 KeyPosition newKeyPosition;
@@ -521,7 +490,7 @@ namespace Rudy
                 newKeyBone->m_KeyPositions.push_back(newKeyPosition); 
             }
 
-            for (int j = 0; j < channel->mNumRotationKeys; j++)
+            for (unsigned int j = 0; j < channel->mNumRotationKeys; j++)
             {
                 auto key = channel->mRotationKeys[j];
                 KeyRotation newKeyRotation;
@@ -530,7 +499,7 @@ namespace Rudy
                 newKeyBone->m_KeyRotations.push_back(newKeyRotation);
             }
 
-            for (int j = 0; j < channel->mNumScalingKeys; j++)
+            for (unsigned int j = 0; j < channel->mNumScalingKeys; j++)
             {
                 auto key = channel->mScalingKeys[j];
                 KeyScale newKeyScale;
@@ -581,17 +550,37 @@ namespace Rudy
 
 
 
+    //assume model use same shader for all meshes,  this works for now
+    //otherwise the buffer should be handled for each mesh ;
+    void Model::Draw(Ref<Camera> cam, uint32_t count, Ref<Material> mat)
+    {
+         //legacy way:
+        //for (int i = 0; i < 100; ++i)
+        //    gBufferPassSkinnedShader->SetMat4("u_BoneTransforms[" + std::to_string(i) + "]", transforms[i]);
+ 
+        if (this->animator != nullptr)
+        {
+           if(this->shader != nullptr)
+           this->shader->Bind();
+           boneTransformBuffer->BindBase(0); 
 
-    void Model::SetMaterial(Ref<Material> mat)
-{
-		for (auto meshObj : this->meshObjects)
-			meshObj->material = mat;
-	}
+           if(mat !=nullptr)
+           mat->GetShader()->Bind();
+           boneTransformBuffer->BindBase(0); 
+
+		}   
+
+        for (auto meshObj : this->meshObjects)
+            meshObj->GetRenderer()->Draw(cam, count, mat);
+
+    }
+
+ 
 
     void Model::SetShader(Ref<Shader> shader)
-{
+    {
 		for (auto meshObj : this->meshObjects)
-			meshObj->material->SetShader(shader);
+            meshObj->GetRenderer()->SetShader(shader);
 	}
 
 

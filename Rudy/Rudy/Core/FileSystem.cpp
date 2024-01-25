@@ -1,33 +1,16 @@
-#include "hzpch.h"
+#include "RudyPCH.h"
 #include "FileSystem.h"
 
-namespace Hazel {
+namespace Rudy {
 
-	Buffer FileSystem::ReadFileBinary(const std::filesystem::path& filepath)
+
+	std::string FileSystem::ConvertPath(const char* path)
 	{
-		std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
+		std::string result = path;
+		//note it's \\ 
+		std::replace(result.begin(), result.end(), '\\', '/');
+		return result;
 
-		if (!stream)
-		{
-			// Failed to open the file
-			return {};
-		}
-
-
-		std::streampos end = stream.tellg();
-		stream.seekg(0, std::ios::beg);
-		uint64_t size = end - stream.tellg();
-
-		if (size == 0)
-		{
-			// File is empty
-			return {};
-		}
-
-		Buffer buffer(size);
-		stream.read(buffer.As<char>(), size);
-		stream.close();
-		return buffer;
 	}
-
+	 
 }

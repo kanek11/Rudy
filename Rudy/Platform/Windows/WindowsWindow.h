@@ -2,7 +2,8 @@
 #include "RudyPCH.h"
 
 #include "Rudy/Core/Window.h"
-#include "Rudy/Renderer/GraphicsContext.h"
+#include "Rudy/Renderer/GraphicsContext.h" 
+#include "Platform/OpenGL/OpenGLContext.h"
 
 #include <GLFW/glfw3.h>
 
@@ -21,9 +22,9 @@ namespace Rudy {
 	{
 	public:
 		WindowsWindow(const WindowProps& props);
-		virtual ~WindowsWindow();
+		~WindowsWindow();
 
-		//===me: inherited from Window
+		//===inherited
 		void OnUpdate() override;
 
 		uint32_t GetWidth() const override { return m_Data.Width; }
@@ -38,21 +39,26 @@ namespace Rudy {
 
 		virtual void* GetNativeWindow() const { return m_Window; }
 
-		//=====me: inherited from Window
+		//===========
 
 
+		//child -specific
 	private:
+		//utilities
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
+
+
 	private:
 		GLFWwindow* m_Window;
 		Scope<GraphicsContext> m_Context;
 
 		struct WindowData
 		{
-			std::string Title = "Default";
+
 			uint32_t Width, Height;
-			bool VSync;
+			std::string Title = "Default";
+			bool VSync = true;
 
 			//me: for robustness, when no callback is set, we set it to a dummy function that does nothing.
 			EventCallbackFn EventCallback = [](Event& e) {  RD_CORE_WARN("windowswindowEventCallBack: no callback of type:{0} is set", e.GetName());  };

@@ -1,6 +1,4 @@
-//#include "hzpch.h"
 
-//me£º
 #include "RudyPCH.h" 
 
 
@@ -11,7 +9,7 @@
 #include "Rudy/Events/KeyEvent.h"
 
 #include "Rudy/Renderer/Renderer.h"
-#include "Platform/OpenGL/OpenGLContext.h"
+
 
 #include "WindowsWindow.h"
 
@@ -27,15 +25,13 @@ namespace Rudy {
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 	{
-		//RD_PROFILE_FUNCTION();
-
+		//RD_PROFILE_FUNCTION(); 
 		Init(props);
 	}
 
 	WindowsWindow::~WindowsWindow()
 	{
-		//RD_PROFILE_FUNCTION();
-
+		//RD_PROFILE_FUNCTION(); 
 		Shutdown();
 	}
 
@@ -47,12 +43,12 @@ namespace Rudy {
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
 
-		RD_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
+		RD_CORE_INFO("WindowsWindow: Creating window:{0} ({1}, {2})", props.Title, props.Width, props.Height);
  
-
+		//if no window is created, initialize GLFW first;
 		if (s_GLFWWindowCount == 0)
 		{
-			//RD_PROFILE_SCOPE("glfwInit");
+			//RD_PROFILE_SCOPE("glfwInit first time");
 			int success = glfwInit();
 			RD_CORE_ASSERT(success, "Could not initialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
@@ -70,13 +66,11 @@ namespace Rudy {
 		}
 
 		m_Context = GraphicsContext::Create(m_Window);
-		m_Context->Init();
+		m_Context -> Init();
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 
-		SetVSync(true);
-		
-
+		SetVSync(m_Data.VSync); 
 
 		// Set GLFW callbacks  using lambda expressions
 		//bug history: runtime;  std::function,std::bad_function_call 
@@ -185,38 +179,43 @@ namespace Rudy {
 		{
 			glfwTerminate();
 		}
+
 	}
 
 	void WindowsWindow::OnUpdate()
 	{
 		//RD_PROFILE_FUNCTION();
 
-
-		m_Context->SwapBuffers();
-		//glfwSwapBuffers(m_Window);
+		 
+		glfwSwapBuffers(m_Window);
 		glfwPollEvents();
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)
 	{
 		//RD_PROFILE_FUNCTION();
+		RD_CORE_INFO("WindowsWindow: VSync On: {0}", enabled);
+		m_Data.VSync = enabled;
 
 		if (enabled)
-			glfwSwapInterval(1);
+			glfwSwapInterval(1);  //lock to system refresh rate
 		else
-			glfwSwapInterval(0);
+			glfwSwapInterval(0);  //unlimited fps
 
-		m_Data.VSync = enabled;
+		
 	}
 
-	bool WindowsWindow::IsVSync() const
-	{
-		return m_Data.VSync;
-	}
 
 	bool WindowsWindow::ShouldClose()
 	{
 		return glfwWindowShouldClose(m_Window); 
 	}
+
+
+	bool WindowsWindow::IsVSync() const
+     {
+     	return m_Data.VSync;
+     }
+
 
 }

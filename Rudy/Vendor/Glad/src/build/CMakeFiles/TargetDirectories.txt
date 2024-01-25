@@ -1,0 +1,3 @@
+D:/dev/dependencies/GLAD/src/build/CMakeFiles/glad.dir
+D:/dev/dependencies/GLAD/src/build/CMakeFiles/ALL_BUILD.dir
+D:/dev/dependencies/GLAD/src/build/CMakeFiles/ZERO_CHECK.dir

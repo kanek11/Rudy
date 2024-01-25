@@ -87,10 +87,7 @@
     <ClInclude Include="Rudy\Renderer\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Platform\OpenGL\OpenGLMesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sphere.hpp">
+    <ClInclude Include="Rudy\Primitives\Sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy\Renderer\Texture.h">
@@ -117,28 +114,109 @@
     <ClInclude Include="Platform\OpenGL\OpenGLFrameBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Plane.hpp">
+    <ClInclude Include="Rudy\Primitives\Plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Quad.hpp">
+    <ClInclude Include="Rudy\Primitives\ScreenQuad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Cube.h">
+    <ClInclude Include="Rudy\Primitives\Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy\Renderer\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\Skeleton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Rudy\Renderer\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\Animation.h">
+    <ClInclude Include="Rudy\Animation\Animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Overlay.hpp">
+    <ClInclude Include="Rudy\Primitives\Overlay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Core\FileSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\Buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Particles\ParticleSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\RendererComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\Kernel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Physics\cloth.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Apps\Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Passes\Pass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Passes\SSAO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Passes\WorldToView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\imgui\imstb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\imgui\imstb_textedit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\imgui\imstb_rectpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\imgui\imgui_impl_opengl3_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\imgui\imgui_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\imgui\imgui_impl_opengl3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\imgui\imgui_impl_glfw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\imgui\imgui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vendor\imgui\imconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Passes\Bloom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Passes\Outline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Passes\SSR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Apps\NPR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Passes\ToneMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Apps\PBR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Passes\Composer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -165,9 +243,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Rudy\Renderer\Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform\OpenGL\OpenGLMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Rudy\Renderer\Mesh.cpp">
@@ -215,16 +290,106 @@
     <ClCompile Include="Rudy\Renderer\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Cube.cpp">
+    <ClCompile Include="Rudy\Primitives\Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Rudy\Renderer\Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\Animation.cpp">
+    <ClCompile Include="Rudy\Animation\Animation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test_pipeline_pbr.cpp">
+    <ClCompile Include="Rudy\Core\FileSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\Buffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Particles\ParticleSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\RendererComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\Kernel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Physics\cloth.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Primitives\Sphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Primitives\plane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Primitives\ScreenQuad.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Primitives\Overlay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Apps\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Passes\SSAO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Passes\WorldToView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Apps\test_template.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Apps\test_particles_new.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Apps\test_cloth.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\imgui\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\imgui\imgui_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\imgui\imgui_impl_opengl3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\imgui\imgui_impl_glfw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\imgui\imgui_draw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\imgui\imgui_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\imgui\imgui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Passes\Bloom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Passes\Outline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Passes\SSR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Apps\NPR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Passes\ToneMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Apps\PBR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Passes\Composer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -232,45 +397,83 @@
     <Text Include="dependencies.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\Default_FS.glsl" />
-    <None Include="Resources\Shaders\Default_VS.glsl" />
-    <None Include="Resources\Shaders\BlinnPhong_VS.glsl" />
-    <None Include="Resources\Shaders\BlinnPhong_FS.glsl">
+    <None Include="Shaders\Shaders\default_FS.glsl" />
+    <None Include="Shaders\Shaders\default_VS.glsl" />
+    <None Include="Shaders\Deferred\BlinnPhong_VS.glsl" />
+    <None Include="Shaders\Deferred\BlinnPhong_FS.glsl">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="Resources\Shaders\DepthMap_FS.glsl" />
-    <None Include="Resources\Shaders\DepthMap_VS.glsl" />
-    <None Include="Resources\Shaders\DepthQuad_FS.glsl" />
-    <None Include="Resources\Shaders\DepthQuad_VS.glsl" />
-    <None Include="Resources\Shaders\Skybox_VS.glsl" />
-    <None Include="Resources\Shaders\Skybox_FS.glsl" />
-    <None Include="Resources\Shaders\GBuffer_VS.glsl" />
-    <None Include="Resources\Shaders\GBuffer_FS.glsl" />
-    <None Include="Resources\Shaders\ScreenQuad_VS.glsl" />
-    <None Include="Resources\Shaders\ScreenQuad_FS.glsl" />
-    <None Include="Resources\Shaders\SpecularEnvMap_FS.glsl" />
-    <None Include="Resources\Shaders\SpecularEnvMap_VS.glsl" />
-    <None Include="Resources\Shaders\PBR_FS.glsl" />
-    <None Include="Resources\Shaders\PBR_VS.glsl" />
-    <None Include="Resources\Shaders\BrdfLUT_VS.glsl" />
-    <None Include="Resources\Shaders\BrdfLUT_FS.glsl" />
-    <None Include="Resources\Shaders\DiffuseEnvMap_FS.glsl" />
-    <None Include="Resources\Shaders\DiffuseEnvMap_VS.glsl" />
-    <None Include="Resources\Shaders\RectToCube_VS.glsl" />
-    <None Include="Resources\Shaders\RectToCube_FS.glsl" />
-    <None Include="Resources\Shaders\SSAO_VS.glsl" />
-    <None Include="Resources\Shaders\SSAO_FS.glsl" />
-    <None Include="Resources\Shaders\SSR_FS.glsl" />
-    <None Include="Resources\Shaders\SSR_VS.glsl" />
-    <None Include="Resources\Shaders\GBufferSkinned_VS.glsl" />
-    <None Include="Resources\Shaders\TextureOnly_FS.glsl" />
-    <None Include="Resources\Shaders\TextureOnly_VS.glsl" />
-    <None Include="Resources\Shaders\Default_Flat_FS.glsl" />
-    <None Include="Resources\Shaders\Vertex_Color_VS.glsl" />
-    <None Include="Resources\Shaders\Vertex_Color_FS.glsl" />
-    <None Include="Resources\Shaders\BlinnPhong_Color_FS.glsl" />
-    <None Include="Resources\Shaders\DepthMapSkinned_VS.glsl">
+    <None Include="Shaders\Shaders\DepthMap_FS.glsl" />
+    <None Include="Shaders\Shaders\DepthMap_VS.glsl" />
+    <None Include="Shaders\Shaders\DepthQuad_FS.glsl" />
+    <None Include="Shaders\Shaders\DepthQuad_VS.glsl" />
+    <None Include="Shaders\Shaders\Skybox_VS.glsl" />
+    <None Include="Shaders\Shaders\Skybox_FS.glsl" />
+    <None Include="Shaders\Deferred\GBuffer_VS.glsl" />
+    <None Include="Shaders\Deferred\GBuffer_FS.glsl" />
+    <None Include="Shaders\Shaders\ScreenQuad_VS.glsl" />
+    <None Include="Shaders\Shaders\ScreenQuad_FS.glsl" />
+    <None Include="Shaders\Shaders\SpecularEnvMap_FS.glsl" />
+    <None Include="Shaders\Shaders\SpecularEnvMap_VS.glsl" />
+    <None Include="Shaders\Deferred\PBR_FS.glsl" />
+    <None Include="Shaders\Deferred\PBR_VS.glsl" />
+    <None Include="Shaders\Shaders\BrdfLUT_VS.glsl" />
+    <None Include="Shaders\Shaders\BrdfLUT_FS.glsl" />
+    <None Include="Shaders\Shaders\DiffuseEnvMap_FS.glsl" />
+    <None Include="Shaders\Shaders\DiffuseEnvMap_VS.glsl" />
+    <None Include="Shaders\Shaders\RectToCube_VS.glsl" />
+    <None Include="Shaders\Shaders\RectToCube_FS.glsl" />
+    <None Include="Shaders\PostProcess\SSAO_VS.glsl" />
+    <None Include="Shaders\PostProcess\SSAO_FS.glsl" />
+    <None Include="Shaders\PostProcess\SSR_FS.glsl" />
+    <None Include="Shaders\Deferred\GBufferSkinned_VS.glsl" />
+    <None Include="Shaders\Shaders\Default_Flat_FS.glsl" />
+    <None Include="Shaders\Deferred\BlinnPhong_Color_FS.glsl" />
+    <None Include="Shaders\Shaders\DepthMapSkinned_VS.glsl">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="Shaders\PostProcess\TestImage_CS.glsl" />
+    <None Include="Shaders\Particles\particle_render_mesh_VS.glsl" />
+    <None Include="Shaders\Particles\particle_render_mesh_FS.glsl" />
+    <None Include="Shaders\Particles\Particle_CS.glsl" />
+    <None Include="Shaders\PostProcess\upSample_CS.glsl" />
+    <None Include="Shaders\PostProcess\downSample_CS.glsl" />
+    <None Include="Shaders\Particles\particle_reset_CS.glsl" />
+    <None Include="Shaders\Particles\particle_emission_CS.glsl" />
+    <None Include="Shaders\Particles\particle_update_CS.glsl" />
+    <None Include="Shaders\Particles\particle_render_sprite_VS.glsl" />
+    <None Include="Shaders\Particles\particle_render_sprite_GS.glsl" />
+    <None Include="Shaders\Particles\particle_render_sprite_FS.glsl" />
+    <None Include="Shaders\Shaders\Genshin_FS.glsl" />
+    <None Include="Shaders\Shaders\Genshin_VS.glsl" />
+    <None Include="Shaders\Deferred\Lambertian_FS.glsl" />
+    <None Include="Shaders\Shaders\show_normal_GS.glsl" />
+    <None Include="Shaders\Shaders\show_normal_FS.glsl" />
+    <None Include="Shaders\Particles\particle_dispatch_CS.glsl" />
+    <None Include="Shaders\Cloth\compute_rest_length_CS.glsl" />
+    <None Include="Shaders\Particles\template_CS.glsl" />
+    <None Include="Shaders\Cloth\pre_integrate_CS.glsl" />
+    <None Include="Shaders\Cloth\post_correction_CS.glsl" />
+    <None Include="Shaders\Cloth\solve_stretchConst_CS.glsl" />
+    <None Include="Shaders\Cloth\compute_normals_CS.glsl" />
+    <None Include="Shaders\Cloth\default_cloth_VS.glsl" />
+    <None Include="Shaders\Cloth\default_cloth_FS.glsl" />
+    <None Include="Shaders\Cloth\post_update_vel_CS.glsl" />
+    <None Include="Shaders\Cloth\solve_distConst_legacy_CS.glsl" />
+    <None Include="Shaders\Cloth\solve_bendConst_CS.glsl" />
+    <None Include="Shaders\Cloth\normalize_normals_CS.glsl" />
+    <None Include="Shaders\PostProcess\WorldToView_CS.glsl" />
+    <None Include="Shaders\PostProcess\GaussianBlur_CS.glsl" />
+    <None Include="Shaders\PostProcess\averageBlur_CS.glsl" />
+    <None Include="Shaders\PostProcess\threshold_CS.glsl" />
+    <None Include="Shaders\PostProcess\outline_CS.glsl" />
+    <None Include="Shaders\PostProcess\SSR_CS.glsl" />
+    <None Include="Shaders\PostProcess\SSR_aveFilter_CS.glsl" />
+    <None Include="Shaders\Shaders\Vertex_Color_FS.glsl" />
+    <None Include="Shaders\Shaders\Vertex_Color_VS.glsl" />
+    <None Include="Shaders\PostProcess\toneMapping_CS.glsl" />
+    <None Include="Shaders\PostProcess\composer_CS.glsl" />
+    <None Include="Shaders\PostProcess\outline_FDM_CS.glsl" />
+    <None Include="Shaders\PostProcess\bloom_add_CS.glsl" />
   </ItemGroup>
 </Project>
