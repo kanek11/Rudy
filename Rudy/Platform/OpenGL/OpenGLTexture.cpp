@@ -1,10 +1,10 @@
 ﻿
-#include "RudyPCH.h"  
+#include "RudyPCH.h" 
+#include <Rudy.h>
  
 #include "Platform/OpenGL/OpenGLTexture.h"
 #include "Platform/OpenGL/OpenGLShader.h"
-#include "Rudy/Renderer/Material.h"
-#include "Primitives/Cube.h"
+#include "Rudy/Renderer/Material.h" 
 
 #include <stb_image.h>
 

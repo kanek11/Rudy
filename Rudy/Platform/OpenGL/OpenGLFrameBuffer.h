@@ -68,7 +68,7 @@ namespace Rudy {
 			glNamedFramebufferTexture(this->m_FrameBufferID, GL_COLOR_ATTACHMENT0 + slot, 
 				                       texture->GetID(), 0);
 			
-			RD_CORE_INFO("GBuffer: textureId:{0} is attached to colorbuffer{1}", texture->GetID(), slot);
+			RD_CORE_INFO("FBO {0}: textureId:{1} is attached to colorbuffer{2}", m_Name, texture->GetID(), slot);
 	 
 		}
 
@@ -124,7 +124,18 @@ namespace Rudy {
 
 		virtual void FinishSetup() override
 		{ 
-			this->SetDrawBuffers();
+			//if no depth texture, create a renderbuffer for depth/stencil
+			if (m_DepthTexture == nullptr)
+			{
+				//depthbuffer
+				m_RenderBuffer = RenderBuffer::Create(m_Width, m_Height, RenderBufferFormat::DEPTH24STENCIL8);
+				glNamedFramebufferRenderbuffer(this->m_FrameBufferID, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_RenderBuffer->GetRenderBufferID());
+			}
+
+
+
+
+			this->SetDrawBuffers(); 
 			this->CheckCompleteness();
 		}
 

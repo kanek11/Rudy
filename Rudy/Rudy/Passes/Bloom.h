@@ -1,3 +1,4 @@
+#pragma once
 #include "RudyPCH.h"    
 #include <Rudy.h>
 
@@ -32,6 +33,7 @@ namespace Rudy
 		Ref<Shader> upsampleShader;
 		Ref<Shader> downsampleShader;
 		Ref<Shader> thresholdShader;
+		Ref<Shader> addShader;
 
      	std::vector< Ref<Texture> > RT_Horizonal;
 		std::vector< Ref<Texture> > RT_Vertical; 
@@ -42,15 +44,19 @@ namespace Rudy
 		const int nMips = 6;
 
 		//the [0] is not really used, just for convenience of indexing
-		const int kernelRadiusArray[6] = {1,3,5,7,9,11 };
+		const int kernelRadiusArray[6] = { 1,3,5,7,9,11 };
 
 		//to adjust the strength of each mip
-		const float bloomFactors[6] = {1.2f, 1.0f, 0.8f, 0.6f, 0.4f, 0.2f};
+		const float bloomFactors[6] = {1.2f, 1.2f, 1.2f, 0.6f, 0.4f, 0.2f};
+
+		//the code is :  so 1.2 =no addition of current level ; large radius lean to lower level;
+		//float mirrorFactor = 1.2 - factor;
+		//return mix(factor, mirrorFactor, u_bloom_radius);
 
 
-		float bloom_strength = 1.0f;
-		float bloom_radius = 0.0f;
-		float threshold = 0.0f;
+		float bloom_strength = 0.7f;
+		float bloom_radius = 1.0f;
+		float threshold = 1.5f;
 
 	};
 

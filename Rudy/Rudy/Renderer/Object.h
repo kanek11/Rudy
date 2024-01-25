@@ -143,6 +143,7 @@ namespace Rudy {
      public:
          //global settings 
          static float s_scaleFactor;  
+         static Ref<Shader> s_defaultShader;
  
      public:  
          ~Model() = default; 

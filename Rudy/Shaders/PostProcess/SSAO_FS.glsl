@@ -9,7 +9,7 @@ in vec2 TexCoords;
 uniform sampler2D gViewPosition;
 uniform sampler2D gViewNormal;
 
-uniform sampler2D gWorldTangent;
+//uniform sampler2D gWorldTangent;
 uniform sampler2D gViewDepth;
  
 uniform sampler2D u_NoiseTexture;

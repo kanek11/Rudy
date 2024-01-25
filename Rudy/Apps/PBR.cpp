@@ -95,6 +95,45 @@ namespace Rudy
 
          
 
+            //==========shadow map pass
+            auto shadowMapShader = Shader::Create("shadowMap Shader",
+                "Shaders/Shaders/DepthMap_VS.glsl",
+                "Shaders/Shaders/DepthMap_FS.glsl");
+            //Material::SetMaterialProperties(shadowMapShader);
+
+            auto shadowMapSkinnedShader = Shader::Create("shadowMap skinned Shader",
+                "Shaders/Shaders/DepthMapSkinned_VS.glsl",
+                "Shaders/Shaders/DepthMap_FS.glsl");
+            //Material::SetMaterialProperties(shadowMapSkinnedShader);
+
+
+            auto shadowMapMaterial = Material::Create(shadowMapShader);
+            auto shadowMapSkinnedMaterial = Material::Create(shadowMapSkinnedShader);
+
+
+            auto shadowMapFBO = FrameBuffer::Create("shadowMap FBO",
+                SHADOW_WIDTH, SHADOW_HEIGHT,
+                FrameBufferType::DepthTexture);
+
+            shadowMap = Texture2D::CreateEmpty(
+                TextureSpec{ SHADOW_WIDTH, SHADOW_HEIGHT, TextureInternalFormat::DEPTH_COMPONENT24,
+                             false, WrapMode::ClampToBorder, FilterMode::Nearest });
+            //set the border color for the depth texture;
+
+            float borderColor2[] = { 1.0, 1.0, 1.0, 1.0 };
+            glTextureParameterfv(shadowMap->GetID(), GL_TEXTURE_BORDER_COLOR, borderColor2);
+
+            shadowMapFBO->SetDepthTexture(shadowMap);
+            //shadowMapFBO->FinishSetup(); 
+
+
+
+
+
+
+
+
+
             //======gbuffer pass; 
              //the framebuffer for gbuffer pass: 8;
             auto gWorldPosition = Texture2D::CreateEmpty(TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGBA32F });
@@ -144,6 +183,60 @@ namespace Rudy
 
 
             }
+
+
+
+            //===============================  
+        //======lit pass
+
+        //auto litPassShader = Shader::Create("blinnPhong Shader", "Shaders/Shaders/BlinnPhong_VS.glsl", "Shaders/Shaders/BlinnPhong_FS.glsl");
+            auto litPassShader = Shader::Create("pbr Shader",
+                "Shaders/Deferred/PBR_VS.glsl", "Shaders/Deferred/PBR_FS.glsl");
+            Material::SetMaterialProperties(litPassShader);
+
+            //=== FBO
+            litPassFBO = FrameBuffer::Create("litPass FBO",
+                SCR_WIDTH, SCR_WIDTH, FrameBufferType::Regular);
+
+            auto litPassScreenTexture = Texture2D::CreateEmpty(
+                TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGBA32F ,
+                false, WrapMode::ClampToBorder, FilterMode::Linear, FilterMode::Linear
+                });
+
+
+            litPassFBO->SetColorTexture(TexType::ScreenTexture, litPassScreenTexture, 0);
+            litPassFBO->FinishSetup();
+
+            litOutputs[TexType::ScreenTexture] = litPassScreenTexture;
+
+
+
+            //=== material
+
+            auto litPassMaterial = Material::Create(litPassShader);
+
+            litPassMaterial->SetTexture(TexType::gWorldPosition, gWorldPosition);
+            litPassMaterial->SetTexture(TexType::gWorldNormal, gWorldNormal);
+            litPassMaterial->SetTexture(TexType::gWorldTangent, gWorldTangent);
+            litPassMaterial->SetTexture(TexType::gAlbedo, gAlbedo);
+            litPassMaterial->SetTexture(TexType::gSpecular, gSpecular);
+            litPassMaterial->SetTexture(TexType::gMetallic, gMetallic);
+            litPassMaterial->SetTexture(TexType::gRoughness, gRoughness);
+
+            litPassMaterial->SetTexture(TexType::gViewDepth, gViewDepth);
+
+            litPassMaterial->SetTexture(TexType::diffuseEnvMap, diffuseEnvMap);
+            litPassMaterial->SetTexture(TexType::specularEnvMap, specularEnvMap);
+            litPassMaterial->SetTexture(TexType::brdfLUTTexture, brdfLUTTexture);
+
+            litPassMaterial->SetTexture(TexType::DepthTexture, shadowMap);
+
+
+
+            //render quad;
+            auto litPassQuad = ScreenQuad::Create();
+            litPassQuad->SetMaterial(litPassMaterial);
+
 
 
             //=====the scene  
@@ -256,14 +349,21 @@ namespace Rudy
             model->shader = gBufferPassSkinnedShader; 
 
             //set animator
-            auto animator = Animator::Create(model);
-            model->SetAnimator(animator); 
-             
+            if (model->hasAnimation())
+            {
+                auto animator = Animator::Create(model);
+                model->SetAnimator(animator);
+            }
              
             for (auto meshObj : model->meshObjects)
             {
-                auto _material = meshObj->GetRenderer()->GetMaterial();
-                _material->SetShader(gBufferPassSkinnedShader); 
+                auto _material = meshObj->GetRenderer()->GetMaterial();  
+                 
+                //switch textures to the new material;
+                auto new_material = PBRMaterial::Create(gBufferPassSkinnedShader);
+                auto textures = _material->GetTextures();
+                new_material->SetTextures(textures);
+                meshObj->SetMaterial(new_material); 
 
                 _material->SetFloat("u_Metallic", 0.0f);
                 _material->SetFloat("u_Roughness", 0.0f);
@@ -272,90 +372,6 @@ namespace Rudy
              
 
 
-            //==========shadow map pass
-            auto shadowMapShader = Shader::Create("shadowMap Shader",
-                "Shaders/Shaders/DepthMap_VS.glsl",
-                "Shaders/Shaders/DepthMap_FS.glsl");
-            //Material::SetMaterialProperties(shadowMapShader);
-
-            auto shadowMapSkinnedShader = Shader::Create("shadowMap skinned Shader",
-                "Shaders/Shaders/DepthMapSkinned_VS.glsl",
-                "Shaders/Shaders/DepthMap_FS.glsl");
-            //Material::SetMaterialProperties(shadowMapSkinnedShader);
-
-
-            auto shadowMapMaterial = Material::Create(shadowMapShader);
-            auto shadowMapSkinnedMaterial = Material::Create(shadowMapSkinnedShader);
-
-
-            auto shadowMapFBO = FrameBuffer::Create("shadowMap FBO",
-                SHADOW_WIDTH, SHADOW_HEIGHT,
-                FrameBufferType::DepthTexture);
-
-            shadowMap = Texture2D::CreateEmpty(
-                TextureSpec{ SHADOW_WIDTH, SHADOW_HEIGHT, TextureInternalFormat::DEPTH_COMPONENT24,
-                             false, WrapMode::ClampToBorder, FilterMode::Nearest });
-            //set the border color for the depth texture;
-
-            float borderColor2[] = { 1.0, 1.0, 1.0, 1.0 };
-            glTextureParameterfv(shadowMap->GetID(), GL_TEXTURE_BORDER_COLOR, borderColor2);
-
-            shadowMapFBO->SetDepthTexture(shadowMap);
-            //shadowMapFBO->FinishSetup(); 
-
-
-
-
-            //===============================  
-            //======lit pass
-
-            //auto litPassShader = Shader::Create("blinnPhong Shader", "Shaders/Shaders/BlinnPhong_VS.glsl", "Shaders/Shaders/BlinnPhong_FS.glsl");
-            auto litPassShader = Shader::Create("pbr Shader",
-                "Shaders/Deferred/PBR_VS.glsl", "Shaders/Deferred/PBR_FS.glsl");
-            Material::SetMaterialProperties(litPassShader);
-
-            //=== FBO
-            litPassFBO = FrameBuffer::Create("litPass FBO",
-                SCR_WIDTH, SCR_WIDTH, FrameBufferType::Regular);
-
-            auto litPassScreenTexture = Texture2D::CreateEmpty(
-                TextureSpec{ SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGBA32F ,
-                false, WrapMode::ClampToBorder, FilterMode::Linear, FilterMode::Linear
-                });
-
- 
-            litPassFBO->SetColorTexture(TexType::ScreenTexture, litPassScreenTexture, 0);
-            litPassFBO->FinishSetup(); 
-
-            litOutputs[TexType::ScreenTexture] = litPassScreenTexture;
-
-
-
-            //=== material
-
-            auto litPassMaterial = Material::Create(litPassShader);
-
-            litPassMaterial->SetTexture(TexType::gWorldPosition, gWorldPosition);
-            litPassMaterial->SetTexture(TexType::gWorldNormal,   gWorldNormal);
-            litPassMaterial->SetTexture(TexType::gWorldTangent,  gWorldTangent);
-            litPassMaterial->SetTexture(TexType::gAlbedo,    gAlbedo); 
-            litPassMaterial->SetTexture(TexType::gSpecular,  gSpecular);
-            litPassMaterial->SetTexture(TexType::gMetallic,  gMetallic);
-            litPassMaterial->SetTexture(TexType::gRoughness, gRoughness);
-
-            litPassMaterial->SetTexture(TexType::gViewDepth, gViewDepth);
-
-            litPassMaterial->SetTexture(TexType::diffuseEnvMap, diffuseEnvMap);
-            litPassMaterial->SetTexture(TexType::specularEnvMap, specularEnvMap);
-            litPassMaterial->SetTexture(TexType::brdfLUTTexture, brdfLUTTexture);
-
-            litPassMaterial->SetTexture(TexType::DepthTexture, shadowMap);
-
- 
-
-            //render quad;
-            auto litPassQuad = ScreenQuad::Create();
-            litPassQuad->SetMaterial(litPassMaterial);
 
 
              
@@ -375,7 +391,7 @@ namespace Rudy
             {
                 SSAOInputs[TexType::gViewPosition] = gViewPosition;
                 SSAOInputs[TexType::gViewNormal]   = gViewNormal;
-                SSAOInputs[TexType::gWorldTangent] = gWorldTangent;
+                //SSAOInputs[TexType::gWorldTangent] = gWorldTangent;
                 SSAOInputs[TexType::gViewDepth]    = gViewDepth; 
 
                 SSAOPass = CreateRef<SSAO>(SCR_WIDTH, SCR_HEIGHT, SSAOInputs, SSAOOutputs);
@@ -506,8 +522,7 @@ namespace Rudy
 
 
     
-                //======gBuffer pass: render the scene to the gbuffer 
-                if(true)
+                //======gBuffer pass: render the scene to the gbuffer  
                 {
                     GBufferFBO->Bind();
 
@@ -538,7 +553,6 @@ namespace Rudy
                
 
                 //======Lit pass
-                if (true)
                 {
 
                     litPassFBO->Bind();
@@ -563,7 +577,8 @@ namespace Rudy
                     litPassShader->SetFloat("u_DirLight.intensity", sunlight->intensity);
 
                     litPassShader->SetMat4("u_LightSpaceMatrix", lightSpaceCamera->GetProjectionViewMatrix()); 
-                    //config:
+               
+
                     litPassShader->SetBool("u_EnableSkyBox", enableSkyBox);
 
                     litPassShader->SetFloat("u_min_shadow_bias", min_shadow_bias);
@@ -632,8 +647,7 @@ namespace Rudy
                 }
 
                 screenQuad->Draw(nullptr);
-                screenQuadShader->Unbind(); 
-         
+                screenQuadShader->Unbind();  
 
 
 

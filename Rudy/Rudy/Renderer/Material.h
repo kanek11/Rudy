@@ -70,6 +70,13 @@ namespace Rudy {
 		//NPR
          ToonTexture,
 		 FaceSDFTexture, 
+
+
+		 //new postprocessing
+		 SSAOOutputTexture,
+		 SSROutputTexture,
+		 BloomOutputTexture,
+		 OutlineOutputTexture,
 		 
 
 	};
@@ -161,7 +168,21 @@ namespace Rudy {
 		}
 
 		std::unordered_map<TexType, Ref<Texture>> GetTextures() const { return m_Texture_map; }
-		void SetTextures(std::unordered_map<TexType, Ref<Texture>> map) { m_Texture_map = map; }
+		void SetTextures(std::unordered_map<TexType, Ref<Texture>> map) 
+		{ m_Texture_map = map;
+		
+		
+		//set uniform bool used for texture, if exists
+		for (auto& texture : m_Texture_map)
+		{
+			std::string BoolName = "Use_" + TexTypeNames[texture.first];
+			auto ite = m_Bool_map.find(BoolName);
+			if (ite != m_Bool_map.end()) {
+				m_Bool_map[BoolName] = true;
+			}
+		}
+		
+		}
 
 
 
@@ -225,8 +246,7 @@ namespace Rudy {
 
 
 	//==========PBR
-
-
+ 
 	inline std::unordered_map<std::string, glm::vec3> PBRDefaultVec3Map
 	{
 		{"u_Albedo", glm::vec3(1.0,1.0,1.0)},
@@ -275,13 +295,9 @@ namespace Rudy {
 		}
 
 	};
+	 
 
-
-
-
-	//{"u_litColor", glm::vec3(1.0, 1.0, 1.0)},
-	//{ "u_shadowColor", glm::vec3(1.0,1.0,1.0) },
-
+	 
 
 
 

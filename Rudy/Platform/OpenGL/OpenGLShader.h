@@ -1,10 +1,8 @@
 #pragma once
 #include "RudyPCH.h"
 
-#include "Rudy/Renderer/Shader.h"
-#include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "Rudy/Renderer/Shader.h" 
+
 
 //me: 
 //not Cherno's code, we don't need translate between OpenGL and Vulkan yet.

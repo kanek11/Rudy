@@ -51,10 +51,7 @@ namespace Rudy {
 			//create and bind framebuffer
 			glCreateFramebuffers(1, &m_FrameBufferID);
 
-			//depthbuffer
-			m_RenderBuffer = RenderBuffer::Create(width, height, RenderBufferFormat::DEPTH24STENCIL8);
-			glNamedFramebufferRenderbuffer(this->m_FrameBufferID, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_RenderBuffer->GetRenderBufferID());
-
+		
 			RD_CORE_INFO("Regular FBO {0} ,ID:{1} is created", m_Name, m_FrameBufferID);
 
 			break;

@@ -1,3 +1,4 @@
+#pragma once
 #include "RudyPCH.h"    
 #include <Rudy.h>
 
@@ -16,8 +17,7 @@ namespace Rudy
 			std::unordered_map< TexType, Ref<Texture>>& m_SSROutputs
 		);
 
-		virtual void Render(Ref<Camera>) override;
-
+		virtual void Render(Ref<Camera>) override; 
 
 		void Init();
 
@@ -38,8 +38,7 @@ namespace Rudy
 
 		float depth_bias = 0.02f;
 		float  step_size = 0.02f;
-		int    max_steps = 250;
-
+		int    max_steps = 250; 
 
 		bool enableBlur = true;
 

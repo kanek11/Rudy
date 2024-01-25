@@ -41,8 +41,7 @@ uniform float u_depth_thres ;
 uniform float u_depth_thres_scale;
 uniform float u_depth_NdotV_threshold ;
 
-uniform float u_normal_threshold; 
-
+uniform float u_normal_threshold;  
 
 uniform float u_outline_width;
 
@@ -108,6 +107,9 @@ void main() {
     float depth_norm = sqrt( depth_diff0 * depth_diff0 + depth_diff1 * depth_diff1 ); 
 
 
+
+
+
     //---------------------------
     //apply threshold
     float normal_threshold = u_normal_threshold; //0.1;   
@@ -131,8 +133,7 @@ void main() {
     float depth_threshold = depth_thres * (1 + map_NdotV * depth_thres_scale);  
 
     float depth_edge = depth_norm > depth_threshold ? 1.0f : 0.0f;
-
-
+     
 
     //final edge
     if(!u_enable_normal)
@@ -142,7 +143,7 @@ void main() {
 
 
     //float isEdge = normal_edge * depth_edge; 
-    float isEdge = max(normal_edge, depth_edge);
+    float isEdge = max( normal_edge,  depth_edge);
     //float isEdge = depth_edge; //normal_edge; 
 
     // Write to the mask texture

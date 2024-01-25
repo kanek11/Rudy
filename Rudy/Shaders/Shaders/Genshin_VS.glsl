@@ -5,8 +5,6 @@ layout(location = 2) in vec3 aNormal;
 layout(location = 3) in vec3 aTangent;
 //bitangent to be compute by cross product; this saves a buffer slot
 
-
-
 out VS_OUT
 {
     vec3 WorldPos;
@@ -15,9 +13,7 @@ out VS_OUT
     vec3 WorldTangent;
     mat3 WorldTBN;
 
-} vs_out;
-
-
+} vs_out; 
 
 uniform mat4 u_model;
 uniform mat4 u_projection;
@@ -30,7 +26,6 @@ void main()
     vs_out.TexCoords = aTexCoords;
     vs_out.WorldNormal = mat3(transpose(inverse(u_model))) * aNormal;
     vs_out.WorldTangent = mat3(transpose(inverse(u_model))) * aTangent;
-
 
     vs_out.WorldPos = vec3(u_model * vec4(aPos, 1.0));
 

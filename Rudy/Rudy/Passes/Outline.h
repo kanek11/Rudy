@@ -1,5 +1,5 @@
-#include "RudyPCH.h"   
-
+#pragma once
+#include "RudyPCH.h"    
 #include <Rudy.h>
 
 #include "Pass.h"

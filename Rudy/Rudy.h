@@ -20,8 +20,17 @@
 
 #include "Rudy/Renderer/Scene.h"
 
-#include "Primitives/Sphere.h"
-#include "Primitives/Plane.h"
-#include "Primitives/ScreenQuad.h"
-#include "Primitives/Cube.h" 
-#include "Primitives/Overlay.h"
+#include "Rudy/Primitives/Sphere.h"
+#include "Rudy/Primitives/Plane.h"
+#include "Rudy/Primitives/ScreenQuad.h"
+#include "Rudy/Primitives/Cube.h" 
+#include "Rudy/Primitives/Overlay.h"
+
+
+#include "Rudy/Passes/WorldToView.h"
+#include "Rudy/Passes/SSAO.h"
+#include "Rudy/Passes/Bloom.h"
+#include "Rudy/Passes/Outline.h"
+#include "Rudy/Passes/SSR.h"
+#include "Rudy/Passes/ToneMap.h"
+#include "Rudy/Passes/Composer.h"

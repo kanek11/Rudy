@@ -53,8 +53,7 @@ namespace  Rudy
 
 
         SSAOMaterial = Material::Create(SSAOShader);
-        SSAOMaterial->SetTextures(m_SSAOInputs);
-
+        SSAOMaterial->SetTextures(m_SSAOInputs); 
 
 
         std::unordered_map<std::string, float> FloatMap = {
@@ -144,7 +143,7 @@ namespace  Rudy
 	void SSAO::Render(Ref<Camera> main_camera)
 	{
         SSAOShader->Bind();
-       // SSAOShader->SetMat4("u_view",       main_camera->GetViewMatrix());
+        // SSAOShader->SetMat4("u_view",       main_camera->GetViewMatrix());
         SSAOShader->SetMat4("u_projection", main_camera->GetProjectionMatrix()); 
 
         SSAOMaterial->SetFloat("u_radius", radius);

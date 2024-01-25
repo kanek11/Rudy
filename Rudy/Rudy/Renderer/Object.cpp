@@ -346,11 +346,11 @@ namespace Rudy
         aiMaterial* ai_material = scene->mMaterials[mesh->mMaterialIndex]; 
 
         //engine-specific material object
-        auto material = PBRMaterial::Create();  
+        auto material = Material::Create();  
         material->m_Name = ai_material->GetName().C_Str();
         material->m_GlobalIndex = mesh->mMaterialIndex;  //the index in the scene
 
-        RD_CORE_INFO("Modelloading: material name:{0}, index:{1}", material->m_Name, material->m_GlobalIndex);
+        RD_CORE_INFO("Model loading: material name:{0}, index:{1}", material->m_Name, material->m_GlobalIndex);
          
 
         auto loadTexture = [&](aiTextureType type, TexType TexType) {

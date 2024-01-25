@@ -24,7 +24,7 @@ void main()
 {
 
     vs_out.TexCoords = aTexCoords;
-    vs_out.WorldNormal =  mat3(transpose(inverse(u_model))) * aNormal;
+    vs_out.WorldNormal = mat3(transpose(inverse(u_model))) * aNormal;
     vs_out.WorldTangent = mat3(transpose(inverse(u_model))) * aTangent;
 
 

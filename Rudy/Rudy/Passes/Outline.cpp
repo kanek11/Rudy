@@ -19,9 +19,9 @@ namespace  Rudy
 	void Outline::Init() 
 	{
 
-		outlineShader = Shader::CreateComputeShader
-			("outlineShader", "Shaders/PostProcess/Outline_CS.glsl"); 
-
+		outlineShader = Shader::CreateComputeShader ("outlineShader", 
+			//"Shaders/PostProcess/Outline_CS.glsl"); 
+			"Shaders/PostProcess/Outline_FDM_CS.glsl");
 		 
 		outputTexture = Texture2D::CreateEmpty( 
 		TextureSpec{ m_width, m_height, TextureInternalFormat::R32F, 

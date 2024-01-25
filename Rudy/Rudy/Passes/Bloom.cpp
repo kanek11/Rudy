@@ -64,22 +64,24 @@ namespace  Rudy
 		//glGenerateTextureMipmap( this->inputTexture->GetID() );
 
 		//this->m_BloomOutputs[TexType::ScreenTexture] = RT_Vertical; 
-		this->m_BloomOutputs[TexType::ScreenTexture] = RT_Vertical[0];
-		//this->m_BloomOutputs[TexType::ScreenTexture] = RT_Horizonal[1];
+		this->m_BloomOutputs[TexType::ScreenTexture] = inputTexture;
 
 
 
 		//shaders
-		this->thresholdShader = Shader::CreateComputeShader(
-			"threshold shader", "Shaders/PostProcess/threshold_CS.glsl");
+		this->thresholdShader = Shader::CreateComputeShader( "threshold shader", 
+			"Shaders/PostProcess/threshold_CS.glsl");
 		
 
-		this->downsampleShader = Shader::CreateComputeShader(
-			 "downsample shader", "Shaders/PostProcess/downSample_CS.glsl"); 
+		this->downsampleShader = Shader::CreateComputeShader(  "downsample shader", 
+			"Shaders/PostProcess/downSample_CS.glsl"); 
 
 
-		this->upsampleShader = Shader::CreateComputeShader(
-			"upsample shader", "Shaders/PostProcess/upSample_CS.glsl");
+		this->upsampleShader = Shader::CreateComputeShader( "upsample shader", 
+			"Shaders/PostProcess/upSample_CS.glsl");
+
+		this->addShader = Shader::CreateComputeShader( "add shader", 
+			"Shaders/PostProcess/bloom_add_CS.glsl");
 
 	}
 
@@ -88,6 +90,7 @@ namespace  Rudy
 	{
 
 		//threshold
+		//take input lit texture, output to RT_Vertical[0]
 		{
 			this->thresholdShader->Bind();
 
@@ -95,7 +98,7 @@ namespace  Rudy
 			
 			glBindImageTexture(0, inputTexture->GetID(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 		 
-			glBindImageTexture(1, RT_Vertical[0]->GetID(), 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+			glBindImageTexture(1, RT_Vertical[0]->GetID(), 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 
 			//dispatch
 			glDispatchCompute(glm::ceil(float(m_width) / 8), glm::ceil(float(m_height) / 8), 1);
@@ -215,11 +218,23 @@ namespace  Rudy
 		 
 
 		}
-		 
-
-
+		  
 		upsampleShader->Unbind();
 
+
+
+
+		//add
+		
+		addShader->Bind();
+
+		glBindImageTexture(0, RT_Vertical[0]->GetID(), 0, GL_FALSE, 0, GL_READ_ONLY,GL_RGBA32F);
+		glBindImageTexture(1, inputTexture->GetID(),   0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);  
+
+		glDispatchCompute(glm::ceil(float(m_width) / 8), glm::ceil(float(m_height) / 8), 1);
+		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+		addShader->Unbind();
 
 
 

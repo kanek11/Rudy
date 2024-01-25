@@ -13,11 +13,12 @@ layout(r32f, binding = 1) uniform image2D outputImage;
 uniform int u_radius;
 
 void main() {
+    ivec2 pixelCoord = ivec2(gl_GlobalInvocationID.xy);
+
 
     int radius = u_radius;
 
-    ivec2 pixelCoord = ivec2(gl_GlobalInvocationID.xy);
-    vec4 sum = vec4(0.0);
+     vec4 sum = vec4(0.0);
     int count = 0;
 
     for (int x = -radius; x <= radius; x++) {

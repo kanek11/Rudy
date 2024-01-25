@@ -23,7 +23,7 @@ layout(std430, binding = 0) buffer BoneTransforms_t {
 void main()
 {
 
-    mat4 boneMatrix = mat4(0.0f);
+    mat4 boneMatrix = mat4(1.0f);
     for (int i = 0; i < 4; i++)
     { 
         int index = int(aBoneIndices[i]);

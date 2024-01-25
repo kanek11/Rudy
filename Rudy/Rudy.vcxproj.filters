@@ -87,7 +87,7 @@
     <ClInclude Include="Rudy\Renderer\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Primitives\Sphere.h">
+    <ClInclude Include="Rudy\Primitives\Sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy\Renderer\Texture.h">
@@ -114,13 +114,13 @@
     <ClInclude Include="Platform\OpenGL\OpenGLFrameBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Primitives\Plane.h">
+    <ClInclude Include="Rudy\Primitives\Plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Primitives\ScreenQuad.h">
+    <ClInclude Include="Rudy\Primitives\ScreenQuad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Primitives\Cube.h">
+    <ClInclude Include="Rudy\Primitives\Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy\Renderer\Scene.h">
@@ -132,7 +132,7 @@
     <ClInclude Include="Rudy\Animation\Animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Primitives\Overlay.h">
+    <ClInclude Include="Rudy\Primitives\Overlay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy\Core\FileSystem.h">
@@ -162,9 +162,6 @@
     <ClInclude Include="Apps\Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Apps\PBR.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Rudy\Passes\Pass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -174,31 +171,31 @@
     <ClInclude Include="Rudy\Passes\WorldToView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Vendor\imgui\imstb_truetype.h">
+    <ClInclude Include="Vendor\imgui\imstb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Vendor\imgui\imstb_textedit.h">
+    <ClInclude Include="Vendor\imgui\imstb_textedit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Vendor\imgui\imstb_rectpack.h">
+    <ClInclude Include="Vendor\imgui\imstb_rectpack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Vendor\imgui\imgui_impl_opengl3_loader.h">
+    <ClInclude Include="Vendor\imgui\imgui_impl_opengl3_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Vendor\imgui\imgui_internal.h">
+    <ClInclude Include="Vendor\imgui\imgui_internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Vendor\imgui\imgui_impl_opengl3.h">
+    <ClInclude Include="Vendor\imgui\imgui_impl_opengl3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Vendor\imgui\imgui_impl_glfw.h">
+    <ClInclude Include="Vendor\imgui\imgui_impl_glfw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Vendor\imgui\imgui.h">
+    <ClInclude Include="Vendor\imgui\imgui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Vendor\imgui\imconfig.h">
+    <ClInclude Include="Vendor\imgui\imconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy\Passes\Bloom.h">
@@ -208,6 +205,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy\Passes\SSR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Apps\NPR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Passes\ToneMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Apps\PBR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Passes\Composer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -281,7 +290,7 @@
     <ClCompile Include="Rudy\Renderer\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Primitives\Cube.cpp">
+    <ClCompile Include="Rudy\Primitives\Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Rudy\Renderer\Transform.cpp">
@@ -311,19 +320,16 @@
     <ClCompile Include="Rudy\Physics\cloth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Apps\PBR.cpp">
+    <ClCompile Include="Rudy\Primitives\Sphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Primitives\Sphere.cpp">
+    <ClCompile Include="Rudy\Primitives\plane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Primitives\plane.cpp">
+    <ClCompile Include="Rudy\Primitives\ScreenQuad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Primitives\ScreenQuad.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Primitives\Overlay.cpp">
+    <ClCompile Include="Rudy\Primitives\Overlay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Apps\main.cpp">
@@ -344,25 +350,25 @@
     <ClCompile Include="Apps\test_cloth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Vendor\imgui\imgui_widgets.cpp">
+    <ClCompile Include="Vendor\imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Vendor\imgui\imgui_tables.cpp">
+    <ClCompile Include="Vendor\imgui\imgui_tables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Vendor\imgui\imgui_impl_opengl3.cpp">
+    <ClCompile Include="Vendor\imgui\imgui_impl_opengl3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Vendor\imgui\imgui_impl_glfw.cpp">
+    <ClCompile Include="Vendor\imgui\imgui_impl_glfw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Vendor\imgui\imgui_draw.cpp">
+    <ClCompile Include="Vendor\imgui\imgui_draw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Vendor\imgui\imgui_demo.cpp">
+    <ClCompile Include="Vendor\imgui\imgui_demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Vendor\imgui\imgui.cpp">
+    <ClCompile Include="Vendor\imgui\imgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Rudy\Passes\Bloom.cpp">
@@ -372,6 +378,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Rudy\Passes\SSR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Apps\NPR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Passes\ToneMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Apps\PBR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Passes\Composer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -453,5 +471,9 @@
     <None Include="Shaders\PostProcess\SSR_aveFilter_CS.glsl" />
     <None Include="Shaders\Shaders\Vertex_Color_FS.glsl" />
     <None Include="Shaders\Shaders\Vertex_Color_VS.glsl" />
+    <None Include="Shaders\PostProcess\toneMapping_CS.glsl" />
+    <None Include="Shaders\PostProcess\composer_CS.glsl" />
+    <None Include="Shaders\PostProcess\outline_FDM_CS.glsl" />
+    <None Include="Shaders\PostProcess\bloom_add_CS.glsl" />
   </ItemGroup>
 </Project>

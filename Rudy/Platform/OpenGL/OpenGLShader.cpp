@@ -208,7 +208,7 @@ namespace Rudy {
     {
         GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
         if (location == -1) {
-            RD_CORE_ERROR("glShader: SetBool: uniform {0} not found", name);
+            RD_CORE_ERROR("glShader {0}: SeBool: uniform {1} not found", m_Name, name);
             return;
         }
         glUniform1i(location, value);
@@ -239,7 +239,7 @@ namespace Rudy {
     {
         GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
         if (location == -1) {
-            RD_CORE_ERROR("glShader: SetFloat: uniform {0} not found", name);
+            RD_CORE_ERROR("glShader {0}: SetFloat: uniform {1} not found", m_Name, name);
             return;
         } 
         glUniform1f(location, value);
@@ -283,7 +283,7 @@ namespace Rudy {
     { 
         GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
         if (location == -1) {
-            RD_CORE_ERROR("glShader: SetVec3: uniform {0} not found", name);
+            RD_CORE_ERROR("glShader {0}: SetVec3: uniform {1} not found", m_Name, name);
             return;
         }
         glUniform3fv(location, 1, &value[0]);
@@ -293,7 +293,7 @@ namespace Rudy {
     {
         GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
         if (location == -1) {
-            RD_CORE_ERROR("glShader: SetVec3: uniform {0} not found", name);
+            RD_CORE_ERROR("glShader {0}: SetVec3: uniform {1} not found", m_Name, name);
             return;
         }
         glUniform3f(location, x, y, z);

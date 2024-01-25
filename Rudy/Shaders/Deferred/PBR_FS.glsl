@@ -25,27 +25,29 @@ uniform samplerCube u_DiffuseEnvMap;
 uniform samplerCube u_SpecularEnvMap;
 uniform sampler2D u_brdfLUTTexture;
 
-uniform sampler2D u_DepthTexture;  //shadow map
+
 
 
 uniform bool u_EnableSkyBox;
 
 
-
-
+ 
 
 struct DirLight { 
     vec3 color;
     vec3 direction;
     float intensity;
-};
+}; 
+
 
 
 uniform DirLight u_DirLight; 
 uniform mat4 u_LightSpaceMatrix;  //for shadow map
 
-uniform vec3 u_CameraPos;
- 
+
+uniform sampler2D u_DepthTexture;  //shadow map
+
+uniform vec3 u_CameraPos; 
 
 uniform float u_min_shadow_bias;
 uniform float u_max_shadow_bias;
@@ -62,8 +64,7 @@ float ShadowCalculation(vec4 WorldFragPos, float NdotL)
     projCoords = projCoords * 0.5 + 0.5;   
     //robust check eg: outof range, return 0 means not in shadow; 
     if (projCoords.z < 0.0 || projCoords.z > 1.0)
-		return 0.0;
-
+		return 0.0; 
 
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
     float closestDepth = texture(u_DepthTexture, projCoords.xy).r;
@@ -77,7 +78,6 @@ float ShadowCalculation(vec4 WorldFragPos, float NdotL)
     //tolerate some bias 
     float bias = max(u_max_shadow_bias * (1.0 - NdotL), u_min_shadow_bias);   //todo: tune it better;  
     
-    
     //float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
     //simple 3x3 PCF for AA
     float shadow = 0.0;
@@ -89,7 +89,6 @@ float ShadowCalculation(vec4 WorldFragPos, float NdotL)
 			shadow += currentDepth - bias > sampleDepth ? 1.0 : 0.0;
 		}    
     shadow /= 9.0;  //9 samples
-	  
 
     return shadow;
 }

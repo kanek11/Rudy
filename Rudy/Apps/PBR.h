@@ -2,19 +2,13 @@
 
 #include <Rudy.h>
 
-#include "Rudy/Vendor/imgui/imgui.h"
-#include "Rudy/Vendor/imgui/imgui_impl_glfw.h"
-#include "Rudy/Vendor/imgui/imgui_impl_opengl3.h"
+#include "Vendor/imgui/imgui.h"
+#include "Vendor/imgui/imgui_impl_glfw.h"
+#include "Vendor/imgui/imgui_impl_opengl3.h"
 
 
 #include "Application.h"
-#include "Rudy/Passes/SSAO.h"
-#include "Rudy/Passes/Bloom.h"
-#include "Rudy/Passes/Outline.h"
-#include "Rudy/Passes/SSR.h"
 
-
-#include "Rudy/Passes/WorldToView.h"
 
 
 
@@ -42,8 +36,7 @@ namespace Rudy
 
 		//
 		Ref<Camera> main_camera;
-		Ref<Window> window; 
-
+		Ref<Window> window;  
 
 
 		//
@@ -114,6 +107,12 @@ namespace Rudy
 		std::unordered_map< TexType, Ref<Texture >> SSROutputs;
 
 
+		//tonemapping
+		Ref<ToneMap> ToneMapPass;
+
+		std::unordered_map< TexType, Ref<Texture >> ToneMapInputs;
+		std::unordered_map< TexType, Ref<Texture >> ToneMapOutputs;
+
 
 
 
@@ -136,6 +135,8 @@ namespace Rudy
 		bool  enableOutline = false;
 		bool  enableBloom = false;
 		bool  enableSSAO = false; 
+
+		bool  enableToneMap = false;
 
 		bool  visualize_gbuffer = true;
 		bool  enableSkyBox = false;
