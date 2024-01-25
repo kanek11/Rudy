@@ -1,7 +1,7 @@
 # a GPU-based renderer
 This is a rendering engine in development, primarily for educational purposes.
 I have been trying to keep the code understandable and maintainable, such that it's easy to implement ideas and to customize complicated pipeline.
-Source codes of the following demos can be found under the 'App' folder.
+Source codes of the following demos can be found under the 'Apps' folder.
 
 ## Prerequisite
 This is a visual studio project runs on Windows, and relying on NVIDIA graphics cards for atomic float operations.
