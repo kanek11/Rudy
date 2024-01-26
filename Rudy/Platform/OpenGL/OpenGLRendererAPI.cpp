@@ -1,12 +1,8 @@
-// #include "hzpch.h"
-
+ 
 #include "RudyPCH.h"
 
 #include "Rudy/Renderer/Renderer.h"
-#include "Platform/OpenGL/OpenGLRendererAPI.h"
-
-#include <glad/glad.h>
-
+#include "Platform/OpenGL/OpenGLRendererAPI.h" 
 namespace Rudy
 {
 	namespace utils

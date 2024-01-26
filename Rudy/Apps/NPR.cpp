@@ -229,9 +229,7 @@ namespace Rudy
         //====material
         Texture2D::SetFlipYOnLoad(true); //eg: for .png;   
         auto faceSDF = Texture2D::LoadFile("Resources/faceLightMap/Avatar_Girl_Tex_FaceLightmap.png");
-        auto toonTexture = Texture2D::LoadFile("Resources/Models/byMihoyo/player/toon.png");
-
-         
+     
 
         //model loading
         Texture2D::SetFlipYOnLoad(true); //eg: for .png;   
@@ -254,8 +252,7 @@ namespace Rudy
         {
            
             auto old_material = meshObj->GetRenderer()->GetMaterial(); 
-            old_material->SetTexture(TexType::FaceLightMap, faceSDF);
-            old_material->SetTexture(TexType::ToonTexture, toonTexture); 
+            old_material->SetTexture(TexType::FaceLightMap, faceSDF); 
             old_material->SetTexture(TexType::DepthTexture, shadowMap);
 
            //switch textures to the new material;

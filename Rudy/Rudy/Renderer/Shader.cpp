@@ -1,10 +1,6 @@
- 
-//#include "hzpch.h"
-
 #include "RudyPCH.h"  
 
-#include "Rudy/Renderer/Renderer.h"
- 
+#include "Rudy/Renderer/Renderer.h" 
 
 #include "Rudy/Renderer/Shader.h" 
 #include "Platform/OpenGL/OpenGLShader.h"
@@ -31,8 +27,7 @@ namespace Rudy {
 		{
 		case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLShader>(name, vertexSrc, fragmentSrc, geometrySrc);
-		}
-
+		} 
 		RD_CORE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}

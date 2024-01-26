@@ -153,9 +153,6 @@
     <ClInclude Include="Rudy\Renderer\RendererComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\Kernel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Rudy\Physics\Cloth.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -318,9 +315,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Rudy\Renderer\RendererComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Rudy\Renderer\Kernel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Rudy\Physics\Cloth.cpp">

@@ -123,7 +123,6 @@
     <ClInclude Include="Rudy\Renderer\Camera.h" />
     <ClInclude Include="Rudy\Renderer\FrameBuffer.h" />
     <ClInclude Include="Rudy\Renderer\GraphicsContext.h" />
-    <ClInclude Include="Rudy\Renderer\Kernel.h" />
     <ClInclude Include="Rudy\Renderer\Material.h" />
     <ClInclude Include="Rudy\Renderer\Mesh.h" />
     <ClInclude Include="Rudy\Renderer\Object.h" />
@@ -186,7 +185,6 @@
     <ClCompile Include="Rudy\Passes\WorldToView.cpp" />
     <ClCompile Include="Rudy\Physics\Cloth.cpp" />
     <ClCompile Include="Rudy\Renderer\Buffer.cpp" />
-    <ClCompile Include="Rudy\Renderer\Kernel.cpp" />
     <ClCompile Include="Rudy\Renderer\RendererComponent.cpp" />
     <ClCompile Include="Vendor\imgui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

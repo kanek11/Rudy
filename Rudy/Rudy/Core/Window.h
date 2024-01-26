@@ -3,12 +3,7 @@
  
 #include "Rudy/Events/Event.h"
 
-
-//me:
-
-
-
-
+ 
 
 //user-defined Event callback function, like a delegate in C#.
 //a void function that takes an Event& as a parameter.

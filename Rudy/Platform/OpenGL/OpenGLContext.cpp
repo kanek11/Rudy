@@ -1,7 +1,4 @@
-//#include "hzpch.h"
-//
-
-#include "RudyPCH.h"
+ #include "RudyPCH.h"
 
 #include "OpenGLContext.h"
  
@@ -67,13 +64,7 @@ namespace Rudy {
 
 	
 
-		//some default settings
-#ifdef RD_DEBUG
-		glEnable(GL_DEBUG_OUTPUT);
-		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-		glDebugMessageCallback(OpenGLMessageCallback, nullptr); 
-		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
-#endif
+		//some default settings 
 
 		//be careful;
 		//glEnable(GL_BLEND);
@@ -83,8 +74,7 @@ namespace Rudy {
 		//glCullFace(GL_BACK);
 
 		//polygon mode, careful for deferred shading?
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); 
 
 		//not used;
 		//glEnable(GL_MULTISAMPLE); 
@@ -98,6 +88,14 @@ namespace Rudy {
 		glClearDepth(1.0f);     
 
 		 
+
+
+#ifdef RD_DEBUG
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		glDebugMessageCallback(OpenGLMessageCallback, nullptr);
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+#endif
 	
 	}
 
