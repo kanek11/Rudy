@@ -1,10 +1,21 @@
-#pragma once
-
+#pragma once 
 #include "Rudy/Core/PlatformDetection.h"
 
-#include <memory>
+#include "Log.h" 
+#include <memory> 
 
-#ifdef RD_DEBUG
+
+#define RD_EXPAND_MACRO(x) x
+#define RD_STRINGIFY_MACRO(x) #x
+
+//see events.
+#define BIT(x) (1 << x)
+
+#define RD_BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
+
+ 
+
+#ifdef _DEBUG
 	#if defined(RD_PLATFORM_WINDOWS)
 		#define RD_DEBUGBREAK() __debugbreak()
 	#elif defined(RD_PLATFORM_LINUX)
@@ -18,12 +29,40 @@
 	#define RD_DEBUGBREAK()
 #endif
 
-#define RD_EXPAND_MACRO(x) x
-#define RD_STRINGIFY_MACRO(x) #x
 
-#define BIT(x) (1 << x)
+//me: 
+#define PATH_SEPARATOR '\\'
+#define FILENAME (strrchr(__FILE__, PATH_SEPARATOR) ? strrchr(__FILE__, PATH_SEPARATOR) + 1 : __FILE__)
 
-#define RD_BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
+
+//IMPL= IMPLEMENTATION
+//RD##type##ERROR  will generate like RD_CORE_ERROR  or RD_ERROR
+
+
+#ifdef RD_ENABLE_ASSERTS 
+// provide support for custom formatting by concatenating the formatting string instead of having the format inside the default message
+#define RD_INTERNAL_ASSERT_IMPL(type, check, msg, ...) { if(!(check)) { RD##type##ERROR(msg, __VA_ARGS__); RD_DEBUGBREAK();} }
+ 
+#define RD_INTERNAL_ASSERT_WITH_MSG(type, check, ...) RD_INTERNAL_ASSERT_IMPL(type, check, "Assertion condition '{0}' failed at {1}:({2}) :{3}", RD_STRINGIFY_MACRO(check), FILENAME, __LINE__, __VA_ARGS__) 
+#define RD_INTERNAL_ASSERT_NO_MSG(type, check) RD_INTERNAL_ASSERT_IMPL(type, check, "Assertion '{0}' failed at {1}:{2}", RD_STRINGIFY_MACRO(check), FILENAME, __LINE__)
+
+//if #args = 1, then NO_MSG is at macro position;
+#define RD_INTERNAL_ASSERT_GET_MACRO_NAME(arg1, arg2, macro, ...) macro
+#define RD_INTERNAL_ASSERT_GET_MACRO(...) RD_EXPAND_MACRO( RD_INTERNAL_ASSERT_GET_MACRO_NAME(__VA_ARGS__, RD_INTERNAL_ASSERT_WITH_MSG, RD_INTERNAL_ASSERT_NO_MSG) )
+
+// Select based on the number of arguments , with/without message
+// Currently accepts at least the condition and one additional parameter (the message) being optional
+#define RD_ASSERT(...) RD_EXPAND_MACRO( RD_INTERNAL_ASSERT_GET_MACRO(__VA_ARGS__)(_, __VA_ARGS__) )
+#define RD_CORE_ASSERT(...) RD_EXPAND_MACRO( RD_INTERNAL_ASSERT_GET_MACRO(__VA_ARGS__)(_CORE_, __VA_ARGS__) )
+#else
+//do nothing
+#define RD_ASSERT(...)
+#define RD_CORE_ASSERT(...)
+#endif
+
+
+
+
 
 namespace Rudy {
 
@@ -42,8 +81,9 @@ namespace Rudy {
 	{
 		return std::make_shared<T>(std::forward<Args>(args)...);
 	}
-
+	
 }
 
-#include "Rudy/Core/Log.h"
-#include "Rudy/Core/Assert.h"
+ 
+
+

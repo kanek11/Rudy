@@ -5,6 +5,38 @@
 
 namespace Rudy {
 
+
+	void OpenGLMessageCallback(
+		unsigned source,
+		unsigned type,
+		unsigned id,
+		unsigned severity,
+		int length,
+		const char* message,
+		const void* userParam)
+	{
+		switch (severity)
+		{
+		case GL_DEBUG_SEVERITY_HIGH:
+			RD_CORE_CRITICAL(message);
+			return;
+		case GL_DEBUG_SEVERITY_MEDIUM:
+			RD_CORE_ERROR(message);
+			return;
+		case GL_DEBUG_SEVERITY_LOW:
+			RD_CORE_WARN(message);
+			return;
+		case GL_DEBUG_SEVERITY_NOTIFICATION:
+			RD_CORE_TRACE(message);
+			return;
+		}
+
+		RD_CORE_ASSERT(false, "Unknown severity level!");
+	}
+
+
+
+
 	OpenGLContext::OpenGLContext(GLFWwindow* windowHandle)
 		: m_WindowHandle(windowHandle)
 	{
@@ -60,10 +92,7 @@ namespace Rudy {
 		   RD_CORE_ERROR("GL_NV_shader_atomic_float is not supported");
 	   }
 	    
-
-
-	
-
+	    
 		//some default settings 
 
 		//be careful;
@@ -90,7 +119,7 @@ namespace Rudy {
 		 
 
 
-#ifdef RD_DEBUG
+#ifdef _DEBUG
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 		glDebugMessageCallback(OpenGLMessageCallback, nullptr);
@@ -100,4 +129,6 @@ namespace Rudy {
 	}
 
 
+
+	
 }

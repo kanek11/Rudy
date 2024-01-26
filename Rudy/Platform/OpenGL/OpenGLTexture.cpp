@@ -588,10 +588,7 @@ namespace Rudy {
 
 
 		case ConvolutionType::Specular:
-		{
-
-			//initial check
-			RD_CORE_ASSERT(maxMipLevels > 0, "TextureCube: mipLevels must be greater than 0");
+		{ 
 
 			//shader
 			auto prefilterShader = Shader::Create("Prefilter specular Shader", "Shaders/Shaders/SpecularEnvMap_VS.glsl", "Shaders/Shaders/SpecularEnvMap_FS.glsl");

@@ -18,9 +18,6 @@
     <ClInclude Include="RudyPCH.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Core\Assert.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Rudy\Core\Base.h">
       <Filter>Header Files</Filter>
     </ClInclude>

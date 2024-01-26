@@ -2,16 +2,17 @@
 
 
 //project core files
+//log first ,  assertion based on log
 #include "Rudy/Core/Log.h"
 
-#include "Rudy/Core/Base.h"
-
-#include "Rudy/Core/Assert.h"
-
-#include "Rudy/Core/FileSystem.h"
+#include "Rudy/Core/Base.h" 
 
 #include "Rudy/Debug/Instrumentor.h"
 
+
+
+
+#include "Rudy/Core/FileSystem.h"
 
 //third party 
 
