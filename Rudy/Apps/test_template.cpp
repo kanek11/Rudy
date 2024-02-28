@@ -72,8 +72,9 @@ void StartTemp() {
     auto screenQuadShader = Shader::Create("screen quad shader", "Shaders/Shaders/ScreenQuad_VS.glsl", "Shaders/Shaders/ScreenQuad_FS.glsl");
     auto screenQuadMaterial = Material::Create(screenQuadShader);
 
-    ScreenQuad screenQuad = ScreenQuad();
-    screenQuad.SetMaterial(screenQuadMaterial);
+
+    auto screenQuad = ScreenQuad::Create();
+    screenQuad->SetMaterial(screenQuadMaterial);
 
 
     //======the loop 

@@ -10,7 +10,7 @@ layout(location = 0) out vec4 out_FragColor;
 } fs_in;
 
 
- uniform bool u_custom_color;
+ uniform bool u_use_color;
  uniform vec3 u_color;
 
 

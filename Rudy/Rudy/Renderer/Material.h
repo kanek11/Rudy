@@ -9,15 +9,13 @@
 
 
 //doc
-
-
 namespace Rudy { 
 	
 	//conventions:
     //textures used as varying property on geometry surface is named []Map,
 	//and has a variable version ;
-	//textures used as for utilities is named []Texture, 
-	//including output of a quad, cubemap, and other custom textures.
+	//textures for utilities is named []Texture, 
+	//including output of a quad, noise, etc.
 
 
 	enum class TexType
@@ -212,18 +210,9 @@ namespace Rudy {
 	   }
 
 
-	   void SetSSBO(uint32_t bindingPoint, Ref<StorageBuffer> SSBO)
-	   {
-		   m_StorageBuffer_map[bindingPoint] = SSBO;
-	   }
-
-	   Ref<StorageBuffer> GetSSBO(uint32_t bindingPoint)
-	   {
-		   return m_StorageBuffer_map[bindingPoint];
-	   }
  
-
-		void Bind();   //before draw call, bind the material/textures
+	   //before draw call, bind the material/textures
+		void Bind();  
 		void Unbind();
 		 
 		static void SetMaterialProperties(Ref<Shader> shader);
@@ -235,73 +224,17 @@ namespace Rudy {
 		uint32_t m_GlobalIndex = 0;  //unique id for each material
 
 		//used for binding textures
-		std::unordered_map<TexType, Ref<Texture>> m_Texture_map;
-		std::unordered_map<std::string, glm::vec3>  m_Vec3_map  ;
-		std::unordered_map<std::string, float>      m_Float_map  ;
-		std::unordered_map<std::string, bool>       m_Bool_map  ;
+		std::unordered_map<TexType,     Ref<Texture>> m_Texture_map;
+		std::unordered_map<std::string, glm::vec3>    m_Vec3_map  ;
+		std::unordered_map<std::string, float>        m_Float_map  ;
+		std::unordered_map<std::string, bool>         m_Bool_map  ;
 		 
-		//new: <binding point, SSBO>, mainly for compute shader
-		 std::unordered_map<uint32_t, Ref<StorageBuffer>> m_StorageBuffer_map;
-	};
-
-
-	//==========PBR
- 
-	inline std::unordered_map<std::string, glm::vec3> PBRDefaultVec3Map
-	{
-		{"u_Albedo", glm::vec3(1.0,1.0,1.0)},
-	};
-
-	inline std::unordered_map<std::string, float> PBRDefaultFloatMap
-	{ 
-		{"u_Metallic",    1.0f},
-		{"u_Roughness",   1.0f},
-		{"u_Specular",    1.0f},
-
-		//intensity for techs
-		//{"u_NormalScale", 1.0f},
-		//{"u_AO",          1.0f},
-	};
-
-
-	inline std::unordered_map<std::string, bool> PBRDefaultBoolMap
-	{
-		{"Use_u_AlbedoMap", false},
-		{"Use_u_SpecularMap", false},
-		{"Use_u_MetallicMap", false},
-		{"Use_u_RoughnessMap", false},
-
-		{"Use_u_NormalMap", false},
-	};
-
-
-	class PBRMaterial : public Material
-	{
-	public:
-		~PBRMaterial() = default;
-		PBRMaterial() = default;
-
-		//set preset values
-		PBRMaterial(Ref<Shader> shader, const std::string& name) : Material(shader, name)
-		{
-			this->SetFloatMap(PBRDefaultFloatMap);
-			this->SetVec3Map(PBRDefaultVec3Map);
-			this->SetBoolMap(PBRDefaultBoolMap);
-		}
-
-		static Ref<PBRMaterial> Create(Ref<Shader> shader = nullptr, const std::string& name = "UnnamedPBRMaterial")
-		{
-			return CreateRef<PBRMaterial>(shader, name);
-		}
 
 	};
-	 
 
 	 
-
-
-
-
+	 
+	 
 
 }
 

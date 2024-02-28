@@ -18,13 +18,19 @@
 
 namespace Rudy {
 
-
+    //require linked object on creation;
     //declare the class, dont declare out the namespace
     class Object;
 
     class Transform
     {
      public:
+         ~ Transform() = default; 
+         Transform () = default; 
+         static Ref<Transform> Create(Ref<Object> gameObject);
+           
+
+
         //world ;
         //won't expose to user; because it's possible to have it un-synced with this->transform;
         glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f); 

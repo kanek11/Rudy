@@ -7,6 +7,16 @@
 
 namespace Rudy {
 
+
+    Ref<Transform> Transform::Create(Ref<Object> gameObject)
+    {
+        auto transform = CreateRef<Transform>();
+
+		transform->gameObject = gameObject;
+		return transform;
+    }
+
+     
      
     uint32_t Transform::GetChildCount() const 
     { return children.size(); }

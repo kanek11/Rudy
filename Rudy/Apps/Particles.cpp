@@ -120,8 +120,9 @@ void Particles::Start() {
     auto floorShader = Shader::Create("default Shader",
         "Shaders/Shaders/default_VS.glsl", "Shaders/Shaders/default_FS.glsl");
 
-    floorShader->SetBool("u_custom_color", true);
-    floorShader->SetVec3("u_color", glm::vec3(0.5f, 0.5f, 0.5f));
+    floorShader->Bind();
+    floorShader->SetBool("u_use_color", true);
+    floorShader->SetVec3("u_color", glm::vec3(0.5f));
 
     auto floorMaterial = Material::Create(floorShader); 
     floor->GetRenderer()->SetMaterial(floorMaterial);

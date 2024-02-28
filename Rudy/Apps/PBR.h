@@ -16,6 +16,59 @@
 namespace Rudy
 {
 
+	//==========PBR
+
+	inline std::unordered_map<std::string, glm::vec3> PBRDefaultVec3Map
+	{
+		{"u_Albedo", glm::vec3(1.0,1.0,1.0)},
+	};
+
+	inline std::unordered_map<std::string, float> PBRDefaultFloatMap
+	{
+		{"u_Metallic",    1.0f},
+		{"u_Roughness",   1.0f},
+		{"u_Specular",    1.0f},
+
+		//intensity for techs
+		//{"u_NormalScale", 1.0f},
+		//{"u_AO",          1.0f},
+	};
+
+
+	inline std::unordered_map<std::string, bool> PBRDefaultBoolMap
+	{
+		{"Use_u_AlbedoMap",    false},
+		{"Use_u_SpecularMap",  false},
+		{"Use_u_MetallicMap",  false},
+		{"Use_u_RoughnessMap", false},
+
+		{"Use_u_NormalMap",    false},
+	};
+
+
+	class PBRMaterial : public Material
+	{
+	public:
+		~PBRMaterial() = default;
+		PBRMaterial() = default;
+
+		//set preset values
+		PBRMaterial(Ref<Shader> shader, const std::string& name) : Material(shader, name)
+		{
+			this->SetFloatMap(PBRDefaultFloatMap);
+			this->SetVec3Map(PBRDefaultVec3Map);
+			this->SetBoolMap(PBRDefaultBoolMap);
+		}
+
+		static Ref<PBRMaterial> Create(Ref<Shader> shader = nullptr, const std::string& name = "UnnamedPBRMaterial")
+		{
+			return CreateRef<PBRMaterial>(shader, name);
+		}
+
+	};
+
+
+
 
 	class PBR : public Application
 	{
@@ -146,6 +199,12 @@ namespace Rudy
 
 		Ref<Texture2D> shadowMap;
 
+
+		void ShowTreeNode(const Ref<Transform> transform);
+		void ShowHierarchy();
+
+
+		Ref<Shader> pure_color_shader;
 	};
 	  
 	

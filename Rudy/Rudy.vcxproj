@@ -206,6 +206,7 @@
     <ClCompile Include="Vendor\imgui\imgui_widgets.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <None Include=".clang-format" />
     <None Include="Shaders\Cloth\default_cloth_FS.glsl" />
     <None Include="Shaders\Cloth\default_cloth_VS.glsl" />
     <None Include="Shaders\Cloth\normalize_normals_CS.glsl" />
@@ -284,7 +285,7 @@
     <None Include="Shaders\Deferred\BlinnPhong_Color_FS.glsl" />
     <None Include="Shaders\Shaders\BrdfLUT_FS.glsl" />
     <None Include="Shaders\Shaders\BrdfLUT_VS.glsl" />
-    <None Include="Shaders\Shaders\Default_Flat_FS.glsl" />
+    <None Include="Shaders\Shaders\default_pure_FS.glsl" />
     <None Include="Shaders\Shaders\DepthMap_VS.glsl" />
     <None Include="Shaders\Shaders\DepthMap_FS.glsl" />
     <None Include="Shaders\Shaders\DepthQuad_FS.glsl" />

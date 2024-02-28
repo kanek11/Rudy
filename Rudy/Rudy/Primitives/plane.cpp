@@ -8,13 +8,20 @@ namespace Rudy
 
     Plane::Plane(uint32_t subdivison) : StaticMeshObject()
     {
-        this->GetRenderer()->SetMesh(CreateMeshGeometry(subdivison));
+        m_mesh = CreateMeshGeometry(subdivison) ;
     }
 
 
-    Ref<Plane> Plane::Create(uint32_t subdivison) 
-    { return CreateRef<Plane>(subdivison); }
+    Ref<Plane> Plane::Create(uint32_t subdivison)
+    {
+        auto object = CreateRef<Plane>(subdivison);
 
+        object->StaticMeshObject::InitComponent(object);
+        //object->InitComponent(object);
+        object->GetRenderer()->SetMesh(object->m_mesh);
+        return object;
+
+    }
 
 
 

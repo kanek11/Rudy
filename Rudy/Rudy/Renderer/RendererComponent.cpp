@@ -86,6 +86,10 @@ namespace Rudy
         m_vertexArray->Bind();
         _mat ->Bind();
 
+        for (auto& SSBO : m_StorageBuffer_map)
+        {
+            SSBO.second->BindBase(SSBO.first);
+        }
 
 
         if (cam != nullptr)
@@ -196,10 +200,7 @@ namespace Rudy
 
         }
 
-
-
-
-
+         
 		_mat->Unbind(); 
 
 	}

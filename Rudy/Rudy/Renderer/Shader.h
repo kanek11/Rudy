@@ -36,27 +36,28 @@ namespace Rudy {
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
 
-		virtual void SetBool (const std::string& name, bool value)  const = 0;
-		virtual void SetInt  (const std::string& name, int value)   const = 0; 
-		virtual void SetUInt(const std::string& name, int value) const  = 0;
-		virtual void SetFloat(const std::string& name, float value) const = 0;
+		virtual void SetBool (const std::string& name, bool value)    = 0;
+		virtual void SetInt  (const std::string& name, int value)     = 0; 
+		virtual void SetUInt(const std::string& name, int value)      = 0;
+		virtual void SetFloat(const std::string& name, float value)   = 0;
 
 		//me: change to set Vec , instead of set float
-		virtual void SetVec2(const std::string& name, const glm::vec2& value) const = 0;
-		virtual void SetVec2(const std::string& name, float x, float y)       const = 0;
+		virtual void SetVec2(const std::string& name, const glm::vec2& value)    = 0;
+		virtual void SetVec2(const std::string& name, float x, float y)          = 0;
+																				 
+		virtual void SetIVec2(const std::string& name, const glm::ivec2& value)  = 0;
+		virtual void SetIVec2(const std::string& name, int x, int y)             = 0;
+																				  
+																				  
+		virtual void SetVec3(const std::string& name, const glm::vec3& value)      = 0;
+        virtual void SetVec3(const std::string& name, float x, float y, float z)   = 0;
 
-		virtual void SetIVec2(const std::string& name, const glm::ivec2& value) const = 0;
-		virtual void SetIVec2(const std::string& name, int x, int y)       const = 0;
+        virtual void SetVec4(const std::string& name, const glm::vec4& value)  = 0;
+        virtual void SetVec4(const std::string& name, float x, float y, float z, float w)  = 0;
 
+		virtual void SetMat3(const std::string& name, const glm::mat3& value) = 0;
+		virtual void SetMat4(const std::string& name, const glm::mat4& value) = 0;
 
-		virtual void SetVec3(const std::string& name, const glm::vec3& value)    const = 0;
-        virtual void SetVec3(const std::string& name, float x, float y, float z) const = 0;
-
-        virtual void SetVec4(const std::string& name, const glm::vec4& value) const = 0;
-        virtual void SetVec4(const std::string& name, float x, float y, float z, float w) const = 0;
-
-		virtual void SetMat3(const std::string& name, const glm::mat3& value) const = 0;
-		virtual void SetMat4(const std::string& name, const glm::mat4& value) const = 0;
 
 		virtual const std::string& GetName() const = 0;
 		virtual const uint32_t GetShaderID() const = 0;
@@ -82,16 +83,16 @@ namespace Rudy {
 	class ShaderLibrary
 	{
 	public:
-		void Add(const std::string& name, const Ref<Shader>& shader);
-		void Add(const Ref<Shader>& shader);
-		Ref<Shader> Load(const std::string& filepath);
-		Ref<Shader> Load(const std::string& name, const std::string& filepath);
+		static void Add(const std::string& name, const Ref<Shader>& shader);
+		static void Add(const Ref<Shader>& shader);
+		//Ref<Shader> Load(const std::string& filepath);
+		//Ref<Shader> Load(const std::string& name, const std::string& filepath);
 
-		Ref<Shader> Get(const std::string& name);
+		static Ref<Shader> Get(const std::string& name);
 
-		bool Exists(const std::string& name) const;
-	private:
-		std::unordered_map<std::string, Ref<Shader>> m_Shaders;
+		static bool Exists(const std::string& name) ;
+ 
+		static std::unordered_map<std::string, Ref<Shader>> s_shaders;
 	};
 
 }

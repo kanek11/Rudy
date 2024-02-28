@@ -1,230 +1,202 @@
-#pragma once 
-#include "RudyPCH.h" 
+#pragma once
+#include "RudyPCH.h"
 
+#include <Rudy/Animation/Animation.h>
+#include <Rudy/Renderer/Buffer.h>
+#include <Rudy/Renderer/Camera.h>
+#include <Rudy/Renderer/Material.h>
 #include <Rudy/Renderer/Mesh.h>
-#include <Rudy/Renderer/Material.h> 
-
-#include <Rudy/Renderer/Camera.h> 
-#include <Rudy/Renderer/Transform.h> 
-#include <Rudy/Renderer/Buffer.h> 
-
-#include <Rudy/Animation/Animation.h> 
-
 #include <Rudy/Renderer/RendererComponent.h>
+#include <Rudy/Renderer/Transform.h>
 
-
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/scene.h>
+#include <assimp/Importer.hpp>
 
+namespace Rudy
+{
 
-namespace Rudy {
+// rule: use a factory method Create() to create an object;
+// create a transform component for the object;
 
+// object is the base class for all objects in the scene,
+// we will have reflection system in the future,  but for now,  we just use this
+// simple inheritance;
 
+// virtual destructor is needed to correctly release derived class;
+//<<abstract>>
+class Object
+{
+public:
+    virtual ~Object() = default;
+    Object()          = default;
 
-    //object is the base class for all objects in the scene,  
-    //we will have reflection system in the future,  but for now,  we just use this simple inheritance;
-
-    //virtual destructor is needed to correctly release derived class;
-    //<<abstract>>
-    class Object
+    static Ref<Object> Create()
     {
-    public :
-        virtual ~Object() = default;
-        Object() 
-        { 
-			transform = CreateRef<Transform>(); 
-		}
-      
-  
-     public:
-         Ref<Transform> transform = nullptr;
-         std::string name = "Unnamed Object";
+        auto object = CreateRef<Object>();
+        object->InitComponent(object);
+        return object;
+    }
 
-         bool isRenderable = false;
-
-    };
-
-    
-     
-    //a renderable object is an object that can be rendered;
-    //now, it contains a renderer component; 
-    //a generic renderer component defines draw command. 
-    //there's no default one,  user must define the drived classes and set the renderer component;
- 
-
-    //we hardcode the transform component in the renderer component;  
-    //todo: maybe implement a fancy ECS system in the future;
-    //<<abstract base>>
-    class RenderableObject : public Object
+    void InitComponent(Ref<Object> object)
     {
-    public: 
-        virtual ~RenderableObject() = default; 
-       RenderableObject() : Object() { isRenderable = true; } 
-     
+        object->transform = Transform::Create(object);
+    }
 
-        void SetRendererComponent(Ref<Renderer> rendererComponent) 
-		{ 
-            rendererComponent->SetTransform(this->transform);
-			this->rendererComponent = rendererComponent; 
-		}
+public:
+    Ref<Transform> transform = nullptr;
+    std::string    name      = "Unnamed gameObject";
 
-        Ref<Renderer> GetRendererComponent() 
-        { return rendererComponent; }
-         
-  
-        bool hasRendererComponent() { return rendererComponent != nullptr; }
-    
-    public:
+    bool isRenderable = false;
+};
 
-        virtual void Draw(Ref<Camera> cam) = 0;
+// a renderable object is an object that can be rendered;
+// now, it contains a renderer component;
+// a generic renderer component defines draw command.
+// there's no default one,  user must define the drived classes and set the
+// renderer component;
 
-        Ref<Renderer> rendererComponent = nullptr;
-    };
- 
+// we hardcode the transform component in the renderer component;
+// todo: maybe implement a fancy ECS system in the future;
+//<<abstract base>>
+class RenderableObject : public Object
+{
+public:
+    virtual ~RenderableObject() = default;
+    RenderableObject() :
+        Object() { isRenderable = true; }
 
-
-
-
-    //<<terminal>>
-    //simply assume mesh renderer component; come with a mesh component;
-    class StaticMeshObject : public Object
+    void SetRendererComponent(Ref<Renderer> rendererComponent)
     {
-    public:
-        virtual ~StaticMeshObject()  = default;
-        StaticMeshObject() : Object() {
-            isRenderable = true;
-            renderer = StaticMeshRenderer::Create();
-            renderer ->SetTransform(this->transform);
-        }   
+        rendererComponent->SetTransform(this->transform);
+        this->rendererComponent = rendererComponent;
+    }
 
-        static Ref<StaticMeshObject> Create() 
-		{ return CreateRef<StaticMeshObject>(); }
+    Ref<Renderer> GetRendererComponent() { return rendererComponent; }
 
+    bool hasRendererComponent() { return rendererComponent != nullptr; }
 
-        void SetRenderer(Ref<StaticMeshRenderer> rendererComponent)
-        { 
-            this->renderer = rendererComponent;
-        }
+public:
+    virtual void Draw(Ref<Camera> cam) = 0;
 
-        Ref<StaticMeshRenderer> GetRenderer()
-        {
-            return this->renderer;
-        }  
+    Ref<Renderer> rendererComponent = nullptr;
+};
 
+//<<terminal>>
+// simply assume mesh renderer component; come with a mesh component;
+class StaticMeshObject : public Object
+{
+public:
+    virtual ~StaticMeshObject() = default;
+    StaticMeshObject() :
+        Object() { isRenderable = true; }
 
-        void SetMaterial(Ref<Material> mat)
-		{
-			this->renderer->SetMaterial(mat);
-		} 
-        void SetShader(Ref<Shader> shader)
-        { 
-            this->renderer->SetShader(shader);
-		} 
+    static Ref<StaticMeshObject> Create()
+    {
+        auto object = CreateRef<StaticMeshObject>();
+        object->InitComponent(object);
+        return object;
+    }
 
-    public:
-        //override draw command if needed;
-        virtual void Draw(Ref<Camera> cam)
-        {
-            this->renderer->Draw(cam);
-        }
-         
-        Ref<StaticMeshRenderer> renderer = nullptr;
+    void InitComponent(Ref<StaticMeshObject> object)
+    {
+        object->Object::InitComponent(object);
 
-    };
+        object->renderer = StaticMeshRenderer::Create();
+        object->renderer->SetTransform(object->transform);
+    }
 
+    void SetRenderer(Ref<StaticMeshRenderer> rendererComponent)
+    {
+        this->renderer = rendererComponent;
+    }
 
-      
+    Ref<StaticMeshRenderer> GetRenderer() { return this->renderer; }
 
-     //a model contains... whatever the model contains;  
-     //expect multiple mesh objects;
-     class Model: public Object    
-     {
-     public:
-         //global settings 
-         static float s_scaleFactor;  
-         static Ref<Shader> s_defaultShader;
- 
-     public:  
-         ~Model() = default; 
-         Model() = default;
-         Model(std::string const& path); 
-     
-         static Ref<Model> LoadModel(std::string const& path);
+    void SetMaterial(Ref<Material> mat) { this->renderer->SetMaterial(mat); }
+    void SetShader(Ref<Shader> shader) { this->renderer->SetShader(shader); }
 
- 
-     public:
-         std::vector< Ref<StaticMeshObject> >  meshObjects;
+public:
+    // override draw command if needed;
+    virtual void Draw(Ref<Camera> cam) { this->renderer->Draw(cam); }
 
-         Ref<Shader> shader = nullptr;
-         Ref<StorageBuffer> boneTransformBuffer = StorageBuffer::Create();
+    // asset and renderer component;
+    Ref<Mesh>               m_mesh   = nullptr;
+    Ref<StaticMeshRenderer> renderer = nullptr;
+};
 
+// a model contains... whatever the model contains;
+// expect multiple mesh objects;
+class Model : public Object
+{
+public:
+    // global settings
+    static float       s_scaleFactor;
+    static Ref<Shader> s_defaultShader;
 
-         Ref<Animator> animator = nullptr;
+public:
+    ~Model() = default;
+    Model()  = default;
+    Model(std::string const& path);
 
-         void SetAnimator(Ref<Animator> animator)
-         {
-			 this->animator = animator; 
-             if (this->hasAnimation())
-             animator->animationClip = this->animationClip;
-             else
-             RD_CORE_WARN("Model:: model has no animation for the animator");
-		 }
+    static Ref<Model> LoadModel(std::string const& path);
 
+public:
+    Ref<Shader> shader = nullptr;
+    void        SetShader(Ref<Shader> shader);
 
+    Ref<StorageBuffer> boneTransformBuffer = StorageBuffer::Create();
 
-         //animation and bound bones are could-be-separate;
-         //might need retarget;
-         Ref<AnimationClip> animationClip = nullptr;
-          
-         //retreive the bound bones defined in the mesh;     //aiBone->mName; aiBone->mOffsetMatrix 
-         //ordered map,  key = name to facilate searching by name in animation keyframe; 
-         std::map<std::string, Bone> bindPoseBoneMap;
-          
+    // animator component;
+    Ref<Animator> animator = nullptr;
 
-	 public:  
-         void Draw(Ref<Camera> cam, uint32_t count = 1, Ref<Material> mat = nullptr);
-          
-         void SetShader(Ref<Shader> shader) ;
+    void SetAnimator(Ref<Animator> animator)
+    {
+        this->animator = animator;
+        if (this->hasAnimation())
+            animator->animationClip = this->animationClip;
+        else
+            RD_CORE_WARN("Model: model has no animations, invalid animator setting");
+    }
 
+    //============================================
+    // load from model files:
+    std::vector<Ref<StaticMeshObject>> meshObjects;
 
-         bool hasAnimation() { return animationClip != nullptr ; }
+    // animation and bound bones are could-be-separate;
+    // might need retarget;
+    Ref<AnimationClip> animationClip = nullptr;
+    bool               hasAnimation() { return animationClip != nullptr; }
 
+    // retreive the bound bones defined in the mesh;     //aiBone->mName;
+    // aiBone->mOffsetMatrix ordered map,  key = name to facilate searching by
+    // name in animation keyframe;
+    std::map<std::string, int> boneMap;
+    std::vector<glm::mat4>     bindPose = std::vector<glm::mat4>(100, glm::mat4(1.0f));
 
- //========system 
-         //retrieved in the hierarchy of the animation file;
-         Ref<Object> rootNode = CreateRef<Object>();
-         Ref<Object> findNode(std::string const& name);
-         Ref<Object> findNodeRecursive(Ref<Transform> node, std::string const& name);
-          
+public:
+    void Draw(Ref<Camera> cam, uint32_t count = 1, Ref<Material> mat = nullptr);
 
-     public:  
-         std::vector<Ref<Texture2D>> m_Loaded_Textures;  
-         //opt to avoid duplicate textures,  loading is extremely slow
+    //========system
+    // retrieved in the hierarchy of the animation file;
+    Ref<Object> rootNode = nullptr;
+    Ref<Object> findNode(std::string const& name);
+    Ref<Object> findNodeRecursive(Ref<Transform> node, std::string const& name);
 
+public:
+    std::vector<Ref<Texture2D>> m_Loaded_Textures;
+    // opt to avoid duplicate textures,  loading is extremely slow
 
-         void processNode(const aiScene* scene, aiNode* ai_node, Ref<Object> scene_node);
+    void processNode(const aiScene* scene, aiNode* ai_node, Ref<Object> scene_node);
 
-         Ref<Mesh>     processMesh(aiMesh* mesh, const aiScene* scene);
-         Ref<Material> processMaterial(aiMesh* mesh, const aiScene* scene);
-          
-         void processBones(const aiScene* scene, aiMesh* mesh, std::vector<Vertex>& vertices);
-         void processAnimation(const aiScene* scene);
+    Ref<Mesh>     processMesh(aiMesh* mesh, const aiScene* scene);
+    Ref<Material> processMaterial(aiMesh* mesh, const aiScene* scene);
 
+    void processBones(const aiScene* scene, aiMesh* mesh, std::vector<Vertex>& vertices);
+    void processAnimation(const aiScene* scene);
 
+public:
+    std::string directory;
+};
 
-
-     public: 
-         std::string directory;
-     };
-     
- 
-
-       
-
-
-     
-}
-  
-
- 
+} // namespace Rudy

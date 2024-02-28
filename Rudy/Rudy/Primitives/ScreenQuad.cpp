@@ -9,10 +9,19 @@ namespace Rudy
 
     ScreenQuad::ScreenQuad() : StaticMeshObject()
     {
-        this->GetRenderer()->SetMesh(CreateMeshGeometry());
+        m_mesh = CreateMeshGeometry();
     }
 
-    Ref<ScreenQuad> ScreenQuad::Create() { return std::make_shared<ScreenQuad>(); }
+    Ref<ScreenQuad> ScreenQuad::Create() { 
+        
+        auto object = CreateRef<ScreenQuad>();
+
+        object->StaticMeshObject::InitComponent(object);
+        //object->InitComponent(object);
+        object->GetRenderer()->SetMesh(object->m_mesh);
+        return object;
+    
+    }
 
 
 

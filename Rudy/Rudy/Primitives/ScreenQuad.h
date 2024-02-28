@@ -20,8 +20,6 @@ namespace Rudy {
         static Ref<ScreenQuad> Create();
 
         Ref<Mesh> CreateMeshGeometry(); 
-
-
     };
      
 

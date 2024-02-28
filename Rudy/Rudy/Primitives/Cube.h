@@ -16,17 +16,25 @@ namespace Rudy {
 
         Cube() : StaticMeshObject()
         { 
-            this->GetRenderer()->SetMesh( CreateMeshGeometry() );
-        }
-      
+            m_mesh = CreateMeshGeometry();
+            
+        } 
 
-        Ref<Mesh> CreateMeshGeometry(); 
-      
+        Ref<Mesh> CreateMeshGeometry();  
       
 
         void DrawSkybox(Ref<Camera> cam);  //need to set special view matrix, and gldepthfunc;
   
-        static Ref<Cube> Create() { return std::make_shared<Cube>(); }
+        static Ref<Cube> Create() {  
+            auto object = CreateRef<Cube>();
+
+            object->StaticMeshObject::InitComponent(object);
+            //object->InitComponent(object);
+            
+
+            object->GetRenderer()->SetMesh(object->m_mesh);
+            return object; 
+        }
         
 
     }; 

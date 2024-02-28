@@ -27,8 +27,7 @@ namespace Rudy {
         Plane(uint32_t subdivison);
         static Ref<Plane> Create(uint32_t subdivison);
 
-        Ref<Mesh> CreateMeshGeometry(uint32_t subdivison); 
-         
+        Ref<Mesh> CreateMeshGeometry(uint32_t subdivison);  
     };
       
   

@@ -427,7 +427,7 @@
     <None Include="Shaders\PostProcess\SSAO_FS.glsl" />
     <None Include="Shaders\PostProcess\SSR_FS.glsl" />
     <None Include="Shaders\Deferred\GBufferSkinned_VS.glsl" />
-    <None Include="Shaders\Shaders\Default_Flat_FS.glsl" />
+    <None Include="Shaders\Shaders\default_pure_FS.glsl" />
     <None Include="Shaders\Deferred\BlinnPhong_Color_FS.glsl" />
     <None Include="Shaders\Shaders\DepthMapSkinned_VS.glsl">
       <Filter>Source Files</Filter>
@@ -475,5 +475,6 @@
     <None Include="Shaders\PostProcess\composer_CS.glsl" />
     <None Include="Shaders\PostProcess\outline_FDM_CS.glsl" />
     <None Include="Shaders\PostProcess\bloom_add_CS.glsl" />
+    <None Include=".clang-format" />
   </ItemGroup>
 </Project>

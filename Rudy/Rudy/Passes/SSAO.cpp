@@ -2,7 +2,7 @@
  
 #include "SSAO.h"
 
-namespace  Rudy
+namespace Rudy
 {
  
 	SSAO::SSAO(
@@ -96,6 +96,7 @@ namespace  Rudy
         }
 
 
+        SSAOShader->Bind();
         //used by all fragments;
         for (unsigned int i = 0; i < 64; ++i)
             SSAOShader->SetVec3("samples[" + std::to_string(i) + "]", SSAOKernel[i]);

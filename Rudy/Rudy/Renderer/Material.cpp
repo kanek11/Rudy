@@ -30,6 +30,7 @@ namespace Rudy
 		//m_Shader = shader;
 		//RD_CORE_INFO("Material: Material setup is called, use shader id: {0}", m_Shader->GetShaderID());
   
+		/*
 	    RD_ASSERT(shader, " passed shader is null");
 	    shader->Bind();  
 	    
@@ -40,6 +41,7 @@ namespace Rudy
 	    { 
 			 shader->SetInt(texture.second, (int)texture.first); 
 	    }
+ */
  
 		 
 	}
@@ -57,6 +59,13 @@ namespace Rudy
 			return;
 		}
 
+
+
+		//texture use enum as key, textureName as value, 
+		for (auto& texture : m_Texture_map)
+		{
+			m_Shader->SetInt(TexTypeNames[texture.first], (int)texture.first);
+		}  
 
 		//for unordered map, .first is the key, .second is the value 
 		//texture object -> bind 
@@ -83,12 +92,6 @@ namespace Rudy
 			//RD_CORE_INFO("Material: bool {0} is set to {1}", value.first, value.second);
 		 }
 
-
-		 for (auto& SSBO : m_StorageBuffer_map)
-		 {
-		 	SSBO.second->BindBase(SSBO.first);
-		 } 
-
 	}
 	 
 
@@ -114,27 +117,7 @@ namespace Rudy
 
  
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	 
 
 
 

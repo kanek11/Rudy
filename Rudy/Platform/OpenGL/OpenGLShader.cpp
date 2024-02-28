@@ -204,130 +204,213 @@ namespace Rudy {
 
     // utility uniform setter functions
     // ------------------------------------------------------------------------
-    void OpenGLShader::SetBool(const std::string& name, bool value) const
+    void OpenGLShader::SetBool(const std::string& name, bool value)
     {
-        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
-        if (location == -1) {
-            RD_CORE_ERROR("glShader {0}: SeBool: uniform {1} not found", m_Name, name);
-            return;
+        //GLint location = glGetUniformLocation(m_ShaderID, name.c_str()); 
+       
+        if (m_uniformLocationCache.find(name) == m_uniformLocationCache.end()) { 
+             CacheLocation(name);  
         }
-        glUniform1i(location, value);
-    }
-    // ------------------------------------------------------------------------
-    void OpenGLShader::SetInt(const std::string& name, int value) const
-    {
-        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
-        if (location == -1) {
-            //RD_CORE_ERROR("glShader: SetInt: uniform {0} not found", name);  //for now we have a lot unused texture slots;
-            return;
-        }
-        glUniform1i(location, value);
+
+        GLint location = m_uniformLocationCache[name]; 
+        if(location != -1)
+        glProgramUniform1i(m_ShaderID, location, value); 
+
     }
 
-    void OpenGLShader::SetUInt(const std::string& name, int value) const
+      
+
+    // ------------------------------------------------------------------------
+    void OpenGLShader::SetInt(const std::string& name, int value)  
     {
-        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        //GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        //if (location == -1) {
+        //    //RD_CORE_ERROR("glShader: SetInt: uniform {0} not found", name);  //for now we have a lot unused texture slots;
+        //    return;
+        //}
+        if (m_uniformLocationCache.find(name) == m_uniformLocationCache.end()) {
+            CacheLocation(name);
+        } 
+        GLint location = m_uniformLocationCache[name];
+        if (location != -1)
+        glProgramUniform1i(m_ShaderID, location, value);
+    }
+
+    void OpenGLShader::SetUInt(const std::string& name, int value)  
+    {
+   /*     GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
         if (location == -1) {
             RD_CORE_WARN("OpenGLShader: SetUInt: uniform {0} not found", name);
             return;
-        }  
-        glUniform1ui(location, value);
+        }  */
+        if (m_uniformLocationCache.find(name) == m_uniformLocationCache.end()) {
+            CacheLocation(name);
+        }
+
+        GLint location = m_uniformLocationCache[name];
+        if (location != -1)
+        glProgramUniform1ui(m_ShaderID, location, value);
     }
 
     // ------------------------------------------------------------------------
-    void OpenGLShader::SetFloat(const std::string& name, float value) const
+    void OpenGLShader::SetFloat(const std::string& name, float value)  
     {
-        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+      /*  GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
         if (location == -1) {
             RD_CORE_ERROR("glShader {0}: SetFloat: uniform {1} not found", m_Name, name);
             return;
-        } 
-        glUniform1f(location, value);
+        } */
+        if (m_uniformLocationCache.find(name) == m_uniformLocationCache.end()) {
+            CacheLocation(name);
+        }
+
+        GLint location = m_uniformLocationCache[name];
+        if (location != -1)
+        glProgramUniform1f(m_ShaderID, location, value);
     }
     // ------------------------------------------------------------------------
-    void OpenGLShader::SetVec2(const std::string& name, const glm::vec2& value) const
+    void OpenGLShader::SetVec2(const std::string& name, const glm::vec2& value) 
     {
-        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        //GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        //if (location == -1) {
+        //    RD_CORE_ERROR("glShader: SetVec2: uniform {0} not found", name);
+        //    return;
+        //}
+        if (m_uniformLocationCache.find(name) == m_uniformLocationCache.end()) {
+            CacheLocation(name);
+        }
+
+        GLint location = m_uniformLocationCache[name];
+        if (location != -1)
+        glProgramUniform2fv(m_ShaderID, location, 1, &value[0]);
+    }
+
+    void OpenGLShader::SetVec2(const std::string& name, float x, float y) 
+    {
+        if (m_uniformLocationCache.find(name) == m_uniformLocationCache.end()) {
+            CacheLocation(name);
+        }
+
+        GLint location = m_uniformLocationCache[name];
+        if (location != -1)
+        glProgramUniform2f(m_ShaderID, location, x, y);
+    }
+
+
+    void OpenGLShader::SetIVec2(const std::string& name, const glm::ivec2& value)  
+    {
+     /*   GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
         if (location == -1) {
             RD_CORE_ERROR("glShader: SetVec2: uniform {0} not found", name);
             return;
+        }*/
+        if (m_uniformLocationCache.find(name) == m_uniformLocationCache.end()) {
+            CacheLocation(name);
         }
-        glUniform2fv(location, 1, &value[0]);
+
+        GLint location = m_uniformLocationCache[name];
+        if (location != -1)
+        glProgramUniform2iv(m_ShaderID, location, 1, &value[0]);
     }
 
-    void OpenGLShader::SetVec2(const std::string& name, float x, float y) const
+    void OpenGLShader::SetIVec2(const std::string& name, int x, int y) 
     {
-        glUniform2f(glGetUniformLocation(m_ShaderID, name.c_str()), x, y);
-    }
-
-
-    void OpenGLShader::SetIVec2(const std::string& name, const glm::ivec2& value) const
-    {
-        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
-        if (location == -1) {
-            RD_CORE_ERROR("glShader: SetVec2: uniform {0} not found", name);
-            return;
+        if (m_uniformLocationCache.find(name) == m_uniformLocationCache.end()) {
+            CacheLocation(name);
         }
-        glUniform2iv(location, 1, &value[0]);
-    }
 
-    void OpenGLShader::SetIVec2(const std::string& name, int x, int y) const
-    {
-        glUniform2i(glGetUniformLocation(m_ShaderID, name.c_str()), x, y);
+        GLint location = m_uniformLocationCache[name];
+        if (location != -1)
+        glProgramUniform2i(m_ShaderID, location, x, y);
     }
 
 
 
     // ------------------------------------------------------------------------
-    void OpenGLShader::SetVec3(const std::string& name, const glm::vec3& value) const
+    void OpenGLShader::SetVec3(const std::string& name, const glm::vec3& value)  
     { 
-        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+      /*  GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
         if (location == -1) {
             RD_CORE_ERROR("glShader {0}: SetVec3: uniform {1} not found", m_Name, name);
             return;
+        }*/
+        if (m_uniformLocationCache.find(name) == m_uniformLocationCache.end()) {
+            CacheLocation(name);
         }
-        glUniform3fv(location, 1, &value[0]);
+
+        GLint location = m_uniformLocationCache[name];
+        if (location != -1)
+        glProgramUniform3fv(m_ShaderID, location, 1, &value[0]);
     }
 
-    void OpenGLShader::SetVec3(const std::string& name, float x, float y, float z) const
+    void OpenGLShader::SetVec3(const std::string& name, float x, float y, float z)  
     {
-        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+      /*  GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
         if (location == -1) {
             RD_CORE_ERROR("glShader {0}: SetVec3: uniform {1} not found", m_Name, name);
             return;
+        }*/
+        if (m_uniformLocationCache.find(name) == m_uniformLocationCache.end()) {
+            CacheLocation(name);
         }
-        glUniform3f(location, x, y, z);
+
+        GLint location = m_uniformLocationCache[name];
+        if (location != -1)
+        glProgramUniform3f(m_ShaderID, location, x, y, z);
     }
 
     // ------------------------------------------------------------------------
-    void OpenGLShader::SetVec4(const std::string& name, const glm::vec4& value) const
+    void OpenGLShader::SetVec4(const std::string& name, const glm::vec4& value)  
     {
-        glUniform4fv(glGetUniformLocation(m_ShaderID, name.c_str()), 1, &value[0]);
+        if (m_uniformLocationCache.find(name) == m_uniformLocationCache.end()) {
+            CacheLocation(name);
+        }
+
+        GLint location = m_uniformLocationCache[name];
+        if (location != -1)
+        glProgramUniform4fv(m_ShaderID, location, 1, &value[0]);
     }
-    void OpenGLShader::SetVec4(const std::string& name, float x, float y, float z, float w) const
+    void OpenGLShader::SetVec4(const std::string& name, float x, float y, float z, float w) 
     {
-        glUniform4f(glGetUniformLocation(m_ShaderID, name.c_str()), x, y, z, w);
+        if (m_uniformLocationCache.find(name) == m_uniformLocationCache.end()) {
+            CacheLocation(name);
+        }
+
+        GLint location = m_uniformLocationCache[name];
+        if (location != -1)
+        glProgramUniform4f(m_ShaderID, location, x, y, z, w);
     }
 
     // ------------------------------------------------------------------------
-    void OpenGLShader::SetMat3(const std::string& name, const glm::mat3& mat) const
+    void OpenGLShader::SetMat3(const std::string& name, const glm::mat3& mat) 
     {
-        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+      /*  GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
         if (location == -1) {
             RD_CORE_ERROR("glShader: SetMat3: uniform {0} not found", name);
             return;
+        }*/
+        if (m_uniformLocationCache.find(name) == m_uniformLocationCache.end()) {
+            CacheLocation(name);
         }
-        glUniformMatrix3fv(location, 1, GL_FALSE, &mat[0][0]);
+
+        GLint location = m_uniformLocationCache[name];
+        if (location != -1)
+        glProgramUniformMatrix3fv(m_ShaderID, location, 1, GL_FALSE, &mat[0][0]);
     }
     // ------------------------------------------------------------------------
-    void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& mat) const
+    void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& mat)  
     {  
-        GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
-        if (location == -1) {
-            //RD_CORE_ERROR("glShader: SetMat4: uniform {0} not found", name);
-            return;
-        }
-        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat)); 
+        //GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        //if (location == -1) {
+        //    //RD_CORE_ERROR("glShader: SetMat4: uniform {0} not found", name);
+        //    return;
+        //}
+        if (m_uniformLocationCache.find(name) == m_uniformLocationCache.end()) {
+            CacheLocation(name);
+        } 
+        GLint location = m_uniformLocationCache[name];
+        if (location != -1)
+        glProgramUniformMatrix4fv(m_ShaderID, location, 1, GL_FALSE, glm::value_ptr(mat)); 
 
     } 
 
@@ -357,11 +440,50 @@ namespace Rudy {
             if (!success)
             {
                 glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-                std::cout << "Shader name: " << m_Name << " ;directory:" << m_FilePath << std::endl;
+                std::cout << "Shader name: " << m_Name <<  std::endl;
                 std::cout << "APP GET ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
             }
         }
     }
 
 
+    void OpenGLShader::CacheLocation(const std::string& name)
+    {
+
+        // if already cached, return
+        auto it = m_uniformLocationCache.find(name);
+        if (it != m_uniformLocationCache.end()) {  
+            //RD_CORE_INFO("glShader:  {0}: uniform {1} is registered", this->m_Name, name);
+          
+        }
+
+        //register as -1 if not found
+		GLint location = glGetUniformLocation(m_ShaderID, name.c_str());
+        if (location == -1) {
+            m_uniformLocationCache[name] = -1;
+			RD_CORE_ERROR("glShader: {0}: uniform {1} not found", this->m_Name, name);
+		 
+		}
+        else
+        {
+            m_uniformLocationCache[name] = location;
+			//RD_CORE_INFO("glShader: {0}: uniform {1} is found at location: {2}", this->m_Name, name, location);
+        
+		}
+    }
+
+    //if cached, return the location, if not, return -1 
+	GLint OpenGLShader::GetLocation(const std::string& name)
+	{
+		auto it = m_uniformLocationCache.find(name);
+        if (it == m_uniformLocationCache.end()) { 
+            CacheLocation(name); 
+		}
+
+        return it->second; 
+	}
+
+ 
+
 }
+ 
