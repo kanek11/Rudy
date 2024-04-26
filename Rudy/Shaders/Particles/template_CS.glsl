@@ -15,19 +15,15 @@ layout(local_size_x = 32, local_size_y = 1, local_size_z = 1) in;
 // UNIFORMS ---------------------------------------------------------
 // ------------------------------------------------------------------
 
-
-
-
 // ------------------------------------------------------------------
 // BUFFERS ---------------------------------------------------------
 // ------------------------------------------------------------------
 
-
-layout(std430, binding = 0) buffer buffer_t 
-{ 
-	float buffer_data[]; 
-
-} buffer0;
+layout(std430, binding = 0) buffer buffer_t
+{
+    float buffer_data[];
+}
+buffer0;
 
 // ------------------------------------------------------------------
 // Images ---------------------------------------------------------
@@ -35,18 +31,24 @@ layout(std430, binding = 0) buffer buffer_t
 
 layout(binding = 0, rgba32f) uniform image2D image0;
 
+// ------------------------------------------------------------------
+// functions ---------------------------------------------------------
+// ------------------------------------------------------------------
 
+// ------------------------------------------------------------------
+// entry ---------------------------------------------------------
+// ------------------------------------------------------------------
 
 void main()
 {
-	uint index = gl_GlobalInvocationID.x;
-	buffer0.buffer_data[index] = 0.0f;
+    // for 1D
+    uint index                 = gl_GlobalInvocationID.x;
+    buffer0.buffer_data[index] = 0.0f;
 
-	//or
-	ivec2 pixel_index = ivec2(gl_GlobalInvocationID.xy);
-	
-	vec4 imageValue = imageLoad(image0, pixel_index);
-    imageValue = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-	imageStore(image0, pixel_index, imageValue);
-	
+    // for 2D
+    ivec2 pixel_index = ivec2(gl_GlobalInvocationID.xy);
+
+    vec4 imageValue = imageLoad(image0, pixel_index);
+    imageValue      = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    imageStore(image0, pixel_index, imageValue);
 }

@@ -4,28 +4,23 @@
 
 #include "PBR.h"
 #include "NPR.h"
-#include "Particles.h"
-#include "ClothApp.h"
+#include "Phys.h"
 
 using namespace Rudy;
 
-Ref<Application> CreateApp(const std::string& appName)
+ViewportLayer* CreateLayer(const std::string& appName)
 {
     if (appName == "PBR")
     {
-        return PBR::Create();
+        return new PBR();
     }
     else if (appName == "NPR")
     {
-        return NPR::Create();
+        return new NPR();
     }
-    else if (appName == "Particles")
+    else if (appName == "Phys")
     {
-        return Particles::Create();
-    }
-    else if (appName == "ClothApp")
-    {
-        return ClothApp::Create();
+        return new Phys();
     }
     else
     {
@@ -41,28 +36,39 @@ int main(int argc, char** argv)
     // RD_ASSERT(2 < 1, "test:Assert!");
 
     // auto app = PBR::Create();
-    //  auto app = Particles::Create();
-    //  auto app = ClothApp::Create();
-    //  auto app = NPR::Create();
 
-    std::string appName = "PBR"; // Ä¬ÈÏÓ¦ÓÃ
+    auto app = CreateRef<Application>();
+
+    std::string appName = "Phys"; // default app
     for (int i = 1; i < argc; ++i)
     {
         std::string arg = argv[i];
-        if (arg.find("--app=") == 0)
+        if (arg.find("--demo=") == 0)
         {
             appName = arg.substr(6);
         }
     }
 
-    auto app = CreateApp(appName);
-    if (!app)
+    auto viewport_layer = CreateLayer(appName);
+    if (!viewport_layer)
     {
+        RD_CORE_ERROR("Failed to create layer: {0}", appName);
         return -1;
     }
 
+    // layer stack
+    // app->PushLayer(scene_layer);
+    app->m_viewportLayer       = viewport_layer;
+    viewport_layer->SCR_HEIGHT = 1080;
+    viewport_layer->SCR_WIDTH  = 1920;
+
+    // gui
+    auto gui_layer    = new ImGuiLayer();
+    app->m_imguiLayer = gui_layer;
+
     app->Init();
-    app->Start();
+    app->Run();
+    app->ShutDown();
 
     return 0;
 }

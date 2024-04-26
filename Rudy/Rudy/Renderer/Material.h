@@ -20,6 +20,8 @@ namespace Rudy {
 
 	enum class TexType
 	{
+		
+		ScreenTexture = 0,  //for screen quad
 
 		//named []Map, that 
 		//DiffuseMap, //replaced as basecolor
@@ -51,7 +53,6 @@ namespace Rudy {
 
 		//pass outputs named "[]Texture"
 		//litPass output  
-		ScreenTexture,
 		litPassTexture, 
 		SkyboxTexture,  //cubemap 
 

@@ -18,7 +18,7 @@ namespace Rudy {
 
 	Ref<Texture2D> Texture2D::LoadFile(const std::string& path, bool isHDRI)
 	{
-		switch (RendererApp::GetAPI())
+		switch (RendererAPI::GetAPI())
 		{
 		case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTexture2D>(path, isHDRI);
@@ -31,7 +31,7 @@ namespace Rudy {
 	
 	Ref<Texture2D> Texture2D::CreateEmpty(const TextureSpec& specfication)
 	{
-		switch (RendererApp::GetAPI())
+		switch (RendererAPI::GetAPI())
 		{
 		case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTexture2D>(specfication);
@@ -55,7 +55,7 @@ namespace Rudy {
 
 	Ref<TextureCube> TextureCube::LoadImages(const std::vector<std::string>& paths)
 	{
-		switch (RendererApp::GetAPI())
+		switch (RendererAPI::GetAPI())
 		{
 		case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTextureCube>(paths);
@@ -70,7 +70,7 @@ namespace Rudy {
 
 	Ref<TextureCube> TextureCube::CreateEmpty(const TextureSpec& specfication)
 	{
-		switch (RendererApp::GetAPI())
+		switch (RendererAPI::GetAPI())
 		{
 		case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTextureCube>(specfication);
@@ -84,7 +84,7 @@ namespace Rudy {
 
 	 Ref<TextureCube> TextureCube::LoadHDRI(const std::string& path)
 	 {
-		 switch (RendererApp::GetAPI())
+		 switch (RendererAPI::GetAPI())
 		 {
 		 case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 		 case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTextureCube>(path);

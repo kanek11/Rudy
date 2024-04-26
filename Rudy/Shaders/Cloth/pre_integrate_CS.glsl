@@ -25,72 +25,63 @@ uniform uint u_num_particles;
 // BUFFERS ---------------------------------------------------------
 // ------------------------------------------------------------------
 
-
 layout(std430, binding = 0) buffer Positions_t
 {
-	vec4 positions[];
+    vec4 positions[];
+}
+Positions;
 
-}Positions;
-
-layout(std430, binding = 1) buffer PrevPositions_t   
-{ 
-	vec4 prev_positions[]; 
-
-}PrevPositions;
+layout(std430, binding = 1) buffer PrevPositions_t
+{
+    vec4 prev_positions[];
+}
+PrevPositions;
 
 layout(std430, binding = 2) buffer Corrections_t
 {
-	vec4 corrections[];
-
-}Corrections;
-
+    vec4 corrections[];
+}
+Corrections;
 
 layout(std430, binding = 3) buffer Velocities_t
 {
-	vec4 velocities[];
-
-}Velocities;
-
+    vec4 velocities[];
+}
+Velocities;
 
 layout(std430, binding = 4) readonly buffer InvMass_t
 {
-	float invMass[];
-
-}InvMass;
-
+    float invMass[];
+}
+InvMass;
 
 layout(std430, binding = 5) buffer Normals_t
 {
-	vec4 normals[];
-
-}Normals;
-
-
-
+    vec4 normals[];
+}
+Normals;
 
 void main()
 {
-	uint index = gl_GlobalInvocationID.x; 
-	if(index >= u_num_particles)
-	{
-		return;
-	}
-	 
-	PrevPositions.prev_positions[index] = Positions.positions[index];
+    uint index = gl_GlobalInvocationID.x;
+    if (index >= u_num_particles)
+    {
+        return;
+    }
 
-	float invMass = InvMass.invMass[index];
-	if (invMass == 0.0f)
-	{
-		return;
-	}
-	
-	Velocities.velocities[index].y += u_gravity * u_deltaTime;
-	Velocities.velocities[index] *= 0.999f;
-	Positions.positions[index].xyz += Velocities.velocities[index].xyz * u_deltaTime;
+    PrevPositions.prev_positions[index] = Positions.positions[index];
 
+    float invMass = InvMass.invMass[index];
+    if (invMass == 0.0f)
+    {
+        return;
+    }
 
-	//important: reset the correction
-	Corrections.corrections[index].xyzw = vec4(0.0f);
-	 Normals.normals[index].xyzw = vec4(0.0f);
+    Velocities.velocities[index].y += u_gravity * u_deltaTime;
+    Velocities.velocities[index] *= 0.999f;
+    Positions.positions[index].xyz += Velocities.velocities[index].xyz * u_deltaTime;
 
+    // important: reset data
+    Corrections.corrections[index].xyzw = vec4(0.0f);
+    Normals.normals[index].xyzw         = vec4(0.0f);
 }

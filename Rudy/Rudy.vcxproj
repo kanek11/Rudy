@@ -89,10 +89,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Apps\Application.h" />
-    <ClInclude Include="Apps\ClothApp.h" />
+    <ClInclude Include="Apps\Layer.h" />
     <ClInclude Include="Apps\NPR.h" />
-    <ClInclude Include="Apps\Particles.h" />
+    <ClInclude Include="Apps\Phys.h" />
     <ClInclude Include="Apps\PBR.h" />
+    <ClInclude Include="Rudy\Physics\Fluid.h" />
     <ClInclude Include="Rudy\Primitives\Cube.h" />
     <ClInclude Include="Rudy\Primitives\Overlay.h" />
     <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h" />
@@ -163,13 +164,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Apps\Application.cpp" />
+    <ClCompile Include="Apps\Layer.cpp" />
     <ClCompile Include="Apps\main.cpp" />
     <ClCompile Include="Apps\NPR.cpp" />
+    <ClCompile Include="Apps\Phys.cpp" />
     <ClCompile Include="Apps\PBR.cpp" />
-    <ClCompile Include="Apps\ClothApp.cpp" />
-    <ClCompile Include="Apps\Particles.cpp" />
-    <ClCompile Include="Apps\test_template.cpp" />
     <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp" />
+    <ClCompile Include="Rudy\Physics\Fluid.cpp" />
     <ClCompile Include="Rudy\Primitives\Overlay.cpp" />
     <ClCompile Include="Rudy\Primitives\plane.cpp" />
     <ClCompile Include="Rudy\Primitives\ScreenQuad.cpp" />
@@ -184,6 +185,7 @@
     <ClCompile Include="Rudy\Passes\WorldToView.cpp" />
     <ClCompile Include="Rudy\Physics\Cloth.cpp" />
     <ClCompile Include="Rudy\Renderer\Buffer.cpp" />
+    <ClCompile Include="Rudy\Renderer\Light.cpp" />
     <ClCompile Include="Rudy\Renderer\RendererComponent.cpp" />
     <ClCompile Include="Vendor\imgui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -213,6 +215,11 @@
     <None Include="Shaders\Cloth\post_update_vel_CS.glsl" />
     <None Include="Shaders\Cloth\solve_bendConst_CS.glsl" />
     <None Include="Shaders\Cloth\solve_distConst_legacy_CS.glsl" />
+    <None Include="Shaders\Fluid\fluid_advection_attr_CS.glsl" />
+    <None Include="Shaders\Fluid\fluid_advection_CS.glsl" />
+    <None Include="Shaders\Fluid\fluid_post_projection_CS.glsl" />
+    <None Include="Shaders\Fluid\fluid_projection_CS.glsl" />
+    <None Include="Shaders\Fluid\fluid_colormap_CS.glsl" />
     <None Include="Shaders\Particles\particle_dispatch_CS.glsl" />
     <None Include="Shaders\Particles\template_CS.glsl" />
     <None Include="Shaders\Cloth\compute_normals_CS.glsl" />

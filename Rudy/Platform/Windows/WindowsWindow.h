@@ -2,69 +2,65 @@
 #include "RudyPCH.h"
 
 #include "Rudy/Core/Window.h"
-#include "Rudy/Renderer/GraphicsContext.h" 
+#include "Rudy/Renderer/GraphicsContext.h"
 #include "Platform/OpenGL/OpenGLContext.h"
 
-#include <GLFW/glfw3.h>
+// new:
+#include "Apps/Application.h"
 
+// me:
+//  WindowData:
+//  group all the window related data into a struct similarly.
+// including config,state, callback, etc.
 
-//me:
-// WindowData:
-// group all the window related data into a struct similarly.
-//including config,state, callback, etc.
+namespace Rudy
+{
 
- 
+class WindowsWindow : public Window
+{
+public:
+    WindowsWindow(const WindowProps& props);
+    ~WindowsWindow();
 
+    //===inherited
+    void OnUpdate() override;
 
-namespace Rudy {
+    uint32_t GetWidth() const override { return m_Data.Width; }
+    uint32_t GetHeight() const override { return m_Data.Height; }
 
-	class WindowsWindow : public Window
-	{
-	public:
-		WindowsWindow(const WindowProps& props);
-		~WindowsWindow();
+    // Window attributes
+    void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
+    void SetVSync(bool enabled) override;
+    bool IsVSync() const override;
 
-		//===inherited
-		void OnUpdate() override;
+    bool ShouldClose() override;
 
-		uint32_t GetWidth() const override { return m_Data.Width; }
-		uint32_t GetHeight() const override { return m_Data.Height; }
+    virtual void* GetNativeWindow() const { return m_Window; }
 
-		// Window attributes
-		void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
-		void SetVSync(bool enabled) override;
-		bool IsVSync() const override;
+    //===========
 
-		bool ShouldClose() override;
+    // child -specific
+private:
+    // utilities
+    virtual void Init(const WindowProps& props);
+    virtual void Shutdown();
 
-		virtual void* GetNativeWindow() const { return m_Window; }
+private:
+    GLFWwindow*            m_Window;
+    Scope<GraphicsContext> m_Context;
 
-		//===========
+    struct WindowData
+    {
+        uint32_t    Width, Height;
+        std::string Title = "Default";
+        bool        VSync = true;
 
+        // me: for robustness, when no callback is set, we set it to a dummy function that does nothing.
+        EventCallbackFn EventCallback = [](Event& e)
+        { RD_CORE_WARN("windowswindowEventCallBack: no callback of type:{0} is set", e.GetName()); };
+    };
 
-		//child -specific
-	private:
-		//utilities
-		virtual void Init(const WindowProps& props);
-		virtual void Shutdown();
+    WindowData m_Data;
+};
 
-
-	private:
-		GLFWwindow* m_Window;
-		Scope<GraphicsContext> m_Context;
-
-		struct WindowData
-		{
-
-			uint32_t Width, Height;
-			std::string Title = "Default";
-			bool VSync = true;
-
-			//me: for robustness, when no callback is set, we set it to a dummy function that does nothing.
-			EventCallbackFn EventCallback = [](Event& e) {  RD_CORE_WARN("windowswindowEventCallBack: no callback of type:{0} is set", e.GetName());  };
-		};
-
-		WindowData m_Data;
-	};
-
-}
+} // namespace Rudy

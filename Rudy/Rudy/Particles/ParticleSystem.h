@@ -4,17 +4,15 @@
 
 #include "Rudy/Renderer/Buffer.h"
 #include "Rudy/Renderer/Object.h"
-#include "Rudy/Renderer/RendererComponent.h"
 
 namespace Rudy
 {
 
-// structs are mere data containers to specify the layout for the buffers
-// they are structed the same way as in the shader structs
+// structs that specify layout, also for GPU buffers
 
-// important warning: somehow the std140 and std430 layout  always round up to
-// the next multiple of 16 bytes so vec3 is really 16 bytes and access by index
-// will cause a misalignment ,so just use vec4 instead
+// warning: somehow the std140 and std430 layout have different alignment rules
+// for std430, the next multiple of 16 bytes ,means vec3 is really 16 bytes ,
+// always use vec4  or vec3 + padding;
 struct Particle
 {
     glm::vec4 position;
@@ -55,18 +53,22 @@ public:
 class Emitter : public RenderableObject
 {
 public:
-    Emitter();
     ~Emitter();
+    Emitter();
 
+    static Ref<Emitter> Create();
+    void                InitComponent(Ref<Emitter> object);
+
+    // basic stages
     void Spawn();
     void Update();
     void Reset();
 
-    // inherit;
+    // inherit rendering method;
     void Draw(Ref<Camera> cam) override;
 
 public:
-    // system handles
+    // system parameters
     float m_deltaTime = 0.0f;
 
     uint32_t m_local_size_x = 32;
@@ -79,33 +81,41 @@ public:
 
     float m_emissionAccumulator = 0.0f;
 
-    // debug
+    // debug info
     uint32_t totalEmissionCount = 0;
-    float    totalEmissionTime  = 0.0f;
+    float    EmissionTime       = 0.0f;
 
-    // emitter spawn parameters
+    // emitter spawn
 
     glm::vec3 m_emitter_position = { 0.0f, 10.0f, 0.0f };
 
-    float m_emissionRate = 32;
+    float m_emission_rate = 32;
+
+    // emitter shape
+    int m_emission_shape = 0;
+    // sphere
     float m_sphereRadius = 1.0f;
 
-    // emitter update parameters
+    // cone
+    glm::vec3 m_cone_axis_direction = { 0.0f, 1.0f, 0.0f };
+    float     m_cone_angle          = 45.0f;
+
+    // emitter update
     uint32_t m_preSimIndex  = 0;
     uint32_t m_postSimIndex = 1;
 
-    // particle spawn parameters
+    // particle spawn
     float m_particle_minLifetime     = 3.0f;
     float m_particle_maxLifetime     = 10.0f;
     float m_particle_minInitialSpeed = 5.0f;
     float m_particle_maxInitialSpeed = 10.0f;
 
-    // particle simulation/update parameters
+    // particle simulation/update
 
 public:
-    // system handles
+    // system resources
     //======shader programs======//
-    // each shader is a stage in the stack;
+    //  each shader is a stage in the stack;
     Ref<Shader> m_particle_reset_compute_shader;
     Ref<Shader> m_particle_dispatch_compute_shader;
     Ref<Shader> m_particle_emission_compute_shader;
@@ -129,9 +139,20 @@ public:
     Ref<StorageBuffer> m_indirect_dispatch_update_buffer;
     Ref<StorageBuffer> m_indirect_dispatch_emission_buffer;
 
-public:
-    // meta data
-    std::string m_name = "Unnamed";
+    // rendering
+
+    Ref<Texture2D> radial_sprite = nullptr;
+
+    Ref<Shader> m_particle_sprite_shader = nullptr;
+    Ref<Shader> m_particle_mesh_shader   = nullptr;
+    enum class RENDER_TYPE
+    {
+        POINTS = 0,
+        SPRITES,
+        MESHES,
+    };
+
+    RENDER_TYPE m_render_type = RENDER_TYPE::SPRITES;
 };
 
 // float rotation = 0.0f;

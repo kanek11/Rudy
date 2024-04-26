@@ -1,6 +1,5 @@
 
-#include "RudyPCH.h" 
-
+#include "RudyPCH.h"
 
 #include "Rudy/Events/Input.h"
 
@@ -10,93 +9,91 @@
 
 #include "Rudy/Renderer/Renderer.h"
 
-
 #include "WindowsWindow.h"
 
+namespace Rudy
+{
 
-namespace Rudy {
-	
-	static uint8_t s_GLFWWindowCount = 0;
+static uint8_t s_GLFWWindowCount = 0;
 
-	static void GLFWErrorCallback(int error, const char* description)
-	{
-		RD_CORE_ERROR("WindowsWindow.cpp: GLFW Error ({0}): {1}", error, description); 
-	}
+static void GLFWErrorCallback(int error, const char* description)
+{
+    RD_CORE_ERROR("WindowsWindow.cpp: GLFW Error ({0}): {1}", error, description);
+}
 
-	WindowsWindow::WindowsWindow(const WindowProps& props)
-	{
-		//RD_PROFILE_FUNCTION(); 
-		Init(props);
-	}
+WindowsWindow::WindowsWindow(const WindowProps& props)
+{
+    // RD_PROFILE_FUNCTION();
+    Init(props);
+}
 
-	WindowsWindow::~WindowsWindow()
-	{
-		//RD_PROFILE_FUNCTION(); 
-		Shutdown();
-	}
+WindowsWindow::~WindowsWindow()
+{
+    // RD_PROFILE_FUNCTION();
+    Shutdown();
+}
 
-	void WindowsWindow::Init(const WindowProps& props)
-	{
-		//RD_PROFILE_FUNCTION();
+void WindowsWindow::Init(const WindowProps& props)
+{
+    // RD_PROFILE_FUNCTION();
 
-		m_Data.Title = props.Title;
-		m_Data.Width = props.Width;
-		m_Data.Height = props.Height;
+    m_Data.Title  = props.Title;
+    m_Data.Width  = props.Width;
+    m_Data.Height = props.Height;
 
-		RD_CORE_INFO("WindowsWindow: Creating window:{0} ({1}, {2})", props.Title, props.Width, props.Height);
- 
-		//if no window is created, initialize GLFW first;
-		if (s_GLFWWindowCount == 0)
-		{
-			//RD_PROFILE_SCOPE("glfwInit first time");
-			int success = glfwInit();
-			RD_CORE_ASSERT(success, "Could not initialize GLFW!");
-			glfwSetErrorCallback(GLFWErrorCallback);
+    RD_CORE_INFO("WindowsWindow: Creating window:{0} ({1}, {2})", props.Title, props.Width, props.Height);
 
-		}
+    // if no window is created, initialize GLFW first;
+    if (s_GLFWWindowCount == 0)
+    {
+        // RD_PROFILE_SCOPE("glfwInit first time");
+        int success = glfwInit();
+        RD_CORE_ASSERT(success, "Could not initialize GLFW!");
+        glfwSetErrorCallback(GLFWErrorCallback);
+    }
 
-		{
-			//RD_PROFILE_SCOPE("glfwCreateWindow");
-		    #if defined(_DEBUG)
-		    	if (RendererApp ::GetAPI() == RendererAPI::API::OpenGL)
-		    		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-		    #endif
+    {
+        // RD_PROFILE_SCOPE("glfwCreateWindow");
+#if defined(_DEBUG)
+        if (RendererAPI::GetAPI() == RendererAPI::API::OpenGL)
+            glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+#endif
 
-			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
-			++s_GLFWWindowCount;
-		}
+        m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+        ++s_GLFWWindowCount;
+    }
 
-		m_Context = GraphicsContext::Create(m_Window);
-		m_Context -> Init();
+    m_Context = GraphicsContext::Create(m_Window);
+    m_Context->Init();
 
-		glfwSetWindowUserPointer(m_Window, &m_Data);
+    glfwSetWindowUserPointer(m_Window, &m_Data);
 
-		SetVSync(m_Data.VSync); 
+    SetVSync(m_Data.VSync);
 
-		// Set GLFW callbacks  using lambda expressions
-		//bug history: runtime;  std::function,std::bad_function_call 
-		//need to set the "EventCallbackFn"  before calling it.  
-		//i find such coupling bad design, i just ignore it for now.
-		 
-		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
-			{
-				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-				data.Width = width;
-				data.Height = height;
+    // Set GLFW callbacks  using lambda expressions
+    // bug history: runtime;  std::function,std::bad_function_call
+    // need to set the "EventCallbackFn"  before calling it.
+    // i find such coupling bad design, i just ignore it for now.
 
-				WindowResizeEvent event(width, height);
-				//data.EventCallback(event);
-			});
+    glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
+                              {
+                                  WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+                                  data.Width       = width;
+                                  data.Height      = height;
 
-		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
-			{
-				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-				WindowCloseEvent event;
-				//data.EventCallback(event);
-			});
+                                  WindowResizeEvent event(width, height);
+                                  // data.EventCallback(event);
+                              });
 
-		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
-			{
+    glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
+                               {
+                                   WindowData&      data = *(WindowData*)glfwGetWindowUserPointer(window);
+                                   WindowCloseEvent event;
+                                   // data.EventCallback(event);
+                               });
+
+    glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+                       {
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
 				switch (action)
@@ -119,19 +116,18 @@ namespace Rudy {
 					//data.EventCallback(event);
 					break;
 				}
-				}
-			});
+				} });
 
-		glfwSetCharCallback(m_Window, [](GLFWwindow* window, uint32_t keycode)
-			{
-				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+    glfwSetCharCallback(m_Window, [](GLFWwindow* window, uint32_t keycode)
+                        {
+                            WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
-				KeyTypedEvent event(keycode);
-				//data.EventCallback(event);
-			});
+                            KeyTypedEvent event(keycode);
+                            // data.EventCallback(event);
+                        });
 
-		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
-		 {
+    glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
+                               {
 		 	WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 		 
 		 	switch (action)
@@ -148,75 +144,66 @@ namespace Rudy {
 		 		//data.EventCallback(event);
 		 		break;
 		 	}
-		 	}
-		 });
+		 	} });
 
-		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset)
-			{
-				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+    glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset)
+                          {
+                              WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
-				MouseScrolledEvent event((float)xOffset, (float)yOffset);
-				//data.EventCallback(event);
-			});
+                              MouseScrolledEvent event((float)xOffset, (float)yOffset);
+                              // data.EventCallback(event);
+                          });
 
-		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos)
-			{
-				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+    glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos)
+                             {
+                                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
-				MouseMovedEvent event((float)xPos, (float)yPos);
-				//data.EventCallback(event);
-			});
-	
-	}
-
-	void WindowsWindow::Shutdown()
-	{
-		//RD_PROFILE_FUNCTION();
-
-		glfwDestroyWindow(m_Window);
-		--s_GLFWWindowCount;
-
-		if (s_GLFWWindowCount == 0)
-		{
-			glfwTerminate();
-		}
-
-	}
-
-	void WindowsWindow::OnUpdate()
-	{
-		//RD_PROFILE_FUNCTION();
-
-		 
-		glfwSwapBuffers(m_Window);
-		glfwPollEvents();
-	}
-
-	void WindowsWindow::SetVSync(bool enabled)
-	{
-		//RD_PROFILE_FUNCTION();
-		RD_CORE_INFO("WindowsWindow: VSync On: {0}", enabled);
-		m_Data.VSync = enabled;
-
-		if (enabled)
-			glfwSwapInterval(1);  //lock to system refresh rate
-		else
-			glfwSwapInterval(0);  //unlimited fps
-
-		
-	}
-
-
-	bool WindowsWindow::ShouldClose()
-	{
-		return glfwWindowShouldClose(m_Window); 
-	}
-
-
-	bool WindowsWindow::IsVSync() const
-     {
-     	return m_Data.VSync;
-     }
-
-
+                                 MouseMovedEvent event((float)xPos, (float)yPos);
+                                 // data.EventCallback(event);
+                             });
 }
+
+void WindowsWindow::Shutdown()
+{
+    // RD_PROFILE_FUNCTION();
+
+    glfwDestroyWindow(m_Window);
+    --s_GLFWWindowCount;
+
+    if (s_GLFWWindowCount == 0)
+    {
+        glfwTerminate();
+    }
+}
+
+void WindowsWindow::OnUpdate()
+{
+    // RD_PROFILE_FUNCTION();
+
+    glfwSwapBuffers(m_Window);
+    glfwPollEvents();
+}
+
+void WindowsWindow::SetVSync(bool enabled)
+{
+    // RD_PROFILE_FUNCTION();
+    RD_CORE_INFO("WindowsWindow: VSync On: {0}", enabled);
+    m_Data.VSync = enabled;
+
+    if (enabled)
+        glfwSwapInterval(1); // lock to system refresh rate
+    else
+        glfwSwapInterval(0); // unlimited fps
+}
+
+bool WindowsWindow::ShouldClose()
+{
+    return glfwWindowShouldClose(m_Window);
+}
+
+bool WindowsWindow::IsVSync() const
+{
+    return m_Data.VSync;
+}
+
+} // namespace Rudy

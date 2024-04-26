@@ -201,9 +201,6 @@
     <ClInclude Include="Rudy\Passes\SSR.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Apps\NPR.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Rudy\Passes\ToneMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -213,10 +210,16 @@
     <ClInclude Include="Rudy\Passes\Composer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Apps\Particles.h">
+    <ClInclude Include="Apps\Phys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Apps\ClothApp.h">
+    <ClInclude Include="Apps\NPR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Physics\Fluid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Apps\Layer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -338,15 +341,6 @@
     <ClCompile Include="Rudy\Passes\WorldToView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Apps\test_template.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Apps\Particles.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Apps\ClothApp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Vendor\imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -377,9 +371,6 @@
     <ClCompile Include="Rudy\Passes\SSR.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Apps\NPR.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Rudy\Passes\ToneMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -390,6 +381,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Apps\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Apps\Phys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Apps\NPR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Physics\Fluid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Apps\Layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -476,5 +482,10 @@
     <None Include="Shaders\PostProcess\outline_FDM_CS.glsl" />
     <None Include="Shaders\PostProcess\bloom_add_CS.glsl" />
     <None Include=".clang-format" />
+    <None Include="Shaders\Fluid\fluid_colormap_CS.glsl" />
+    <None Include="Shaders\Fluid\fluid_projection_CS.glsl" />
+    <None Include="Shaders\Fluid\fluid_advection_CS.glsl" />
+    <None Include="Shaders\Fluid\fluid_post_projection_CS.glsl" />
+    <None Include="Shaders\Fluid\fluid_advection_attr_CS.glsl" />
   </ItemGroup>
 </Project>

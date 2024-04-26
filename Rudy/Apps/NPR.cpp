@@ -1,4 +1,4 @@
-// update 2024.1.22
+ï»¿// update 2024.1.22
 #include "RudyPCH.h"
 #include "NPR.h"
 
@@ -6,44 +6,20 @@ namespace Rudy
 {
 
 NPR::NPR() :
-    Application()
+    ViewportLayer()
 {
     // this->GetWindow()->SetVSync(false);
 }
 
-Ref<NPR> NPR::Create()
+void NPR::ShutDown()
 {
-    return CreateRef<NPR>();
+    // all lifetime management is done by the smart pointers;
 }
 
 void NPR::Init()
 {
-}
-
-void NPR::Start()
-{
-    Rudy::Log::Init();
-    RD_CORE_WARN("test:Initialized Log!");
-
-    //========================================
-    //=== initialize renderer
-    // auto window = Window::Create();
-    // Input::SetWindowContext(window->GetNativeWindow());
-
-    main_camera = Camera::Create(MAIN_CAMERA_POS);
-
-    RendererApp::Init(SCR_WIDTH, SCR_HEIGHT);
-    RendererApp::SetMainCamera(main_camera);
-
-    window         = RendererApp::GetWindow();
-    auto renderAPI = RendererApp::GetAPI();
-
-    // gui
-    this->InitGUI();
-
-    //=================================================================================================
-    //=== initialize the resources
-
+    ViewportLayer::Init();
+    //================================================================================================
     //==========shadow map pass
     auto shadowMapShader = Shader::Create("shadowMap Shader",
                                           "Shaders/Shaders/DepthMap_VS.glsl",
@@ -55,13 +31,13 @@ void NPR::Start()
                                                  "Shaders/Shaders/DepthMap_FS.glsl");
     // Material::SetMaterialProperties(shadowMapSkinnedShader);
 
-    auto shadowMapMaterial        = Material::Create(shadowMapShader);
-    auto shadowMapSkinnedMaterial = Material::Create(shadowMapSkinnedShader);
+    this->shadowMapMaterial        = Material::Create(shadowMapShader);
+    this->shadowMapSkinnedMaterial = Material::Create(shadowMapSkinnedShader);
 
-    auto shadowMapFBO = FrameBuffer::Create("shadowMap FBO",
-                                            SHADOW_WIDTH,
-                                            SHADOW_HEIGHT,
-                                            FrameBufferType::DepthTexture);
+    this->shadowMapFBO = FrameBuffer::Create("shadowMap FBO",
+                                             SHADOW_WIDTH,
+                                             SHADOW_HEIGHT,
+                                             FrameBufferType::DepthTexture);
 
     shadowMap = Texture2D::CreateEmpty(
         TextureSpec { SHADOW_WIDTH, SHADOW_HEIGHT, TextureInternalFormat::DEPTH_COMPONENT24, false, WrapMode::ClampToBorder, FilterMode::Nearest });
@@ -98,9 +74,9 @@ void NPR::Start()
     auto litPassScreenTexture = Texture2D::CreateEmpty(
         TextureSpec { SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGBA32F, false, WrapMode::ClampToBorder, FilterMode::Linear, FilterMode::Linear });
 
-    auto litPassShader = Shader::Create("NPR Shader",
-                                        "Shaders/Shaders/Genshin_VS.glsl",
-                                        "Shaders/Shaders/Genshin_FS.glsl");
+    this->litPassShader = Shader::Create("NPR Shader",
+                                         "Shaders/Shaders/Genshin_VS.glsl",
+                                         "Shaders/Shaders/Genshin_FS.glsl");
     // "Shaders/Shaders/default_VS.glsl", "Shaders/Shaders/default_FS.glsl");
     Material::SetMaterialProperties(litPassShader);
 
@@ -124,21 +100,22 @@ void NPR::Start()
     // auto scene = Scene::Create();
 
     // lighting
-    auto sunlight       = DirectionalLight::Create();
-    sunlight->intensity = 1.0f;
-    sunlight->direction = glm::vec3(0.5f, -0.5f, -1.0f);
+    this->sunlight = DirectionalLight::Create();
+    sunlight->SetIntensity(5.0f);
+    sunlight->SetDirection(glm::vec3(0.5f, -0.5f, -1.0f));
 
     // info for shadowmap:
-    // the orthographic projection matrix for the light source£º
-    float     near_plane = -5.0f, far_plane = 5.0f;
+    // the orthographic projection matrix for the light sourceï¼š
+    sunlight->near_plane      = -10.0f;
+    sunlight->far_plane       = 10.0f;
     glm::mat4 lightProjection = glm::ortho(
-        -5.0f, 5.0f, -5.0f, 5.0f, near_plane, far_plane); // the near and far plane should be large enough to cover the scene
+        -10.0f, 10.0f, -10.0f, 10.0f, sunlight->near_plane, sunlight->far_plane); // the near and far plane should be large enough to cover the scene
     // look at minus direction;
-    glm::mat4 lightView = glm::lookAt(-sunlight->direction, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+    glm::mat4 lightView = glm::lookAt(-sunlight->m_direction, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 
-    auto lightSpaceCamera                = Camera::Create();
-    lightSpaceCamera->m_ProjectionMatrix = lightProjection;
-    lightSpaceCamera->m_ViewMatrix       = lightView;
+    sunlight->lightSpaceCamera                     = Camera::Create();
+    sunlight->lightSpaceCamera->m_ProjectionMatrix = lightProjection;
+    sunlight->lightSpaceCamera->m_ViewMatrix       = lightView;
 
     //=======actors
 
@@ -203,7 +180,7 @@ void NPR::Start()
     // model loading
     Texture2D::SetFlipYOnLoad(true); // eg: for .png;
     Model::s_scaleFactor = 0.01f;
-    auto model           = Model::LoadModel("D:/CG_resources/blender_export/player_no_bones.dae");
+    this->model          = Model::LoadModel("D:/CG_resources/blender_export/player_no_bones.dae");
     this->models.push_back(model);
 
     // for now: assume model use same shader.
@@ -307,278 +284,195 @@ void NPR::Start()
     Material::SetMaterialProperties(skyboxShader);
 
     //
-    auto      gridShader = Shader::Create("default Shader", "Shaders/Shaders/Default_VS.glsl", "Shaders/Shaders/Default_Flat_FS.glsl");
+    auto      gridShader = Shader::Create("default Shader",
+                                     "Shaders/Shaders/Default_VS.glsl",
+                                     "Shaders/Shaders/Default_pure_FS.glsl");
     WorldGrid grid       = WorldGrid(20);
     grid.material        = Material::Create(gridShader);
 
-    auto       lineShader = Shader::Create("vertex color Shader", "Shaders/Shaders/Vertex_Color_VS.glsl", "Shaders/Shaders/Vertex_Color_FS.glsl");
-    Navigation nav        = Navigation();
-    nav.material          = Material::Create(lineShader);
+    auto lineShader = Shader::Create("vertex color Shader", "Shaders/Shaders/Vertex_Color_VS.glsl", "Shaders/Shaders/Vertex_Color_FS.glsl");
+    this->nav       = new Navigation();
+    nav->material   = Material::Create(lineShader);
 
-    auto screenQuadShader   = Shader::Create("screen quad shader",
-                                           "Shaders/Shaders/ScreenQuad_VS.glsl",
-                                           "Shaders/Shaders/ScreenQuad_FS.glsl");
+    this->screenQuadShader  = Shader::Create("screen quad shader",
+                                            "Shaders/Shaders/ScreenQuad_VS.glsl",
+                                            "Shaders/Shaders/ScreenQuad_FS.glsl");
     auto screenQuadMaterial = Material::Create(screenQuadShader);
 
-    auto screenQuad = ScreenQuad::Create();
+    this->screenQuad = ScreenQuad::Create();
     screenQuad->SetMaterial(screenQuadMaterial);
-
-    //======the loop
-    /* Loop until the user closes the window */
-
-    float lastFrameTime = 0.0f;
-    float timer         = 0.0f;
-    RD_CORE_WARN("App: Entering the loop");
-    while (!RendererApp::ShouldClose())
-    {
-        // RD_PROFILE_SCOPE("the game loop");
-
-        // get the time of each frame
-        float time      = (float)glfwGetTime();
-        float deltaTime = time - lastFrameTime;
-        lastFrameTime   = time;
-        timer += deltaTime;
-
-        //'gui'
-        this->PrepareGUI();
-
-        // routined updates
-        // animations
-        {
-            if (model->animator != nullptr)
-            {
-                model->animator->UpdateBoneTransforms(timer);
-                auto transforms = model->animator->GetBoneTransforms();
-                model->boneTransformBuffer->SetData(transforms.data(), transforms.size() * sizeof(glm::mat4));
-            }
-        }
-
-        //====== shadowMap pass: render the scene to the shadowMap;
-        if (true)
-        {
-            shadowMapFBO->Bind();
-            glClear(GL_DEPTH_BUFFER_BIT); // make sure clear the framebuffer's content
-            glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-            glEnable(GL_DEPTH_TEST);
-
-            for (auto& _meshObj : staticMeshObjects)
-            {
-                _meshObj->GetRenderer()->Draw(lightSpaceCamera, 1, shadowMapMaterial);
-            }
-
-            for (auto& _model : models)
-            {
-                _model->Draw(lightSpaceCamera, 1, shadowMapSkinnedMaterial);
-            }
-
-            shadowMapFBO->Unbind();
-        }
-
-        //======Lit pass
-        if (true)
-        {
-            litPassFBO->Bind();
-
-            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // make sure clear the framebuffer's content
-            glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-            glEnable(GL_DEPTH_TEST);
-
-            // scene info
-            litPassShader->Bind();
-
-            // light info
-            litPassShader->SetVec3("u_DirLight.direction", direct_light_dir); // sunlight->direction);
-            litPassShader->SetVec3("u_DirLight.color", sunlight->color);
-            litPassShader->SetFloat("u_DirLight.intensity", direct_light_intensity); // sunlight->intensity);
-
-            litPassShader->SetMat4("u_LightSpaceMatrix", lightSpaceCamera->GetProjectionViewMatrix());
-
-            // camera info
-            litPassShader->SetVec3("u_CameraPos", main_camera->GetPosition());
-
-            // litPassShader->SetBool("u_EnableSkyBox", enableSkyBox);
-
-            litPassShader->SetFloat("u_min_shadow_bias", min_shadow_bias);
-            litPassShader->SetFloat("u_max_shadow_bias", max_shadow_bias);
-
-            litPassShader->SetVec3("u_faceForward", glm::vec3(0.0f, 0.0f, 1.0f));
-            litPassShader->SetVec3("u_faceRight", glm::vec3(-1.0f, 0.0f, 0.0f));
-
-            litPassShader->SetVec3("u_litColor", litColor);
-            litPassShader->SetVec3("u_shadowColor", shadowColor);
-
-            litPassShader->SetFloat("u_diffuse_cutoff", diffuse_cutoff);
-
-            litPassShader->SetFloat("u_ambient_coeff", ambient_coeff);
-
-            for (auto& _meshObj : staticMeshObjects)
-            {
-                _meshObj->GetRenderer()->Draw(main_camera);
-            }
-
-            for (auto& _model : models)
-            {
-                _model->Draw(main_camera);
-            }
-
-            litPassFBO->Unbind();
-            glDisable(GL_DEPTH_TEST);
-        }
-
-        //=======postprocessing
-        if (enableSSAO)
-        {
-            // RD_PROFILE_SCOPE("SSAO pass");
-            SSAOPass->Render(main_camera);
-        }
-
-        if (enableOutline)
-        {
-            OutlinePass->Render(main_camera);
-        }
-
-        if (enableSSR)
-        {
-            SSRPass->Render(main_camera);
-        }
-
-        if (enableComposer)
-        {
-            ComposerPass->Render(main_camera);
-        }
-
-        if (enableBloom)
-        {
-            BloomPass->Render(main_camera);
-        }
-
-        if (enableToneMap)
-        {
-            ToneMapPass->Render(main_camera);
-        }
-
-        //=======output any texture;
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glDisable(GL_DEPTH_TEST);
-        glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-
-        screenQuadShader->Bind();
-        // visualizeBuffer = BloomOutputs[TexType::ScreenTexture];
-        // visualizeBuffer = SSAOOutputs[TexType::ScreenTexture];
-        if (visualizeBuffer != nullptr)
-        {
-            int channel = visualizeBuffer->GetChannels();
-            screenQuadShader->SetBool("u_isGrayScale", channel == 1);
-            screenQuadShader->SetFloat("u_mipLevel", bufferMipLevel);
-
-            // screenQuadShader->SetBool("u_isDepthTexture", true);
-            // screenQuadShader->SetFloat("u_near_plane", near_plane);
-            // screenQuadShader->SetFloat("u_far_plane", far_plane);
-
-            glBindTextureUnit(0, visualizeBuffer->GetID());
-        }
-
-        screenQuad->Draw(nullptr);
-        screenQuadShader->Unbind();
-
-        //=======skybox overlay;
-        // this is final pass of scene rendering;
-        // compare the depth with gbuffer;  make sure enable the depth test;
-
-        // if (enableSkyBox)
-        // {
-        //     glEnable(GL_DEPTH_TEST);
-        //     glBindFramebuffer(GL_READ_FRAMEBUFFER, GBufferFBO->GetFrameBufferID());
-        //     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        //     glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-        //
-        //     skyboxShader->Bind();
-        //     skyboxShader->SetFloat("u_mipLevel", bufferMipLevel);
-        //     skybox.DrawSkybox(main_camera);
-        //
-        //     skyboxShader->Unbind();
-        //
-        // }
-
-        //==========
-        // buffer visualization
-        if (visualize_gbuffer)
-        {
-            // render the buffers to the screen, for debugging
-            // WARN: don't clear the buffer for overlay;
-            glDisable(GL_DEPTH_TEST);
-
-            std::vector<std::pair<int, int>> leftBottom = {
-                { 0, 0 },
-                { 1, 0 },
-                { 2, 0 },
-                { 3, 0 },
-                { 0, 3 },
-                { 1, 3 },
-                { 2, 3 },
-                { 3, 3 },
-            };
-
-            std::vector<Ref<Texture>> bufferTextures = {
-                // gWorldPosition,
-                // gWorldNormal,
-                ////gWorldTangent,
-                // gAlbedo,
-                // gSpecular,
-                // gMetallic,
-                // gRoughness,
-                gViewDepth,
-                gViewPosition,
-                gViewNormal,
-                litPassScreenTexture,
-                shadowMap,
-            };
-
-            int index = 0;
-            for (auto& g_texture : bufferTextures)
-            {
-                if (index >= 8)
-                    break;
-                screenQuadShader->Bind();
-
-                glViewport(leftBottom[index].first * BUFFER_WIDTH, leftBottom[index].second * BUFFER_HEIGHT, BUFFER_WIDTH, BUFFER_HEIGHT);
-                glBindTextureUnit(0, g_texture->GetID());
-                int channel = g_texture->GetChannels();
-                screenQuadShader->SetBool("u_isGrayScale", channel == 1);
-
-                screenQuad->Draw(nullptr);
-                index++;
-            }
-            glEnable(GL_DEPTH_TEST);
-        }
-
-        //=======overlays
-        // grid.Draw();
-        nav.Draw();
-
-        main_camera->OnUpdate(deltaTime);
-
-        //======gui
-        this->RenderGUI();
-        RendererApp::WindowOnUpdate();
-        /* Swap front and back buffers */
-        // glfwSwapBuffers(window);
-        /* Poll for and process events */
-        // glfwPollEvents();
-    }
-
-    //====shutdown
-    this->ShutDownGUI();
-    glfwTerminate();
 }
 
-void NPR::DrawGUI()
+void NPR::OnUpdate(float deltaTime)
+{ // routined updates
+    // animations
+    {
+        if (model->animator != nullptr)
+        {
+            model->animator->UpdateBoneTransforms(timer);
+            auto transforms = model->animator->GetBoneTransforms();
+            model->boneTransformBuffer->SetData(transforms.data(), transforms.size() * sizeof(glm::mat4));
+        }
+    }
+
+    //====== shadowMap pass: render the scene to the shadowMap;
+    if (true)
+    {
+        shadowMapFBO->Bind();
+        glClear(GL_DEPTH_BUFFER_BIT); // make sure clear the framebuffer's content
+        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+        glEnable(GL_DEPTH_TEST);
+
+        for (auto& _meshObj : staticMeshObjects)
+        {
+            _meshObj->GetRenderer()->Draw(sunlight->lightSpaceCamera, 1, shadowMapMaterial);
+        }
+
+        for (auto& _model : models)
+        {
+            _model->Draw(sunlight->lightSpaceCamera, 1, shadowMapSkinnedMaterial);
+        }
+
+        shadowMapFBO->Unbind();
+    }
+
+    //======Lit pass
+    if (true)
+    {
+        litPassFBO->Bind();
+
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // make sure clear the framebuffer's content
+        glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+        glEnable(GL_DEPTH_TEST);
+
+        // scene info
+        litPassShader->Bind();
+
+        // light info
+        litPassShader->SetVec3("u_DirLight.direction", direct_light_dir); // sunlight->direction);
+        litPassShader->SetVec3("u_DirLight.color", sunlight->m_color);
+        litPassShader->SetFloat("u_DirLight.intensity", direct_light_intensity); // sunlight->intensity);
+
+        litPassShader->SetMat4("u_LightSpaceMatrix", sunlight->lightSpaceCamera->GetProjectionViewMatrix());
+
+        // camera info
+        litPassShader->SetVec3("u_CameraPos", this->GetMainCamera()->GetPosition());
+
+        // litPassShader->SetBool("u_EnableSkyBox", enableSkyBox);
+
+        litPassShader->SetFloat("u_min_shadow_bias", min_shadow_bias);
+        litPassShader->SetFloat("u_max_shadow_bias", max_shadow_bias);
+
+        litPassShader->SetVec3("u_faceForward", glm::vec3(0.0f, 0.0f, 1.0f));
+        litPassShader->SetVec3("u_faceRight", glm::vec3(-1.0f, 0.0f, 0.0f));
+
+        litPassShader->SetVec3("u_litColor", litColor);
+        litPassShader->SetVec3("u_shadowColor", shadowColor);
+
+        litPassShader->SetFloat("u_diffuse_cutoff", diffuse_cutoff);
+
+        litPassShader->SetFloat("u_ambient_coeff", ambient_coeff);
+
+        for (auto& _meshObj : staticMeshObjects)
+        {
+            _meshObj->GetRenderer()->Draw(this->GetMainCamera());
+        }
+
+        for (auto& _model : models)
+        {
+            _model->Draw(this->GetMainCamera());
+        }
+
+        litPassFBO->Unbind();
+        glDisable(GL_DEPTH_TEST);
+    }
+
+    //=======postprocessing
+    if (enableSSAO)
+    {
+        // RD_PROFILE_SCOPE("SSAO pass");
+        SSAOPass->Render(this->GetMainCamera());
+    }
+
+    if (enableOutline)
+    {
+        OutlinePass->Render(this->GetMainCamera());
+    }
+
+    if (enableSSR)
+    {
+        SSRPass->Render(this->GetMainCamera());
+    }
+
+    if (enableComposer)
+    {
+        ComposerPass->Render(this->GetMainCamera());
+    }
+
+    if (enableBloom)
+    {
+        BloomPass->Render(this->GetMainCamera());
+    }
+
+    if (enableToneMap)
+    {
+        ToneMapPass->Render(this->GetMainCamera());
+    }
+
+    //=======output any texture;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glDisable(GL_DEPTH_TEST);
+    glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+
+    screenQuadShader->Bind();
+    // visualizeBuffer = BloomOutputs[TexType::ScreenTexture];
+    // visualizeBuffer = SSAOOutputs[TexType::ScreenTexture];
+    if (visualizeBuffer != nullptr)
+    {
+        int channel = visualizeBuffer->GetChannels();
+        screenQuadShader->SetBool("u_isGrayScale", channel == 1);
+        screenQuadShader->SetFloat("u_mipLevel", bufferMipLevel);
+
+        // screenQuadShader->SetBool("u_isDepthTexture", true);
+        // screenQuadShader->SetFloat("u_near_plane", near_plane);
+        // screenQuadShader->SetFloat("u_far_plane", far_plane);
+
+        glBindTextureUnit(0, visualizeBuffer->GetID());
+    }
+
+    screenQuad->Draw(nullptr);
+    screenQuadShader->Unbind();
+
+    //=======skybox overlay;
+    // this is final pass of scene rendering;
+    // compare the depth with gbuffer;  make sure enable the depth test;
+
+    // if (enableSkyBox)
+    // {
+    //     glEnable(GL_DEPTH_TEST);
+    //     glBindFramebuffer(GL_READ_FRAMEBUFFER, GBufferFBO->GetFrameBufferID());
+    //     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    //     glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+    //
+    //     skyboxShader->Bind();
+    //     skyboxShader->SetFloat("u_mipLevel", bufferMipLevel);
+    //     skybox.DrawSkybox(main_camera);
+    //
+    //     skyboxShader->Unbind();
+    //
+    // }
+
+    //=======overlays
+    // grid.Draw();
+    nav->Draw();
+}
+
+void NPR::OnImGuiRender()
 {
-    // äÖÈ¾GUI
     ImGui::Begin("Rudy Engine");
     ImGui::Text("Hello World");
 
@@ -596,7 +490,7 @@ void NPR::DrawGUI()
         { "sunlight shadowmap", shadowMap },
     };
 
-    // ´´½¨Ò»¸ö±£´æËùÓÐ¼üµÄ×Ö·û´®Êý×é
+    // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     std::vector<std::string> keys = {
         "Lit Pass output",
         "SSR output",
@@ -608,12 +502,12 @@ void NPR::DrawGUI()
         "sunlight shadowmap",
     };
 
-    static int  item_current_idx = 0;  // Èç¹ûÄãÓÐÒ»¸ö¿ÉÒÔ´ÓÍâ²¿·ÃÎÊµÄÄ¬ÈÏÏî£¬Ò²¿ÉÒÔÔÚÕâÀïÉèÖÃËüµÄË÷Òý
-    std::string item_current     = ""; // ÓÃÓÚÏÔÊ¾ºÍÑ¡Ôñµ±Ç°Ïî
+    static int  item_current_idx = 0;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½â²¿ï¿½ï¿½ï¿½Êµï¿½Ä¬ï¿½ï¿½ï¿½î£¬Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    std::string item_current     = ""; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Ñ¡ï¿½ï¿½Ç°ï¿½ï¿½
 
     if (bufferList.size() > 0)
     {
-        // »ñÈ¡µ±Ç°Ñ¡ÖÐÏîµÄ¼ü
+        // ï¿½ï¿½È¡ï¿½ï¿½Ç°Ñ¡ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
         item_current    = keys[item_current_idx];
         visualizeBuffer = bufferList[item_current];
 
@@ -628,7 +522,7 @@ void NPR::DrawGUI()
                     visualizeBuffer  = bufferList[keys[n]];
                 }
 
-                // ÉèÖÃ³õÊ¼½¹µãÏî
+                // ï¿½ï¿½ï¿½Ã³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 if (is_selected)
                 {
                     ImGui::SetItemDefaultFocus();
@@ -641,7 +535,7 @@ void NPR::DrawGUI()
     ImGui::Checkbox("enableSSAO", &enableSSAO);
     ImGui::Checkbox("enableSSAOBlur", &(SSAOPass->enableBlur));
 
-    ImGui::Checkbox("enableSSR", &enableSSR);
+    // ImGui::Checkbox("enableSSR", &enableSSR);
     ImGui::Checkbox("enableOutline", &enableOutline);
 
     ImGui::Checkbox("enableComposer", &enableComposer);
@@ -702,29 +596,4 @@ void NPR::DrawGUI()
     ImGui::SliderFloat("Buffer miplevel", &bufferMipLevel, 0, 10);
     ImGui::End();
 }
-
-void NPR::InitGUI()
-{
-    // ³õÊ¼»¯ImGui
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    // ÉèÖÃImGuiµÄÑùÊ½
-    ImGui::StyleColorsDark();
-    // °ó¶¨ºó¶Ë
-    ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)this->window->GetNativeWindow(), true);
-    ImGui_ImplOpenGL3_Init("#version 130");
-
-    // other settings
-    ImGui::SetNextWindowSize(ImVec2(500, 400)); // ÉèÖÃ´°¿Ú´óÐ¡Îª 500x400
-
-    // initial position on the right top corner;
-    ImGui::SetNextWindowPos(ImVec2(SCR_WIDTH - 500, 0)); // ÉèÖÃ´°¿ÚÎ»ÖÃÎª (SCR_WIDTH - 500, 0)
-
-    ImGui::CreateContext();
-    ImGuiIO&     io = ImGui::GetIO();
-    ImFontConfig fontConfig;
-    fontConfig.SizePixels = 18.0f; // ÉèÖÃ×ÖÌå´óÐ¡Îª 18 ÏñËØ
-    io.Fonts->AddFontDefault(&fontConfig);
-}
-
 } // namespace Rudy

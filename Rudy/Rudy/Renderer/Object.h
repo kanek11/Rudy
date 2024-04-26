@@ -3,7 +3,6 @@
 
 #include <Rudy/Animation/Animation.h>
 #include <Rudy/Renderer/Buffer.h>
-#include <Rudy/Renderer/Camera.h>
 #include <Rudy/Renderer/Material.h>
 #include <Rudy/Renderer/Mesh.h>
 #include <Rudy/Renderer/RendererComponent.h>
@@ -58,28 +57,28 @@ public:
 
 // we hardcode the transform component in the renderer component;
 // todo: maybe implement a fancy ECS system in the future;
-//<<abstract base>>
+//<<abstract>>
 class RenderableObject : public Object
 {
 public:
     virtual ~RenderableObject() = default;
     RenderableObject() :
-        Object() { isRenderable = true; }
+        Object() { }
 
     void SetRendererComponent(Ref<Renderer> rendererComponent)
     {
         rendererComponent->SetTransform(this->transform);
-        this->rendererComponent = rendererComponent;
+        this->m_rendererComponent = rendererComponent;
     }
 
-    Ref<Renderer> GetRendererComponent() { return rendererComponent; }
+    Ref<Renderer> GetRendererComponent() { return m_rendererComponent; }
 
-    bool hasRendererComponent() { return rendererComponent != nullptr; }
+    bool hasRendererComponent() { return m_rendererComponent != nullptr; }
 
 public:
     virtual void Draw(Ref<Camera> cam) = 0;
 
-    Ref<Renderer> rendererComponent = nullptr;
+    Ref<Renderer> m_rendererComponent = nullptr;
 };
 
 //<<terminal>>
@@ -87,9 +86,9 @@ public:
 class StaticMeshObject : public Object
 {
 public:
-    virtual ~StaticMeshObject() = default;
+    ~StaticMeshObject() = default;
     StaticMeshObject() :
-        Object() { isRenderable = true; }
+        Object() { }
 
     static Ref<StaticMeshObject> Create()
     {
@@ -101,16 +100,14 @@ public:
     void InitComponent(Ref<StaticMeshObject> object)
     {
         object->Object::InitComponent(object);
-
-        object->renderer = StaticMeshRenderer::Create();
-        object->renderer->SetTransform(object->transform);
+        object->SetRenderer(StaticMeshRenderer::Create());
     }
 
     void SetRenderer(Ref<StaticMeshRenderer> rendererComponent)
     {
+        rendererComponent->SetTransform(this->transform);
         this->renderer = rendererComponent;
     }
-
     Ref<StaticMeshRenderer> GetRenderer() { return this->renderer; }
 
     void SetMaterial(Ref<Material> mat) { this->renderer->SetMaterial(mat); }

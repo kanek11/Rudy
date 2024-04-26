@@ -1,9 +1,13 @@
 #pragma once
-
 #include "RudyPCH.h"
-#include <Rudy.h>
+
+#include "Vendor/imgui/imgui.h"
+#include "Vendor/imgui/imgui_impl_glfw.h"
+#include "Vendor/imgui/imgui_impl_opengl3.h"
 
 #include "Application.h"
+
+#include "Rudy/Renderer/Light.h"
 
 namespace Rudy
 {
@@ -15,9 +19,6 @@ inline std::unordered_map<std::string, glm::vec3> NPRDefaultVec3Map {
 };
 
 inline std::unordered_map<std::string, float> NPRDefaultFloatMap {
-    //{"u_Metallic",    1.0f},
-    //{"u_Roughness",   1.0f},
-    //{"u_Specular",    1.0f},
 
     // intensity for techs
     //{"u_NormalScale", 1.0f},
@@ -53,24 +54,20 @@ public:
     }
 };
 
-class NPR : public Application
+class NPR : public ViewportLayer
 {
 public:
     ~NPR() = default;
     NPR();
-    static Ref<NPR> Create();
 
     void Init() override;
-    void Start() override;
+    void ShutDown() override;
 
-    virtual void InitGUI() override;
-    virtual void DrawGUI() override;
-
-    //
-    Ref<Camera> main_camera;
-    Ref<Window> window;
+    virtual void OnUpdate(float ts) override;
+    virtual void OnImGuiRender() override;
 
     //
+    Ref<DirectionalLight>              sunlight = nullptr;
     std::vector<Ref<StaticMeshObject>> staticMeshObjects;
     std::vector<Ref<Model>>            models;
 
@@ -131,15 +128,9 @@ public:
     std::unordered_map<TexType, Ref<Texture>> ComposerOutputs;
 
 public:
-    // 2560:1440 = 16:9
-    const uint32_t SCR_WIDTH  = 2560;
-    const uint32_t SCR_HEIGHT = 1440;
-
     const uint32_t BUFFER_WIDTH  = SCR_WIDTH / 4;
     const uint32_t BUFFER_HEIGHT = SCR_HEIGHT / 4;
     const uint32_t SHADOW_WIDTH = 2048, SHADOW_HEIGHT = 2048;
-
-    const glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 1.5f, 5.0f);
 
 public:
     bool enableSSAO = false;
@@ -168,6 +159,21 @@ public:
     glm::vec3 shadowColor = glm::vec3(0.88f, 0.73f, 0.70f);
 
     float diffuse_cutoff = 0.3f;
+
+    // todo:make these more elegant
+    Ref<Shader>     screenQuadShader;
+    Ref<ScreenQuad> screenQuad;
+
+    Navigation* nav;
+    Ref<Shader> pure_color_shader;
+
+    float timer = 0.0f;
+
+    Ref<FrameBuffer> shadowMapFBO             = nullptr;
+    Ref<Material>    shadowMapMaterial        = nullptr;
+    Ref<Material>    shadowMapSkinnedMaterial = nullptr;
+
+    Ref<Model> model = nullptr;
 };
 
 } // namespace Rudy

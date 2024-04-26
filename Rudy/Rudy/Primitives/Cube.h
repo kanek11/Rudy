@@ -1,42 +1,38 @@
 #pragma once
 
 #include "RudyPCH.h"
-#include "Rudy/Renderer/Mesh.h"
-#include "Rudy/Renderer/Material.h"
+
 #include "Rudy/Renderer/Object.h"
-  
-#include "Rudy/Renderer/Renderer.h"
 
-namespace Rudy {
+namespace Rudy
+{
 
-    //<<terminal>>
-    class Cube : public StaticMeshObject {
-    public:
-        ~Cube() = default;
+//<<terminal>>
+class Cube : public StaticMeshObject
+{
+public:
+    ~Cube() = default;
 
-        Cube() : StaticMeshObject()
-        { 
-            m_mesh = CreateMeshGeometry();
-            
-        } 
+    Cube() :
+        StaticMeshObject()
+    {
+        m_mesh = CreateMeshGeometry();
+    }
 
-        Ref<Mesh> CreateMeshGeometry();  
-      
+    Ref<Mesh> CreateMeshGeometry();
 
-        void DrawSkybox(Ref<Camera> cam);  //need to set special view matrix, and gldepthfunc;
-  
-        static Ref<Cube> Create() {  
-            auto object = CreateRef<Cube>();
+    void DrawSkybox(Ref<Camera> cam); // need to set special view matrix, and gldepthfunc;
 
-            object->StaticMeshObject::InitComponent(object);
-            //object->InitComponent(object);
-            
+    static Ref<Cube> Create()
+    {
+        auto object = CreateRef<Cube>();
 
-            object->GetRenderer()->SetMesh(object->m_mesh);
-            return object; 
-        }
-        
+        object->StaticMeshObject::InitComponent(object);
+        // object->InitComponent(object);
 
-    }; 
+        object->GetRenderer()->SetMesh(object->m_mesh);
+        return object;
+    }
+};
 
-}
+} // namespace Rudy

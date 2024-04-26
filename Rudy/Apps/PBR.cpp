@@ -6,40 +6,20 @@ namespace Rudy
 {
 
 PBR::PBR() :
-    Application()
+    ViewportLayer()
 {
-    // this->GetWindow()->SetVSync(false);
 }
 
-Ref<PBR> PBR::Create()
+void PBR::ShutDown()
 {
-    return CreateRef<PBR>();
+    // all lifetime management is done by the smart pointers;
 }
 
 void PBR::Init()
 {
-    Rudy::Log::Init();
-    RD_CORE_WARN("test:Initialized Log!");
+    // impose: init base class;
+    ViewportLayer::Init();
 
-    //========================================
-    //=== initialize renderer
-    // auto window = Window::Create();
-    // Input::SetWindowContext(window->GetNativeWindow());
-
-    main_camera = Camera::Create(MAIN_CAMERA_POS);
-
-    RendererApp::Init(SCR_WIDTH, SCR_HEIGHT);
-    RendererApp::SetMainCamera(main_camera);
-
-    window         = RendererApp::GetWindow();
-    auto renderAPI = RendererApp::GetAPI();
-
-    // gui
-    this->InitGUI();
-}
-
-void PBR::Start()
-{
     //=================================================================================================
     //=== initialize resources
 
@@ -94,13 +74,13 @@ void PBR::Start()
                                                  "Shaders/Shaders/DepthMap_FS.glsl");
     // Material::SetMaterialProperties(shadowMapSkinnedShader);
 
-    auto shadowMapMaterial        = Material::Create(shadowMapShader);
-    auto shadowMapSkinnedMaterial = Material::Create(shadowMapSkinnedShader);
+    shadowMapMaterial        = Material::Create(shadowMapShader);
+    shadowMapSkinnedMaterial = Material::Create(shadowMapSkinnedShader);
 
-    auto shadowMapFBO = FrameBuffer::Create("shadowMap FBO",
-                                            SHADOW_WIDTH,
-                                            SHADOW_HEIGHT,
-                                            FrameBufferType::DepthTexture);
+    shadowMapFBO = FrameBuffer::Create("shadowMap FBO",
+                                       SHADOW_WIDTH,
+                                       SHADOW_HEIGHT,
+                                       FrameBufferType::DepthTexture);
 
     shadowMap = Texture2D::CreateEmpty(
         TextureSpec { SHADOW_WIDTH, SHADOW_HEIGHT, TextureInternalFormat::DEPTH_COMPONENT24, false, WrapMode::ClampToBorder, FilterMode::Nearest });
@@ -136,40 +116,40 @@ void PBR::Start()
         Material::SetMaterialProperties(gBufferPassShader);
 
         // Framebuffer;
-        GBufferFBO = FrameBuffer::Create(
+        gBufferFBO = FrameBuffer::Create(
             "GBuffer FBO", SCR_WIDTH, SCR_WIDTH, FrameBufferType::GBuffer);
 
         // set the border color for the depth texture;
         float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
         glTextureParameterfv(gViewDepth->GetID(), GL_TEXTURE_BORDER_COLOR, borderColor);
 
-        GBufferFBO->SetColorTexture(TexType::gWorldPosition, gWorldPosition, 0);
-        GBufferFBO->SetColorTexture(TexType::gAlbedo, gAlbedo, 1);
-        GBufferFBO->SetColorTexture(TexType::gWorldNormal, gWorldNormal, 2);
-        GBufferFBO->SetColorTexture(TexType::gWorldTangent, gWorldTangent, 3);
-        GBufferFBO->SetColorTexture(TexType::gSpecular, gSpecular, 4);
-        GBufferFBO->SetColorTexture(TexType::gMetallic, gMetallic, 5);
-        GBufferFBO->SetColorTexture(TexType::gRoughness, gRoughness, 6);
+        gBufferFBO->SetColorTexture(TexType::gWorldPosition, gWorldPosition, 0);
+        gBufferFBO->SetColorTexture(TexType::gAlbedo, gAlbedo, 1);
+        gBufferFBO->SetColorTexture(TexType::gWorldNormal, gWorldNormal, 2);
+        gBufferFBO->SetColorTexture(TexType::gWorldTangent, gWorldTangent, 3);
+        gBufferFBO->SetColorTexture(TexType::gSpecular, gSpecular, 4);
+        gBufferFBO->SetColorTexture(TexType::gMetallic, gMetallic, 5);
+        gBufferFBO->SetColorTexture(TexType::gRoughness, gRoughness, 6);
 
-        GBufferFBO->SetDepthTexture(gViewDepth);
+        gBufferFBO->SetDepthTexture(gViewDepth);
 
-        GBufferFBO->FinishSetup();
+        gBufferFBO->FinishSetup();
     }
 
     //===============================
     //======lit pass
 
     // auto litPassShader = Shader::Create("blinnPhong Shader", "Shaders/Shaders/BlinnPhong_VS.glsl", "Shaders/Shaders/BlinnPhong_FS.glsl");
-    auto litPassShader = Shader::Create("pbr Shader",
-                                        "Shaders/Deferred/PBR_VS.glsl",
-                                        "Shaders/Deferred/PBR_FS.glsl");
+    this->litPassShader = Shader::Create("pbr Shader",
+                                         "Shaders/Deferred/PBR_VS.glsl",
+                                         "Shaders/Deferred/PBR_FS.glsl");
     Material::SetMaterialProperties(litPassShader);
 
     //=== FBO
-    litPassFBO = FrameBuffer::Create("litPass FBO",
-                                     SCR_WIDTH,
-                                     SCR_WIDTH,
-                                     FrameBufferType::Regular);
+    this->litPassFBO = FrameBuffer::Create("litPass FBO",
+                                           SCR_WIDTH,
+                                           SCR_WIDTH,
+                                           FrameBufferType::Regular);
 
     auto litPassScreenTexture = Texture2D::CreateEmpty(
         TextureSpec { SCR_WIDTH, SCR_HEIGHT, TextureInternalFormat::RGBA32F, false, WrapMode::ClampToBorder, FilterMode::Linear, FilterMode::Linear });
@@ -200,28 +180,29 @@ void PBR::Start()
     litPassMaterial->SetTexture(TexType::DepthTexture, shadowMap);
 
     // render quad;
-    auto litPassQuad = ScreenQuad::Create();
+    litPassQuad = ScreenQuad::Create();
     litPassQuad->SetMaterial(litPassMaterial);
 
     //=====the scene
     // auto scene = Scene::Create();
 
     // lighting
-    auto sunlight       = DirectionalLight::Create();
-    sunlight->intensity = 5.0f;
-    sunlight->direction = glm::vec3(0.5f, -0.5f, -1.0f);
+    this->sunlight = DirectionalLight::Create();
+    sunlight->SetIntensity(5.0f);
+    sunlight->SetDirection(glm::vec3(0.5f, -0.5f, -1.0f));
 
     // info for shadowmap:
     // the orthographic projection matrix for the light source：
-    float     near_plane = -10.0f, far_plane = 10.0f;
+    sunlight->near_plane      = -10.0f;
+    sunlight->far_plane       = 10.0f;
     glm::mat4 lightProjection = glm::ortho(
-        -10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane); // the near and far plane should be large enough to cover the scene
+        -10.0f, 10.0f, -10.0f, 10.0f, sunlight->near_plane, sunlight->far_plane); // the near and far plane should be large enough to cover the scene
     // look at minus direction;
-    glm::mat4 lightView = glm::lookAt(-sunlight->direction, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+    glm::mat4 lightView = glm::lookAt(-sunlight->m_direction, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 
-    auto lightSpaceCamera                = Camera::Create();
-    lightSpaceCamera->m_ProjectionMatrix = lightProjection;
-    lightSpaceCamera->m_ViewMatrix       = lightView;
+    sunlight->lightSpaceCamera                     = Camera::Create();
+    sunlight->lightSpaceCamera->m_ProjectionMatrix = lightProjection;
+    sunlight->lightSpaceCamera->m_ViewMatrix       = lightView;
 
     //=======actors
 
@@ -237,14 +218,16 @@ void PBR::Start()
     floor_gMaterial->SetTexture(TexType::RoughnessMap, floor_roughnessMap);
     floor_gMaterial->SetTexture(TexType::MetallicMap, floor_metallicMap);
 
-    auto floor1 = Plane::Create(10);
+    auto floor1  = Plane::Create(10);
+    floor1->name = "floor1";
     floor1->SetMaterial(floor_gMaterial);
     floor1->transform->scale = glm::vec3(20.0f);
     staticMeshObjects.push_back(floor1);
 
     if (false)
     {
-        auto floor2 = Plane::Create(10);
+        auto floor2  = Plane::Create(10);
+        floor2->name = "floor2";
         floor2->SetMaterial(floor_gMaterial);
 
         floor2->transform->scale    = glm::vec3(10.0f);
@@ -252,7 +235,8 @@ void PBR::Start()
         floor2->transform->position = glm::vec3(0.0f, 0.0f, -5.0f);
         staticMeshObjects.push_back(floor2);
 
-        auto floor3 = Plane::Create(10);
+        auto floor3  = Plane::Create(10);
+        floor3->name = "floor3";
         floor3->SetMaterial(floor_gMaterial);
 
         floor3->transform->scale    = glm::vec3(10.0f);
@@ -274,7 +258,8 @@ void PBR::Start()
         sphere_gMaterial->SetFloat("u_Metallic", 1.0f);
         sphere_gMaterial->SetFloat("u_Roughness", (float)i / 5.0f);
 
-        auto sphere = Sphere::Create(20);
+        auto sphere  = Sphere::Create(20);
+        sphere->name = "sphere" + std::to_string(i);
         sphere->SetMaterial(sphere_gMaterial);
         sphere->transform->position = glm::vec3(-3.0f + i * 2.0f, +1.0f, 0.0f);
 
@@ -415,17 +400,17 @@ void PBR::Start()
     //=========================================
 
     //=====skybox pass
-    auto skyboxShader = Shader::Create("skybox",
-                                       "Shaders/Shaders/Skybox_VS.glsl",
-                                       "Shaders/Shaders/Skybox_FS.glsl");
+    skyboxShader = Shader::Create("skybox",
+                                  "Shaders/Shaders/Skybox_VS.glsl",
+                                  "Shaders/Shaders/Skybox_FS.glsl");
     Material::SetMaterialProperties(skyboxShader);
 
     // material
     auto skyboxMaterial = Material::Create(skyboxShader);
-    skyboxMaterial->SetTexture(TexType::SkyboxTexture, specularEnvMap);
-    // skyboxMaterial->SetTexture(TexType::SkyboxTexture,envMap);
+    // skyboxMaterial->SetTexture(TexType::SkyboxTexture, specularEnvMap);
+    skyboxMaterial->SetTexture(TexType::SkyboxTexture, envMap);
 
-    auto skybox = Cube::Create();
+    skybox = Cube::Create();
     skybox->SetMaterial(skyboxMaterial);
 
     //
@@ -433,302 +418,268 @@ void PBR::Start()
     WorldGrid grid       = WorldGrid(20);
     grid.material        = Material::Create(gridShader);
 
-    auto       lineShader = Shader::Create("vertex color Shader", "Shaders/Shaders/Vertex_Color_VS.glsl", "Shaders/Shaders/Vertex_Color_FS.glsl");
-    Navigation nav        = Navigation();
-    nav.material          = Material::Create(lineShader);
+    auto lineShader = Shader::Create("vertex color Shader", "Shaders/Shaders/Vertex_Color_VS.glsl", "Shaders/Shaders/Vertex_Color_FS.glsl");
+    this->nav       = new Navigation();
+    nav->material   = Material::Create(lineShader);
 
-    auto screenQuadShader   = Shader::Create("screen quad shader",
-                                           "Shaders/Shaders/ScreenQuad_VS.glsl",
-                                           "Shaders/Shaders/ScreenQuad_FS.glsl");
+    screenQuadShader        = Shader::Create("screen quad shader",
+                                      "Shaders/Shaders/ScreenQuad_VS.glsl",
+                                      "Shaders/Shaders/ScreenQuad_FS.glsl");
     auto screenQuadMaterial = Material::Create(screenQuadShader);
 
-    auto screenQuad = ScreenQuad::Create();
+    screenQuad = ScreenQuad::Create();
     screenQuad->SetMaterial(screenQuadMaterial);
+}
 
-    //======the loop
-    /* Loop until the user closes the window */
-
-    float lastFrameTime = 0.0f;
-    float timer         = 0.0f;
-    RD_CORE_WARN("App: Entering the loop");
-    while (!RendererApp::ShouldClose())
+//=================================================================================================
+void PBR::OnUpdate(float deltaTime)
+{
+    timer += deltaTime;
+    // routined updates
+    // animations
     {
-        // RD_PROFILE_SCOPE("the game loop");
-
-        // get the time of each frame
-        float time      = (float)glfwGetTime();
-        float deltaTime = time - lastFrameTime;
-        lastFrameTime   = time;
-        timer += deltaTime;
-
-        //'gui'
-        this->PrepareGUI();
-
-        // routined updates
-        // animations
+        for (auto& _model : models)
         {
-            for (auto& _model : models)
+            if (_model->animator != nullptr)
             {
-                if (_model->animator != nullptr)
-                {
-                    _model->animator->UpdateBoneTransforms(timer);
-                    auto transforms = _model->animator->GetBoneTransforms();
-                    _model->boneTransformBuffer->SetData(transforms.data(), transforms.size() * sizeof(glm::mat4));
-                }
+                _model->animator->UpdateBoneTransforms(timer);
+                auto transforms = _model->animator->GetBoneTransforms();
+                _model->boneTransformBuffer->SetData(transforms.data(), transforms.size() * sizeof(glm::mat4));
             }
         }
-
-        //====== shadowMap pass: render the scene to the shadowMap;
-        if (true)
-        {
-            shadowMapFBO->Bind();
-            glClear(GL_DEPTH_BUFFER_BIT); // make sure clear the framebuffer's content
-            glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-            glEnable(GL_DEPTH_TEST);
-
-            for (auto& _meshObj : staticMeshObjects)
-            {
-                _meshObj->GetRenderer()->Draw(lightSpaceCamera, 1, shadowMapMaterial);
-            }
-
-            for (auto& _model : models)
-            {
-                _model->Draw(lightSpaceCamera, 1, shadowMapSkinnedMaterial);
-            }
-
-            shadowMapFBO->Unbind();
-        }
-
-        //======gBuffer pass: render the scene to the gbuffer
-        {
-            GBufferFBO->Bind();
-
-            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // make sure clear the framebuffer's content
-            glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-            glEnable(GL_DEPTH_TEST);
-
-            for (auto& _meshObj : staticMeshObjects)
-            {
-                _meshObj->Draw(main_camera);
-            }
-
-            for (auto& _model : models)
-            {
-                _model->Draw(main_camera);
-            }
-
-            GBufferFBO->Unbind();
-        }
-
-        {
-            WorldToViewPass->Render(main_camera);
-        }
-
-        //======Lit pass
-        {
-            litPassFBO->Bind();
-
-            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-
-            // glDepthMask(GL_FALSE);
-            glDisable(GL_DEPTH_TEST);
-
-            // scene info
-            litPassShader->Bind();
-
-            // camera info
-            litPassShader->SetVec3("u_CameraPos", main_camera->GetPosition());
-
-            // light info
-            litPassShader->SetVec3("u_DirLight.direction", sunlight->direction);
-            litPassShader->SetVec3("u_DirLight.color", sunlight->color);
-            litPassShader->SetFloat("u_DirLight.intensity", sunlight->intensity);
-
-            litPassShader->SetMat4("u_LightSpaceMatrix", lightSpaceCamera->GetProjectionViewMatrix());
-
-            litPassShader->SetBool("u_EnableSkyBox", enableSkyBox);
-
-            litPassShader->SetFloat("u_min_shadow_bias", min_shadow_bias);
-            litPassShader->SetFloat("u_max_shadow_bias", max_shadow_bias);
-
-            litPassQuad->Draw(nullptr);
-
-            // glDepthMask(GL_TRUE);
-            glEnable(GL_DEPTH_TEST);
-
-            litPassFBO->Unbind();
-        }
-
-        //=======postprocessing
-        if (enableSSAO)
-        {
-            // RD_PROFILE_SCOPE("SSAO pass");
-            SSAOPass->Render(main_camera);
-        }
-
-        if (enableBloom)
-        {
-            BloomPass->Render(main_camera);
-        }
-
-        if (enableOutline)
-        {
-            OutlinePass->Render(main_camera);
-        }
-
-        if (enableSSR)
-        {
-            SSRPass->Render(main_camera);
-        }
-
-        //=======output any texture;
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glDisable(GL_DEPTH_TEST);
-        glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-
-        screenQuadShader->Bind();
-        // visualizeBuffer = BloomOutputs[TexType::ScreenTexture];
-        // visualizeBuffer = SSAOOutputs[TexType::ScreenTexture];
-        if (visualizeBuffer != nullptr)
-        {
-            int channel = visualizeBuffer->GetChannels();
-            screenQuadShader->SetBool("u_isGrayScale", channel == 1);
-            screenQuadShader->SetFloat("u_mipLevel", bufferMipLevel);
-
-            // screenQuadShader->SetBool("u_isDepthTexture", true);
-            // screenQuadShader->SetFloat("u_near_plane", near_plane);
-            // screenQuadShader->SetFloat("u_far_plane", far_plane);
-
-            glBindTextureUnit(0, visualizeBuffer->GetID());
-        }
-
-        screenQuad->Draw(nullptr);
-        screenQuadShader->Unbind();
-
-        //=======skybox overlay;
-        // this is final pass of scene rendering;
-        // compare the depth with gbuffer;  make sure enable the depth test;
-
-        if (enableSkyBox)
-        {
-            glEnable(GL_DEPTH_TEST);
-            glBindFramebuffer(GL_READ_FRAMEBUFFER, GBufferFBO->GetFrameBufferID());
-            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-            glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-
-            skyboxShader->Bind();
-            skyboxShader->SetFloat("u_mipLevel", bufferMipLevel);
-            skybox->DrawSkybox(main_camera);
-
-            skyboxShader->Unbind();
-        }
-
-        //==========
-        // buffer visualization
-        if (visualize_gbuffer)
-        {
-            // render the buffers to the screen, for debugging
-            // WARN: don't clear the buffer for overlay;
-            glDisable(GL_DEPTH_TEST);
-
-            std::vector<std::pair<int, int>> leftBottom = {
-                { 0, 0 },
-                { 1, 0 },
-                { 2, 0 },
-                { 3, 0 },
-                { 0, 3 },
-                { 1, 3 },
-                { 2, 3 },
-                { 3, 3 },
-            };
-
-            std::vector<Ref<Texture>> bufferTextures = {
-                gWorldPosition,
-                gWorldNormal,
-                gWorldTangent,
-                gAlbedo,
-                // gSpecular,
-                gMetallic,
-                gRoughness,
-                gViewDepth,
-                // gViewPosition,
-                // gViewNormal,
-                // litPassScreenTexture,
-                shadowMap,
-            };
-
-            int index = 0;
-            for (auto& g_texture : bufferTextures)
-            {
-                if (index >= 8)
-                    break;
-                screenQuadShader->Bind();
-
-                glViewport(leftBottom[index].first * BUFFER_WIDTH, leftBottom[index].second * BUFFER_HEIGHT, BUFFER_WIDTH, BUFFER_HEIGHT);
-                glBindTextureUnit(0, g_texture->GetID());
-                int channel = g_texture->GetChannels();
-                screenQuadShader->SetBool("u_isGrayScale", channel == 1);
-
-                screenQuad->Draw(nullptr);
-                index++;
-            }
-            glEnable(GL_DEPTH_TEST);
-        }
-
-        //=======overlays
-        // grid.Draw();
-        nav.Draw();
-
-        main_camera->OnUpdate(deltaTime);
-
-        //======gui
-        this->RenderGUI();
-        RendererApp::WindowOnUpdate();
-        /* Swap front and back buffers */
-        // glfwSwapBuffers(window);
-        /* Poll for and process events */
-        // glfwPollEvents();
     }
 
+    //====== shadowMap pass: render the scene to the shadowMap;
+    if (true)
+    {
+        shadowMapFBO->Bind();
+        glClear(GL_DEPTH_BUFFER_BIT); // make sure clear the framebuffer's content
+        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+        glEnable(GL_DEPTH_TEST);
+
+        for (auto& _meshObj : staticMeshObjects)
+        {
+            _meshObj->GetRenderer()->Draw(sunlight->lightSpaceCamera, 1, shadowMapMaterial);
+        }
+
+        for (auto& _model : models)
+        {
+            _model->Draw(sunlight->lightSpaceCamera, 1, shadowMapSkinnedMaterial);
+        }
+
+        shadowMapFBO->Unbind();
+    }
+
+    //======gBuffer pass: render the scene to the gbuffer
+    {
+        gBufferFBO->Bind();
+
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // make sure clear the framebuffer's content
+        glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+        glEnable(GL_DEPTH_TEST);
+
+        for (auto& _meshObj : staticMeshObjects)
+        {
+            _meshObj->Draw(this->GetMainCamera());
+        }
+
+        for (auto& _model : models)
+        {
+            _model->Draw(this->GetMainCamera());
+        }
+
+        gBufferFBO->Unbind();
+    }
+
+    {
+        WorldToViewPass->Render(this->GetMainCamera());
+    }
+
+    //======Lit pass
+    {
+        litPassFBO->Bind();
+
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+
+        // glDepthMask(GL_FALSE);
+        glDisable(GL_DEPTH_TEST);
+
+        litPassShader->Bind();
+
+        // camera info
+        litPassShader->SetVec3("u_CameraPos", this->GetMainCamera()->GetPosition());
+
+        // light info
+        litPassShader->SetVec3("u_DirLight.direction", sunlight->m_direction);
+        litPassShader->SetVec3("u_DirLight.color", sunlight->m_color);
+        litPassShader->SetFloat("u_DirLight.intensity", sunlight->m_intensity);
+
+        litPassShader->SetMat4("u_LightSpaceMatrix", sunlight->lightSpaceCamera->GetProjectionViewMatrix());
+
+        litPassShader->SetBool("u_EnableSkyBox", enableSkyBox);
+
+        litPassShader->SetFloat("u_min_shadow_bias", min_shadow_bias);
+        litPassShader->SetFloat("u_max_shadow_bias", max_shadow_bias);
+
+        litPassQuad->Draw(nullptr);
+
+        // glDepthMask(GL_TRUE);
+        glEnable(GL_DEPTH_TEST);
+
+        litPassFBO->Unbind();
+    }
+
+    //=======postprocessing
+    if (enableSSAO)
+    {
+        // RD_PROFILE_SCOPE("SSAO pass");
+        SSAOPass->Render(this->GetMainCamera());
+    }
+
+    if (enableBloom)
+    {
+        BloomPass->Render(this->GetMainCamera());
+    }
+
+    if (enableOutline)
+    {
+        OutlinePass->Render(this->GetMainCamera());
+    }
+
+    if (enableSSR)
+    {
+        SSRPass->Render(this->GetMainCamera());
+    }
+
+    //=======output any texture;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glDisable(GL_DEPTH_TEST);
+    glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+
+    screenQuadShader->Bind();
+    // visualizeBuffer = BloomOutputs[TexType::ScreenTexture];
+    // visualizeBuffer = SSAOOutputs[TexType::ScreenTexture];
+    if (visualizeBuffer != nullptr)
+    {
+        int channel = visualizeBuffer->GetChannels();
+        screenQuadShader->SetBool("u_isGrayScale", channel == 1);
+        screenQuadShader->SetFloat("u_mipLevel", bufferMipLevel);
+
+        // screenQuadShader->SetBool("u_isDepthTexture", true);
+        // screenQuadShader->SetFloat("u_near_plane", near_plane);
+        // screenQuadShader->SetFloat("u_far_plane", far_plane);
+
+        glBindTextureUnit(0, visualizeBuffer->GetID());
+    }
+
+    screenQuad->Draw(nullptr);
+    screenQuadShader->Unbind();
+
+    //=======skybox overlay;
+    // this is final pass of scene rendering;
+    // compare the depth with gbuffer;  make sure enable the depth test;
+
+    if (enableSkyBox)
+    {
+        glEnable(GL_DEPTH_TEST);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, gBufferFBO->GetFrameBufferID());
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+        skyboxShader->Bind();
+        skyboxShader->SetFloat("u_mipLevel", bufferMipLevel);
+        skybox->DrawSkybox(this->GetMainCamera());
+
+        skyboxShader->Unbind();
+    }
+
+    //==========
+    // buffer visualization
+    if (visualize_gbuffer)
+    {
+        // render the buffers to the screen, for debugging
+        // WARN: don't clear the buffer for overlay;
+        glDisable(GL_DEPTH_TEST);
+
+        std::vector<std::pair<int, int>> leftBottom = {
+            { 0, 0 },
+            { 1, 0 },
+            { 2, 0 },
+            { 3, 0 },
+            { 0, 3 },
+            { 1, 3 },
+            { 2, 3 },
+            { 3, 3 },
+        };
+
+        auto                      gbuffer_tex    = gBufferFBO->GetColorTextures();
+        std::vector<Ref<Texture>> bufferTextures = {
+            gbuffer_tex[TexType::gWorldPosition],
+            gbuffer_tex[TexType::gWorldNormal],
+            gbuffer_tex[TexType::gWorldTangent],
+            gbuffer_tex[TexType::gAlbedo],
+            gbuffer_tex[TexType::gMetallic],
+            gbuffer_tex[TexType::gRoughness],
+            // gViewDepth ,
+            //  gViewPosition,
+            //  gViewNormal,
+            //  litPassScreenTexture,
+            shadowMap,
+        };
+
+        int index = 0;
+        for (auto& g_texture : bufferTextures)
+        {
+            if (g_texture == nullptr)
+                continue;
+            if (index >= 8)
+                break;
+            screenQuadShader->Bind();
+
+            glViewport(leftBottom[index].first * BUFFER_WIDTH, leftBottom[index].second * BUFFER_HEIGHT, BUFFER_WIDTH, BUFFER_HEIGHT);
+            glBindTextureUnit(0, g_texture->GetID());
+            int channel = g_texture->GetChannels();
+            screenQuadShader->SetBool("u_isGrayScale", channel == 1);
+
+            screenQuad->Draw(nullptr);
+            index++;
+        }
+        glEnable(GL_DEPTH_TEST);
+    }
+
+    //=======overlays
+    // grid.Draw();
+    nav->Draw();
+
+    // camera as part of the scene;
+    // main_camera->OnUpdate(deltaTime);
+
+    //======gui
+    // this->RenderGUI();
+
+    // RendererApp::WindowOnUpdate();
+    /* Swap front and back buffers */
+    // glfwSwapBuffers(window);
+    /* Poll for and process events */
+    // glfwPollEvents();
+
     //====shutdown
-    this->ShutDownGUI();
-    glfwTerminate();
-}
+    // this->ShutDownGUI();
+    // glfwTerminate();
 
-void PBR::InitGUI()
-{
-    // 初始化ImGui
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    // 设置ImGui的样式
-    ImGui::StyleColorsDark();
-    // 绑定后端
-    ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)this->window->GetNativeWindow(), true);
-    ImGui_ImplOpenGL3_Init("#version 130");
+} // onUpdate
 
-    // other settings
-    ImGui::SetNextWindowSize(ImVec2(500, 400)); // 设置窗口大小为 500x400
-
-    // initial position on the right top corner;
-    ImGui::SetNextWindowPos(ImVec2(SCR_WIDTH - 500, 0)); // 设置窗口位置为 (SCR_WIDTH - 500, 0)
-
-    ImGui::CreateContext();
-    ImGuiIO&     io = ImGui::GetIO();
-    ImFontConfig fontConfig;
-    fontConfig.SizePixels = 18.0f; // 设置字体大小为 18 像素
-    io.Fonts->AddFontDefault(&fontConfig);
-}
-
-void PBR::DrawGUI()
+void PBR::OnImGuiRender()
 {
     // 渲染GUI
     ImGui::Begin("Rudy Engine");
+
     ImGui::Text("Hello World");
     ImGui::Checkbox("enableSkybox", &enableSkyBox);
 
@@ -790,7 +741,7 @@ void PBR::DrawGUI()
     ImGui::Checkbox("enableSSAOBlur", &(SSAOPass->enableBlur));
     ImGui::Checkbox("enableBloom", &enableBloom);
     ImGui::Checkbox("enableOutline", &enableOutline);
-    ImGui::Checkbox("enableSSR", &enableSSR);
+    // ImGui::Checkbox("enableSSR", &enableSSR);
 
     // group: SSAO
 
@@ -895,7 +846,7 @@ void PBR::ShowHierarchy()
 }
 
 // by render a larger object, and cull front face.
-//void HighlightObject()
+// void HighlightObject()
 //{
 //    glEnable(GL_CULL_FACE);
 //    glCullFace(GL_FRONT);

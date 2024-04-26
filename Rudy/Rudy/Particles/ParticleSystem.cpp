@@ -2,20 +2,34 @@
 #include "RudyPCH.h"
 #include "ParticleSystem.h"
 
+#include "Rudy/Primitives/Sphere.h"
+
 namespace Rudy
 {
 
 Emitter::Emitter() :
     RenderableObject()
 {
-    RD_CORE_INFO("Emitter {0} created:", m_name);
+    name = "Unnamed Emitter";
+    RD_CORE_INFO("Emitter {0} created:", name);
 }
 
-Emitter::~Emitter() { RD_CORE_INFO("Emitter {0} destroyed", m_name); }
+Emitter::~Emitter() { RD_CORE_INFO("Emitter {0} destroyed", name); }
+
+Ref<Emitter> Emitter::Create()
+{
+    auto emitter = CreateRef<Emitter>();
+    emitter->InitComponent(emitter);
+    return emitter;
+}
+
+void Emitter::InitComponent(Ref<Emitter> object)
+{
+    object->Object::InitComponent(object);
+}
 
 void Emitter::Draw(Ref<Camera> cam)
 {
-    // std::cout << "m_currentAliveCount: " << m_currentAliveCount << std::endl;
     this->GetRendererComponent()->Draw(cam, m_currentAliveCount);
 }
 
@@ -35,7 +49,7 @@ void Emitter::Spawn()
     {
         if (!this->hasRendererComponent())
         {
-            RD_CORE_ERROR("Emitter {0} has no renderer component ", m_name);
+            RD_CORE_ERROR("Emitter {0} has no renderer component ", name);
         }
     }
 
@@ -82,8 +96,6 @@ void Emitter::Spawn()
     }
 
     //----------------------------------
-
-    //----------------------------------
     // initialize shaders
 
     {
@@ -99,6 +111,58 @@ void Emitter::Spawn()
     }
     // reset once
     this->Reset();
+
+    // rendering related=======================
+
+    // sprite renderer
+    this->radial_sprite = Texture2D::LoadFile("D:/CG_resources/radial_gradient.png");
+
+    // texture
+    this->m_particle_sprite_shader = Shader::Create("particle sprite shader",
+                                                    "Shaders/Particles/particle_render_sprite_VS.glsl",
+                                                    "Shaders/Particles/particle_render_sprite_FS.glsl",
+                                                    "Shaders/Particles/particle_render_sprite_GS.glsl");
+
+    m_particle_sprite_shader->Bind();
+    m_particle_sprite_shader->SetInt("u_sprite", 0);
+    glBindTextureUnit(0, radial_sprite->GetID());
+
+    // uniforms
+    m_particle_sprite_shader->SetVec4("u_color", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)); // red
+    m_particle_sprite_shader->SetFloat("u_sprite_size", 0.6f);
+
+    m_particle_sprite_shader->Unbind();
+
+    auto particle_sprite_renderer = ParticleSpriteRenderer::Create();
+
+    auto particle_sprite_material = Material::Create(m_particle_sprite_shader);
+    particle_sprite_material->SetTexture(TexType::ScreenTexture, radial_sprite);
+    particle_sprite_renderer->SetMaterial(particle_sprite_material);
+
+    // mesh renderer
+    this->m_particle_mesh_shader = Shader::Create("particle mesh shader",
+                                                  "Shaders/Particles/particle_render_mesh_VS.glsl",
+                                                  "Shaders/Particles/particle_render_mesh_FS.glsl");
+    auto particle_mesh_renderer  = StaticMeshRenderer::Create();
+    auto particle_mesh_material  = Material::Create(m_particle_mesh_shader);
+    particle_mesh_renderer->SetMaterial(particle_mesh_material);
+
+    auto sphere = Sphere::Create(10);
+    particle_mesh_renderer->SetMesh(sphere->GetRenderer()->GetMesh());
+
+    switch (m_render_type)
+    {
+        case RENDER_TYPE::SPRITES:
+            this->SetRendererComponent(particle_sprite_renderer);
+            break;
+
+        case RENDER_TYPE::MESHES:
+            this->SetRendererComponent(particle_mesh_renderer);
+            break;
+
+        default:
+            break;
+    }
 }
 
 void Emitter::Reset()
@@ -129,44 +193,50 @@ void Emitter::Update()
     // auto emissionCount = static_cast<uint32_t>(
     //	ceil(m_deltaTime * m_emissionRate));
 
-    m_emissionAccumulator += m_deltaTime * m_emissionRate;
+    m_emissionAccumulator += m_deltaTime * m_emission_rate;
 
     // integer part,  eg: 1.5 -> 1
     uint32_t emissionCount = static_cast<uint32_t>(floor(m_emissionAccumulator));
 
     totalEmissionCount += emissionCount;
-    totalEmissionTime += m_deltaTime;
+    EmissionTime += m_deltaTime;
     // fractional part is left in the accumulator
     if (emissionCount > 0)
         m_emissionAccumulator -= static_cast<float>(emissionCount);
 
-    // std::cout << "emission this frame: " << m_deltaTime * m_emissionRate <<
-    // std::endl; std::cout << "emission accumulator: " << m_emissionAccumulator
-    // << std::endl; std::cout << "emission count: " << emissionCount <<
-    // std::endl;
-
     if (true)
-        if (totalEmissionCount > m_emissionRate)
+        if (totalEmissionCount > m_emission_rate)
         {
             RD_CORE_INFO("total emission count:{0}", totalEmissionCount);
-            RD_CORE_INFO("total emission time: {0} ", totalEmissionTime);
+            // RD_CORE_INFO("accumulated emission time: {0} ", EmissionTime);
             totalEmissionCount = 0;
-            totalEmissionTime  = 0.0f;
+            EmissionTime       = 0.0f;
 
             glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_counter_buffer->GetBufferID());
             Counter* counter = (Counter*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_ONLY);
-
-            std::cout << "pre sim alive count: " << std::endl;
-            std::cout << counter->aliveCount[m_preSimIndex] << std::endl;
             glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
-            std::cout << std::endl;
+            RD_CORE_INFO("pre sim alive count", counter->aliveCount[m_preSimIndex]);
         }
 
     // loop control
     if (false)
     {
         this->Reset();
+    }
+
+    // rendering
+    if (false)
+    {
+        std::uniform_real_distribution<float> distribution(0.1f, 100.0f);
+        std::mt19937                          generator(std::random_device {}());
+
+        auto seeds = glm::vec3(distribution(generator), distribution(generator), distribution(generator));
+
+        m_particle_sprite_shader->Bind();
+        m_particle_sprite_shader->SetVec3("u_seeds", seeds);
+
+        m_particle_sprite_shader->Unbind();
     }
 
     // dispatch
@@ -250,15 +320,17 @@ void Emitter::Update()
         // emitter spawn
         m_particle_emission_compute_shader->SetVec3("u_seeds", seeds);
 
-        m_particle_emission_compute_shader->SetVec3("u_emitter_position",
-                                                    m_emitter_position);
-        m_particle_emission_compute_shader->SetFloat("u_sphereRadius",
-                                                     m_sphereRadius);
+        m_particle_emission_compute_shader->SetVec3("u_emitter_position", m_emitter_position);
 
-        //====emitter update
+        m_particle_emission_compute_shader->SetInt("u_emission_shape", m_emission_shape);
+        m_particle_emission_compute_shader->SetFloat("u_sphereRadius", m_sphereRadius);
+        m_particle_emission_compute_shader->SetVec3("u_cone_axis_direction", m_cone_axis_direction);
+        m_particle_emission_compute_shader->SetFloat("u_cone_angle", m_cone_angle);
+
+        // emitter update
         m_particle_emission_compute_shader->SetUInt("u_preSimIndex", m_preSimIndex);
 
-        //====particle spawn
+        // particle spawn
         m_particle_emission_compute_shader->SetFloat("u_particle_minLifetime",
                                                      m_particle_minLifetime);
         m_particle_emission_compute_shader->SetFloat("u_particle_maxLifetime",
@@ -481,7 +553,7 @@ void Emitter::Update()
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
     // set bindings for material
-    auto _shader = this->rendererComponent->GetMaterial()->GetShader();
+    auto _shader = this->m_rendererComponent->GetMaterial()->GetShader();
     _shader->Bind();
 
     m_aliveList_buffer[m_postSimIndex]->BindBase(0);

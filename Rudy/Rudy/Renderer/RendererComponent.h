@@ -1,5 +1,4 @@
 #pragma once
-
 #include "RudyPCH.h"
 
 #include "Rudy/Renderer/Transform.h"
@@ -7,6 +6,8 @@
 #include "Rudy/Renderer/Material.h"
 #include "Rudy/Renderer/Camera.h"
 #include "Rudy/Renderer/Buffer.h"
+
+#include "Apps/Layer.h"
 
 namespace Rudy
 {

@@ -4,8 +4,6 @@
 // CONSTANTS ---------------------------------------------------------
 // ------------------------------------------------------------------
 
- 
-
 // ------------------------------------------------------------------
 // INPUTS -----------------------------------------------------------
 // ------------------------------------------------------------------
@@ -16,24 +14,20 @@ layout(local_size_x = 32, local_size_y = 1, local_size_z = 1) in;
 // UNIFORMS ---------------------------------------------------------
 // ------------------------------------------------------------------
 
+// engine provided
+uniform float u_deltaTime;
 
-//engine provided
-uniform float u_deltaTime; 
+// system
 
-//system
-
-//emitter
+// emitter
 
 uniform uint u_preSimIndex;
 uniform uint u_postSimIndex;
 
+// simulation parameters
 
-//simulation parameters   
-
-//uniform sampler2D s_Depth;
-//uniform sampler2D s_Normals;
-
-
+// uniform sampler2D s_Depth;
+// uniform sampler2D s_Normals;
 
 layout(std430, binding = 0) buffer Counters_t
 {
@@ -43,7 +37,6 @@ layout(std430, binding = 0) buffer Counters_t
     uint update_count;
 }
 Counters;
-
 
 layout(std430, binding = 1) buffer ParticleDeadIndices_t
 {
@@ -62,11 +55,6 @@ layout(std430, binding = 3) buffer ParticleAlivePostSimIndices_t
     uint indices[];
 }
 AliveIndicesPostSim;
-
- 
-
- 
-
 
 layout(std430, binding = 5) buffer ParticlePosition_t
 {
@@ -92,29 +80,20 @@ layout(std430, binding = 8) buffer ParticleAge_t
 }
 ParticleAges;
 
-
-
 // ------------------------------------------------------------------
 // FUNCTIONS --------------------------------------------------------
 // ------------------------------------------------------------------
 
+// add a simple collision detection with a xz plane
+// if the particle is below the plane, bounce it back up
 
-//add a simple collision detection with a xz plane
-//if the particle is below the plane, bounce it back up
-
- void collision_detection(vec4 position, vec4 velocity)
- {
-	
+void collision_detection(vec4 position, vec4 velocity)
+{
 }
-
-
-
-
-
 
 void push_dead_index(uint index)
 {
-    uint insert_Index = atomicAdd(Counters.dead_count, 1);
+    uint insert_Index                 = atomicAdd(Counters.dead_count, 1);
     DeadIndices.indices[insert_Index] = index;
 }
 
@@ -126,7 +105,7 @@ uint pop_dead_index()
 
 void push_alive_index(uint index)
 {
-    uint insert_Index = atomicAdd(Counters.alive_count[u_postSimIndex], 1);
+    uint insert_Index                         = atomicAdd(Counters.alive_count[u_postSimIndex], 1);
     AliveIndicesPostSim.indices[insert_Index] = index;
 }
 
@@ -136,8 +115,6 @@ uint pop_alive_index()
     return AliveIndicesPreSim.indices[index - 1];
 }
 
- 
-
 // ------------------------------------------------------------------
 // MAIN -------------------------------------------------------------
 // ------------------------------------------------------------------
@@ -146,17 +123,16 @@ void main()
 {
     uint index = gl_GlobalInvocationID.x;
 
-     if (index < Counters.update_count)
+    if (index < Counters.update_count)
     {
         // Consume an Alive particle index
         uint particle_index = pop_alive_index();
 
-        //Particle particle = ParticleData.particles[particle_index];
-        vec4 position = ParticlePositions.positions[particle_index];
-        vec4 velocity = ParticleVelocities.velocities[particle_index];
+        // Particle particle = ParticleData.particles[particle_index];
+        vec4  position = ParticlePositions.positions[particle_index];
+        vec4  velocity = ParticleVelocities.velocities[particle_index];
         float lifetime = ParticleLifetimes.lifetimes[particle_index];
-        float age = ParticleAges.ages[particle_index];
-
+        float age      = ParticleAges.ages[particle_index];
 
         // Is it dead?
         if (age >= lifetime)
@@ -169,34 +145,29 @@ void main()
             // If still alive, increment lifetime and run simulation
             age += u_deltaTime;
 
-            //hardcode graivity for now
+            // hardcode graivity for now
             velocity.y += -9.8 * u_deltaTime;
-            position +=  velocity  * u_deltaTime;
+            // hardcode drag for now
+            velocity *= 0.99;
+            position += velocity * u_deltaTime;
 
-
-            //very simple collision detection
+            // very simple collision detection
             if (position.y < +0.5)
-			{
-				position.y = +0.5;
-				velocity.y = -velocity.y * 0.8;
-			}
+            {
+                position.y = +0.5;
+                velocity.y = -velocity.y * 0.8;
+            }
 
-              
             // Update particle data
-            ParticlePositions.positions[particle_index] = position;
+            ParticlePositions.positions[particle_index]   = position;
             ParticleVelocities.velocities[particle_index] = velocity;
-            ParticleAges.ages[particle_index] = age;
+            ParticleAges.ages[particle_index]             = age;
 
-             
             // Append index back into AliveIndices list
             push_alive_index(particle_index);
 
             // Increment draw instance count
-            //atomicAdd(ParticleRenderArgs.instance_count, 1);
-
+            // atomicAdd(ParticleRenderArgs.instance_count, 1);
         }
-
-     }
-
-
+    }
 }

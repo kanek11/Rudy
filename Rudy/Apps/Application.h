@@ -1,25 +1,33 @@
 #pragma once
 #include "RudyPCH.h"
-#include "Vendor/imgui/imgui.h"
-#include "Vendor/imgui/imgui_impl_glfw.h"
-#include "Vendor/imgui/imgui_impl_opengl3.h"
+#include <Rudy.h>
 
-namespace Rudy {
+namespace Rudy
+{
 
-//<<interface>>
-class Application {
- public:
-  virtual ~Application() = default;
-  Application() = default;
+//<<interface>>  <<singleton>>
+class Application
+{
+public:
+    virtual ~Application() = default;
+    Application();
 
-  virtual void Init() = 0;
-  virtual void Start() = 0;
+    virtual void Init();
+    virtual void Run();
+    virtual void ShutDown();
 
-  virtual void InitGUI() = 0;
-  void ShutDownGUI();
-  void PrepareGUI();
-  virtual void DrawGUI() = 0;
-  void RenderGUI();
+public:
+    static Application* s_instance; // to access application;
+    static Application* GetInstance();
+
+    ViewportLayer* GetViewportLayer();
+
+    // new: layer stack
+    std::vector<Layer*> m_layers;
+    ViewportLayer*      m_viewportLayer = nullptr;
+    ImGuiLayer*         m_imguiLayer    = nullptr;
+    void                PushLayer(Layer* layer);
+    void                PopLayer(Layer* layer);
 };
 
-}  // namespace Rudy
+} // namespace Rudy

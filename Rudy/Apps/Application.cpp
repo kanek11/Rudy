@@ -1,39 +1,114 @@
 #include "RudyPCH.h"
 #include "Application.h"
 
-
 namespace Rudy
 {
-	 
 
+Application* Application::s_instance = nullptr;
 
-
-     
-    void Application::ShutDownGUI()
-    {
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplGlfw_Shutdown();
-        ImGui::DestroyContext();
-    }
-
-
-    void Application::PrepareGUI()
-    {
-        // 开始新的一帧
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        //  
-        this->DrawGUI();
-    } 
-
-
-    void Application::RenderGUI()
-    {
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    }
-
-	
+Application::Application()
+{
+    RD_CORE_ASSERT(!s_instance, "Application already exists!");
+    s_instance = this;
 }
+
+Application* Application::GetInstance() { return s_instance; }
+
+ViewportLayer* Application::GetViewportLayer() { return m_viewportLayer; }
+
+void Application::PushLayer(Layer* layer)
+{
+    this->m_layers.push_back(layer);
+}
+
+void Application::PopLayer(Layer* layer)
+{
+    auto it = std::find(this->m_layers.begin(), this->m_layers.end(), layer);
+    if (it != this->m_layers.end())
+    {
+        this->m_layers.erase(it);
+    }
+}
+
+void Application::Init()
+{
+    Rudy::Log::Init();
+    RD_CORE_WARN("test:Initialized Log!");
+
+    //========================================
+    m_viewportLayer->Init();
+
+    for (Layer* layer : this->m_layers)
+    {
+        layer->Init();
+    }
+
+    // after opengl and glfw is initialized
+    m_imguiLayer->Init();
+}
+
+//======the loop
+/* Loop until the user closes the window */
+
+// float lastFrameTime   = 0.0f;
+// float timer = 0.0f;
+// RD_CORE_WARN("App: Entering the loop");
+// while (!RendererApp::ShouldClose())
+//{
+//     // RD_PROFILE_SCOPE("the game loop");
+
+//    // get the time of each frame
+//    float time      = (float)glfwGetTime();
+//    float deltaTime = time - lastFrameTime;
+//    lastFrameTime   = time;
+//    timer += deltaTime;
+
+//'gui'
+// this->PrepareGUI();
+
+void Application::Run()
+{
+    float lastFrameTime = 0.0f;
+    RD_CORE_WARN("App: the game loop");
+    while (!m_viewportLayer->ShouldClose())
+    {
+        // RD_PROFILE_SCOPE("the game loop");
+
+        // get the time of each frame
+        float time      = (float)glfwGetTime();
+        float deltaTime = time - lastFrameTime;
+        lastFrameTime   = time;
+
+        for (Layer* layer : this->m_layers)
+        {
+            layer->OnUpdate(deltaTime);
+        }
+
+        m_viewportLayer->OnUpdate(deltaTime);
+
+        this->m_imguiLayer->BeginUpdate();
+        for (Layer* layer : this->m_layers)
+        {
+            layer->OnImGuiRender();
+        }
+        m_viewportLayer->OnImGuiRender();
+        this->m_imguiLayer->EndUpdate();
+
+        m_viewportLayer->WindowOnUpdate();
+        m_viewportLayer->CameraOnUpdate(deltaTime);
+    }
+}
+
+void Application::ShutDown()
+{
+    for (Layer* layer : this->m_layers)
+    {
+        layer->ShutDown();
+    }
+    m_imguiLayer->ShutDown();
+
+    // RendererApp::Shutdown();
+    glfwTerminate();
+}
+
+} // namespace Rudy
