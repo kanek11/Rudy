@@ -242,7 +242,7 @@ void PBR::Init()
         floor3->transform->scale    = glm::vec3(10.0f);
         floor3->transform->rotation = glm::angleAxis(glm::radians(+90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         floor3->transform->position = glm::vec3(0.0f, -2.0f, -4.0f);
-        staticMeshObjects.push_back(floor3);
+        this->staticMeshObjects.push_back(floor3);
     }
 
     //
@@ -263,7 +263,7 @@ void PBR::Init()
         sphere->SetMaterial(sphere_gMaterial);
         sphere->transform->position = glm::vec3(-3.0f + i * 2.0f, +1.0f, 0.0f);
 
-        staticMeshObjects.push_back(sphere);
+        this->staticMeshObjects.push_back(sphere);
     }
 
     for (int i = 0; i < 6; i++)

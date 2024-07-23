@@ -35,11 +35,9 @@ int main(int argc, char** argv)
     // RD_CORE_WARN("test:Initialized Log!");
     // RD_ASSERT(2 < 1, "test:Assert!");
 
-    // auto app = PBR::Create();
-
     auto app = CreateRef<Application>();
 
-    std::string appName = "Phys"; // default app
+    std::string appName = "PBR"; // default app
     for (int i = 1; i < argc; ++i)
     {
         std::string arg = argv[i];
@@ -58,9 +56,15 @@ int main(int argc, char** argv)
 
     // layer stack
     // app->PushLayer(scene_layer);
-    app->m_viewportLayer       = viewport_layer;
-    viewport_layer->SCR_HEIGHT = 1080;
-    viewport_layer->SCR_WIDTH  = 1920;
+    app->m_viewportLayer = viewport_layer;
+
+    // PBR 4K
+    viewport_layer->SCR_WIDTH  = 2560;
+    viewport_layer->SCR_HEIGHT = 1440;
+
+    // phys
+    //  viewport_layer->SCR_HEIGHT = 1080;
+    //  viewport_layer->SCR_WIDTH  = 1920;
 
     // gui
     auto gui_layer    = new ImGuiLayer();

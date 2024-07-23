@@ -106,20 +106,20 @@ public:
     void SetRenderer(Ref<StaticMeshRenderer> rendererComponent)
     {
         rendererComponent->SetTransform(this->transform);
-        this->renderer = rendererComponent;
+        this->m_renderer = rendererComponent;
     }
-    Ref<StaticMeshRenderer> GetRenderer() { return this->renderer; }
+    Ref<StaticMeshRenderer> GetRenderer() { return this->m_renderer; }
 
-    void SetMaterial(Ref<Material> mat) { this->renderer->SetMaterial(mat); }
-    void SetShader(Ref<Shader> shader) { this->renderer->SetShader(shader); }
+    void SetMaterial(Ref<Material> mat) { this->m_renderer->SetMaterial(mat); }
+    void SetShader(Ref<Shader> shader) { this->m_renderer->SetShader(shader); }
 
 public:
     // override draw command if needed;
-    virtual void Draw(Ref<Camera> cam) { this->renderer->Draw(cam); }
+    virtual void Draw(Ref<Camera> cam) { this->m_renderer->Draw(cam); }
 
     // asset and renderer component;
     Ref<Mesh>               m_mesh   = nullptr;
-    Ref<StaticMeshRenderer> renderer = nullptr;
+    Ref<StaticMeshRenderer> m_renderer = nullptr;
 };
 
 // a model contains... whatever the model contains;
