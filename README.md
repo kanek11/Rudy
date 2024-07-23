@@ -1,11 +1,10 @@
 # a GPU-based renderer
 This is a rendering engine in development, primarily for educational purposes.
-I have been trying to keep the code understandable and maintainable, such that it's easy to implement ideas and to customize complicated pipeline.
 Source codes of the following demos can be found under the 'Apps' folder.
 
 ## Prerequisite
 This is a visual studio project runs on Windows, and relying on NVIDIA graphics cards for atomic float operations.
-Dependencies are included in the project.
+Resources and dependencies are included in the project.
 
 ## Major implementations.　
  実装した項目
@@ -17,6 +16,7 @@ Dependencies are included in the project.
 * NPR pipeline
 * GPU particles
 * GPU cloth
+* Eulerian fluid
 
 
 ## Snapshots
@@ -37,16 +37,18 @@ A basic non-photorealistic rendering pipeline.
 * flow chart showing the pipeline data flow. (visualization using Blender shader graph)
 <img src="images/NPR_pipeline.png" width="800">
 
-
 ### GPU particles
 * lifetime management
 * camera-facing sprites
-<img src="images/particles.gif" width="800">
+<img src="images/particles_gif.gif" width="800">
 
 ### GPU cloth
 * by PBD(position-based dynamics) 
 <img src="images/cloth.gif" width="800">
 
+### Fluid simulation
+* by Eulerian method
+<img src="images/fluid_gif.gif" width="800">
 
 ## Roadmap
 これからやりたいこと
@@ -54,8 +56,8 @@ A basic non-photorealistic rendering pipeline.
 * Temporal techniques (TAA, temporal denoising)
 * MMD animations with physics
 * Particle sorting/Collision handling
-* SoftBody simulation
-* Fluid simulation 
+* fluid simulation by FLIP
+* SoftBody simulation 
 * Volume rendering
 * Subsurface scattering
 
