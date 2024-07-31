@@ -1,5 +1,4 @@
 #pragma once
-
 #include "RudyPCH.h"
 
 #include "Object.h"

@@ -51,7 +51,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Rudy\Vendor\imgui;D:\dev\dependencies\assimp\include;D:\dev\dependencies\stb_image;D:\dev\dependencies\GLM;D:\dev\dependencies\spdlog-1.x\include;D:\dev\dependencies\glfw-3.3.8.bin.WIN64\include;D:\dev\dependencies\Glad\include; </AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>RudyPCH.h </PrecompiledHeaderFile>
     </ClCompile>
@@ -93,6 +93,7 @@
     <ClInclude Include="Apps\NPR.h" />
     <ClInclude Include="Apps\Phys.h" />
     <ClInclude Include="Apps\PBR.h" />
+    <ClInclude Include="Rudy\Core\Assert.h" />
     <ClInclude Include="Rudy\Physics\Fluid.h" />
     <ClInclude Include="Rudy\Primitives\Cube.h" />
     <ClInclude Include="Rudy\Primitives\Overlay.h" />
@@ -100,8 +101,6 @@
     <ClInclude Include="Rudy.h" />
     <ClInclude Include="Rudy\Core\Base.h" />
     <ClInclude Include="Rudy\Core\FileSystem.h" />
-    <ClInclude Include="Rudy\Core\Timer.h" />
-    <ClInclude Include="Rudy\Core\Timestep.h" />
     <ClInclude Include="Rudy\Debug\Instrumentor.h" />
     <ClInclude Include="Rudy\Events\Input.h" />
     <ClInclude Include="Rudy\Core\Log.h" />
@@ -123,6 +122,7 @@
     <ClInclude Include="Rudy\Renderer\Camera.h" />
     <ClInclude Include="Rudy\Renderer\FrameBuffer.h" />
     <ClInclude Include="Rudy\Renderer\GraphicsContext.h" />
+    <ClInclude Include="Rudy\Renderer\Light.h" />
     <ClInclude Include="Rudy\Renderer\Material.h" />
     <ClInclude Include="Rudy\Renderer\Mesh.h" />
     <ClInclude Include="Rudy\Renderer\Object.h" />
@@ -268,7 +268,6 @@
     <ClCompile Include="Rudy\Renderer\Camera.cpp" />
     <ClCompile Include="Rudy\Renderer\FrameBuffer.cpp" />
     <ClCompile Include="Rudy\Renderer\GraphicsContext.cpp" />
-    <ClCompile Include="Rudy\Renderer\Light.h" />
     <ClCompile Include="Rudy\Renderer\Material.cpp" />
     <ClCompile Include="Rudy\Renderer\Mesh.cpp" />
     <ClCompile Include="Rudy\Renderer\Object.cpp" />

@@ -12,6 +12,8 @@
 #include "Rudy/Renderer/Object.h"
 #include "Rudy/Renderer/Buffer.h"
 
+#include "Rudy/Renderer/Light.h"
+
 #include "Rudy/Renderer/Scene.h"
 #include "Rudy/Primitives/Sphere.h"
 #include "Rudy/Primitives/Plane.h"

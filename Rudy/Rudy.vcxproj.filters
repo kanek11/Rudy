@@ -54,9 +54,6 @@
     <ClInclude Include="Rudy\Events\MouseCodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Core\Timestep.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Rudy\Renderer\GraphicsContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -97,9 +94,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy\Renderer\Object.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Rudy\Core\Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy\Debug\Instrumentor.h">
@@ -222,6 +216,12 @@
     <ClInclude Include="Apps\Layer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Rudy\Core\Assert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rudy\Renderer\Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Rudy\Core\Log.cpp">
@@ -282,9 +282,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Platform\Windows\WindowsInput.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Rudy\Renderer\Light.h">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp">
@@ -389,13 +386,13 @@
     <ClCompile Include="Apps\NPR.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\Light.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Rudy\Physics\Fluid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Apps\Layer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rudy\Renderer\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

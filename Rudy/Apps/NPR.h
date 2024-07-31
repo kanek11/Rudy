@@ -6,8 +6,7 @@
 #include "Vendor/imgui/imgui_impl_opengl3.h"
 
 #include "Application.h"
-
-#include "Rudy/Renderer/Light.h"
+ 
 
 namespace Rudy
 {

@@ -2,33 +2,18 @@
 
 
 //project core files
-//log first ,  assertion based on log
-#include "Rudy/Core/Log.h"
-
-#include "Rudy/Core/Base.h" 
-
-#include "Rudy/Debug/Instrumentor.h"
+// assert -> log-> base
+// assert -> platform detection 
 
 
 
+//usually independent of other files,but many depend on it
+#include "Rudy/Core/PlatformDetection.h"
 
-#include "Rudy/Core/FileSystem.h"
-
-//third party 
-
-#include <glad/glad.h>  //before glfw3.h
-#include <GLFW/glfw3.h> 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>  //for glm::value_ptr
 
 //standard library
-
-#include <string> 
-#include <vector>
-
-#include <sstream>
-#include <fstream>
-#include <iostream>
+#include <vector> 
+#include <string>  
 #include <unordered_map>   
 #include <map>
 #include <unordered_set>
@@ -39,4 +24,26 @@
 #include <utility>
 
 
-#include <random> 
+#include <sstream>
+#include <fstream>
+#include <iostream>
+
+#include <random>  
+
+
+
+//third party 
+
+#include <glad/glad.h>  //before glfw3.h
+#include <GLFW/glfw3.h> 
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>  //for glm::value_ptr
+
+
+
+#include "Rudy/Core/Base.h" 
+#include "Rudy/Core/Log.h" 
+#include "Rudy/Core/Assert.h" 
+#include "Rudy/Debug/Instrumentor.h"  
+
+#include "Rudy/Core/FileSystem.h"

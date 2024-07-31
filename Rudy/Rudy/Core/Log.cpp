@@ -1,5 +1,4 @@
- #include "RudyPCH.h" 
-
+#include "RudyPCH.h" 
 #include "Log.h"
 
 #include <spdlog/sinks/stdout_color_sinks.h>

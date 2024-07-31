@@ -1,15 +1,19 @@
-#pragma once
+#pragma once 
 
-#include "Rudy/Core/Base.h"
-
+#include "Rudy/Core/Base.h" 
+ 
 #define GLM_ENABLE_EXPERIMENTAL
-#include "glm/gtx/string_cast.hpp"
+#include "glm/gtx/string_cast.hpp" 
 
+#define _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING
+#define _SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS
 // This ignores all warnings raised inside External headers
 #pragma warning(push, 0)
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
 #pragma warning(pop)
+
+ 
 
 namespace Rudy {
 
