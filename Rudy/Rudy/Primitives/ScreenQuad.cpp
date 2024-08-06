@@ -12,9 +12,9 @@ namespace Rudy
         m_mesh = CreateMeshGeometry();
     }
 
-    Ref<ScreenQuad> ScreenQuad::Create() { 
+    SharedPtr<ScreenQuad> ScreenQuad::Create() { 
         
-        auto object = CreateRef<ScreenQuad>();
+        auto object = CreateShared<ScreenQuad>();
 
         object->StaticMeshObject::InitComponent(object);
         //object->InitComponent(object);
@@ -27,7 +27,7 @@ namespace Rudy
 
     //static Scope<Mesh> Create(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
 
-    Ref<Mesh> ScreenQuad::CreateMeshGeometry()
+    SharedPtr<Mesh> ScreenQuad::CreateMeshGeometry()
     {
 
         auto _mesh = Mesh::Create();

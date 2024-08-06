@@ -12,9 +12,9 @@ namespace Rudy
     }
 
 
-    Ref<Plane> Plane::Create(uint32_t subdivison)
+    SharedPtr<Plane> Plane::Create(uint32_t subdivison)
     {
-        auto object = CreateRef<Plane>(subdivison);
+        auto object = CreateShared<Plane>(subdivison);
 
         object->StaticMeshObject::InitComponent(object);
         //object->InitComponent(object);
@@ -27,7 +27,7 @@ namespace Rudy
 
     //static Scope<Mesh> Create(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
 
-    Ref<Mesh> Plane::CreateMeshGeometry(uint32_t subdivision)
+    SharedPtr<Mesh> Plane::CreateMeshGeometry(uint32_t subdivision)
     {
         //divide by 2 means 3x3 grid
         uint32_t numX = subdivision + 1;

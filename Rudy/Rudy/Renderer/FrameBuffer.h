@@ -26,7 +26,7 @@ public:
 
     virtual uint32_t GetRenderBufferID() = 0;
 
-    static Scope<RenderBuffer> Create(uint32_t width, uint32_t height, RenderBufferFormat format = RenderBufferFormat::DEPTH24STENCIL8);
+    static UniquePtr<RenderBuffer> Create(uint32_t width, uint32_t height, RenderBufferFormat format = RenderBufferFormat::DEPTH24STENCIL8);
 
 private:
     uint32_t           m_Width = 0, m_Height = 0;
@@ -67,17 +67,17 @@ public:
 
     virtual uint32_t GetFrameBufferID() = 0;
 
-    static Ref<FrameBuffer> Create(
+    static SharedPtr<FrameBuffer> Create(
         std::string     name,
         uint32_t        width,
         uint32_t        height,
         FrameBufferType type = FrameBufferType::Regular);
 
-    virtual void SetColorTexture(TexType type, Ref<Texture> texture, uint32_t slot) = 0;
-    virtual void SetDepthTexture(Ref<Texture> texture)                              = 0;
+    virtual void SetColorTexture(TexType type, SharedPtr<Texture> texture, uint32_t slot) = 0;
+    virtual void SetDepthTexture(SharedPtr<Texture> texture)                              = 0;
 
-    virtual std::unordered_map<TexType, Ref<Texture>> GetColorTextures() = 0;
-    virtual Ref<Texture>                              GetDepthTexture()  = 0;
+    virtual std::unordered_map<TexType, SharedPtr<Texture>> GetColorTextures() = 0;
+    virtual SharedPtr<Texture>                              GetDepthTexture()  = 0;
 
     virtual void SetDrawBuffers()    = 0;
     virtual void CheckCompleteness() = 0;

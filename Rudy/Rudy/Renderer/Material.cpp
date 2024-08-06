@@ -7,13 +7,13 @@
 namespace Rudy 
 {
  
-	Ref<Material> Material::Create(Ref<Shader> shader, const std::string& name)
+	SharedPtr<Material> Material::Create(SharedPtr<Shader> shader, const std::string& name)
 	{
-		return CreateRef<Material>(shader, name);
+		return CreateShared<Material>(shader, name);
 	} 
  
 
-	Material::Material(Ref<Shader> shader, const std::string& name)
+	Material::Material(SharedPtr<Shader> shader, const std::string& name)
 		: m_Shader(shader), m_Name(name)
 	{ 
 		if(shader!=nullptr)
@@ -24,7 +24,7 @@ namespace Rudy
 	}
 	 
 
-	void Material::SetMaterialProperties(Ref<Shader> shader)
+	void Material::SetMaterialProperties(SharedPtr<Shader> shader)
 	{
 		// materialType = MaterialType::Custom;
 		//m_Shader = shader;

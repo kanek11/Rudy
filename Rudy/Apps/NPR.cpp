@@ -229,7 +229,7 @@ void NPR::Init()
         // SSAOInputs[TexType::gWorldTangent] = gWorldTangent;
         SSAOInputs[TexType::gViewDepth] = gViewDepth;
 
-        SSAOPass = CreateRef<SSAO>(SCR_WIDTH, SCR_HEIGHT, SSAOInputs, SSAOOutputs);
+        SSAOPass = CreateShared<SSAO>(SCR_WIDTH, SCR_HEIGHT, SSAOInputs, SSAOOutputs);
     }
 
     // Outline
@@ -237,7 +237,7 @@ void NPR::Init()
         OutlineInputs[TexType::gViewPosition] = gViewPosition;
         OutlineInputs[TexType::gViewNormal]   = gViewNormal;
 
-        OutlinePass = CreateRef<Outline>(SCR_WIDTH, SCR_HEIGHT, OutlineInputs, OutlineOutputs);
+        OutlinePass = CreateShared<Outline>(SCR_WIDTH, SCR_HEIGHT, OutlineInputs, OutlineOutputs);
     }
 
     // SSR
@@ -249,7 +249,7 @@ void NPR::Init()
 
         SSRInputs[TexType::gRoughness] = gRoughness;
 
-        SSRPass = CreateRef<SSR>(SCR_WIDTH, SCR_HEIGHT, SSRInputs, SSROutputs);
+        SSRPass = CreateShared<SSR>(SCR_WIDTH, SCR_HEIGHT, SSRInputs, SSROutputs);
     }
 
     // composer
@@ -258,21 +258,21 @@ void NPR::Init()
         ComposerInputs[TexType::SSROutputTexture]     = SSROutputs[TexType::ScreenTexture];
         ComposerInputs[TexType::OutlineOutputTexture] = OutlineOutputs[TexType::ScreenTexture];
 
-        ComposerPass = CreateRef<Composer>(SCR_WIDTH, SCR_HEIGHT, ComposerInputs, ComposerOutputs);
+        ComposerPass = CreateShared<Composer>(SCR_WIDTH, SCR_HEIGHT, ComposerInputs, ComposerOutputs);
     }
 
     // Bloom
     {
         BloomInputs[TexType::ScreenTexture] = litPassScreenTexture;
 
-        BloomPass = CreateRef<Bloom>(SCR_WIDTH, SCR_HEIGHT, BloomInputs, BloomOutputs);
+        BloomPass = CreateShared<Bloom>(SCR_WIDTH, SCR_HEIGHT, BloomInputs, BloomOutputs);
     }
 
     // tone mapping
     {
         ToneMapInputs[TexType::ScreenTexture] = litPassScreenTexture;
 
-        ToneMapPass = CreateRef<ToneMap>(SCR_WIDTH, SCR_HEIGHT, ToneMapInputs, ToneMapOutputs);
+        ToneMapPass = CreateShared<ToneMap>(SCR_WIDTH, SCR_HEIGHT, ToneMapInputs, ToneMapOutputs);
     }
 
     //=========================================
@@ -478,7 +478,7 @@ void NPR::OnImGuiRender()
 
     ImGui::Checkbox("enableSkybox", &enableSkyBox);
 
-    std::unordered_map<std::string, Ref<Texture>> bufferList = {
+    std::unordered_map<std::string, SharedPtr<Texture>> bufferList = {
         { "Lit Pass output", litOutputs[TexType::ScreenTexture] },
         { "SSR output", SSROutputs[TexType::ScreenTexture] },
         { "SSAO output", SSAOOutputs[TexType::ScreenTexture] },

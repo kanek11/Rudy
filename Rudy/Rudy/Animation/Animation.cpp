@@ -6,9 +6,9 @@
 namespace Rudy
 {
 
-Ref<AnimationClip> AnimationClip::Create()
+SharedPtr<AnimationClip> AnimationClip::Create()
 {
-    return CreateRef<AnimationClip>();
+    return CreateShared<AnimationClip>();
 }
 
 AnimationClip::AnimationClip()
@@ -146,7 +146,7 @@ glm::mat4 Animator::GetGlobalTransform(const std::string& name)
 
 // get the data-oriented array from the avatar;
 //
-Animator::Animator(Ref<Model> model) :
+Animator::Animator(SharedPtr<Model> model) :
     model(model)
 {
     // m_BoneTransforms.resize(100);  //TODO: adjust the size from the avatar;
@@ -207,7 +207,7 @@ void Animator::UpdateBoneTransforms(float time)
     // SetBoneTransformsRecursive(time, m_AnimationClip->rootNode, glm::mat4(1.0f));
 }
 
-void AnimationClip::printHierarchy(const Ref<Transform> node)
+void AnimationClip::printHierarchy(const SharedPtr<Transform> node)
 {
     RD_CORE_INFO("animationclip print: node name:{0}", node->gameObject->name);
 

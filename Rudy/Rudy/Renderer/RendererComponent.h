@@ -40,19 +40,19 @@ class Renderer
 public:
     virtual ~Renderer() = default;
 
-    virtual void Draw(Ref<Camera> cam, uint32_t count = 1, Ref<Material> mat = nullptr) = 0;
+    virtual void Draw(SharedPtr<Camera> cam, uint32_t count = 1, SharedPtr<Material> mat = nullptr) = 0;
 
     // set/get
-    void          SetMaterial(Ref<Material> mat) { m_material = mat; }
-    Ref<Material> GetMaterial() { return m_material; }
+    void                SetMaterial(SharedPtr<Material> mat) { m_material = mat; }
+    SharedPtr<Material> GetMaterial() { return m_material; }
 
-    void SetShader(Ref<Shader> shader) { m_material->SetShader(shader); }
+    void SetShader(SharedPtr<Shader> shader) { m_material->SetShader(shader); }
     void GetShader() { m_material->GetShader(); }
 
-    void             SetVertexArray(Ref<VertexArray> va) { m_vertexArray = va; }
-    Ref<VertexArray> GetVertexArray() { return m_vertexArray; }
+    void                   SetVertexArray(SharedPtr<VertexArray> va) { m_vertexArray = va; }
+    SharedPtr<VertexArray> GetVertexArray() { return m_vertexArray; }
 
-    void SetSSBO(uint32_t bindingPoint, Ref<StorageBuffer> SSBO)
+    void SetSSBO(uint32_t bindingPoint, SharedPtr<StorageBuffer> SSBO)
     {
         m_StorageBuffer_map[bindingPoint] = SSBO;
     }
@@ -62,19 +62,19 @@ public:
     bool hasVertexArray() { return m_vertexArray != nullptr; }
 
 protected:
-    Ref<Material> m_material = nullptr;
+    SharedPtr<Material> m_material = nullptr;
     // optional
-    Ref<VertexArray> m_vertexArray = nullptr;
+    SharedPtr<VertexArray> m_vertexArray = nullptr;
 
     uint32_t m_instanceCount = 1;
 
     // new: <binding point, SSBO>, mainly for compute shader
-    std::unordered_map<uint32_t, Ref<StorageBuffer>> m_StorageBuffer_map;
+    std::unordered_map<uint32_t, SharedPtr<StorageBuffer>> m_StorageBuffer_map;
 
 public:
     // hack:
-    void           SetTransform(Ref<Transform> t) { m_transform = t; }
-    Ref<Transform> m_transform = nullptr;
+    void                 SetTransform(SharedPtr<Transform> t) { m_transform = t; }
+    SharedPtr<Transform> m_transform = nullptr;
 };
 
 //<<terminal>>
@@ -90,27 +90,27 @@ public:
         m_indexBuffer  = IndexBuffer::Create();
     }
 
-    static Ref<StaticMeshRenderer> Create()
+    static SharedPtr<StaticMeshRenderer> Create()
     {
-        return CreateRef<StaticMeshRenderer>();
+        return CreateShared<StaticMeshRenderer>();
     }
 
 public:
-    virtual void Draw(Ref<Camera> cam, uint32_t count = 1, Ref<Material> mat = nullptr) override;
+    virtual void Draw(SharedPtr<Camera> cam, uint32_t count = 1, SharedPtr<Material> mat = nullptr) override;
 
-    void      SetMesh(Ref<Mesh> m);
-    Ref<Mesh> GetMesh() { return m_mesh; }
-    bool      hasMesh() { return m_mesh != nullptr; }
+    void            SetMesh(SharedPtr<Mesh> m);
+    SharedPtr<Mesh> GetMesh() { return m_mesh; }
+    bool            hasMesh() { return m_mesh != nullptr; }
 
     // system utilities
 private:
     void SetupBuffers();
 
 public:
-    Ref<Mesh> m_mesh = nullptr;
+    SharedPtr<Mesh> m_mesh = nullptr;
 
-    Ref<VertexBuffer> m_vertexBuffer = nullptr;
-    Ref<IndexBuffer>  m_indexBuffer  = nullptr;
+    SharedPtr<VertexBuffer> m_vertexBuffer = nullptr;
+    SharedPtr<IndexBuffer>  m_indexBuffer  = nullptr;
 };
 
 //<<terminal>>
@@ -125,20 +125,20 @@ public:
 //		m_vertexArray = VertexArray::Create();
 //	}
 
-//	static Ref<PhysicalMeshRendererComponent> Create()
+//	static SharedPtr<PhysicalMeshRendererComponent> Create()
 //	{
-//		return CreateRef<PhysicalMeshRendererComponent>();
+//		return CreateShared<PhysicalMeshRendererComponent>();
 //	}
 
-//	virtual void Draw(Ref<Camera> cam) override;
+//	virtual void Draw(SharedPtr<Camera> cam) override;
 
 // public:
-//	void SetMesh(Ref<Mesh> m);
-//	Ref<Mesh> GetMesh() { return m_mesh; }
+//	void SetMesh(SharedPtr<Mesh> m);
+//	SharedPtr<Mesh> GetMesh() { return m_mesh; }
 //	bool hasMesh() { return m_mesh != nullptr; }
 
 // public:
-//	Ref<Mesh> m_mesh = nullptr;
+//	SharedPtr<Mesh> m_mesh = nullptr;
 // };
 
 class ParticleSpriteRenderer : public Renderer
@@ -150,13 +150,13 @@ public:
         RD_CORE_INFO(" ParticleSpriteRendererComponent created:");
     }
 
-    static Ref<ParticleSpriteRenderer> Create()
+    static SharedPtr<ParticleSpriteRenderer> Create()
     {
-        return CreateRef<ParticleSpriteRenderer>();
+        return CreateShared<ParticleSpriteRenderer>();
     }
 
 public:
-    virtual void Draw(Ref<Camera> cam, uint32_t count = 1, Ref<Material> mat = nullptr) override;
+    virtual void Draw(SharedPtr<Camera> cam, uint32_t count = 1, SharedPtr<Material> mat = nullptr) override;
 };
 
 } // namespace Rudy

@@ -5,12 +5,12 @@
 namespace Rudy
 {
 
-    Ref<Scene> Scene::Create()
+    SharedPtr<Scene> Scene::Create()
     {
-		return CreateRef<Scene>();
+		return CreateShared<Scene>();
 	}
 
-    void Scene::AddObject(Ref<Object> object)
+    void Scene::AddObject(SharedPtr<Object> object)
     {
         objects.push_back(object);
         std::cout << "Scene: add object, current size: " << objects.size() << std::endl;
@@ -18,7 +18,7 @@ namespace Rudy
 
 
     //until we determine a stable framework;
-    void Scene::Render(Ref<Camera> camera)
+    void Scene::Render(SharedPtr<Camera> camera)
     {
 		 RD_CORE_ERROR("not implemented"); 
 

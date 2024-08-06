@@ -35,7 +35,7 @@ namespace Rudy {
 
 	
 
- 	     //virtual void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) override;
+ 	     //virtual void DrawLines(const SharedPtr<VertexArray>& vertexArray, uint32_t vertexCount) override;
 		
 		//virtual void SetLineWidth(float width) override;*/
 	};

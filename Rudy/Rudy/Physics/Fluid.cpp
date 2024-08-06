@@ -11,7 +11,7 @@ Fluid::Fluid() :
     RD_CORE_INFO("Fluid: grid size: {0} x {1}", m_num_width, m_num_height);
 };
 
-void Fluid::Draw(Ref<Camera> cam)
+void Fluid::Draw(SharedPtr<Camera> cam)
 {
     m_screen_quad->Draw(nullptr);
 }
@@ -126,8 +126,6 @@ void Fluid::Init()
     m_output_material = Material::Create(m_output_shader);
     m_screen_quad->SetMaterial(m_output_material);
     m_output_material->SetTexture(TexType::ScreenTexture, m_output_texture);
-
-    
 }
 
 void Fluid::Update()

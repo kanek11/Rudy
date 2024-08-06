@@ -16,12 +16,12 @@ namespace Rudy {
 		s_FlipYOnLoad = flip;
 	}
 
-	Ref<Texture2D> Texture2D::LoadFile(const std::string& path, bool isHDRI)
+	SharedPtr<Texture2D> Texture2D::LoadFile(const std::string& path, bool isHDRI)
 	{
 		switch (RendererAPI::GetAPI())
 		{
 		case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTexture2D>(path, isHDRI);
+		case RendererAPI::API::OpenGL:  return CreateShared<OpenGLTexture2D>(path, isHDRI);
 		}
 
 		RD_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -29,12 +29,12 @@ namespace Rudy {
 	}
 
 	
-	Ref<Texture2D> Texture2D::CreateEmpty(const TextureSpec& specfication)
+	SharedPtr<Texture2D> Texture2D::CreateEmpty(const TextureSpec& specfication)
 	{
 		switch (RendererAPI::GetAPI())
 		{
 		case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTexture2D>(specfication);
+		case RendererAPI::API::OpenGL:  return CreateShared<OpenGLTexture2D>(specfication);
 		}
 
 		RD_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -53,12 +53,12 @@ namespace Rudy {
 
 
 
-	Ref<TextureCube> TextureCube::LoadImages(const std::vector<std::string>& paths)
+	SharedPtr<TextureCube> TextureCube::LoadImages(const std::vector<std::string>& paths)
 	{
 		switch (RendererAPI::GetAPI())
 		{
 		case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTextureCube>(paths);
+		case RendererAPI::API::OpenGL:  return CreateShared<OpenGLTextureCube>(paths);
 		}
 
 		RD_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -68,12 +68,12 @@ namespace Rudy {
 
 
 
-	Ref<TextureCube> TextureCube::CreateEmpty(const TextureSpec& specfication)
+	SharedPtr<TextureCube> TextureCube::CreateEmpty(const TextureSpec& specfication)
 	{
 		switch (RendererAPI::GetAPI())
 		{
 		case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTextureCube>(specfication);
+		case RendererAPI::API::OpenGL:  return CreateShared<OpenGLTextureCube>(specfication);
 		}
 
 		RD_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -82,12 +82,12 @@ namespace Rudy {
 
 
 
-	 Ref<TextureCube> TextureCube::LoadHDRI(const std::string& path)
+	 SharedPtr<TextureCube> TextureCube::LoadHDRI(const std::string& path)
 	 {
 		 switch (RendererAPI::GetAPI())
 		 {
 		 case RendererAPI::API::None:    RD_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		 case RendererAPI::API::OpenGL:  return CreateRef<OpenGLTextureCube>(path);
+		 case RendererAPI::API::OpenGL:  return CreateShared<OpenGLTextureCube>(path);
 		 }
 
 		 RD_CORE_ASSERT(false, "Unknown RendererAPI!");

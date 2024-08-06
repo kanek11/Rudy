@@ -93,7 +93,7 @@ public:
     Mesh()  = default;
     ~Mesh() = default;
 
-    static Ref<Mesh> Create();
+    static SharedPtr<Mesh> Create();
 
     // for drawcall.
     uint32_t GetIndexCount()

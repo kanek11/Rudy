@@ -19,7 +19,7 @@ public:
 
     virtual uint32_t GetRenderBufferID() override { return m_RenderBufferID; }
 
-    static Scope<RenderBuffer> Create(RenderBufferFormat format, uint32_t width, uint32_t height);
+    static UniquePtr<RenderBuffer> Create(RenderBufferFormat format, uint32_t width, uint32_t height);
 
 private:
     uint32_t           m_Width = 0, m_Height = 0;
@@ -42,7 +42,7 @@ public:
 
     virtual uint32_t GetFrameBufferID() override { return this->m_FrameBufferID; }
 
-    virtual void SetColorTexture(TexType type, Ref<Texture> texture, uint32_t slot) override
+    virtual void SetColorTexture(TexType type, SharedPtr<Texture> texture, uint32_t slot) override
     {
         if (slot >= 8)
         {
@@ -57,7 +57,7 @@ public:
         RD_CORE_INFO("FBO {0}: textureId:{1} is attached to colorbuffer{2}", m_Name, texture->GetID(), slot);
     }
 
-    virtual void SetDepthTexture(Ref<Texture> texture) override
+    virtual void SetDepthTexture(SharedPtr<Texture> texture) override
     {
         // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture->GetID(), 0);
 
@@ -65,12 +65,12 @@ public:
         glNamedFramebufferTexture(this->m_FrameBufferID, GL_DEPTH_ATTACHMENT, texture->GetID(), 0);
     }
 
-    virtual std::unordered_map<TexType, Ref<Texture>> GetColorTextures() override
+    virtual std::unordered_map<TexType, SharedPtr<Texture>> GetColorTextures() override
     {
         return m_ColorBuffers;
     }
 
-    virtual Ref<Texture> GetDepthTexture() override
+    virtual SharedPtr<Texture> GetDepthTexture() override
     {
         return m_DepthTexture;
     }
@@ -123,9 +123,9 @@ private:
     uint32_t    m_ColorBufferNum = 0;
     uint32_t    m_Width = 0, m_Height = 0;
 
-    std::unordered_map<TexType, Ref<Texture>> m_ColorBuffers;
-    Ref<Texture>                              m_DepthTexture;
-    Scope<RenderBuffer>                       m_RenderBuffer; // only for depth/stencil
+    std::unordered_map<TexType, SharedPtr<Texture>> m_ColorBuffers;
+    SharedPtr<Texture>                              m_DepthTexture;
+    UniquePtr<RenderBuffer>                         m_RenderBuffer; // only for depth/stencil
 };
 
 } // namespace Rudy

@@ -13,9 +13,9 @@ DirectionalLight::DirectionalLight() :
 {
 }
 
-Ref<DirectionalLight> DirectionalLight::Create()
+SharedPtr<DirectionalLight> DirectionalLight::Create()
 {
-    Ref<DirectionalLight> light = CreateRef<DirectionalLight>();
+    SharedPtr<DirectionalLight> light = CreateShared<DirectionalLight>();
     // component
     light->InitComponent(light);
     return light;

@@ -6,7 +6,6 @@
 #include "Vendor/imgui/imgui_impl_opengl3.h"
 
 #include "Application.h"
- 
 
 namespace Rudy
 {
@@ -38,13 +37,13 @@ public:
     ~NPRMaterial() = default;
     NPRMaterial()  = default;
 
-    static Ref<NPRMaterial> Create(Ref<Shader> shader = nullptr, const std::string& name = "UnnamedNPRMaterial")
+    static SharedPtr<NPRMaterial> Create(SharedPtr<Shader> shader = nullptr, const std::string& name = "UnnamedNPRMaterial")
     {
-        return CreateRef<NPRMaterial>(shader, name);
+        return CreateShared<NPRMaterial>(shader, name);
     }
 
     // set preset values
-    NPRMaterial(Ref<Shader> shader, const std::string& name) :
+    NPRMaterial(SharedPtr<Shader> shader, const std::string& name) :
         Material(shader, name)
     {
         this->SetFloatMap(NPRDefaultFloatMap);
@@ -66,9 +65,9 @@ public:
     virtual void OnImGuiRender() override;
 
     //
-    Ref<DirectionalLight>              sunlight = nullptr;
-    std::vector<Ref<StaticMeshObject>> staticMeshObjects;
-    std::vector<Ref<Model>>            models;
+    SharedPtr<DirectionalLight>              sunlight = nullptr;
+    std::vector<SharedPtr<StaticMeshObject>> staticMeshObjects;
+    std::vector<SharedPtr<Model>>            models;
 
     // float shadow_bias = 0.005f;
     float min_shadow_bias = 0.001f;
@@ -76,55 +75,55 @@ public:
 
     //==========================================
     // Lit
-    Ref<FrameBuffer> litPassFBO;
-    Ref<Shader>      litPassShader;
+    SharedPtr<FrameBuffer> litPassFBO;
+    SharedPtr<Shader>      litPassShader;
 
     //
     //
-    // Ref<Pass> LitPass;
-    std::map<TexType, Ref<Texture2D>> litInputs;
-    std::map<TexType, Ref<Texture2D>> litOutputs;
+    // SharedPtr<Pass> LitPass;
+    std::map<TexType, SharedPtr<Texture2D>> litInputs;
+    std::map<TexType, SharedPtr<Texture2D>> litOutputs;
 
     //=======================================================================================================
     // SSAO
-    Ref<SSAO> SSAOPass;
+    SharedPtr<SSAO> SSAOPass;
 
-    std::unordered_map<TexType, Ref<Texture>> SSAOInputs;
-    std::unordered_map<TexType, Ref<Texture>> SSAOOutputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> SSAOInputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> SSAOOutputs;
 
     //=======================================================================================================
     // Bloom
 
-    Ref<Bloom> BloomPass;
+    SharedPtr<Bloom> BloomPass;
 
-    std::unordered_map<TexType, Ref<Texture>> BloomInputs;
-    std::unordered_map<TexType, Ref<Texture>> BloomOutputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> BloomInputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> BloomOutputs;
 
     //=======================================================================================================
     // Outline
 
-    Ref<Outline> OutlinePass;
+    SharedPtr<Outline> OutlinePass;
 
-    std::unordered_map<TexType, Ref<Texture>> OutlineInputs;
-    std::unordered_map<TexType, Ref<Texture>> OutlineOutputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> OutlineInputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> OutlineOutputs;
 
     //=======================================================================================================
     // SSR
-    Ref<SSR> SSRPass;
+    SharedPtr<SSR> SSRPass;
 
-    std::unordered_map<TexType, Ref<Texture>> SSRInputs;
-    std::unordered_map<TexType, Ref<Texture>> SSROutputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> SSRInputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> SSROutputs;
 
     // tonemapping
-    Ref<ToneMap> ToneMapPass;
+    SharedPtr<ToneMap> ToneMapPass;
 
-    std::unordered_map<TexType, Ref<Texture>> ToneMapInputs;
-    std::unordered_map<TexType, Ref<Texture>> ToneMapOutputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> ToneMapInputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> ToneMapOutputs;
 
-    Ref<Composer> ComposerPass;
+    SharedPtr<Composer> ComposerPass;
 
-    std::unordered_map<TexType, Ref<Texture>> ComposerInputs;
-    std::unordered_map<TexType, Ref<Texture>> ComposerOutputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> ComposerInputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> ComposerOutputs;
 
 public:
     const uint32_t BUFFER_WIDTH  = SCR_WIDTH / 4;
@@ -144,10 +143,10 @@ public:
     bool visualize_gbuffer = false;
     bool enableSkyBox      = false;
 
-    Ref<Texture> visualizeBuffer;
-    float        bufferMipLevel = 0;
+    SharedPtr<Texture> visualizeBuffer;
+    float              bufferMipLevel = 0;
 
-    Ref<Texture2D> shadowMap;
+    SharedPtr<Texture2D> shadowMap;
 
     float     direct_light_intensity = 0.9f;
     glm::vec3 direct_light_dir       = glm::vec3(0.3f, -0.5f, -1.0f);
@@ -160,19 +159,19 @@ public:
     float diffuse_cutoff = 0.3f;
 
     // todo:make these more elegant
-    Ref<Shader>     screenQuadShader;
-    Ref<ScreenQuad> screenQuad;
+    SharedPtr<Shader>     screenQuadShader;
+    SharedPtr<ScreenQuad> screenQuad;
 
-    Navigation* nav;
-    Ref<Shader> pure_color_shader;
+    Navigation*       nav;
+    SharedPtr<Shader> pure_color_shader;
 
     float timer = 0.0f;
 
-    Ref<FrameBuffer> shadowMapFBO             = nullptr;
-    Ref<Material>    shadowMapMaterial        = nullptr;
-    Ref<Material>    shadowMapSkinnedMaterial = nullptr;
+    SharedPtr<FrameBuffer> shadowMapFBO             = nullptr;
+    SharedPtr<Material>    shadowMapMaterial        = nullptr;
+    SharedPtr<Material>    shadowMapSkinnedMaterial = nullptr;
 
-    Ref<Model> model = nullptr;
+    SharedPtr<Model> model = nullptr;
 };
 
 } // namespace Rudy

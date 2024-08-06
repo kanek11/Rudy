@@ -3,7 +3,7 @@
 namespace Rudy
 {
 
-Ref<Mesh> Cube::CreateMeshGeometry()
+SharedPtr<Mesh> Cube::CreateMeshGeometry()
 {
     // we don't use indices for now
     float CubeVertices[] = {
@@ -200,7 +200,7 @@ Ref<Mesh> Cube::CreateMeshGeometry()
     return _mesh;
 }
 
-void Cube::DrawSkybox(Ref<Camera> cam)
+void Cube::DrawSkybox(SharedPtr<Camera> cam)
 {
     auto renderer = this->GetRenderer();
 

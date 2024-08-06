@@ -357,7 +357,7 @@ void PBR::Init()
         WorldToViewOutputs[TexType::gViewPosition] = gViewPosition;
         WorldToViewOutputs[TexType::gViewNormal]   = gViewNormal;
 
-        WorldToViewPass = CreateRef<WorldToView>(SCR_WIDTH, SCR_HEIGHT, WorldToViewInputs, WorldToViewOutputs);
+        WorldToViewPass = CreateShared<WorldToView>(SCR_WIDTH, SCR_HEIGHT, WorldToViewInputs, WorldToViewOutputs);
     }
 
     // SSAO
@@ -367,14 +367,14 @@ void PBR::Init()
         // SSAOInputs[TexType::gWorldTangent] = gWorldTangent;
         SSAOInputs[TexType::gViewDepth] = gViewDepth;
 
-        SSAOPass = CreateRef<SSAO>(SCR_WIDTH, SCR_HEIGHT, SSAOInputs, SSAOOutputs);
+        SSAOPass = CreateShared<SSAO>(SCR_WIDTH, SCR_HEIGHT, SSAOInputs, SSAOOutputs);
     }
 
     // Bloom
     {
         BloomInputs[TexType::ScreenTexture] = litPassScreenTexture;
 
-        BloomPass = CreateRef<Bloom>(SCR_WIDTH, SCR_HEIGHT, BloomInputs, BloomOutputs);
+        BloomPass = CreateShared<Bloom>(SCR_WIDTH, SCR_HEIGHT, BloomInputs, BloomOutputs);
     }
 
     // Outline
@@ -382,7 +382,7 @@ void PBR::Init()
         OutlineInputs[TexType::gViewPosition] = gViewPosition;
         OutlineInputs[TexType::gViewNormal]   = gViewNormal;
 
-        OutlinePass = CreateRef<Outline>(SCR_WIDTH, SCR_HEIGHT, OutlineInputs, OutlineOutputs);
+        OutlinePass = CreateShared<Outline>(SCR_WIDTH, SCR_HEIGHT, OutlineInputs, OutlineOutputs);
     }
 
     // SSR
@@ -394,7 +394,7 @@ void PBR::Init()
 
         SSRInputs[TexType::gRoughness] = gRoughness;
 
-        SSRPass = CreateRef<SSR>(SCR_WIDTH, SCR_HEIGHT, SSRInputs, SSROutputs);
+        SSRPass = CreateShared<SSR>(SCR_WIDTH, SCR_HEIGHT, SSRInputs, SSROutputs);
     }
 
     //=========================================
@@ -619,7 +619,7 @@ void PBR::OnUpdate(float deltaTime)
         };
 
         auto                      gbuffer_tex    = gBufferFBO->GetColorTextures();
-        std::vector<Ref<Texture>> bufferTextures = {
+        std::vector<SharedPtr<Texture>> bufferTextures = {
             gbuffer_tex[TexType::gWorldPosition],
             gbuffer_tex[TexType::gWorldNormal],
             gbuffer_tex[TexType::gWorldTangent],
@@ -683,7 +683,7 @@ void PBR::OnImGuiRender()
     ImGui::Text("Hello World");
     ImGui::Checkbox("enableSkybox", &enableSkyBox);
 
-    std::unordered_map<std::string, Ref<Texture>> bufferList = {
+    std::unordered_map<std::string, SharedPtr<Texture>> bufferList = {
         { "Lit Pass output", litOutputs[TexType::ScreenTexture] },
         { "SSR output", SSROutputs[TexType::ScreenTexture] },
         { "SSAO output", SSAOOutputs[TexType::ScreenTexture] },
@@ -783,7 +783,7 @@ void PBR::OnImGuiRender()
     ShowHierarchy();
 }
 
-void PBR::ShowTreeNode(const Ref<Transform> transform)
+void PBR::ShowTreeNode(const SharedPtr<Transform> transform)
 {
     // 如果节点有子节点，使用TreeNodeEx并传递ImGuiTreeNodeFlags_OpenOnArrow
     RD_CORE_ASSERT(transform != nullptr, "transform is null");

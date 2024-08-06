@@ -61,9 +61,9 @@ public:
         m_ProjectionMatrix = glm::perspective(m_FOV, m_AspectRatio, m_Near, m_Far);
     }
 
-    static Ref<Camera> Create(glm::vec3 position = glm::vec3(0.0f, 0.0f, 5.0f))
+    static SharedPtr<Camera> Create(glm::vec3 position = glm::vec3(0.0f, 0.0f, 5.0f))
     {
-        return CreateRef<Camera>(position);
+        return CreateShared<Camera>(position);
     }
 
     // void OnEvent(Event& e);

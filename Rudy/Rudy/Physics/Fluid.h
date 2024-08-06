@@ -15,7 +15,7 @@ public:
     Fluid();
 
     // inherit rendering method;
-    void Draw(Ref<Camera> cam) override;
+    void Draw(SharedPtr<Camera> cam) override;
 
     void Init();
     void Update();
@@ -62,30 +62,30 @@ public:
     // system resources
 public:
     // buffers
-    Ref<StorageBuffer> m_vel_u;
-    Ref<StorageBuffer> m_vel_v;
-    Ref<StorageBuffer> m_vel_u_post;
-    Ref<StorageBuffer> m_vel_v_post;
+    SharedPtr<StorageBuffer> m_vel_u;
+    SharedPtr<StorageBuffer> m_vel_v;
+    SharedPtr<StorageBuffer> m_vel_u_post;
+    SharedPtr<StorageBuffer> m_vel_v_post;
 
-    Ref<StorageBuffer> m_boundary;
-    Ref<StorageBuffer> m_mass;
-    Ref<StorageBuffer> m_mass_post;
+    SharedPtr<StorageBuffer> m_boundary;
+    SharedPtr<StorageBuffer> m_mass;
+    SharedPtr<StorageBuffer> m_mass_post;
 
     // shader
-    Ref<Shader> m_advection_shader;
-    Ref<Shader> m_advection_attr_shader;
-    Ref<Shader> m_projection_shader;
+    SharedPtr<Shader> m_advection_shader;
+    SharedPtr<Shader> m_advection_attr_shader;
+    SharedPtr<Shader> m_projection_shader;
 
-    Ref<Shader> m_colormap_shader;
+    SharedPtr<Shader> m_colormap_shader;
 
-    Ref<Shader> m_post_projection_shader;
+    SharedPtr<Shader> m_post_projection_shader;
 
     // output texture and quad
-    Ref<Shader>    m_output_shader;
-    Ref<Texture2D> m_output_texture;
-    Ref<Material>  m_output_material;
+    SharedPtr<Shader>    m_output_shader;
+    SharedPtr<Texture2D> m_output_texture;
+    SharedPtr<Material>  m_output_material;
 
-    Ref<ScreenQuad> m_screen_quad;
+    SharedPtr<ScreenQuad> m_screen_quad;
 
     bool CPU_Proj = true;
 

@@ -12,9 +12,9 @@ namespace Rudy
         m_mesh = CreateMeshGeometry(subdivision);
     }
 
-    Ref<Sphere> Sphere::Create(uint32_t subdivision)
+    SharedPtr<Sphere> Sphere::Create(uint32_t subdivision)
     {
-        auto object = CreateRef<Sphere>(subdivision);
+        auto object = CreateShared<Sphere>(subdivision);
 
         object->StaticMeshObject::InitComponent(object);
         //object->InitComponent(object);
@@ -32,7 +32,7 @@ namespace Rudy
 
     //subdivision say 4 , means 4 facets; 
     //say theta varys   [0,..4]* pi/4
-    Ref<Mesh> Sphere::CreateMeshGeometry(uint32_t subdivision)
+    SharedPtr<Mesh> Sphere::CreateMeshGeometry(uint32_t subdivision)
     {
 
         std::vector<Vertex> Vertices;

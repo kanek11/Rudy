@@ -30,21 +30,21 @@ public:
     virtual ~Object() = default;
     Object()          = default;
 
-    static Ref<Object> Create()
+    static SharedPtr<Object> Create()
     {
-        auto object = CreateRef<Object>();
+        auto object = CreateShared<Object>();
         object->InitComponent(object);
         return object;
     }
 
-    void InitComponent(Ref<Object> object)
+    void InitComponent(SharedPtr<Object> object)
     {
         object->transform = Transform::Create(object);
     }
 
 public:
-    Ref<Transform> transform = nullptr;
-    std::string    name      = "Unnamed gameObject";
+    SharedPtr<Transform> transform = nullptr;
+    std::string          name      = "Unnamed gameObject";
 
     bool isRenderable = false;
 };
@@ -65,20 +65,20 @@ public:
     RenderableObject() :
         Object() { }
 
-    void SetRendererComponent(Ref<Renderer> rendererComponent)
+    void SetRendererComponent(SharedPtr<Renderer> rendererComponent)
     {
         rendererComponent->SetTransform(this->transform);
         this->m_rendererComponent = rendererComponent;
     }
 
-    Ref<Renderer> GetRendererComponent() { return m_rendererComponent; }
+    SharedPtr<Renderer> GetRendererComponent() { return m_rendererComponent; }
 
     bool hasRendererComponent() { return m_rendererComponent != nullptr; }
 
 public:
-    virtual void Draw(Ref<Camera> cam) = 0;
+    virtual void Draw(SharedPtr<Camera> cam) = 0;
 
-    Ref<Renderer> m_rendererComponent = nullptr;
+    SharedPtr<Renderer> m_rendererComponent = nullptr;
 };
 
 //<<terminal>>
@@ -90,36 +90,36 @@ public:
     StaticMeshObject() :
         Object() { }
 
-    static Ref<StaticMeshObject> Create()
+    static SharedPtr<StaticMeshObject> Create()
     {
-        auto object = CreateRef<StaticMeshObject>();
+        auto object = CreateShared<StaticMeshObject>();
         object->InitComponent(object);
         return object;
     }
 
-    void InitComponent(Ref<StaticMeshObject> object)
+    void InitComponent(SharedPtr<StaticMeshObject> object)
     {
         object->Object::InitComponent(object);
         object->SetRenderer(StaticMeshRenderer::Create());
     }
 
-    void SetRenderer(Ref<StaticMeshRenderer> rendererComponent)
+    void SetRenderer(SharedPtr<StaticMeshRenderer> rendererComponent)
     {
         rendererComponent->SetTransform(this->transform);
         this->m_renderer = rendererComponent;
     }
-    Ref<StaticMeshRenderer> GetRenderer() { return this->m_renderer; }
+    SharedPtr<StaticMeshRenderer> GetRenderer() { return this->m_renderer; }
 
-    void SetMaterial(Ref<Material> mat) { this->m_renderer->SetMaterial(mat); }
-    void SetShader(Ref<Shader> shader) { this->m_renderer->SetShader(shader); }
+    void SetMaterial(SharedPtr<Material> mat) { this->m_renderer->SetMaterial(mat); }
+    void SetShader(SharedPtr<Shader> shader) { this->m_renderer->SetShader(shader); }
 
 public:
     // override draw command if needed;
-    virtual void Draw(Ref<Camera> cam) { this->m_renderer->Draw(cam); }
+    virtual void Draw(SharedPtr<Camera> cam) { this->m_renderer->Draw(cam); }
 
     // asset and renderer component;
-    Ref<Mesh>               m_mesh   = nullptr;
-    Ref<StaticMeshRenderer> m_renderer = nullptr;
+    SharedPtr<Mesh>               m_mesh     = nullptr;
+    SharedPtr<StaticMeshRenderer> m_renderer = nullptr;
 };
 
 // a model contains... whatever the model contains;
@@ -128,26 +128,26 @@ class Model : public Object
 {
 public:
     // global settings
-    static float       s_scaleFactor;
-    static Ref<Shader> s_defaultShader;
+    static float             s_scaleFactor;
+    static SharedPtr<Shader> s_defaultShader;
 
 public:
     ~Model() = default;
     Model()  = default;
     Model(std::string const& path);
 
-    static Ref<Model> LoadModel(std::string const& path);
+    static SharedPtr<Model> LoadModel(std::string const& path);
 
 public:
-    Ref<Shader> shader = nullptr;
-    void        SetShader(Ref<Shader> shader);
+    SharedPtr<Shader> shader = nullptr;
+    void              SetShader(SharedPtr<Shader> shader);
 
-    Ref<StorageBuffer> boneTransformBuffer = StorageBuffer::Create();
+    SharedPtr<StorageBuffer> boneTransformBuffer = StorageBuffer::Create();
 
     // animator component;
-    Ref<Animator> animator = nullptr;
+    SharedPtr<Animator> animator = nullptr;
 
-    void SetAnimator(Ref<Animator> animator)
+    void SetAnimator(SharedPtr<Animator> animator)
     {
         this->animator = animator;
         if (this->hasAnimation())
@@ -158,12 +158,12 @@ public:
 
     //============================================
     // load from model files:
-    std::vector<Ref<StaticMeshObject>> meshObjects;
+    std::vector<SharedPtr<StaticMeshObject>> meshObjects;
 
     // animation and bound bones are could-be-separate;
     // might need retarget;
-    Ref<AnimationClip> animationClip = nullptr;
-    bool               hasAnimation() { return animationClip != nullptr; }
+    SharedPtr<AnimationClip> animationClip = nullptr;
+    bool                     hasAnimation() { return animationClip != nullptr; }
 
     // retreive the bound bones defined in the mesh;     //aiBone->mName;
     // aiBone->mOffsetMatrix ordered map,  key = name to facilate searching by
@@ -172,22 +172,22 @@ public:
     std::vector<glm::mat4>     bindPose = std::vector<glm::mat4>(100, glm::mat4(1.0f));
 
 public:
-    void Draw(Ref<Camera> cam, uint32_t count = 1, Ref<Material> mat = nullptr);
+    void Draw(SharedPtr<Camera> cam, uint32_t count = 1, SharedPtr<Material> mat = nullptr);
 
     //========system
     // retrieved in the hierarchy of the animation file;
-    Ref<Object> rootNode = nullptr;
-    Ref<Object> findNode(std::string const& name);
-    Ref<Object> findNodeRecursive(Ref<Transform> node, std::string const& name);
+    SharedPtr<Object> rootNode = nullptr;
+    SharedPtr<Object> findNode(std::string const& name);
+    SharedPtr<Object> findNodeRecursive(SharedPtr<Transform> node, std::string const& name);
 
 public:
-    std::vector<Ref<Texture2D>> m_Loaded_Textures;
+    std::vector<SharedPtr<Texture2D>> m_Loaded_Textures;
     // opt to avoid duplicate textures,  loading is extremely slow
 
-    void processNode(const aiScene* scene, aiNode* ai_node, Ref<Object> scene_node);
+    void processNode(const aiScene* scene, aiNode* ai_node, SharedPtr<Object> scene_node);
 
-    Ref<Mesh>     processMesh(aiMesh* mesh, const aiScene* scene);
-    Ref<Material> processMaterial(aiMesh* mesh, const aiScene* scene);
+    SharedPtr<Mesh>     processMesh(aiMesh* mesh, const aiScene* scene);
+    SharedPtr<Material> processMaterial(aiMesh* mesh, const aiScene* scene);
 
     void processBones(const aiScene* scene, aiMesh* mesh, std::vector<Vertex>& vertices);
     void processAnimation(const aiScene* scene);

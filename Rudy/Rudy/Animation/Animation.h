@@ -58,7 +58,7 @@ struct KeyScale
 struct KeyBone
 {
     // for static rest-pose;
-    Ref<Transform> m_Node = CreateRef<Transform>();
+    SharedPtr<Transform> m_Node = CreateShared<Transform>();
 
     std::vector<KeyPosition> m_KeyPositions;
     std::vector<KeyRotation> m_KeyRotations;
@@ -69,7 +69,7 @@ struct KeyBone
 // struct KeyframeBone {
 //
 //	//refer to gameobject in the scene;
-//	 Ref<Transform> m_Node = CreateRef<Transform>();
+//	 SharedPtr<Transform> m_Node = CreateShared<Transform>();
 //
 // };
 //
@@ -90,22 +90,22 @@ class AnimationClip
 public:
     ~AnimationClip() = default;
     AnimationClip();
-    static Ref<AnimationClip> Create();
+    static SharedPtr<AnimationClip> Create();
 
     float    duration = 0; // in seconds;
     uint32_t FPS      = 0;
 
     // keyed properties;
     // the animation clip keeps a list of keyframes for each animated property;
-    std::unordered_map<std::string, Ref<KeyBone>> keybones;
+    std::unordered_map<std::string, SharedPtr<KeyBone>> keybones;
 
     // same as model root;
-    Ref<Transform> rootNode = CreateRef<Transform>();
+    SharedPtr<Transform> rootNode = CreateShared<Transform>();
 
     // Keyframe m_CurrentKeyframe = Keyframe();
 
     // TODO: make the property generic if we have reflection;
-    void AddKeyBone(const std::string& name, const Ref<KeyBone> keybone)
+    void AddKeyBone(const std::string& name, const SharedPtr<KeyBone> keybone)
     {
         keybones[name] = keybone;
     }
@@ -113,7 +113,7 @@ public:
     // update befor get;
     void CalculateKeyframe(float time);
 
-    void printHierarchy(const Ref<Transform> node);
+    void printHierarchy(const SharedPtr<Transform> node);
 };
 
 // the animator drives the animation;
@@ -129,11 +129,11 @@ class Animator
 {
 public:
     ~Animator() = default;
-    Animator(Ref<Model> model);
+    Animator(SharedPtr<Model> model);
 
-    static Ref<Animator> Create(Ref<Model> model = nullptr)
+    static SharedPtr<Animator> Create(SharedPtr<Model> model = nullptr)
     {
-        return CreateRef<Animator>(model);
+        return CreateShared<Animator>(model);
     }
 
     void                   UpdateBoneTransforms(float time);
@@ -143,13 +143,13 @@ public:
     glm::mat4 GetGlobalTransform(const std::string& name);
 
     // as engine asset;
-    Ref<AnimationClip> animationClip = nullptr;
+    SharedPtr<AnimationClip> animationClip = nullptr;
 
     // in the model; todo:  make it for gameobject instead of model asset;
-    Ref<Model> model = nullptr;
+    SharedPtr<Model> model = nullptr;
 
     // std::map<std::string, Bone> bindPoseBoneMap;
-    // Ref<Object> rootNode;
+    // SharedPtr<Object> rootNode;
 
     std::vector<glm::mat4> m_BoneTransforms = std::vector<glm::mat4>(100, glm::mat4(1.0f));
 };

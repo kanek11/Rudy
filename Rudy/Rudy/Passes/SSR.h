@@ -11,22 +11,22 @@ class SSR : public Pass
 public:
     virtual ~SSR() = default;
     SSR(
-        uint32_t m_width, uint32_t m_height, std::unordered_map<TexType, Ref<Texture>>& m_SSRInputs, std::unordered_map<TexType, Ref<Texture>>& m_SSROutputs);
+        uint32_t m_width, uint32_t m_height, std::unordered_map<TexType, SharedPtr<Texture>>& m_SSRInputs, std::unordered_map<TexType, SharedPtr<Texture>>& m_SSROutputs);
 
-    virtual void Render(Ref<Camera>) override;
+    virtual void Render(SharedPtr<Camera>) override;
 
     void Init();
 
 public:
     uint32_t                                   m_width, m_height;
-    std::unordered_map<TexType, Ref<Texture>>& m_SSRInputs;
-    std::unordered_map<TexType, Ref<Texture>>& m_SSROutputs;
+    std::unordered_map<TexType, SharedPtr<Texture>>& m_SSRInputs;
+    std::unordered_map<TexType, SharedPtr<Texture>>& m_SSROutputs;
 
-    Ref<Shader> ssrShader;
-    Ref<Shader> blurShader;
+    SharedPtr<Shader> ssrShader;
+    SharedPtr<Shader> blurShader;
 
-    Ref<Texture> ssrScreenTexture;
-    Ref<Texture> ssrBlurTexture;
+    SharedPtr<Texture> ssrScreenTexture;
+    SharedPtr<Texture> ssrBlurTexture;
 
     float depth_bias = 0.02f;
     float step_size  = 0.02f;

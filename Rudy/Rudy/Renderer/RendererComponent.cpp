@@ -7,7 +7,7 @@
 namespace Rudy
 {
 
-void StaticMeshRenderer::SetMesh(Ref<Mesh> m)
+void StaticMeshRenderer::SetMesh(SharedPtr<Mesh> m)
 {
     RD_CORE_INFO("MeshObject: SetMesh:");
     m_mesh = m;
@@ -44,7 +44,7 @@ void StaticMeshRenderer::SetupBuffers()
     RD_CORE_INFO("MeshObject::SetupBuffers: mesh buffers setup finished");
 }
 
-void StaticMeshRenderer::Draw(Ref<Camera> cam, uint32_t count, Ref<Material> mat)
+void StaticMeshRenderer::Draw(SharedPtr<Camera> cam, uint32_t count, SharedPtr<Material> mat)
 {
     if (!hasMesh())
     {
@@ -58,7 +58,7 @@ void StaticMeshRenderer::Draw(Ref<Camera> cam, uint32_t count, Ref<Material> mat
         return;
     }
 
-    Ref<Material> _mat = nullptr;
+    SharedPtr<Material> _mat = nullptr;
     // use paramter material if not null
     // else use the material attached to the object, this implements cases like shadow map
     if (mat != nullptr)
@@ -127,7 +127,7 @@ void StaticMeshRenderer::Draw(Ref<Camera> cam, uint32_t count, Ref<Material> mat
     m_vertexArray->Unbind();
 }
 
-void ParticleSpriteRenderer::Draw(Ref<Camera> cam, uint32_t count, Ref<Material> mat)
+void ParticleSpriteRenderer::Draw(SharedPtr<Camera> cam, uint32_t count, SharedPtr<Material> mat)
 {
     // disable depth test
     glDisable(GL_DEPTH_TEST);
@@ -141,7 +141,7 @@ void ParticleSpriteRenderer::Draw(Ref<Camera> cam, uint32_t count, Ref<Material>
         return;
     }
 
-    Ref<Material> _mat = nullptr;
+    SharedPtr<Material> _mat = nullptr;
     // use paramter material if not null
     // else use the material attached to the object, this implements cases like shadow map
     if (mat != nullptr)

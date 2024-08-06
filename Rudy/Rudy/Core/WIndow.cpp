@@ -8,10 +8,10 @@
 
 namespace Rudy
 {
-	Ref<Window> Window::Create(const WindowProps& props)
+	SharedPtr<Window> Window::Create(const WindowProps& props)
 	{
 #ifdef RD_PLATFORM_WINDOWS
-		return CreateScope<WindowsWindow>(props);
+		return CreateUnique<WindowsWindow>(props);
 #else
 		RD_CORE_ASSERT(false, "Unknown platform!");
 		return nullptr;

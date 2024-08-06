@@ -11,19 +11,19 @@ class Outline : public Pass
 public:
     virtual ~Outline() = default;
     Outline(
-        uint32_t m_width, uint32_t m_height, std::unordered_map<TexType, Ref<Texture>>& m_OutlineInputs, std::unordered_map<TexType, Ref<Texture>>& m_OutlineOutputs);
+        uint32_t m_width, uint32_t m_height, std::unordered_map<TexType, SharedPtr<Texture>>& m_OutlineInputs, std::unordered_map<TexType, SharedPtr<Texture>>& m_OutlineOutputs);
 
-    virtual void Render(Ref<Camera>) override;
+    virtual void Render(SharedPtr<Camera>) override;
 
     void Init();
 
 public:
-    uint32_t                                   m_width, m_height;
-    std::unordered_map<TexType, Ref<Texture>>& m_OutlineInputs;
-    std::unordered_map<TexType, Ref<Texture>>& m_OutlineOutputs;
+    uint32_t                                         m_width, m_height;
+    std::unordered_map<TexType, SharedPtr<Texture>>& m_OutlineInputs;
+    std::unordered_map<TexType, SharedPtr<Texture>>& m_OutlineOutputs;
 
-    Ref<Shader>  outlineShader;
-    Ref<Texture> outputTexture;
+    SharedPtr<Shader>  outlineShader;
+    SharedPtr<Texture> outputTexture;
 
     // parameters
     float depth_thres           = 0.05f;

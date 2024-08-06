@@ -49,7 +49,7 @@ public:
     virtual bool IsVSync() const        = 0;
 
     //
-    static Ref<Window> Create(const WindowProps& props = WindowProps());
+    static SharedPtr<Window> Create(const WindowProps& props = WindowProps());
 };
 
 } // namespace Rudy

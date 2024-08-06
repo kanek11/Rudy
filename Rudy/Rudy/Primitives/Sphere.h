@@ -16,9 +16,9 @@ public:
     ~Sphere() = default;
     Sphere(uint32_t subdivision);
 
-    static Ref<Sphere> Create(uint32_t subdivision);
+    static SharedPtr<Sphere> Create(uint32_t subdivision);
 
-    Ref<Mesh> CreateMeshGeometry(uint32_t subdivision);
+    SharedPtr<Mesh> CreateMeshGeometry(uint32_t subdivision);
 
     uint32_t m_subdivision = 20;
 };

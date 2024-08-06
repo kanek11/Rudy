@@ -7,8 +7,8 @@ namespace  Rudy
 
 	ToneMap::ToneMap(
 		uint32_t m_width, uint32_t m_height,
-		std::unordered_map< TexType, Ref<Texture>>& m_ToneMapInputs,
-		std::unordered_map< TexType, Ref<Texture>>& m_ToneMapOutputs)
+		std::unordered_map< TexType, SharedPtr<Texture>>& m_ToneMapInputs,
+		std::unordered_map< TexType, SharedPtr<Texture>>& m_ToneMapOutputs)
 		:m_width(m_width), m_height(m_height),
 		m_ToneMapInputs(m_ToneMapInputs), m_ToneMapOutputs(m_ToneMapOutputs)
 	{
@@ -32,7 +32,7 @@ namespace  Rudy
 	
 	}
 
-	void ToneMap::Render(Ref<Camera> main_camera)
+	void ToneMap::Render(SharedPtr<Camera> main_camera)
 	{
 		m_ToneMapShader->Bind();
 

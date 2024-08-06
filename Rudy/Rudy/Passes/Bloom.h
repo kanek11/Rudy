@@ -14,26 +14,26 @@ class Bloom : public Pass
 public:
     virtual ~Bloom() = default;
     Bloom(
-        uint32_t m_width, uint32_t m_height, std::unordered_map<TexType, Ref<Texture>>& m_BloomInputs, std::unordered_map<TexType, Ref<Texture>>& m_BloomOutputs);
+        uint32_t m_width, uint32_t m_height, std::unordered_map<TexType, SharedPtr<Texture>>& m_BloomInputs, std::unordered_map<TexType, SharedPtr<Texture>>& m_BloomOutputs);
 
-    virtual void Render(Ref<Camera>) override;
+    virtual void Render(SharedPtr<Camera>) override;
 
     void Init();
 
 public:
-    uint32_t                                   m_width, m_height;
-    std::unordered_map<TexType, Ref<Texture>>& m_BloomInputs;
-    std::unordered_map<TexType, Ref<Texture>>& m_BloomOutputs;
+    uint32_t                                         m_width, m_height;
+    std::unordered_map<TexType, SharedPtr<Texture>>& m_BloomInputs;
+    std::unordered_map<TexType, SharedPtr<Texture>>& m_BloomOutputs;
 
-    Ref<Shader> upsampleShader;
-    Ref<Shader> downsampleShader;
-    Ref<Shader> thresholdShader;
-    Ref<Shader> addShader;
+    SharedPtr<Shader> upsampleShader;
+    SharedPtr<Shader> downsampleShader;
+    SharedPtr<Shader> thresholdShader;
+    SharedPtr<Shader> addShader;
 
-    std::vector<Ref<Texture>> RT_Horizonal;
-    std::vector<Ref<Texture>> RT_Vertical;
+    std::vector<SharedPtr<Texture>> RT_Horizonal;
+    std::vector<SharedPtr<Texture>> RT_Vertical;
 
-    Ref<Texture> inputTexture;
+    SharedPtr<Texture> inputTexture;
 
     const int nMips = 6;
 

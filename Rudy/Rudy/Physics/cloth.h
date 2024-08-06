@@ -41,8 +41,8 @@ public:
     std::vector<uint32_t> m_edgePairIDs;
     std::vector<uint32_t> m_triPairIDs;
 
-    Ref<StorageBuffer> m_stretchConstPair_IDs_buffer;
-    Ref<StorageBuffer> m_bendConstPair_IDs_buffer;
+    SharedPtr<StorageBuffer> m_stretchConstPair_IDs_buffer;
+    SharedPtr<StorageBuffer> m_bendConstPair_IDs_buffer;
 
     std::vector<float>     m_restLength;
     std::vector<float>     m_invMass;
@@ -60,19 +60,19 @@ public:
     uint32_t m_num_stretchConst = 0;
     uint32_t m_num_bendConst    = 0;
 
-    void Draw(Ref<Camera> cam);
+    void Draw(SharedPtr<Camera> cam);
 
     // fornow:
 public:
-    void      SetMesh(Ref<Mesh> m);
-    Ref<Mesh> GetMesh() { return m_mesh; }
-    bool      hasMesh() { return m_mesh != nullptr; }
+    void            SetMesh(SharedPtr<Mesh> m);
+    SharedPtr<Mesh> GetMesh() { return m_mesh; }
+    bool            hasMesh() { return m_mesh != nullptr; }
 
 public:
-    Ref<Mesh>        m_mesh        = nullptr;
-    Ref<Material>    m_material    = nullptr;
-    Ref<VertexArray> m_vertexArray = nullptr;
-    Ref<IndexBuffer> m_indexBuffer = nullptr;
+    SharedPtr<Mesh>        m_mesh        = nullptr;
+    SharedPtr<Material>    m_material    = nullptr;
+    SharedPtr<VertexArray> m_vertexArray = nullptr;
+    SharedPtr<IndexBuffer> m_indexBuffer = nullptr;
 
     // cloth parameters
 
@@ -93,42 +93,42 @@ public:
 public:
     // buffers
     // particles attributes
-    Ref<StorageBuffer> m_particle_position_buffer;
-    Ref<StorageBuffer> m_particle_rest_position_buffer;
-    Ref<StorageBuffer> m_particle_previous_position_buffer;
+    SharedPtr<StorageBuffer> m_particle_position_buffer;
+    SharedPtr<StorageBuffer> m_particle_rest_position_buffer;
+    SharedPtr<StorageBuffer> m_particle_previous_position_buffer;
 
-    Ref<StorageBuffer> m_particle_correction_buffer; // jacobi iteration
+    SharedPtr<StorageBuffer> m_particle_correction_buffer; // jacobi iteration
 
-    Ref<StorageBuffer> m_particle_velocity_buffer;
-    Ref<StorageBuffer> m_particle_inv_mass_buffer;
+    SharedPtr<StorageBuffer> m_particle_velocity_buffer;
+    SharedPtr<StorageBuffer> m_particle_inv_mass_buffer;
 
     // for rendering, vertex normals
-    Ref<StorageBuffer> m_particle_normal_buffer;
-    Ref<StorageBuffer> m_indices_WorldToView_buffer;
+    SharedPtr<StorageBuffer> m_particle_normal_buffer;
+    SharedPtr<StorageBuffer> m_indices_WorldToView_buffer;
 
-    Ref<StorageBuffer> m_stretchConst_rest_length_buffer;
-    Ref<StorageBuffer> m_bendConst_rest_length_buffer;
+    SharedPtr<StorageBuffer> m_stretchConst_rest_length_buffer;
+    SharedPtr<StorageBuffer> m_bendConst_rest_length_buffer;
 
     // kernels/compute shaders
-    Ref<Shader> m_prePBD_integrate_shader;
-    Ref<Shader> m_update_solve_stretchConst_shader;
-    Ref<Shader> m_update_solve_bendConst_shader;
-    Ref<Shader> m_postPBD_correction_shader;
-    Ref<Shader> m_postPBD_update_vel_shader;
+    SharedPtr<Shader> m_prePBD_integrate_shader;
+    SharedPtr<Shader> m_update_solve_stretchConst_shader;
+    SharedPtr<Shader> m_update_solve_bendConst_shader;
+    SharedPtr<Shader> m_postPBD_correction_shader;
+    SharedPtr<Shader> m_postPBD_update_vel_shader;
 
-    Ref<Shader> m_compute_normals_shader;
-    Ref<Shader> m_normalize_normals_shader;
+    SharedPtr<Shader> m_compute_normals_shader;
+    SharedPtr<Shader> m_normalize_normals_shader;
 
-    Ref<Shader> m_compute_rest_length_shader;
+    SharedPtr<Shader> m_compute_rest_length_shader;
 
     // legacy use accumulations
     std::vector<stretchConstIDs> m_stretchConstIDs;
     std::vector<stretchConstIDs> m_bendConstIDs;
 
-    Ref<Shader> m_update_solve_stretchConst_legacy_shader;
+    SharedPtr<Shader> m_update_solve_stretchConst_legacy_shader;
 
-    Ref<StorageBuffer> m_stretchConst_IDs_buffer;
-    Ref<StorageBuffer> m_bendConst_IDs_buffer;
+    SharedPtr<StorageBuffer> m_stretchConst_IDs_buffer;
+    SharedPtr<StorageBuffer> m_bendConst_IDs_buffer;
 };
 
 } // namespace Rudy

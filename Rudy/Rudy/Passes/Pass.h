@@ -17,7 +17,7 @@ public:
     virtual ~Pass() = default;
     Pass()          = default;
 
-    virtual void Render(Ref<Camera>) = 0;
+    virtual void Render(SharedPtr<Camera>) = 0;
 };
 
 } // namespace Rudy

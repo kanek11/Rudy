@@ -56,8 +56,8 @@ public:
     ~Emitter();
     Emitter();
 
-    static Ref<Emitter> Create();
-    void                InitComponent(Ref<Emitter> object);
+    static SharedPtr<Emitter> Create();
+    void                      InitComponent(SharedPtr<Emitter> object);
 
     // basic stages
     void Spawn();
@@ -65,7 +65,7 @@ public:
     void Reset();
 
     // inherit rendering method;
-    void Draw(Ref<Camera> cam) override;
+    void Draw(SharedPtr<Camera> cam) override;
 
 public:
     // system parameters
@@ -116,35 +116,35 @@ public:
     // system resources
     //======shader programs======//
     //  each shader is a stage in the stack;
-    Ref<Shader> m_particle_reset_compute_shader;
-    Ref<Shader> m_particle_dispatch_compute_shader;
-    Ref<Shader> m_particle_emission_compute_shader;
-    Ref<Shader> m_particle_update_compute_shader;
+    SharedPtr<Shader> m_particle_reset_compute_shader;
+    SharedPtr<Shader> m_particle_dispatch_compute_shader;
+    SharedPtr<Shader> m_particle_emission_compute_shader;
+    SharedPtr<Shader> m_particle_update_compute_shader;
 
     //======buffers======//
 
     // particles attributes
-    Ref<StorageBuffer> m_particle_position_buffer;
-    Ref<StorageBuffer> m_particle_velocity_buffer;
-    Ref<StorageBuffer> m_particle_age_buffer;
-    Ref<StorageBuffer> m_particle_lifeTime_buffer;
+    SharedPtr<StorageBuffer> m_particle_position_buffer;
+    SharedPtr<StorageBuffer> m_particle_velocity_buffer;
+    SharedPtr<StorageBuffer> m_particle_age_buffer;
+    SharedPtr<StorageBuffer> m_particle_lifeTime_buffer;
 
     // management of alive/dead particles
-    Ref<StorageBuffer> m_aliveList_buffer[2];
-    Ref<StorageBuffer> m_deadList_buffer;
-    Ref<StorageBuffer> m_counter_buffer;
+    SharedPtr<StorageBuffer> m_aliveList_buffer[2];
+    SharedPtr<StorageBuffer> m_deadList_buffer;
+    SharedPtr<StorageBuffer> m_counter_buffer;
 
     // indirect for dispatch of each stage ; for dynamic length updated by compute
     // shader
-    Ref<StorageBuffer> m_indirect_dispatch_update_buffer;
-    Ref<StorageBuffer> m_indirect_dispatch_emission_buffer;
+    SharedPtr<StorageBuffer> m_indirect_dispatch_update_buffer;
+    SharedPtr<StorageBuffer> m_indirect_dispatch_emission_buffer;
 
     // rendering
 
-    Ref<Texture2D> radial_sprite = nullptr;
+    SharedPtr<Texture2D> radial_sprite = nullptr;
 
-    Ref<Shader> m_particle_sprite_shader = nullptr;
-    Ref<Shader> m_particle_mesh_shader   = nullptr;
+    SharedPtr<Shader> m_particle_sprite_shader = nullptr;
+    SharedPtr<Shader> m_particle_mesh_shader   = nullptr;
     enum class RENDER_TYPE
     {
         POINTS = 0,

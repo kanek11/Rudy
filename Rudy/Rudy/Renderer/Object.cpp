@@ -51,10 +51,10 @@ static inline glm::quat GetGLMQuat(const aiQuaternion& pOrientation)
 //-------------------------
 //---model-----------------
 
-Ref<Model> Model::LoadModel(std::string const& path)
+SharedPtr<Model> Model::LoadModel(std::string const& path)
 
 {
-    return CreateRef<Model>(path);
+    return CreateShared<Model>(path);
 }
 
 Model::Model(std::string const& path)
@@ -118,7 +118,7 @@ Model::Model(std::string const& path)
 // each node contains meshes[],  and pointers to its children nodes ;
 
 // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
-void Model::processNode(const aiScene* scene, aiNode* ai_node, Ref<Object> scene_node)
+void Model::processNode(const aiScene* scene, aiNode* ai_node, SharedPtr<Object> scene_node)
 {
     // RD_PROFILE_FUNCTION();
 
@@ -157,14 +157,14 @@ void Model::processNode(const aiScene* scene, aiNode* ai_node, Ref<Object> scene
     {
         // new: keep the node hierarchy
         // new children node
-        Ref<Object> newNode = Object::Create();
+        SharedPtr<Object> newNode = Object::Create();
         (scene_node->transform->children).push_back(newNode->transform);
 
         processNode(scene, ai_node->mChildren[i], newNode);
     }
 }
 
-Ref<Mesh> Model::processMesh(aiMesh* mesh, const aiScene* scene)
+SharedPtr<Mesh> Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
     // data to fill,  model loader fits better for per-vertex workflow
     std::vector<Vertex>   vertices;
@@ -294,7 +294,7 @@ void Model::processBones(const aiScene* scene, aiMesh* mesh, std::vector<Vertex>
     }
 }
 
-Ref<Material> Model::processMaterial(aiMesh* mesh, const aiScene* scene)
+SharedPtr<Material> Model::processMaterial(aiMesh* mesh, const aiScene* scene)
 {
     // process materials
     aiMaterial* ai_material = scene->mMaterials[mesh->mMaterialIndex];
@@ -333,7 +333,7 @@ Ref<Material> Model::processMaterial(aiMesh* mesh, const aiScene* scene)
             if (!skip)
             {
                 // Load your texture here using directory, and set it to your material
-                Ref<Texture2D> texture = Texture2D::LoadFile(fileDir);
+                SharedPtr<Texture2D> texture = Texture2D::LoadFile(fileDir);
 
                 material->SetTexture(TexType, texture); // Assuming you have a setter for textures in your Material class
                 m_Loaded_Textures.push_back(texture);   // opt
@@ -404,7 +404,7 @@ void Model::processAnimation(const aiScene* scene)
         std::string boneName = channel->mNodeName.data;
 
         // RD_CORE_INFO("Modelloading: animated bone name found:{0}", boneName);
-        Ref<KeyBone> newKeyBone = CreateRef<KeyBone>();
+        SharedPtr<KeyBone> newKeyBone = CreateShared<KeyBone>();
 
         // me: refer to the hierarchy of the nodes,
         auto node = this->findNode(boneName);
@@ -450,12 +450,12 @@ void Model::processAnimation(const aiScene* scene)
     }
 }
 
-Ref<Object> Model::findNode(std::string const& name)
+SharedPtr<Object> Model::findNode(std::string const& name)
 {
     return findNodeRecursive(rootNode->transform, name);
 }
 
-Ref<Object> Model::findNodeRecursive(Ref<Transform> node, std::string const& name)
+SharedPtr<Object> Model::findNodeRecursive(SharedPtr<Transform> node, std::string const& name)
 {
     if (node == nullptr)
     {
@@ -469,7 +469,7 @@ Ref<Object> Model::findNodeRecursive(Ref<Transform> node, std::string const& nam
 
     for (auto& child : node->children)
     {
-        Ref<Object> found = findNodeRecursive(child, name);
+        SharedPtr<Object> found = findNodeRecursive(child, name);
         if (found != nullptr)
         {
             return found;
@@ -481,7 +481,7 @@ Ref<Object> Model::findNodeRecursive(Ref<Transform> node, std::string const& nam
 
 // assume model use same shader for all meshes,  this works for now
 // otherwise the buffer should be handled for each mesh ;
-void Model::Draw(Ref<Camera> cam, uint32_t count, Ref<Material> mat)
+void Model::Draw(SharedPtr<Camera> cam, uint32_t count, SharedPtr<Material> mat)
 {
     // legacy way:
     // for (int i = 0; i < 100; ++i)
@@ -502,7 +502,7 @@ void Model::Draw(Ref<Camera> cam, uint32_t count, Ref<Material> mat)
         meshObj->GetRenderer()->Draw(cam, count, mat);
 }
 
-void Model::SetShader(Ref<Shader> shader)
+void Model::SetShader(SharedPtr<Shader> shader)
 {
     for (auto meshObj : this->meshObjects)
         meshObj->GetRenderer()->SetShader(shader);

@@ -49,14 +49,14 @@ public:
     void ShutDown() override;
 
     // get/set
-    static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
-    static Ref<RendererAPI> GetRendererAPI() { return s_rendererAPI; }
-    static void             SetRendererAPI(Ref<RendererAPI> api) { s_rendererAPI = api; }
+    static RendererAPI::API       GetAPI() { return RendererAPI::GetAPI(); }
+    static SharedPtr<RendererAPI> GetRendererAPI() { return s_rendererAPI; }
+    static void                   SetRendererAPI(SharedPtr<RendererAPI> api) { s_rendererAPI = api; }
 
-    Ref<Window> GetWindow() { return m_window; }
-    void        SetWindow(Ref<Window> window) { m_window = window; }
-    Ref<Camera> GetMainCamera() { return m_mainCamera; }
-    void        SetMainCamera(Ref<Camera> camera) { m_mainCamera = camera; }
+    SharedPtr<Window> GetWindow() { return m_window; }
+    void              SetWindow(SharedPtr<Window> window) { m_window = window; }
+    SharedPtr<Camera> GetMainCamera() { return m_mainCamera; }
+    void              SetMainCamera(SharedPtr<Camera> camera) { m_mainCamera = camera; }
 
     // new:  width/height
     float GetAspectRatio()
@@ -81,13 +81,13 @@ public:
 
     void OnWindowResize(uint32_t width, uint32_t height);
 
-    // static void Render(const Ref<Scene>& scene);
-    //  static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f));
+    // static void Render(const SharedPtr<Scene>& scene);
+    //  static void Submit(const SharedPtr<Shader>& shader, const SharedPtr<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f));
 
 protected:
-    static Ref<RendererAPI> s_rendererAPI;
-    Ref<Camera>             m_mainCamera = nullptr;
-    Ref<Window>             m_window     = nullptr;
+    static SharedPtr<RendererAPI> s_rendererAPI;
+    SharedPtr<Camera>             m_mainCamera = nullptr;
+    SharedPtr<Window>             m_window     = nullptr;
 
 public:
     // default values

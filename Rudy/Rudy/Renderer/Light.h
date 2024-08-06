@@ -45,7 +45,7 @@ public:
     ~DirectionalLight() = default;
     DirectionalLight();
 
-    static Ref<DirectionalLight> Create();
+    static SharedPtr<DirectionalLight> Create();
 
     //
     // void OnUpdate();
@@ -64,7 +64,7 @@ public:
     float near_plane = 1.0f;
     float far_plane  = 10.0f;
 
-    Ref<Camera> lightSpaceCamera = nullptr;
+    SharedPtr<Camera> lightSpaceCamera = nullptr;
 
     // int m_index = 0;
 };

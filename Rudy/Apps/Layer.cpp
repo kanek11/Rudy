@@ -9,7 +9,7 @@
 
 namespace Rudy
 {
-Ref<RendererAPI> ViewportLayer::s_rendererAPI = nullptr;
+SharedPtr<RendererAPI> ViewportLayer::s_rendererAPI = nullptr;
 
 ImGuiLayer::ImGuiLayer()
 {
@@ -101,7 +101,7 @@ void ViewportLayer::OnWindowResize(uint32_t width, uint32_t height)
     // RenderCommand::SetViewport(0, 0, width, height);
 }
 
-// void ViewportLayer::Render(const Ref<Scene>& scene)
+// void ViewportLayer::Render(const SharedPtr<Scene>& scene)
 //{
 //  RD_PROFILE_FUNCTION();
 
@@ -126,7 +126,7 @@ void ViewportLayer::OnWindowResize(uint32_t width, uint32_t height)
 //}
 //}
 
-// void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
+// void Renderer::Submit(const SharedPtr<Shader>& shader, const SharedPtr<VertexArray>& vertexArray, const glm::mat4& transform)
 //{
 //	shader->Bind();
 //	shader->SetMat4("u_viewProjection", s_SceneData->ViewProjectionMatrix);

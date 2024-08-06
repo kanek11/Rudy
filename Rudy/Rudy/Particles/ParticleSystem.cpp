@@ -16,19 +16,19 @@ Emitter::Emitter() :
 
 Emitter::~Emitter() { RD_CORE_INFO("Emitter {0} destroyed", name); }
 
-Ref<Emitter> Emitter::Create()
+SharedPtr<Emitter> Emitter::Create()
 {
-    auto emitter = CreateRef<Emitter>();
+    auto emitter = CreateShared<Emitter>();
     emitter->InitComponent(emitter);
     return emitter;
 }
 
-void Emitter::InitComponent(Ref<Emitter> object)
+void Emitter::InitComponent(SharedPtr<Emitter> object)
 {
     object->Object::InitComponent(object);
 }
 
-void Emitter::Draw(Ref<Camera> cam)
+void Emitter::Draw(SharedPtr<Camera> cam)
 {
     this->GetRendererComponent()->Draw(cam, m_currentAliveCount);
 }

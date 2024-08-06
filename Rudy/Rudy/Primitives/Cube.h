@@ -19,13 +19,13 @@ public:
         m_mesh = CreateMeshGeometry();
     }
 
-    Ref<Mesh> CreateMeshGeometry();
+    SharedPtr<Mesh> CreateMeshGeometry();
 
-    void DrawSkybox(Ref<Camera> cam); // need to set special view matrix, and gldepthfunc;
+    void DrawSkybox(SharedPtr<Camera> cam); // need to set special view matrix, and gldepthfunc;
 
-    static Ref<Cube> Create()
+    static SharedPtr<Cube> Create()
     {
-        auto object = CreateRef<Cube>();
+        auto object = CreateShared<Cube>();
 
         object->StaticMeshObject::InitComponent(object);
         // object->InitComponent(object);

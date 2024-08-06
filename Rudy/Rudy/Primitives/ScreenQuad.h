@@ -7,23 +7,18 @@
 #include "Rudy/Renderer/Material.h"
 #include "Rudy/Renderer/Object.h"
 
+namespace Rudy
+{
 
+class ScreenQuad : public StaticMeshObject
+{
+public:
+    ~ScreenQuad() = default;
+    ScreenQuad();
 
-namespace Rudy {
+    static SharedPtr<ScreenQuad> Create();
 
+    SharedPtr<Mesh> CreateMeshGeometry();
+};
 
-    class ScreenQuad : public StaticMeshObject {
-    public:
-        ~ScreenQuad() = default; 
-        ScreenQuad();
-
-        static Ref<ScreenQuad> Create();
-
-        Ref<Mesh> CreateMeshGeometry(); 
-    };
-     
-
-
-
-
-}
+} // namespace Rudy

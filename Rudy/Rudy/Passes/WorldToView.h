@@ -11,17 +11,17 @@ class WorldToView : public Pass
 public:
     virtual ~WorldToView() = default;
     WorldToView(
-        uint32_t m_width, uint32_t m_height, std::unordered_map<TexType, Ref<Texture>>& m_WorldToViewInputs, std::unordered_map<TexType, Ref<Texture>>& m_WorldToViewOutputs);
+        uint32_t m_width, uint32_t m_height, std::unordered_map<TexType, SharedPtr<Texture>>& m_WorldToViewInputs, std::unordered_map<TexType, SharedPtr<Texture>>& m_WorldToViewOutputs);
 
-    virtual void Render(Ref<Camera>) override;
+    virtual void Render(SharedPtr<Camera>) override;
 
     void Init();
 
 public:
     uint32_t                                   m_width, m_height;
-    std::unordered_map<TexType, Ref<Texture>>& m_Inputs;
-    std::unordered_map<TexType, Ref<Texture>>& m_Outputs;
+    std::unordered_map<TexType, SharedPtr<Texture>>& m_Inputs;
+    std::unordered_map<TexType, SharedPtr<Texture>>& m_Outputs;
 
-    Ref<Shader> m_WorldToViewShader;
+    SharedPtr<Shader> m_WorldToViewShader;
 };
 } // namespace Rudy

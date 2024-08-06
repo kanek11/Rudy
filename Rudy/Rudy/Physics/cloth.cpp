@@ -764,7 +764,7 @@ void Cloth::CPU_Update()
     }
 }
 
-void Cloth::Draw(Ref<Camera> cam)
+void Cloth::Draw(SharedPtr<Camera> cam)
 {
     if (!hasMesh())
     {

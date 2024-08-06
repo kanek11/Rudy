@@ -47,7 +47,7 @@ private:
 
 private:
     GLFWwindow*            m_Window;
-    Scope<GraphicsContext> m_Context;
+    UniquePtr<GraphicsContext> m_Context;
 
     struct WindowData
     {

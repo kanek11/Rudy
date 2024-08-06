@@ -7,187 +7,175 @@
 
 #include <glad/glad.h>
 
-//todo: 
-// organinze properties in a struct, so that we won't need to change class-by-class.
-//custom mipmap LOD ;
+// todo:
+//  organinze properties in a struct, so that we won't need to change class-by-class.
+// custom mipmap LOD ;
 
+namespace Rudy
+{
 
-namespace Rudy {
+class OpenGLTexture2D : public Texture2D
+{
+public:
+    ~OpenGLTexture2D();
+    OpenGLTexture2D(const std::string& path, bool isHDRI);
+    OpenGLTexture2D(const TextureSpec& specification);
 
-	  
-	class OpenGLTexture2D : public Texture2D
-	{
-	public:
-		~OpenGLTexture2D();
-		OpenGLTexture2D(const std::string& path, bool isHDRI);
-		OpenGLTexture2D(const TextureSpec& specification); 
+    //======inherited
 
+    virtual void Bind(uint32_t slot = 0) const override
+    {
+        glBindTextureUnit(slot, m_TextureID);
+    }
+    virtual void Unbind(uint32_t slot = 0) const override
+    {
+        glBindTextureUnit(slot, 0);
+    }
 
-		//======inherited
+    virtual void SubData(void*    data,
+                         uint32_t width,
+                         uint32_t height,
+                         uint32_t xOffset = 0,
+                         uint32_t yOffset = 0) override;
 
-		virtual void Bind(uint32_t slot = 0) const override
-		{
-			glBindTextureUnit(slot, m_TextureID);
-		}
-		virtual void Unbind(uint32_t slot = 0) const override
-		{
-			glBindTextureUnit(slot, 0);
-		}
+    virtual bool IsLoaded() const override { return m_IsLoaded; }
 
-		virtual void SubData(void* data,
-			uint32_t width, uint32_t height, uint32_t xOffset = 0, uint32_t yOffset = 0) override;
-		
+    //======getters&setters======
+    // virtual void SetData(void* data, uint32_t size) override;
 
-		virtual bool IsLoaded() const override { return m_IsLoaded; }
+    virtual const TextureSpec& GetTextureSpec() const override { return m_TextureSpec; }
+    virtual uint32_t           GetWidth() const override { return m_Width; }
+    virtual uint32_t           GetHeight() const override { return m_Height; }
+    virtual uint32_t           GetID() const override { return m_TextureID; }
 
+    virtual const std::string& GetPath() const override { return m_Path; }
 
-		//======getters&setters======	
-		//virtual void SetData(void* data, uint32_t size) override;
+    virtual int GetChannels() const override
+    {
+        TextureInternalFormat format = m_TextureSpec.textureInternalFormat;
+        switch (format)
+        {
+            case TextureInternalFormat::RGBA32F:
+                return 4;
+                break;
+            case TextureInternalFormat::R32F:
+                return 1;
+                break;
+            case TextureInternalFormat::RGB8:
+                return 3;
+                break;
+            case TextureInternalFormat::DEPTH_COMPONENT24:
+                return 1;
+                break;
+            default:
+                RD_CORE_ERROR("Texture: GetChannels() not implemented for this format");
+                return 0;
+        }
+    }
 
-		virtual const TextureSpec& GetTextureSpec() const override { return m_TextureSpec; }  
-		virtual uint32_t GetWidth() const override { return m_Width;  }
-		virtual uint32_t GetHeight() const override { return m_Height; }
-		virtual uint32_t GetID() const override { return m_TextureID; }
-		 
-		
-		virtual const std::string& GetPath() const override { return m_Path; }  
-		
-		virtual int GetChannels() const override
-		{
-			TextureInternalFormat format = m_TextureSpec.textureInternalFormat;
-			switch (format)
-			{
-			case TextureInternalFormat::RGBA32F:
-				return 4;  break;
-				 case TextureInternalFormat::R32F:
-			    return 1; break;
-				case TextureInternalFormat::RGB8:
-				return 3; break;
-				case TextureInternalFormat::DEPTH_COMPONENT24:
-				return 1; break; 
-				default:
-					RD_CORE_ERROR("Texture: GetChannels() not implemented for this format");
-					return 0; 
-			} 
-		}
-	 
-		
+public:
+    uint32_t m_TextureID;
 
-	public: 
-		uint32_t m_TextureID;
+    TextureSpec m_TextureSpec;
 
-		TextureSpec m_TextureSpec;
- 
-		//stbi_uc* m_TextureData;  
-		//usually no need, data on memory is released after transfer to GPU
-		//unless in the future we want to do some cpu side thing, like preview, processing, etc
+    // stbi_uc* m_TextureData;
+    // usually no need, data on memory is released after transfer to GPU
+    // unless in the future we want to do some cpu side thing, like preview, processing, etc
 
-		uint32_t m_Width, m_Height;
-		std::string m_Path;
-		 
-		GLenum m_InternalFormat, m_DataFormat, m_DataType;
-		GLenum m_WrapMode, m_MinFilterMode, m_MagFilterMode;
+    uint32_t    m_Width, m_Height;
+    std::string m_Path;
 
-		bool m_IsLoaded = false;
- 
-	};
+    GLenum m_InternalFormat, m_DataFormat, m_DataType;
+    GLenum m_WrapMode, m_MinFilterMode, m_MagFilterMode;
 
-	 
+    bool m_IsLoaded = false;
+};
 
-	class OpenGLTextureCube : public TextureCube
-	{
-	public:
+class OpenGLTextureCube : public TextureCube
+{
+public:
+    ~OpenGLTextureCube();
 
-		~OpenGLTextureCube();
+    OpenGLTextureCube(const TextureSpec& specification);
 
+    OpenGLTextureCube(const std::string& path);
+    OpenGLTextureCube(const std::vector<std::string>& paths);
 
-		OpenGLTextureCube(const TextureSpec& specification);
+    // gl utils
+    virtual void Bind(uint32_t slot = 0) const override
+    {
+        glBindTextureUnit(slot, m_TextureID);
+    }
+    virtual void Unbind(uint32_t slot = 0) const override
+    {
+        glBindTextureUnit(slot, 0);
+    }
 
-		OpenGLTextureCube(const std::string& path) ;   
-		OpenGLTextureCube(const std::vector<std::string>& paths);
+    virtual void SubData(void*    data,
+                         uint32_t width,
+                         uint32_t height,
+                         uint32_t xOffset = 0,
+                         uint32_t yOffset = 0) override
+    { // to be implemented
+        RD_CORE_ERROR("Not implemented yet");
+    }
 
-	 
-		//gl utils
-		virtual void Bind(uint32_t slot = 0) const override
-		{
-			glBindTextureUnit(slot, m_TextureID);
-		}
-		virtual void Unbind(uint32_t slot = 0) const override
-		{
-			glBindTextureUnit(slot, 0);
-		}
+    virtual bool IsLoaded() const override { return m_IsLoaded; }
 
-		virtual void SubData(void* data,
-			uint32_t width, uint32_t height, uint32_t xOffset = 0, uint32_t yOffset = 0) override
-		{ //to be implemented
-			RD_CORE_ERROR( "Not implemented yet");}
+    //======getters&setters======
+    // virtual void SetData(void* data, uint32_t size) override;
 
+    virtual const TextureSpec& GetTextureSpec() const override { return m_TextureSpec; }
+    virtual uint32_t           GetWidth() const override { return m_Width; }
+    virtual uint32_t           GetHeight() const override { return m_Height; }
+    virtual uint32_t           GetID() const override { return m_TextureID; }
+    virtual const std::string& GetPath() const override { return m_Path; }
 
-		virtual bool IsLoaded() const override { return m_IsLoaded; }
+    virtual int GetChannels() const override
+    {
+        TextureInternalFormat format = m_TextureSpec.textureInternalFormat;
+        switch (format)
+        {
+            case TextureInternalFormat::RGBA32F:
+                return 4;
+                break;
+            case TextureInternalFormat::R32F:
+                return 1;
+                break;
+            case TextureInternalFormat::RGB8:
+                return 3;
+                break;
+                // all other cases
+            default:
+                RD_CORE_ERROR("Texture: GetChannels() not implemented for this format");
+                return 0;
+        }
+    }
 
- 
+    SharedPtr<TextureCube> CreatePrefilteredEnvMap(SharedPtr<TextureCube> envMap,
+                                                   ConvolutionType        type,
+                                                   uint32_t               mipLevels) override;
 
-		//======getters&setters======	
-		//virtual void SetData(void* data, uint32_t size) override;
+    // virtual bool operator==(const Texture& other) const override
+    //{
+    //	return m_TextureID == other.GetID();
+    // }
+public:
+    // inherited
+    TextureSpec m_TextureSpec;
 
-		virtual const TextureSpec& GetTextureSpec() const override { return m_TextureSpec; }
-		virtual uint32_t GetWidth() const override { return m_Width; }
-		virtual uint32_t GetHeight() const override { return m_Height; }
-		virtual uint32_t GetID() const override { return m_TextureID; }
-		virtual const std::string& GetPath() const override { return m_Path; }
+    // stbi_uc* m_TextureData;
+    // usually no need, data on memory is released after transfer to GPU
+    // unless in the future we want to do some cpu side thing, like preview, processing, etc
 
+    uint32_t    m_Width, m_Height;
+    uint32_t    m_TextureID;
+    std::string m_Path;
 
-		virtual int GetChannels() const override
-		{
-			TextureInternalFormat format = m_TextureSpec.textureInternalFormat;
-			switch (format)
-			{
-			case TextureInternalFormat::RGBA32F:
-				return 4;  break;
-			case TextureInternalFormat::R32F:
-				return 1; break;
-			case TextureInternalFormat::RGB8:
-				return 3; break;
-				//all other cases
-			default:
-				RD_CORE_ERROR("Texture: GetChannels() not implemented for this format");
-				return 0;
-			}
-		}
+    GLenum m_InternalFormat, m_DataFormat, m_DataType;
+    GLenum m_WrapMode, m_MinFilterMode, m_MagFilterMode;
 
+    bool m_IsLoaded = false;
+};
 
-
-		Ref<TextureCube> CreatePrefilteredEnvMap(Ref<TextureCube> envMap,
-			ConvolutionType type, uint32_t mipLevels) override;
-
-		//virtual bool operator==(const Texture& other) const override
-		//{
-		//	return m_TextureID == other.GetID();
-		//}
-	public:
-
-		//inherited
-		TextureSpec m_TextureSpec;
-
-		//stbi_uc* m_TextureData;  
-		//usually no need, data on memory is released after transfer to GPU
-		//unless in the future we want to do some cpu side thing, like preview, processing, etc
-
-		uint32_t m_Width, m_Height;
-		uint32_t m_TextureID;
-		std::string m_Path;
-
-		GLenum m_InternalFormat, m_DataFormat, m_DataType;
-		GLenum m_WrapMode, m_MinFilterMode, m_MagFilterMode;
-
-		bool m_IsLoaded = false;
-
-	};
-
-
-
-
-}
-
-
- 
+} // namespace Rudy

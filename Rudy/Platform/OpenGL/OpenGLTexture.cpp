@@ -447,9 +447,9 @@ OpenGLTextureCube::OpenGLTextureCube(const std::string& path)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-Ref<TextureCube> OpenGLTextureCube::CreatePrefilteredEnvMap(Ref<TextureCube> envMap,
-                                                            ConvolutionType  type,
-                                                            uint32_t         mipLevels)
+SharedPtr<TextureCube> OpenGLTextureCube::CreatePrefilteredEnvMap(SharedPtr<TextureCube> envMap,
+                                                                  ConvolutionType        type,
+                                                                  uint32_t               mipLevels)
 {
     // RD_PROFILE_FUNCTION();
 

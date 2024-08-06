@@ -13,14 +13,14 @@ public:
     ~Scene() = default;
     Scene()  = default;
 
-    static Ref<Scene> Create();
+    static SharedPtr<Scene> Create();
 
-    std::vector<Ref<Object>> objects; // scene objects
+    std::vector<SharedPtr<Object>> objects; // scene objects
 
-    void AddObject(Ref<Object> object);
-    void Render(Ref<Camera> camera);
+    void AddObject(SharedPtr<Object> object);
+    void Render(SharedPtr<Camera> camera);
 
-    // const std::vector<Ref<Object>>>& get_objects() const { return Objects; }
+    // const std::vector<SharedPtr<Object>>>& get_objects() const { return Objects; }
 };
 
 } // namespace Rudy

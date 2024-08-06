@@ -8,9 +8,9 @@
 namespace Rudy {
 
 
-    Ref<Transform> Transform::Create(Ref<Object> gameObject)
+    SharedPtr<Transform> Transform::Create(SharedPtr<Object> gameObject)
     {
-        auto transform = CreateRef<Transform>();
+        auto transform = CreateShared<Transform>();
 
 		transform->gameObject = gameObject;
 		return transform;
@@ -44,7 +44,7 @@ namespace Rudy {
 
 
 
-    void Transform::UpdateWorldTransformRecursive(const Ref<Transform> node, const glm::mat4& parentTransform)
+    void Transform::UpdateWorldTransformRecursive(const SharedPtr<Transform> node, const glm::mat4& parentTransform)
     {
         //update the global transform;
 

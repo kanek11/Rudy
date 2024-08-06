@@ -28,8 +28,8 @@ public:
     // app specific=======================
 
     // particles
-    Ref<Emitter>          particle = nullptr;
-    Ref<StaticMeshObject> floor    = nullptr;
+    SharedPtr<Emitter>          particle = nullptr;
+    SharedPtr<StaticMeshObject> floor    = nullptr;
 
     // cloth
     Cloth* cloth = nullptr;

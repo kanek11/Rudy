@@ -11,28 +11,28 @@ class SSAO : public Pass
 public:
     virtual ~SSAO() = default;
     SSAO(
-        uint32_t m_width, uint32_t m_height, std::unordered_map<TexType, Ref<Texture>>& m_SSAOInputs, std::unordered_map<TexType, Ref<Texture>>& m_SSAOOutputs);
+        uint32_t m_width, uint32_t m_height, std::unordered_map<TexType, SharedPtr<Texture>>& m_SSAOInputs, std::unordered_map<TexType, SharedPtr<Texture>>& m_SSAOOutputs);
 
-    virtual void Render(Ref<Camera>) override;
+    virtual void Render(SharedPtr<Camera>) override;
 
     void Init();
 
 public:
     // common
-    uint32_t                                   m_width, m_height;
-    std::unordered_map<TexType, Ref<Texture>>& m_SSAOInputs;
-    std::unordered_map<TexType, Ref<Texture>>& m_SSAOOutputs;
+    uint32_t                                         m_width, m_height;
+    std::unordered_map<TexType, SharedPtr<Texture>>& m_SSAOInputs;
+    std::unordered_map<TexType, SharedPtr<Texture>>& m_SSAOOutputs;
 
     // specific
 
-    Ref<FrameBuffer> SSAOFBO;
-    Ref<Shader>      SSAOShader;
-    Ref<Material>    SSAOMaterial;
+    SharedPtr<FrameBuffer> SSAOFBO;
+    SharedPtr<Shader>      SSAOShader;
+    SharedPtr<Material>    SSAOMaterial;
 
-    Ref<ScreenQuad> SSAOQuad;
+    SharedPtr<ScreenQuad> SSAOQuad;
 
-    Ref<Texture2D> SSAOOnlyTex;
-    Ref<Texture2D> SSAOBlurTexture;
+    SharedPtr<Texture2D> SSAOOnlyTex;
+    SharedPtr<Texture2D> SSAOBlurTexture;
 
     float radius     = 0.5f;
     float bias       = 0.01;
@@ -41,7 +41,7 @@ public:
     int kernelSize = 64;
 
     // blur
-    Ref<Shader> BlurShader;
+    SharedPtr<Shader> BlurShader;
 
     bool enableBlur = false;
     int  ave_radius = 4;

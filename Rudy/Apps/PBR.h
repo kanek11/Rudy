@@ -6,7 +6,7 @@
 #include "Vendor/imgui/imgui_impl_opengl3.h"
 
 #include "Application.h"
- 
+
 namespace Rudy
 {
 
@@ -42,7 +42,7 @@ public:
     PBRMaterial()  = default;
 
     // set preset values
-    PBRMaterial(Ref<Shader> shader, const std::string& name) :
+    PBRMaterial(SharedPtr<Shader> shader, const std::string& name) :
         Material(shader, name)
     {
         this->SetFloatMap(PBRDefaultFloatMap);
@@ -50,9 +50,9 @@ public:
         this->SetBoolMap(PBRDefaultBoolMap);
     }
 
-    static Ref<PBRMaterial> Create(Ref<Shader> shader = nullptr, const std::string& name = "UnnamedPBRMaterial")
+    static SharedPtr<PBRMaterial> Create(SharedPtr<Shader> shader = nullptr, const std::string& name = "UnnamedPBRMaterial")
     {
-        return CreateRef<PBRMaterial>(shader, name);
+        return CreateShared<PBRMaterial>(shader, name);
     }
 };
 
@@ -77,75 +77,75 @@ public:
     // shadowmap
     const uint32_t SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
-    Ref<FrameBuffer> shadowMapFBO             = nullptr;
-    Ref<Material>    shadowMapMaterial        = nullptr;
-    Ref<Material>    shadowMapSkinnedMaterial = nullptr;
+    SharedPtr<FrameBuffer> shadowMapFBO             = nullptr;
+    SharedPtr<Material>    shadowMapMaterial        = nullptr;
+    SharedPtr<Material>    shadowMapSkinnedMaterial = nullptr;
 
-    Ref<Texture2D> shadowMap = nullptr;
+    SharedPtr<Texture2D> shadowMap = nullptr;
 
     // scene
-    Ref<DirectionalLight>              sunlight = nullptr;
-    std::vector<Ref<StaticMeshObject>> staticMeshObjects;
-    std::vector<Ref<Model>>            models;
+    SharedPtr<DirectionalLight>              sunlight = nullptr;
+    std::vector<SharedPtr<StaticMeshObject>> staticMeshObjects;
+    std::vector<SharedPtr<Model>>            models;
 
-    Ref<Shader>      gBufferPassShader;
-    Ref<FrameBuffer> gBufferFBO;
+    SharedPtr<Shader>      gBufferPassShader;
+    SharedPtr<FrameBuffer> gBufferFBO;
 
     // float shadow_bias = 0.005f;
     float min_shadow_bias = 0.001f;
     float max_shadow_bias = 0.01f;
 
     //
-    Ref<Pass>                                 WorldToViewPass;
-    std::unordered_map<TexType, Ref<Texture>> WorldToViewInputs;
-    std::unordered_map<TexType, Ref<Texture>> WorldToViewOutputs;
+    SharedPtr<Pass>                                 WorldToViewPass;
+    std::unordered_map<TexType, SharedPtr<Texture>> WorldToViewInputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> WorldToViewOutputs;
 
     //==========================================
     // Lit pass
-    Ref<FrameBuffer> litPassFBO;
-    Ref<Shader>      litPassShader;
+    SharedPtr<FrameBuffer> litPassFBO;
+    SharedPtr<Shader>      litPassShader;
 
-    Ref<ScreenQuad> litPassQuad;
+    SharedPtr<ScreenQuad> litPassQuad;
 
-    // Ref<Pass> LitPass;
-    std::map<TexType, Ref<Texture2D>> litInputs;
-    std::map<TexType, Ref<Texture2D>> litOutputs;
+    // SharedPtr<Pass> LitPass;
+    std::map<TexType, SharedPtr<Texture2D>> litInputs;
+    std::map<TexType, SharedPtr<Texture2D>> litOutputs;
 
     //=======================================================================================================
     // SSAO
-    Ref<SSAO> SSAOPass;
+    SharedPtr<SSAO> SSAOPass;
 
-    std::unordered_map<TexType, Ref<Texture>> SSAOInputs;
-    std::unordered_map<TexType, Ref<Texture>> SSAOOutputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> SSAOInputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> SSAOOutputs;
 
     //=======================================================================================================
     // Bloom
 
-    Ref<Bloom> BloomPass;
+    SharedPtr<Bloom> BloomPass;
 
-    std::unordered_map<TexType, Ref<Texture>> BloomInputs;
-    std::unordered_map<TexType, Ref<Texture>> BloomOutputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> BloomInputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> BloomOutputs;
 
     //=======================================================================================================
     // Outline
 
-    Ref<Outline> OutlinePass;
+    SharedPtr<Outline> OutlinePass;
 
-    std::unordered_map<TexType, Ref<Texture>> OutlineInputs;
-    std::unordered_map<TexType, Ref<Texture>> OutlineOutputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> OutlineInputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> OutlineOutputs;
 
     //=======================================================================================================
     // SSR
-    Ref<SSR> SSRPass;
+    SharedPtr<SSR> SSRPass;
 
-    std::unordered_map<TexType, Ref<Texture>> SSRInputs;
-    std::unordered_map<TexType, Ref<Texture>> SSROutputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> SSRInputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> SSROutputs;
 
     // tonemapping
-    Ref<ToneMap> ToneMapPass;
+    SharedPtr<ToneMap> ToneMapPass;
 
-    std::unordered_map<TexType, Ref<Texture>> ToneMapInputs;
-    std::unordered_map<TexType, Ref<Texture>> ToneMapOutputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> ToneMapInputs;
+    std::unordered_map<TexType, SharedPtr<Texture>> ToneMapOutputs;
 
 public:
     bool enableSSR     = false;
@@ -159,21 +159,21 @@ public:
     bool enableSkyBox      = true;
 
     // todo:make these more elegant
-    Ref<Shader>     screenQuadShader;
-    Ref<ScreenQuad> screenQuad;
+    SharedPtr<Shader>     screenQuadShader;
+    SharedPtr<ScreenQuad> screenQuad;
 
-    Ref<Texture> visualizeBuffer;
-    float        bufferMipLevel = 0;
+    SharedPtr<Texture> visualizeBuffer;
+    float              bufferMipLevel = 0;
 
-    Ref<Shader> skyboxShader;
-    Ref<Cube>   skybox;
+    SharedPtr<Shader> skyboxShader;
+    SharedPtr<Cube>   skybox;
 
-    Navigation* nav               = nullptr;
-    Ref<Shader> pure_color_shader = nullptr;
+    Navigation*       nav               = nullptr;
+    SharedPtr<Shader> pure_color_shader = nullptr;
 
     float timer = 0.0f;
 
-    void ShowTreeNode(const Ref<Transform> transform);
+    void ShowTreeNode(const SharedPtr<Transform> transform);
     void ShowHierarchy();
 };
 

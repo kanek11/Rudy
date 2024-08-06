@@ -6,9 +6,9 @@
 namespace Rudy
 {
  
-	Ref<Mesh> Mesh::Create()
+	SharedPtr<Mesh> Mesh::Create()
 	{
-		return CreateRef<Mesh>();
+		return CreateShared<Mesh>();
 	}
 
 	void Mesh::SetupVertices()

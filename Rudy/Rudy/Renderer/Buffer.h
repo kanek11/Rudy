@@ -75,7 +75,7 @@ public:
 class VertexBuffer : public virtual Buffer
 {
 public:
-    static Ref<VertexBuffer> Create();
+    static SharedPtr<VertexBuffer> Create();
 
     // uint32_t m_Stride;
     // layout info.
@@ -84,7 +84,7 @@ public:
 class IndexBuffer : public virtual Buffer
 {
 public:
-    static Ref<IndexBuffer> Create();
+    static SharedPtr<IndexBuffer> Create();
 };
 
 // for cumpute shader.
@@ -93,16 +93,16 @@ public:
 class StorageBuffer : public virtual Buffer
 {
 public:
-    static Ref<StorageBuffer> Create();
-    virtual void              BindBase(uint32_t index) const = 0; // specify the binding point;
+    static SharedPtr<StorageBuffer> Create();
+    virtual void                    BindBase(uint32_t index) const = 0; // specify the binding point;
 };
 
 // for small, shared data among shaders.
 class UniformBuffer : public virtual Buffer
 {
 public:
-    static Ref<UniformBuffer> Create();
-    virtual void              BindBase(uint32_t index) const = 0; // specify the binding point;
+    static SharedPtr<UniformBuffer> Create();
+    virtual void                    BindBase(uint32_t index) const = 0; // specify the binding point;
 };
 
 // todo: maybe maintain a attributes list.
@@ -121,7 +121,7 @@ public:
 class VertexArray
 {
 public:
-    static Ref<VertexArray> Create();
+    static SharedPtr<VertexArray> Create();
 
 public:
     virtual void Bind() const   = 0;

@@ -129,9 +129,9 @@ namespace Rudy {
 	class Texture2D : public Texture
 	{
 	public: 
-		static Ref<Texture2D> LoadFile(const std::string& path, bool isHDRI = false);
-		static Ref<Texture2D> CreateEmpty(const TextureSpec& specfication = TextureSpec());
-	    //static Ref<Texture2D> CreateUsingData(const TextureSpec& specfication = TextureSpec(), void* data = nullptr);
+		static SharedPtr<Texture2D> LoadFile(const std::string& path, bool isHDRI = false);
+		static SharedPtr<Texture2D> CreateEmpty(const TextureSpec& specfication = TextureSpec());
+	    //static SharedPtr<Texture2D> CreateUsingData(const TextureSpec& specfication = TextureSpec(), void* data = nullptr);
 	};
 
 
@@ -146,13 +146,13 @@ namespace Rudy {
 	class TextureCube : public Texture
 	{
 	public: 
-		static Ref<TextureCube> CreateEmpty(const TextureSpec& specfication = TextureSpec());
+		static SharedPtr<TextureCube> CreateEmpty(const TextureSpec& specfication = TextureSpec());
 
-		static Ref<TextureCube> LoadHDRI(const std::string& path); 
-		static Ref<TextureCube> LoadImages(const std::vector<std::string>& paths); 
+		static SharedPtr<TextureCube> LoadHDRI(const std::string& path); 
+		static SharedPtr<TextureCube> LoadImages(const std::vector<std::string>& paths); 
 
 
-		virtual Ref<TextureCube> CreatePrefilteredEnvMap(Ref<TextureCube> envMap,
+		virtual SharedPtr<TextureCube> CreatePrefilteredEnvMap(SharedPtr<TextureCube> envMap,
 			ConvolutionType type = ConvolutionType::Specular,
 			uint32_t mipLevels = 5) = 0;
 	};

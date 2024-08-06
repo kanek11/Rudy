@@ -32,7 +32,7 @@ namespace Rudy
 
 
 
-	//void OpenGLRendererAPI::DrawElements(const Ref<Mesh> &mesh, const Ref<Material> &material, Transform transform)
+	//void OpenGLRendererAPI::DrawElements(const SharedPtr<Mesh> &mesh, const SharedPtr<Material> &material, Transform transform)
 	void OpenGLRendererAPI::DrawIndexed(MeshTopology topo, uint32_t indexCount)
 	{ 
 		//RD_PROFILE_FUNCTION(); 
@@ -115,14 +115,14 @@ namespace Rudy
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	// void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
+	// void OpenGLRendererAPI::DrawIndexed(const SharedPtr<VertexArray>& vertexArray, uint32_t indexCount)
 	//{
 	//	vertexArray->Bind();
 	//	uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
 	//	glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 	// }
 
-	// void OpenGLRendererAPI::DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
+	// void OpenGLRendererAPI::DrawLines(const SharedPtr<VertexArray>& vertexArray, uint32_t vertexCount)
 	//{
 	//	vertexArray->Bind();
 	//	glDrawArrays(GL_LINES, 0, vertexCount);

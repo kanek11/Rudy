@@ -26,7 +26,7 @@ public:
 
     // Transform  Transform;
 
-    Ref<Material> material;
+    SharedPtr<Material> material;
 };
 
 // x red , y green, z blue ;
@@ -42,7 +42,7 @@ public:
     uint32_t           vao, vbo;
     std::vector<float> vertices; // 10 vertical and 10 horizontal lines, each requiring 4 vertices
 
-    Ref<Material> material;
+    SharedPtr<Material> material;
 };
 
 } // namespace Rudy

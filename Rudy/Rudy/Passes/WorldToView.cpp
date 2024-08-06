@@ -9,8 +9,8 @@ namespace  Rudy
 
 	WorldToView::WorldToView(
 		uint32_t m_width, uint32_t m_height,
-		std::unordered_map< TexType, Ref<Texture>>& m_WorldToViewInputs,
-		std::unordered_map< TexType, Ref<Texture>>& m_WorldToViewOutputs)
+		std::unordered_map< TexType, SharedPtr<Texture>>& m_WorldToViewInputs,
+		std::unordered_map< TexType, SharedPtr<Texture>>& m_WorldToViewOutputs)
 		:m_width(m_width), m_height(m_height),
 		m_Inputs(m_WorldToViewInputs), m_Outputs(m_WorldToViewOutputs)
 	{
@@ -27,7 +27,7 @@ namespace  Rudy
 	}
 
 
-	void WorldToView::Render(Ref<Camera> main_camera)
+	void WorldToView::Render(SharedPtr<Camera> main_camera)
 	{
 
 

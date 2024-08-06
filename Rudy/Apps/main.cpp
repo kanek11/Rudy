@@ -35,7 +35,7 @@ int main(int argc, char** argv)
     // RD_CORE_WARN("test:Initialized Log!");
     // RD_ASSERT(2 < 1, "test:Assert!");
 
-    auto app = CreateRef<Application>();
+    auto app = CreateShared<Application>();
 
     std::string appName = "PBR"; // default app
     for (int i = 1; i < argc; ++i)

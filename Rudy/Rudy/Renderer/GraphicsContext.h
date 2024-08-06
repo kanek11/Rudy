@@ -1,14 +1,14 @@
 #pragma once
 
-namespace Rudy {
+namespace Rudy
+{
 
-	class GraphicsContext
-	{
-	public:
+class GraphicsContext
+{
+public:
+    virtual void Init() = 0;
 
-		virtual void Init() = 0; 
+    static UniquePtr<GraphicsContext> Create(void* window);
+};
 
-		static Scope<GraphicsContext> Create(void* window);
-	};
-
-}
+} // namespace Rudy
