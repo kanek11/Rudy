@@ -1,9 +1,9 @@
 #pragma once
 #include "RudyPCH.h"
 
-#include "Rudy/Core/Window.h"
-#include "Rudy/Renderer/Camera.h"
-#include "Rudy/Renderer/RendererAPI.h"
+#include "Runtime/Core/Window.h"
+#include "Runtime/Components/Renderer/Camera.h"
+#include "Runtime/Components/Renderer/RendererAPI.h"
 
 namespace Rudy
 {

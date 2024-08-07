@@ -618,7 +618,7 @@ void PBR::OnUpdate(float deltaTime)
             { 3, 3 },
         };
 
-        auto                      gbuffer_tex    = gBufferFBO->GetColorTextures();
+        auto                            gbuffer_tex    = gBufferFBO->GetColorTextures();
         std::vector<SharedPtr<Texture>> bufferTextures = {
             gbuffer_tex[TexType::gWorldPosition],
             gbuffer_tex[TexType::gWorldNormal],

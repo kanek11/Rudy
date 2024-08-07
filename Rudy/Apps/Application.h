@@ -5,7 +5,7 @@
 namespace Rudy
 {
 
-//<<interface>>  <<singleton>>
+//<<abstract>
 class Application
 {
 public:
@@ -17,6 +17,7 @@ public:
     virtual void ShutDown();
 
 public:
+    //<<singleton>>
     static Application* s_instance; // to access application;
     static Application* GetInstance();
 

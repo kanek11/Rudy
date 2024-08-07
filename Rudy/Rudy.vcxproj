@@ -40,6 +40,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(SolutionDir)Rudy;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Bin\Intermediate\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(SolutionDir)/Ether;$(IncludePath)</IncludePath>
@@ -58,7 +60,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Rudy\Vendor\assimp\lib;$(SolutionDir)Rudy\Vendor\Glad\lib;$(SolutionDir)Rudy\Vendor\glfw-3.3.8.bin.WIN64\lib-vc2022</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Rudy\ThirdParty\assimp\lib;$(SolutionDir)Rudy\ThirdParty\Glad\lib;$(SolutionDir)Rudy\ThirdParty\glfw-3.3.8.bin.WIN64\lib-vc2022</AdditionalLibraryDirectories>
       <AdditionalDependencies>assimp-vc143-mtd.lib;glfw3.lib;opengl32.lib ;glad.lib;User32.lib;Gdi32.lib;Shell32.lib ;</AdditionalDependencies>
       <Profile>false</Profile>
       <StackReserveSize>5242880</StackReserveSize>
@@ -90,73 +92,74 @@
   <ItemGroup>
     <ClInclude Include="Apps\Application.h" />
     <ClInclude Include="Apps\Layer.h" />
-    <ClInclude Include="Apps\NPR.h" />
-    <ClInclude Include="Apps\Phys.h" />
     <ClInclude Include="Apps\PBR.h" />
-    <ClInclude Include="Rudy\Core\Assert.h" />
-    <ClInclude Include="Rudy\Physics\Fluid.h" />
-    <ClInclude Include="Rudy\Primitives\Cube.h" />
-    <ClInclude Include="Rudy\Primitives\Overlay.h" />
-    <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h" />
+    <ClInclude Include="Runtime\Core\Assert.h" />
+    <ClInclude Include="Runtime\CoreFramework\Actor.h" />
+    <ClInclude Include="Runtime\CoreFramework\ActorComponent.h" />
+    <ClInclude Include="Runtime\CoreFramework\Object.h" />
+    <ClInclude Include="Runtime\Components\Physics\Fluid.h" />
+    <ClInclude Include="Runtime\Components\Primitives\Cube.h" />
+    <ClInclude Include="Runtime\Components\Primitives\Overlay.h" />
+    <ClInclude Include="Runtime\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="Rudy.h" />
-    <ClInclude Include="Rudy\Core\Base.h" />
-    <ClInclude Include="Rudy\Core\FileSystem.h" />
-    <ClInclude Include="Rudy\Debug\Instrumentor.h" />
-    <ClInclude Include="Rudy\Events\Input.h" />
-    <ClInclude Include="Rudy\Core\Log.h" />
-    <ClInclude Include="Rudy\Core\PlatformDetection.h" />
-    <ClInclude Include="Rudy\Core\Window.h" />
-    <ClInclude Include="Rudy\Events\KeyCodes.h" />
-    <ClInclude Include="Rudy\Events\MouseCodes.h" />
-    <ClInclude Include="Rudy\Particles\ParticleSystem.h" />
-    <ClInclude Include="Rudy\Passes\Bloom.h" />
-    <ClInclude Include="Rudy\Passes\Composer.h" />
-    <ClInclude Include="Rudy\Passes\Pass.h" />
-    <ClInclude Include="Rudy\Passes\SSAO.h" />
-    <ClInclude Include="Rudy\Passes\SSR.h" />
-    <ClInclude Include="Rudy\Passes\ToneMap.h" />
-    <ClInclude Include="Rudy\Passes\WorldToView.h" />
-    <ClInclude Include="Rudy\Physics\Cloth.h" />
-    <ClInclude Include="Rudy\Animation\Animation.h" />
-    <ClInclude Include="Rudy\Renderer\Buffer.h" />
-    <ClInclude Include="Rudy\Renderer\Camera.h" />
-    <ClInclude Include="Rudy\Renderer\FrameBuffer.h" />
-    <ClInclude Include="Rudy\Renderer\GraphicsContext.h" />
-    <ClInclude Include="Rudy\Renderer\Light.h" />
-    <ClInclude Include="Rudy\Renderer\Material.h" />
-    <ClInclude Include="Rudy\Renderer\Mesh.h" />
-    <ClInclude Include="Rudy\Renderer\Object.h" />
-    <ClInclude Include="Rudy\Renderer\RendererComponent.h" />
-    <ClInclude Include="Rudy\Renderer\Scene.h" />
-    <ClInclude Include="Rudy\Renderer\Shader.h" />
-    <ClInclude Include="Rudy\Renderer\Renderer.h" />
-    <ClInclude Include="Rudy\Renderer\RendererAPI.h" />
-    <ClInclude Include="Rudy\Renderer\Texture.h" />
-    <ClInclude Include="Rudy\Renderer\Transform.h" />
-    <ClInclude Include="Rudy\Primitives\Plane.h" />
-    <ClInclude Include="Platform\OpenGL\OpenGLFrameBuffer.h" />
-    <ClInclude Include="Platform\OpenGL\OpenGLContext.h" />
-    <ClInclude Include="Platform\OpenGL\OpenGLRendererAPI.h" />
-    <ClInclude Include="Platform\OpenGL\OpenGLShader.h" />
-    <ClInclude Include="Platform\OpenGL\OpenGLTexture.h" />
-    <ClInclude Include="Platform\Windows\WindowsWindow.h" />
-    <ClInclude Include="Rudy\Events\ApplicationEvent.h" />
-    <ClInclude Include="Rudy\Events\Event.h" />
-    <ClInclude Include="Rudy\Events\KeyEvent.h" />
-    <ClInclude Include="Rudy\Events\MouseEvent.h" />
+    <ClInclude Include="Runtime\Core\Base.h" />
+    <ClInclude Include="Runtime\Core\FileSystem.h" />
+    <ClInclude Include="Runtime\Debug\Instrumentor.h" />
+    <ClInclude Include="Runtime\Events\Input.h" />
+    <ClInclude Include="Runtime\Core\Log.h" />
+    <ClInclude Include="Runtime\Core\PlatformDetection.h" />
+    <ClInclude Include="Runtime\Core\Window.h" />
+    <ClInclude Include="Runtime\Events\KeyCodes.h" />
+    <ClInclude Include="Runtime\Events\MouseCodes.h" />
+    <ClInclude Include="Runtime\Components\Particles\ParticleSystem.h" />
+    <ClInclude Include="Runtime\Components\Passes\Bloom.h" />
+    <ClInclude Include="Runtime\Components\Passes\Composer.h" />
+    <ClInclude Include="Runtime\Components\Passes\Pass.h" />
+    <ClInclude Include="Runtime\Components\Passes\SSAO.h" />
+    <ClInclude Include="Runtime\Components\Passes\SSR.h" />
+    <ClInclude Include="Runtime\Components\Passes\ToneMap.h" />
+    <ClInclude Include="Runtime\Components\Passes\WorldToView.h" />
+    <ClInclude Include="Runtime\Components\Physics\Cloth.h" />
+    <ClInclude Include="Runtime\Components\Animation\Animation.h" />
+    <ClInclude Include="Runtime\Components\Renderer\Buffer.h" />
+    <ClInclude Include="Runtime\Components\Renderer\Camera.h" />
+    <ClInclude Include="Runtime\Components\Renderer\FrameBuffer.h" />
+    <ClInclude Include="Runtime\Components\Renderer\GraphicsContext.h" />
+    <ClInclude Include="Runtime\Components\Renderer\Light.h" />
+    <ClInclude Include="Runtime\Components\Renderer\Material.h" />
+    <ClInclude Include="Runtime\Components\Renderer\Mesh.h" />
+    <ClInclude Include="Runtime\Components\Renderer\Object.h" />
+    <ClInclude Include="Runtime\Components\Renderer\RendererComponent.h" />
+    <ClInclude Include="Runtime\Components\Renderer\Scene.h" />
+    <ClInclude Include="Runtime\Components\Renderer\Shader.h" />
+    <ClInclude Include="Runtime\Components\Renderer\Renderer.h" />
+    <ClInclude Include="Runtime\Components\Renderer\RendererAPI.h" />
+    <ClInclude Include="Runtime\Components\Renderer\Texture.h" />
+    <ClInclude Include="Runtime\Components\Renderer\Transform.h" />
+    <ClInclude Include="Runtime\Components\Primitives\Plane.h" />
+    <ClInclude Include="Runtime\Platform\OpenGL\OpenGLFrameBuffer.h" />
+    <ClInclude Include="Runtime\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="Runtime\Platform\OpenGL\OpenGLRendererAPI.h" />
+    <ClInclude Include="Runtime\Platform\OpenGL\OpenGLShader.h" />
+    <ClInclude Include="Runtime\Platform\OpenGL\OpenGLTexture.h" />
+    <ClInclude Include="Runtime\Platform\Windows\WindowsWindow.h" />
+    <ClInclude Include="Runtime\Events\ApplicationEvent.h" />
+    <ClInclude Include="Runtime\Events\Event.h" />
+    <ClInclude Include="Runtime\Events\KeyEvent.h" />
+    <ClInclude Include="Runtime\Events\MouseEvent.h" />
     <ClInclude Include="RudyPCH.h" />
-    <ClInclude Include="Rudy\Primitives\ScreenQuad.h" />
-    <ClInclude Include="Rudy\Primitives\Sphere.h" />
-    <ClInclude Include="Vendor\imgui\imconfig.h" />
-    <ClInclude Include="Vendor\imgui\imgui.h" />
-    <ClInclude Include="Vendor\imgui\imgui_impl_glfw.h" />
-    <ClInclude Include="Vendor\imgui\imgui_impl_opengl3.h" />
-    <ClInclude Include="Vendor\imgui\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="Vendor\imgui\imgui_internal.h" />
-    <ClInclude Include="Vendor\imgui\imstb_rectpack.h" />
-    <ClInclude Include="Vendor\imgui\imstb_textedit.h" />
-    <ClInclude Include="Vendor\imgui\imstb_truetype.h" />
-    <ClInclude Include="Rudy\Passes\Outline.h" />
+    <ClInclude Include="Runtime\Components\Primitives\ScreenQuad.h" />
+    <ClInclude Include="Runtime\Components\Primitives\Sphere.h" />
+    <ClInclude Include="ThirdParty\imgui\imconfig.h" />
+    <ClInclude Include="ThirdParty\imgui\imgui.h" />
+    <ClInclude Include="ThirdParty\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="ThirdParty\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="ThirdParty\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="ThirdParty\imgui\imgui_internal.h" />
+    <ClInclude Include="ThirdParty\imgui\imstb_rectpack.h" />
+    <ClInclude Include="ThirdParty\imgui\imstb_textedit.h" />
+    <ClInclude Include="ThirdParty\imgui\imstb_truetype.h" />
+    <ClInclude Include="Runtime\Components\Passes\Outline.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\dependencies\stb_image\stb_image.cpp">
@@ -166,46 +169,46 @@
     <ClCompile Include="Apps\Application.cpp" />
     <ClCompile Include="Apps\Layer.cpp" />
     <ClCompile Include="Apps\main.cpp" />
-    <ClCompile Include="Apps\NPR.cpp" />
-    <ClCompile Include="Apps\Phys.cpp" />
     <ClCompile Include="Apps\PBR.cpp" />
-    <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp" />
-    <ClCompile Include="Rudy\Physics\Fluid.cpp" />
-    <ClCompile Include="Rudy\Primitives\Overlay.cpp" />
-    <ClCompile Include="Rudy\Primitives\plane.cpp" />
-    <ClCompile Include="Rudy\Primitives\ScreenQuad.cpp" />
-    <ClCompile Include="Rudy\Primitives\Sphere.cpp" />
-    <ClCompile Include="Rudy\Particles\ParticleSystem.cpp" />
-    <ClCompile Include="Rudy\Passes\Bloom.cpp" />
-    <ClCompile Include="Rudy\Passes\Composer.cpp" />
-    <ClCompile Include="Rudy\Passes\Outline.cpp" />
-    <ClCompile Include="Rudy\Passes\SSAO.cpp" />
-    <ClCompile Include="Rudy\Passes\SSR.cpp" />
-    <ClCompile Include="Rudy\Passes\ToneMap.cpp" />
-    <ClCompile Include="Rudy\Passes\WorldToView.cpp" />
-    <ClCompile Include="Rudy\Physics\Cloth.cpp" />
-    <ClCompile Include="Rudy\Renderer\Buffer.cpp" />
-    <ClCompile Include="Rudy\Renderer\Light.cpp" />
-    <ClCompile Include="Rudy\Renderer\RendererComponent.cpp" />
-    <ClCompile Include="Vendor\imgui\imgui.cpp">
+    <ClCompile Include="Runtime\Platform\OpenGL\OpenGLBuffer.cpp" />
+    <ClCompile Include="Runtime\CoreFramework\Actor.cpp" />
+    <ClCompile Include="Runtime\CoreFramework\ActorComponent.cpp" />
+    <ClCompile Include="Runtime\Components\Physics\Fluid.cpp" />
+    <ClCompile Include="Runtime\Components\Primitives\Overlay.cpp" />
+    <ClCompile Include="Runtime\Components\Primitives\plane.cpp" />
+    <ClCompile Include="Runtime\Components\Primitives\ScreenQuad.cpp" />
+    <ClCompile Include="Runtime\Components\Primitives\Sphere.cpp" />
+    <ClCompile Include="Runtime\Components\Particles\ParticleSystem.cpp" />
+    <ClCompile Include="Runtime\Components\Passes\Bloom.cpp" />
+    <ClCompile Include="Runtime\Components\Passes\Composer.cpp" />
+    <ClCompile Include="Runtime\Components\Passes\Outline.cpp" />
+    <ClCompile Include="Runtime\Components\Passes\SSAO.cpp" />
+    <ClCompile Include="Runtime\Components\Passes\SSR.cpp" />
+    <ClCompile Include="Runtime\Components\Passes\ToneMap.cpp" />
+    <ClCompile Include="Runtime\Components\Passes\WorldToView.cpp" />
+    <ClCompile Include="Runtime\Components\Physics\Cloth.cpp" />
+    <ClCompile Include="Runtime\Components\Renderer\Buffer.cpp" />
+    <ClCompile Include="Runtime\Components\Renderer\Light.cpp" />
+    <ClCompile Include="Runtime\Components\Renderer\RendererComponent.cpp" />
+    <ClCompile Include="ThirdParty\imgui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Vendor\imgui\imgui_demo.cpp">
+    <ClCompile Include="ThirdParty\imgui\imgui_demo.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Vendor\imgui\imgui_draw.cpp">
+    <ClCompile Include="ThirdParty\imgui\imgui_draw.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Vendor\imgui\imgui_impl_glfw.cpp">
+    <ClCompile Include="ThirdParty\imgui\imgui_impl_glfw.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Vendor\imgui\imgui_impl_opengl3.cpp">
+    <ClCompile Include="ThirdParty\imgui\imgui_impl_opengl3.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Vendor\imgui\imgui_tables.cpp">
+    <ClCompile Include="ThirdParty\imgui\imgui_tables.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Vendor\imgui\imgui_widgets.cpp">
+    <ClCompile Include="ThirdParty\imgui\imgui_widgets.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <None Include=".clang-format" />
@@ -255,39 +258,39 @@
     <None Include="Shaders\Shaders\DepthMapSkinned_VS.glsl">
       <FileType>Document</FileType>
     </None>
-    <ClCompile Include="Rudy\Core\FileSystem.cpp" />
+    <ClCompile Include="Runtime\Core\FileSystem.cpp" />
     <ClCompile Include="RudyPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Rudy\Core\Log.cpp" />
-    <ClCompile Include="Rudy\Core\WIndow.cpp" />
-    <ClCompile Include="Rudy\Animation\Animation.cpp" />
-    <ClCompile Include="Rudy\Renderer\Transform.cpp" />
-    <ClCompile Include="Platform\Windows\WindowsInput.cpp" />
-    <ClCompile Include="Rudy\Renderer\Camera.cpp" />
-    <ClCompile Include="Rudy\Renderer\FrameBuffer.cpp" />
-    <ClCompile Include="Rudy\Renderer\GraphicsContext.cpp" />
-    <ClCompile Include="Rudy\Renderer\Material.cpp" />
-    <ClCompile Include="Rudy\Renderer\Mesh.cpp" />
-    <ClCompile Include="Rudy\Renderer\Object.cpp" />
-    <ClCompile Include="Rudy\Renderer\Renderer.cpp" />
-    <ClCompile Include="Rudy\Renderer\RendererAPI.cpp" />
-    <ClCompile Include="Rudy\Renderer\Scene.cpp" />
-    <ClCompile Include="Rudy\Renderer\Shader.cpp" />
-    <ClCompile Include="Rudy\Renderer\Texture.cpp" />
-    <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp" />
-    <ClCompile Include="Rudy\Primitives\Cube.cpp" />
+    <ClCompile Include="Runtime\Core\Log.cpp" />
+    <ClCompile Include="Runtime\Core\WIndow.cpp" />
+    <ClCompile Include="Runtime\Components\Animation\Animation.cpp" />
+    <ClCompile Include="Runtime\Components\Renderer\Transform.cpp" />
+    <ClCompile Include="Runtime\Platform\Windows\WindowsInput.cpp" />
+    <ClCompile Include="Runtime\Components\Renderer\Camera.cpp" />
+    <ClCompile Include="Runtime\Components\Renderer\FrameBuffer.cpp" />
+    <ClCompile Include="Runtime\Components\Renderer\GraphicsContext.cpp" />
+    <ClCompile Include="Runtime\Components\Renderer\Material.cpp" />
+    <ClCompile Include="Runtime\Components\Renderer\Mesh.cpp" />
+    <ClCompile Include="Runtime\Components\Renderer\Object.cpp" />
+    <ClCompile Include="Runtime\Components\Renderer\Renderer.cpp" />
+    <ClCompile Include="Runtime\Components\Renderer\RendererAPI.cpp" />
+    <ClCompile Include="Runtime\Components\Renderer\Scene.cpp" />
+    <ClCompile Include="Runtime\Components\Renderer\Shader.cpp" />
+    <ClCompile Include="Runtime\Components\Renderer\Texture.cpp" />
+    <ClCompile Include="Runtime\Platform\OpenGL\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="Runtime\Components\Primitives\Cube.cpp" />
     <None Include="Shaders\Deferred\BlinnPhong_FS.glsl">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <FileType>Document</FileType>
     </None>
-    <ClCompile Include="Platform\OpenGL\OpenGLFrameBuffer.cpp" />
-    <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp" />
-    <ClCompile Include="Platform\OpenGL\OpenGLShader.cpp" />
-    <ClCompile Include="Platform\OpenGL\OpenGLTexture.cpp" />
-    <ClCompile Include="Platform\Windows\WindowsWindow.cpp" />
+    <ClCompile Include="Runtime\Platform\OpenGL\OpenGLFrameBuffer.cpp" />
+    <ClCompile Include="Runtime\Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="Runtime\Platform\OpenGL\OpenGLShader.cpp" />
+    <ClCompile Include="Runtime\Platform\OpenGL\OpenGLTexture.cpp" />
+    <ClCompile Include="Runtime\Platform\Windows\WindowsWindow.cpp" />
     <None Include="Shaders\Deferred\BlinnPhong_Color_FS.glsl" />
     <None Include="Shaders\Shaders\BrdfLUT_FS.glsl" />
     <None Include="Shaders\Shaders\BrdfLUT_VS.glsl" />

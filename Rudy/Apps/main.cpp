@@ -3,8 +3,8 @@
 #include "Application.h"
 
 #include "PBR.h"
-#include "NPR.h"
-#include "Phys.h"
+// #include "NPR.h"
+// #include "Phys.h"
 
 using namespace Rudy;
 
@@ -14,14 +14,14 @@ ViewportLayer* CreateLayer(const std::string& appName)
     {
         return new PBR();
     }
-    else if (appName == "NPR")
-    {
-        return new NPR();
-    }
-    else if (appName == "Phys")
-    {
-        return new Phys();
-    }
+    // else if (appName == "NPR")
+    // {
+    //     return new NPR();
+    // }
+    // else if (appName == "Phys")
+    // {
+    //     return new Phys();
+    // }
     else
     {
         std::cerr << "Unknown app: " << appName << std::endl;

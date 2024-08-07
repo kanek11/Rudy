@@ -18,252 +18,255 @@
     <ClInclude Include="RudyPCH.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Core\Base.h">
+    <ClInclude Include="Runtime\Core\Base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Core\Log.h">
+    <ClInclude Include="Runtime\Core\Log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Core\PlatformDetection.h">
+    <ClInclude Include="Runtime\Core\PlatformDetection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Core\Window.h">
+    <ClInclude Include="Runtime\Core\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Platform\Windows\WindowsWindow.h">
+    <ClInclude Include="Runtime\Platform\Windows\WindowsWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Events\ApplicationEvent.h">
+    <ClInclude Include="Runtime\Events\ApplicationEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Events\Event.h">
+    <ClInclude Include="Runtime\Events\Event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Events\KeyEvent.h">
+    <ClInclude Include="Runtime\Events\KeyEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Events\MouseEvent.h">
+    <ClInclude Include="Runtime\Events\MouseEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Events\Input.h">
+    <ClInclude Include="Runtime\Events\Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Events\KeyCodes.h">
+    <ClInclude Include="Runtime\Events\KeyCodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Events\MouseCodes.h">
+    <ClInclude Include="Runtime\Events\MouseCodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\GraphicsContext.h">
+    <ClInclude Include="Runtime\Components\Renderer\GraphicsContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\Renderer.h">
+    <ClInclude Include="Runtime\Components\Renderer\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\RendererAPI.h">
+    <ClInclude Include="Runtime\Components\Renderer\RendererAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Platform\OpenGL\OpenGLContext.h">
+    <ClInclude Include="Runtime\Platform\OpenGL\OpenGLContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Platform\OpenGL\OpenGLRendererAPI.h">
+    <ClInclude Include="Runtime\Platform\OpenGL\OpenGLRendererAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\Shader.h">
+    <ClInclude Include="Runtime\Components\Renderer\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Platform\OpenGL\OpenGLShader.h">
+    <ClInclude Include="Runtime\Platform\OpenGL\OpenGLShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\Camera.h">
+    <ClInclude Include="Runtime\Components\Renderer\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\Mesh.h">
+    <ClInclude Include="Runtime\Components\Renderer\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Primitives\Sphere.h">
+    <ClInclude Include="Runtime\Components\Primitives\Sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\Texture.h">
+    <ClInclude Include="Runtime\Components\Renderer\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Platform\OpenGL\OpenGLTexture.h">
+    <ClInclude Include="Runtime\Platform\OpenGL\OpenGLTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\Material.h">
+    <ClInclude Include="Runtime\Components\Renderer\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\Object.h">
+    <ClInclude Include="Runtime\Components\Renderer\Object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Debug\Instrumentor.h">
+    <ClInclude Include="Runtime\Debug\Instrumentor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\FrameBuffer.h">
+    <ClInclude Include="Runtime\Components\Renderer\FrameBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Platform\OpenGL\OpenGLFrameBuffer.h">
+    <ClInclude Include="Runtime\Platform\OpenGL\OpenGLFrameBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Primitives\Plane.h">
+    <ClInclude Include="Runtime\Components\Primitives\Plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Primitives\ScreenQuad.h">
+    <ClInclude Include="Runtime\Components\Primitives\ScreenQuad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Primitives\Cube.h">
+    <ClInclude Include="Runtime\Components\Primitives\Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\Scene.h">
+    <ClInclude Include="Runtime\Components\Renderer\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\Transform.h">
+    <ClInclude Include="Runtime\Components\Renderer\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Animation\Animation.h">
+    <ClInclude Include="Runtime\Components\Animation\Animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Primitives\Overlay.h">
+    <ClInclude Include="Runtime\Components\Primitives\Overlay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Core\FileSystem.h">
+    <ClInclude Include="Runtime\Core\FileSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\Buffer.h">
+    <ClInclude Include="Runtime\Components\Renderer\Buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Platform\OpenGL\OpenGLBuffer.h">
+    <ClInclude Include="Runtime\Platform\OpenGL\OpenGLBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rudy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Particles\ParticleSystem.h">
+    <ClInclude Include="Runtime\Components\Particles\ParticleSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\RendererComponent.h">
+    <ClInclude Include="Runtime\Components\Renderer\RendererComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Physics\Cloth.h">
+    <ClInclude Include="Runtime\Components\Physics\Cloth.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Apps\Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Passes\Pass.h">
+    <ClInclude Include="Runtime\Components\Passes\Pass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Passes\SSAO.h">
+    <ClInclude Include="Runtime\Components\Passes\SSAO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Passes\WorldToView.h">
+    <ClInclude Include="Runtime\Components\Passes\WorldToView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vendor\imgui\imstb_truetype.h">
+    <ClInclude Include="ThirdParty\imgui\imstb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vendor\imgui\imstb_textedit.h">
+    <ClInclude Include="ThirdParty\imgui\imstb_textedit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vendor\imgui\imstb_rectpack.h">
+    <ClInclude Include="ThirdParty\imgui\imstb_rectpack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vendor\imgui\imgui_impl_opengl3_loader.h">
+    <ClInclude Include="ThirdParty\imgui\imgui_impl_opengl3_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vendor\imgui\imgui_internal.h">
+    <ClInclude Include="ThirdParty\imgui\imgui_internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vendor\imgui\imgui_impl_opengl3.h">
+    <ClInclude Include="ThirdParty\imgui\imgui_impl_opengl3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vendor\imgui\imgui_impl_glfw.h">
+    <ClInclude Include="ThirdParty\imgui\imgui_impl_glfw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vendor\imgui\imgui.h">
+    <ClInclude Include="ThirdParty\imgui\imgui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vendor\imgui\imconfig.h">
+    <ClInclude Include="ThirdParty\imgui\imconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Passes\Bloom.h">
+    <ClInclude Include="Runtime\Components\Passes\Bloom.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Passes\Outline.h">
+    <ClInclude Include="Runtime\Components\Passes\Outline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Passes\SSR.h">
+    <ClInclude Include="Runtime\Components\Passes\SSR.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Passes\ToneMap.h">
+    <ClInclude Include="Runtime\Components\Passes\ToneMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Apps\PBR.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Passes\Composer.h">
+    <ClInclude Include="Runtime\Components\Passes\Composer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Apps\Phys.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Apps\NPR.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Rudy\Physics\Fluid.h">
+    <ClInclude Include="Runtime\Components\Physics\Fluid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Apps\Layer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Core\Assert.h">
+    <ClInclude Include="Runtime\Core\Assert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rudy\Renderer\Light.h">
+    <ClInclude Include="Runtime\Components\Renderer\Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Runtime\CoreFramework\Object.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Runtime\CoreFramework\ActorComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Runtime\CoreFramework\Actor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Rudy\Core\Log.cpp">
+    <ClCompile Include="Runtime\Core\Log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Platform\Windows\WindowsWindow.cpp">
+    <ClCompile Include="Runtime\Platform\Windows\WindowsWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\GraphicsContext.cpp">
+    <ClCompile Include="Runtime\Components\Renderer\GraphicsContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Platform\OpenGL\OpenGLContext.cpp">
+    <ClCompile Include="Runtime\Platform\OpenGL\OpenGLContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Platform\OpenGL\OpenGLShader.cpp">
+    <ClCompile Include="Runtime\Platform\OpenGL\OpenGLShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\Texture.cpp">
+    <ClCompile Include="Runtime\Components\Renderer\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Platform\OpenGL\OpenGLTexture.cpp">
+    <ClCompile Include="Runtime\Platform\OpenGL\OpenGLTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\Shader.cpp">
+    <ClCompile Include="Runtime\Components\Renderer\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\Mesh.cpp">
+    <ClCompile Include="Runtime\Components\Renderer\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\Material.cpp">
+    <ClCompile Include="Runtime\Components\Renderer\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\Renderer.cpp">
+    <ClCompile Include="Runtime\Components\Renderer\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\RendererAPI.cpp">
+    <ClCompile Include="Runtime\Components\Renderer\RendererAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Core\WIndow.cpp">
+    <ClCompile Include="Runtime\Core\WIndow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\Camera.cpp">
+    <ClCompile Include="Runtime\Components\Renderer\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\dependencies\stb_image\stb_image.cpp">
@@ -272,127 +275,127 @@
     <ClCompile Include="RudyPCH.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\Object.cpp">
+    <ClCompile Include="Runtime\Components\Renderer\Object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\FrameBuffer.cpp">
+    <ClCompile Include="Runtime\Components\Renderer\FrameBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Platform\OpenGL\OpenGLFrameBuffer.cpp">
+    <ClCompile Include="Runtime\Platform\OpenGL\OpenGLFrameBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Platform\Windows\WindowsInput.cpp">
+    <ClCompile Include="Runtime\Platform\Windows\WindowsInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Platform\OpenGL\OpenGLRendererAPI.cpp">
+    <ClCompile Include="Runtime\Platform\OpenGL\OpenGLRendererAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\Scene.cpp">
+    <ClCompile Include="Runtime\Components\Renderer\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Primitives\Cube.cpp">
+    <ClCompile Include="Runtime\Components\Primitives\Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\Transform.cpp">
+    <ClCompile Include="Runtime\Components\Renderer\Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Animation\Animation.cpp">
+    <ClCompile Include="Runtime\Components\Animation\Animation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Core\FileSystem.cpp">
+    <ClCompile Include="Runtime\Core\FileSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\Buffer.cpp">
+    <ClCompile Include="Runtime\Components\Renderer\Buffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Platform\OpenGL\OpenGLBuffer.cpp">
+    <ClCompile Include="Runtime\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Particles\ParticleSystem.cpp">
+    <ClCompile Include="Runtime\Components\Particles\ParticleSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\RendererComponent.cpp">
+    <ClCompile Include="Runtime\Components\Renderer\RendererComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Physics\Cloth.cpp">
+    <ClCompile Include="Runtime\Components\Physics\Cloth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Primitives\Sphere.cpp">
+    <ClCompile Include="Runtime\Components\Primitives\Sphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Primitives\plane.cpp">
+    <ClCompile Include="Runtime\Components\Primitives\plane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Primitives\ScreenQuad.cpp">
+    <ClCompile Include="Runtime\Components\Primitives\ScreenQuad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Primitives\Overlay.cpp">
+    <ClCompile Include="Runtime\Components\Primitives\Overlay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Apps\main.cpp">
+    <ClCompile Include="Runtime\Components\Passes\SSAO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Passes\SSAO.cpp">
+    <ClCompile Include="Runtime\Components\Passes\WorldToView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Passes\WorldToView.cpp">
+    <ClCompile Include="ThirdParty\imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Vendor\imgui\imgui_widgets.cpp">
+    <ClCompile Include="ThirdParty\imgui\imgui_tables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Vendor\imgui\imgui_tables.cpp">
+    <ClCompile Include="ThirdParty\imgui\imgui_impl_opengl3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Vendor\imgui\imgui_impl_opengl3.cpp">
+    <ClCompile Include="ThirdParty\imgui\imgui_impl_glfw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Vendor\imgui\imgui_impl_glfw.cpp">
+    <ClCompile Include="ThirdParty\imgui\imgui_draw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Vendor\imgui\imgui_draw.cpp">
+    <ClCompile Include="ThirdParty\imgui\imgui_demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Vendor\imgui\imgui_demo.cpp">
+    <ClCompile Include="ThirdParty\imgui\imgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Vendor\imgui\imgui.cpp">
+    <ClCompile Include="Runtime\Components\Passes\Bloom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Passes\Bloom.cpp">
+    <ClCompile Include="Runtime\Components\Passes\Outline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Passes\Outline.cpp">
+    <ClCompile Include="Runtime\Components\Passes\SSR.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Passes\SSR.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Rudy\Passes\ToneMap.cpp">
+    <ClCompile Include="Runtime\Components\Passes\ToneMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Apps\PBR.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Passes\Composer.cpp">
+    <ClCompile Include="Runtime\Components\Passes\Composer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Apps\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Apps\Phys.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Apps\NPR.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Rudy\Physics\Fluid.cpp">
+    <ClCompile Include="Runtime\Components\Physics\Fluid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Apps\Layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rudy\Renderer\Light.cpp">
+    <ClCompile Include="Runtime\Components\Renderer\Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Runtime\CoreFramework\Actor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Runtime\CoreFramework\ActorComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Apps\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
