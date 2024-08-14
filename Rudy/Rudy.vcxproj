@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -130,7 +130,6 @@
     <ClInclude Include="Runtime\Components\Renderer\Mesh.h" />
     <ClInclude Include="Runtime\Components\Renderer\Object.h" />
     <ClInclude Include="Runtime\Components\Renderer\RendererComponent.h" />
-    <ClInclude Include="Runtime\Components\Renderer\Scene.h" />
     <ClInclude Include="Runtime\Components\Renderer\Shader.h" />
     <ClInclude Include="Runtime\Components\Renderer\Renderer.h" />
     <ClInclude Include="Runtime\Components\Renderer\RendererAPI.h" />
@@ -276,7 +275,6 @@
     <ClCompile Include="Runtime\Components\Renderer\Object.cpp" />
     <ClCompile Include="Runtime\Components\Renderer\Renderer.cpp" />
     <ClCompile Include="Runtime\Components\Renderer\RendererAPI.cpp" />
-    <ClCompile Include="Runtime\Components\Renderer\Scene.cpp" />
     <ClCompile Include="Runtime\Components\Renderer\Shader.cpp" />
     <ClCompile Include="Runtime\Components\Renderer\Texture.cpp" />
     <ClCompile Include="Runtime\Platform\OpenGL\OpenGLRendererAPI.cpp" />

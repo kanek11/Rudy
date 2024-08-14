@@ -4,13 +4,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-// https://docs.unity3d.com/2023.3/Documentation/ScriptReference/Transform.html
-//
-// the transform is a essential component of a game object,
-// consider that all game object have position, rotation and scale
-//
-// and it also serve the role of node in the scene hierarchy
-
 // glm quaternion :
 // https://glm.g-truc.net/0.9.0/api/a00135.html
 
