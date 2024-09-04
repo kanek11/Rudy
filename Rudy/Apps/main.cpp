@@ -2,7 +2,7 @@
 
 #include "Application.h"
 
-#include "PBR.h"
+#include "deferredPBR.h"
 // #include "NPR.h"
 // #include "Phys.h"
 
@@ -10,9 +10,9 @@ using namespace Rudy;
 
 ViewportLayer* CreateLayer(const std::string& appName)
 {
-    if (appName == "PBR")
+    if (appName == "DeferredPBR")
     {
-        return new PBR();
+        return new DeferredPBR();
     }
     // else if (appName == "NPR")
     // {
@@ -31,13 +31,27 @@ ViewportLayer* CreateLayer(const std::string& appName)
 
 int main(int argc, char** argv)
 {
-    // Rudy::Log::Init();
-    // RD_CORE_WARN("test:Initialized Log!");
-    // RD_ASSERT(2 < 1, "test:Assert!");
+    //========================================
+    // project-global stuff
 
+    Rudy::Log::Init();
+    RD_CORE_INFO("test:Initialized Log!");
+
+    // set working directory by filesystem;
+    RD_CORE_INFO("Default Current working directory: {0}", std::filesystem::current_path().string());
+
+    auto                  src_path  = std::source_location::current();
+    std::filesystem::path this_file = src_path.file_name(); // neccessary conversion
+
+    std::filesystem::current_path(this_file.parent_path().parent_path());
+    RD_CORE_INFO("Set Current working directory: {0}", std::filesystem::current_path().string());
+
+    RD_CORE_INFO("size_t on the environment: {0} bytes", sizeof(size_t));
+
+    //
     auto app = CreateShared<Application>();
 
-    std::string appName = "PBR"; // default app
+    std::string appName = "DeferredPBR"; // default app
     for (int i = 1; i < argc; ++i)
     {
         std::string arg = argv[i];

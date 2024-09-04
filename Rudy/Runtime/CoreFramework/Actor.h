@@ -4,6 +4,8 @@
 #include "Object.h"
 #include "ActorComponent.h"
 
+#include "SceneComponent.h"
+
 // todo: actor can be placed in "level, world",
 // the load/streaming of actors can be subtle;
 
@@ -21,9 +23,9 @@ public:
 
 public:
     // game loop
-    virtual void Tick(float DeltaTime) = 0;
-    virtual void BeginPlay()           = 0;
-    virtual void EndPlay()             = 0;
+    virtual void Tick(float DeltaTime);
+    virtual void BeginPlay();
+    virtual void EndPlay();
 
 public:
     // dynamic components
@@ -31,6 +33,16 @@ public:
     // void RemoveComponent();
 
     void RegisterAllComponents();
+
+    // factory for subobjects
+    template <typename T>
+    SharedPtr<T> CreateComponentAsSubObject()
+    {
+        auto _component = CreateActorComponent<T>();
+        this->AddComponent(_component);
+
+        return _component;
+    }
 
     template <typename T>
     SharedPtr<T> GetComponent() const // dynamic cast is a bit slow but safe
@@ -45,28 +57,21 @@ public:
         return nullptr;
     }
 
-    // factory for subobjects
-    template <typename T>
-    SharedPtr<T> CreateComponentAsSubObject()
-    {
-        auto _component = CreateActorComponent<T>();
-        this->AddComponent(_component);
-
-        return _component;
-    }
-
 private:
     std::vector<SharedPtr<UActorComponent>> m_components; // dynamic and subobjects
+
+public:
+    SharedPtr<USceneComponent> RootComponent = nullptr;
 };
 
 // factory function for derived classes
-template <typename T>
-SharedPtr<T> CreateActor()
+template <typename T, typename... Args>
+SharedPtr<T> CreateActor(Args&&... args)
 {
     // abstract class cannot be instantiated
     static_assert(std::is_base_of<AActor, T>::value, "T must be derived from AActor");
 
-    auto _actor = CreateShared<T>();
+    auto _actor = CreateShared<T>(std::forward<Args>(args)...);
 
     _actor->RegisterAllComponents(); // register the actor to the components,  post-construction of the actor;
 

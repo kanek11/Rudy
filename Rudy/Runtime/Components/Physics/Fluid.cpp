@@ -11,7 +11,7 @@ Fluid::Fluid() :
     RD_CORE_INFO("Fluid: grid size: {0} x {1}", m_num_width, m_num_height);
 };
 
-void Fluid::Draw(SharedPtr<Camera> cam)
+void Fluid::Draw(SharedPtr<UCameraComponent> cam)
 {
     m_screen_quad->Draw(nullptr);
 }

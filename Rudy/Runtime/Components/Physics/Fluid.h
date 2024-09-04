@@ -15,7 +15,7 @@ public:
     Fluid();
 
     // inherit rendering method;
-    void Draw(SharedPtr<Camera> cam) override;
+    void Draw(SharedPtr<UCameraComponent> cam) override;
 
     void Init();
     void Update();

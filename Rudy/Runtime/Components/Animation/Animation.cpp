@@ -126,7 +126,7 @@ void AnimationClip::CalculateKeyframe(float time)
     // update the global transform ,by traverse from root to leaf;
     // todo : control transform of root node;
     // UpdateGlobalTransformRecursive(this->rootNode, rootNode->GetWorldTransform());
-    Transform::UpdateWorldTransformRecursive(this->rootNode, glm::mat4(1.0f));
+    SceneComponent::UpdateWorldTransformRecursive(this->rootNode, glm::mat4(1.0f));
 }
 
 glm::mat4 Animator::GetGlobalTransform(const std::string& name)
@@ -207,7 +207,7 @@ void Animator::UpdateBoneTransforms(float time)
     // SetBoneTransformsRecursive(time, m_AnimationClip->rootNode, glm::mat4(1.0f));
 }
 
-void AnimationClip::printHierarchy(const SharedPtr<Transform> node)
+void AnimationClip::printHierarchy(const SharedPtr<SceneComponent> node)
 {
     RD_CORE_INFO("animationclip print: node name:{0}", node->gameObject->name);
 

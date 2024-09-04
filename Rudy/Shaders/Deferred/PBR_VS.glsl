@@ -8,14 +8,11 @@ layout(location = 1) in vec2 in_TexCoords;
 out VS_OUT
 {
     vec2 TexCoords;
-
-} vs_out;
- 
+}
+vs_out;
 
 void main()
 {
-
     vs_out.TexCoords = in_TexCoords;
-    gl_Position = vec4(in_Pos, 1.0); 
-
+    gl_Position      = vec4(in_Pos, 1.0);
 }

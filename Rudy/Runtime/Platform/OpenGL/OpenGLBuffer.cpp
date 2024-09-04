@@ -62,17 +62,17 @@ static GLenum BufferUsageToGLUsage(BufferUsage usage)
 
 } // namespace Utils
 
-void OpenGLBuffer::Bind() const
+void FOpenGLBuffer::Bind() const
 {
     glBindBuffer(m_GLBufferType, m_BufferID);
 }
 
-void OpenGLBuffer::Unbind() const
+void FOpenGLBuffer::Unbind() const
 {
     glBindBuffer(m_GLBufferType, 0);
 }
 
-void OpenGLBuffer::SetData(const void* data, uint32_t size, BufferUsage usage)
+void FOpenGLBuffer::SetData(const void* data, uint32_t size, BufferUsage usage)
 {
     auto GLUsage = Utils::BufferUsageToGLUsage(usage);
 
@@ -80,116 +80,116 @@ void OpenGLBuffer::SetData(const void* data, uint32_t size, BufferUsage usage)
     m_Size = size;
 }
 
-void* OpenGLBuffer::MapRange(uint32_t offset, uint32_t length)
+void* FOpenGLBuffer::MapRange(uint32_t offset, uint32_t length)
 {
     return glMapNamedBufferRange(m_BufferID, offset, length, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 }
 
-void OpenGLBuffer::Unmap()
+void FOpenGLBuffer::Unmap()
 {
     glUnmapNamedBuffer(m_BufferID);
 }
 
-OpenGLVertexBuffer::OpenGLVertexBuffer()
+FOpenGLVertexBuffer::FOpenGLVertexBuffer()
 {
     m_GLBufferType = GL_ARRAY_BUFFER;
     glCreateBuffers(1, &m_BufferID);
     RD_CORE_INFO("GLVertexBuffer created ID = {0}", m_BufferID);
 }
 
-OpenGLVertexBuffer::~OpenGLVertexBuffer()
+FOpenGLVertexBuffer::~FOpenGLVertexBuffer()
 {
     glDeleteBuffers(1, &m_BufferID);
 
-    RD_CORE_INFO("GLVertexBuffer deleted ID = {0}", m_BufferID);
+    RD_CORE_WARN("GLVertexBuffer deleted ID = {0}", m_BufferID);
 }
 
-OpenGLIndexBuffer::OpenGLIndexBuffer()
+FOpenGLIndexBuffer::FOpenGLIndexBuffer()
 {
     m_GLBufferType = GL_ELEMENT_ARRAY_BUFFER;
     glCreateBuffers(1, &m_BufferID);
-    RD_CORE_INFO("OGLIndexBuffer created ID = {0}", m_BufferID);
+    RD_CORE_INFO("GLIndexBuffer created ID = {0}", m_BufferID);
 }
 
-OpenGLIndexBuffer::~OpenGLIndexBuffer()
+FOpenGLIndexBuffer::~FOpenGLIndexBuffer()
 {
     glDeleteBuffers(1, &m_BufferID);
-    RD_CORE_INFO("GLIndexBuffer deleted ID = {0}", m_BufferID);
+    RD_CORE_WARN("GLIndexBuffer deleted ID = {0}", m_BufferID);
 }
 
 //=================================================================================================
-OpenGLStorageBuffer::OpenGLStorageBuffer()
+FOpenGLStorageBuffer::FOpenGLStorageBuffer()
 {
     m_GLBufferType = GL_SHADER_STORAGE_BUFFER;
     glCreateBuffers(1, &m_BufferID);
     RD_CORE_INFO("GLStorageBuffer created ID = {0}", m_BufferID);
 }
 
-OpenGLStorageBuffer::~OpenGLStorageBuffer()
+FOpenGLStorageBuffer::~FOpenGLStorageBuffer()
 {
     glDeleteBuffers(1, &m_BufferID);
-    RD_CORE_INFO("GLStorageBuffer deleted ID = {0}", m_BufferID);
+    RD_CORE_WARN("GLStorageBuffer deleted ID = {0}", m_BufferID);
 }
 
-void OpenGLStorageBuffer::BindBase(uint32_t index) const
+void FOpenGLStorageBuffer::BindBase(uint32_t index) const
 {
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, m_BufferID);
 }
 
 //=================================================================================================
-OpenGLUniformBuffer::OpenGLUniformBuffer()
+FOpenGLUniformBuffer::FOpenGLUniformBuffer()
 {
     m_GLBufferType = GL_UNIFORM_BUFFER;
     glCreateBuffers(1, &m_BufferID);
     RD_CORE_INFO("GLUniformBuffer created ID = {0}", m_BufferID);
 }
 
-OpenGLUniformBuffer::~OpenGLUniformBuffer()
+FOpenGLUniformBuffer::~FOpenGLUniformBuffer()
 {
     glDeleteBuffers(1, &m_BufferID);
-    RD_CORE_INFO("GLUniformBuffer deleted ID = {0}", m_BufferID);
+    RD_CORE_WARN("GLUniformBuffer deleted ID = {0}", m_BufferID);
 }
 
-void OpenGLUniformBuffer::BindBase(uint32_t index) const
+void FOpenGLUniformBuffer::BindBase(uint32_t index) const
 {
     glBindBufferBase(GL_UNIFORM_BUFFER, index, m_BufferID);
 }
 
 //=================================================================================================
-OpenGLVertexArray::OpenGLVertexArray()
+FOpenGLVertexArray::FOpenGLVertexArray()
 {
     glCreateVertexArrays(1, &m_VertexArrayID);
     RD_CORE_INFO("GLVertexArray created ID = {0}", m_VertexArrayID);
     m_UsableBindingIndex = 3;
 }
 
-OpenGLVertexArray::~OpenGLVertexArray()
+FOpenGLVertexArray::~FOpenGLVertexArray()
 {
     glDeleteVertexArrays(1, &m_VertexArrayID);
-    RD_CORE_INFO("GLVertexArray deleted ID = {0}", m_VertexArrayID);
+    RD_CORE_WARN("GLVertexArray deleted ID = {0}", m_VertexArrayID);
 }
 
-void OpenGLVertexArray::Bind() const
+void FOpenGLVertexArray::Bind() const
 {
     glBindVertexArray(m_VertexArrayID);
 }
 
-void OpenGLVertexArray::Unbind() const
+void FOpenGLVertexArray::Unbind() const
 {
     glBindVertexArray(0);
 }
 
-void OpenGLVertexArray::EnableAttribute(uint32_t index)
+void FOpenGLVertexArray::EnableAttribute(uint32_t index)
 {
     glEnableVertexArrayAttrib(m_VertexArrayID, index);
 }
 
-void OpenGLVertexArray::AttachIndexBuffer(uint32_t buffer_id)
+void FOpenGLVertexArray::AttachIndexBuffer(uint32_t buffer_id)
 {
     glVertexArrayElementBuffer(m_VertexArrayID, buffer_id);
 }
 
-void OpenGLVertexArray::AttachBuffer(uint32_t buffer_id, uint32_t binding_index, uint32_t stride, uint32_t offset)
+void FOpenGLVertexArray::AttachBuffer(uint32_t buffer_id, uint32_t binding_index, uint32_t stride, uint32_t offset)
 {
     glVertexArrayVertexBuffer(m_VertexArrayID, binding_index, buffer_id, offset, stride);
     // if that slot already has a binding,  throw warn
@@ -198,14 +198,14 @@ void OpenGLVertexArray::AttachBuffer(uint32_t buffer_id, uint32_t binding_index,
     binding_map[binding_index] = buffer_id;
 }
 
-void OpenGLVertexArray::AddAttribute(uint32_t attri_index, uint32_t binding_index, uint32_t stride_size, BufferDataType type, uint32_t offset)
+void FOpenGLVertexArray::AddAttribute(uint32_t attri_index, uint32_t binding_index, uint32_t stride_size, BufferDataType type, uint32_t offset)
 {
     glEnableVertexArrayAttrib(m_VertexArrayID, attri_index);
     glVertexArrayAttribFormat(m_VertexArrayID, attri_index, stride_size, Utils::BufferDataTypeToGLType(type), false, offset);
     glVertexArrayAttribBinding(m_VertexArrayID, attri_index, binding_index);
 }
 
-void OpenGLVertexArray::AddInstancedAttribute(uint32_t attri_index, uint32_t binding_index, uint32_t stride_size, BufferDataType type, uint32_t offset, uint32_t divisor)
+void FOpenGLVertexArray::AddInstancedAttribute(uint32_t attri_index, uint32_t binding_index, uint32_t stride_size, BufferDataType type, uint32_t offset, uint32_t divisor)
 {
     glEnableVertexArrayAttrib(m_VertexArrayID, attri_index);
     glVertexArrayAttribFormat(m_VertexArrayID, attri_index, stride_size, Utils::BufferDataTypeToGLType(type), false, offset);

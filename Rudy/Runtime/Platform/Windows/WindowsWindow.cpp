@@ -7,7 +7,7 @@
 #include "Runtime/Events/MouseEvent.h"
 #include "Runtime/Events/KeyEvent.h"
 
-#include "Runtime/Components/Renderer/Renderer.h"
+#include "Runtime/Renderer/RendererAPI.h"
 
 #include "WindowsWindow.h"
 
@@ -63,8 +63,10 @@ void WindowsWindow::Init(const WindowProps& props)
         ++s_GLFWWindowCount;
     }
 
+    //====
     m_Context = GraphicsContext::Create(m_Window);
     m_Context->Init();
+    //====
 
     glfwSetWindowUserPointer(m_Window, &m_Data);
 

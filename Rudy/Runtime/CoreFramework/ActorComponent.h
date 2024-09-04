@@ -14,15 +14,16 @@ class UActorComponent : public UObject
 {
 public:
     virtual ~UActorComponent() = default;
-    UActorComponent()          = default;
+    UActorComponent();
 
 public:
-    virtual void TickComponent(float DeltaTime) = 0;
-    // void InitializeComponent();
-    // void UninitializeComponent();
+    virtual void TickComponent(float DeltaTime);
+    // virtual void InitializeComponent()          = 0;
+    //  void UninitializeComponent();
 
 public:
-    void RegisterOwner(const SharedPtr<AActor>& owner);
+    void            RegisterOwner(const SharedPtr<AActor>& owner);
+    WeakPtr<AActor> GetOwner() const;
 
 private:
     WeakPtr<AActor> m_owner; // weak reference to the owner, can't be null

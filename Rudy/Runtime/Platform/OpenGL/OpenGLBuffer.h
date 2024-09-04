@@ -1,7 +1,7 @@
 #pragma once
 #include "RudyPCH.h"
 
-#include "Runtime/Components/Renderer/Buffer.h"
+#include "Runtime/Renderer/Buffer.h"
 
 #include <glad/glad.h>
 
@@ -15,11 +15,11 @@ namespace Rudy
 {
 
 // be careful with diamond inheritance.
-class OpenGLBuffer : public virtual Buffer
+class FOpenGLBuffer : public virtual FRHIBuffer
 {
 public:
-    OpenGLBuffer()  = default;
-    ~OpenGLBuffer() = default;
+    FOpenGLBuffer()  = default;
+    ~FOpenGLBuffer() = default;
 
     // inherited
 public:
@@ -50,25 +50,25 @@ public:
     GLenum m_GLBufferType = 0;
 };
 
-class OpenGLVertexBuffer : public VertexBuffer, public OpenGLBuffer
+class FOpenGLVertexBuffer : public FRHIVertexBuffer, public FOpenGLBuffer
 {
 public:
-    ~OpenGLVertexBuffer();
-    OpenGLVertexBuffer();
+    ~FOpenGLVertexBuffer();
+    FOpenGLVertexBuffer();
 };
 
-class OpenGLIndexBuffer : public IndexBuffer, public OpenGLBuffer
+class FOpenGLIndexBuffer : public FRHIIndexBuffer, public FOpenGLBuffer
 {
 public:
-    ~OpenGLIndexBuffer();
-    OpenGLIndexBuffer();
+    ~FOpenGLIndexBuffer();
+    FOpenGLIndexBuffer();
 };
 
-class OpenGLStorageBuffer : public StorageBuffer, public OpenGLBuffer
+class FOpenGLStorageBuffer : public RHIStorageBuffer, public FOpenGLBuffer
 {
 public:
-    OpenGLStorageBuffer();
-    ~OpenGLStorageBuffer();
+    FOpenGLStorageBuffer();
+    ~FOpenGLStorageBuffer();
 
     virtual void Bind() const override
     {
@@ -78,11 +78,11 @@ public:
     virtual void BindBase(uint32_t index) const override;
 };
 
-class OpenGLUniformBuffer : public UniformBuffer, public OpenGLBuffer
+class FOpenGLUniformBuffer : public FRHIUniformBuffer, public FOpenGLBuffer
 {
 public:
-    OpenGLUniformBuffer();
-    ~OpenGLUniformBuffer();
+    FOpenGLUniformBuffer();
+    ~FOpenGLUniformBuffer();
 
     virtual void Bind() const override
     {
@@ -92,11 +92,11 @@ public:
     virtual void BindBase(uint32_t index) const override;
 };
 
-class OpenGLVertexArray : public VertexArray
+class FOpenGLVertexArray : public FRHIVertexArray
 {
 public:
-    ~OpenGLVertexArray();
-    OpenGLVertexArray();
+    ~FOpenGLVertexArray();
+    FOpenGLVertexArray();
 
     // inherited
 

@@ -2,7 +2,7 @@
 #include "RudyPCH.h"
 
 #include "Runtime/Core/Window.h"
-#include "Runtime/Components/Renderer/GraphicsContext.h"
+#include "Runtime/Renderer/GraphicsContext.h"
 #include "Runtime/Platform/OpenGL/OpenGLContext.h"
 
 // new:

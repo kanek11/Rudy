@@ -1,7 +1,7 @@
 
 #include "RudyPCH.h"
 
-#include "Runtime/Components/Renderer/Renderer.h"
+#include "Runtime/Renderer/RendererAPI.h"
 #include "Runtime/Platform/OpenGL/OpenGLRendererAPI.h"
 namespace Rudy
 {
@@ -33,9 +33,7 @@ GLenum MeshTopologyToGLMode(MeshTopology topo)
 void OpenGLRendererAPI::DrawIndexed(MeshTopology topo, uint32_t indexCount)
 {
     // RD_PROFILE_FUNCTION();
-
     auto GL_mode = utils::MeshTopologyToGLMode(topo);
-
     glDrawElements(GL_mode, indexCount, GL_UNSIGNED_INT, 0);
 }
 

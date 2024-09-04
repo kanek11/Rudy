@@ -1,10 +1,8 @@
 #pragma once
-
+#include "RudyPCH.h"
 #include <glm/gtx/quaternion.hpp>
 
-#include "Runtime/Components/Renderer/Transform.h"
-#include "RudyPCH.h"
-
+#include "SceneComponent.h"
 // animator is created and linked to a model ;
 // manually set animator to model, and link the animtion clips.
 
@@ -58,7 +56,7 @@ struct KeyScale
 struct KeyBone
 {
     // for static rest-pose;
-    SharedPtr<Transform> m_Node = CreateShared<Transform>();
+    SharedPtr<SceneComponent> m_Node = CreateShared<SceneComponent>();
 
     std::vector<KeyPosition> m_KeyPositions;
     std::vector<KeyRotation> m_KeyRotations;
@@ -100,7 +98,7 @@ public:
     std::unordered_map<std::string, SharedPtr<KeyBone>> keybones;
 
     // same as model root;
-    SharedPtr<Transform> rootNode = CreateShared<Transform>();
+    SharedPtr<SceneComponent> rootNode = CreateShared<SceneComponent>();
 
     // Keyframe m_CurrentKeyframe = Keyframe();
 
@@ -113,7 +111,7 @@ public:
     // update befor get;
     void CalculateKeyframe(float time);
 
-    void printHierarchy(const SharedPtr<Transform> node);
+    void printHierarchy(const SharedPtr<SceneComponent> node);
 };
 
 // the animator drives the animation;

@@ -19,4 +19,28 @@ void AActor::RegisterAllComponents()
     }
 }
 
+void AActor::Tick(float DeltaTime)
+{
+    for (auto& component : m_components)
+    {
+        component->TickComponent(DeltaTime);
+    }
+}
+
+void AActor::BeginPlay()
+{
+    //   for (auto& component : m_components)
+    //   {
+    //	component->BeginPlay();
+    //}
+}
+
+void AActor::EndPlay()
+{
+    //   for (auto& component : m_components)
+    //   {
+    //	component->EndPlay();
+    //}
+}
+
 } // namespace Rudy

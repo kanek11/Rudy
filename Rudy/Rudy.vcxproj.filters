@@ -54,13 +54,10 @@
     <ClInclude Include="Runtime\Events\MouseCodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Runtime\Components\Renderer\GraphicsContext.h">
+    <ClInclude Include="Runtime\Renderer\GraphicsContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Runtime\Components\Renderer\Renderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Runtime\Components\Renderer\RendererAPI.h">
+    <ClInclude Include="Runtime\Renderer\RendererAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Runtime\Platform\OpenGL\OpenGLContext.h">
@@ -69,67 +66,52 @@
     <ClInclude Include="Runtime\Platform\OpenGL\OpenGLRendererAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Runtime\Components\Renderer\Shader.h">
+    <ClInclude Include="Runtime\Renderer\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Runtime\Platform\OpenGL\OpenGLShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Runtime\Components\Renderer\Camera.h">
+    <ClInclude Include="Runtime\Renderer\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Runtime\Components\Renderer\Mesh.h">
+    <ClInclude Include="Runtime\Actors\Primitives\Sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Runtime\Components\Primitives\Sphere.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Runtime\Components\Renderer\Texture.h">
+    <ClInclude Include="Runtime\Renderer\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Runtime\Platform\OpenGL\OpenGLTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Runtime\Components\Renderer\Material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Runtime\Components\Renderer\Object.h">
+    <ClInclude Include="Runtime\Renderer\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Runtime\Debug\Instrumentor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Runtime\Components\Renderer\FrameBuffer.h">
+    <ClInclude Include="Runtime\Renderer\FrameBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Runtime\Platform\OpenGL\OpenGLFrameBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Runtime\Components\Primitives\Plane.h">
+    <ClInclude Include="Runtime\Actors\Primitives\Plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Runtime\Components\Primitives\ScreenQuad.h">
+    <ClInclude Include="Runtime\Actors\Primitives\ScreenQuad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Runtime\Components\Primitives\Cube.h">
+    <ClInclude Include="Runtime\Actors\Primitives\Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Runtime\Components\Renderer\Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Runtime\Components\Renderer\Transform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Runtime\Components\Animation\Animation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Runtime\Components\Primitives\Overlay.h">
+    <ClInclude Include="Runtime\CoreFramework\SceneComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Runtime\Core\FileSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Runtime\Components\Renderer\Buffer.h">
+    <ClInclude Include="Runtime\Renderer\Buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Runtime\Platform\OpenGL\OpenGLBuffer.h">
@@ -138,25 +120,7 @@
     <ClInclude Include="Rudy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Runtime\Components\Particles\ParticleSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Runtime\Components\Renderer\RendererComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Runtime\Components\Physics\Cloth.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Apps\Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Runtime\Components\Passes\Pass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Runtime\Components\Passes\SSAO.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Runtime\Components\Passes\WorldToView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ThirdParty\imgui\imstb_truetype.h">
@@ -186,34 +150,13 @@
     <ClInclude Include="ThirdParty\imgui\imconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Runtime\Components\Passes\Bloom.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Runtime\Components\Passes\Outline.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Runtime\Components\Passes\SSR.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Runtime\Components\Passes\ToneMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Apps\PBR.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Runtime\Components\Passes\Composer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Runtime\Components\Physics\Fluid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Apps\Layer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Runtime\Core\Assert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Runtime\Components\Renderer\Light.h">
+    <ClInclude Include="Runtime\Components\Render\LightComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Runtime\CoreFramework\Object.h">
@@ -225,6 +168,51 @@
     <ClInclude Include="Runtime\CoreFramework\Actor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Runtime\Actors\AStaticMeshActor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Runtime\Components\Render\PrimitiveComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Runtime\Components\Render\CameraComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Runtime\Actors\ALightActor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Runtime\Actors\ACameraActor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Runtime\Renderer\CubemapPasses\PrecomputeCubemapPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Apps\DeferredPBR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Runtime\Renderer\PostProcPasses\Bloom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Runtime\Renderer\PostProcPasses\Composer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Runtime\Renderer\PostProcPasses\Outline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Runtime\Renderer\PostProcPasses\Pass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Runtime\Renderer\PostProcPasses\SSAO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Runtime\Renderer\PostProcPasses\SSR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Runtime\Renderer\PostProcPasses\ToneMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Runtime\Renderer\PostProcPasses\WorldToView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Runtime\Core\Log.cpp">
@@ -233,7 +221,7 @@
     <ClCompile Include="Runtime\Platform\Windows\WindowsWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Runtime\Components\Renderer\GraphicsContext.cpp">
+    <ClCompile Include="Runtime\Renderer\GraphicsContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Runtime\Platform\OpenGL\OpenGLContext.cpp">
@@ -242,31 +230,28 @@
     <ClCompile Include="Runtime\Platform\OpenGL\OpenGLShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Runtime\Components\Renderer\Texture.cpp">
+    <ClCompile Include="Runtime\Renderer\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Runtime\Platform\OpenGL\OpenGLTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Runtime\Components\Renderer\Shader.cpp">
+    <ClCompile Include="Runtime\Renderer\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Runtime\Components\Renderer\Mesh.cpp">
+    <ClCompile Include="Runtime\Renderer\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Runtime\Components\Renderer\Material.cpp">
+    <ClCompile Include="Runtime\Renderer\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Runtime\Components\Renderer\Renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Runtime\Components\Renderer\RendererAPI.cpp">
+    <ClCompile Include="Runtime\Renderer\RendererAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Runtime\Core\WIndow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Runtime\Components\Renderer\Camera.cpp">
+    <ClCompile Include="Runtime\Components\Render\CameraComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\dependencies\stb_image\stb_image.cpp">
@@ -275,10 +260,7 @@
     <ClCompile Include="RudyPCH.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Runtime\Components\Renderer\Object.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Runtime\Components\Renderer\FrameBuffer.cpp">
+    <ClCompile Include="Runtime\Renderer\FrameBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Runtime\Platform\OpenGL\OpenGLFrameBuffer.cpp">
@@ -290,52 +272,28 @@
     <ClCompile Include="Runtime\Platform\OpenGL\OpenGLRendererAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Runtime\Components\Renderer\Scene.cpp">
+    <ClCompile Include="Runtime\Actors\Primitives\Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Runtime\Components\Primitives\Cube.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Runtime\Components\Renderer\Transform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Runtime\Components\Animation\Animation.cpp">
+    <ClCompile Include="Runtime\CoreFramework\SceneComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Runtime\Core\FileSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Runtime\Components\Renderer\Buffer.cpp">
+    <ClCompile Include="Runtime\Renderer\Buffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Runtime\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Runtime\Components\Particles\ParticleSystem.cpp">
+    <ClCompile Include="Runtime\Actors\Primitives\Sphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Runtime\Components\Renderer\RendererComponent.cpp">
+    <ClCompile Include="Runtime\Actors\Primitives\plane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Runtime\Components\Physics\Cloth.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Runtime\Components\Primitives\Sphere.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Runtime\Components\Primitives\plane.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Runtime\Components\Primitives\ScreenQuad.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Runtime\Components\Primitives\Overlay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Runtime\Components\Passes\SSAO.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Runtime\Components\Passes\WorldToView.cpp">
+    <ClCompile Include="Runtime\Actors\Primitives\ScreenQuad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ThirdParty\imgui\imgui_widgets.cpp">
@@ -359,40 +317,58 @@
     <ClCompile Include="ThirdParty\imgui\imgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Runtime\Components\Passes\Bloom.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Runtime\Components\Passes\Outline.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Runtime\Components\Passes\SSR.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Runtime\Components\Passes\ToneMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Apps\PBR.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Runtime\Components\Passes\Composer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Apps\Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Runtime\Components\Physics\Fluid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Apps\Layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Runtime\Components\Renderer\Light.cpp">
+    <ClCompile Include="Runtime\Components\Render\LightComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Runtime\CoreFramework\Actor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Runtime\CoreFramework\ActorComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Runtime\Components\Render\PrimitiveComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Runtime\Actors\AStaticMeshActor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Runtime\Actors\ALightActor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Runtime\Actors\ACameraActor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Runtime\Renderer\CubemapPasses\PrecomputeCubemapPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Apps\DeferredPBR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Runtime\Renderer\PostProcPasses\Bloom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Runtime\Renderer\PostProcPasses\Composer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Runtime\Renderer\PostProcPasses\Outline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Runtime\Renderer\PostProcPasses\SSAO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Runtime\Renderer\PostProcPasses\SSR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Runtime\Renderer\PostProcPasses\ToneMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Runtime\Renderer\PostProcPasses\WorldToView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Apps\main.cpp">
@@ -487,5 +463,7 @@
     <None Include="Shaders\Fluid\fluid_advection_CS.glsl" />
     <None Include="Shaders\Fluid\fluid_post_projection_CS.glsl" />
     <None Include="Shaders\Fluid\fluid_advection_attr_CS.glsl" />
+    <None Include="Shaders\Shaders\CubemapCapture_VS.glsl" />
+    <None Include="Shaders\Shaders\CubemapCapture_GS.glsl" />
   </ItemGroup>
 </Project>

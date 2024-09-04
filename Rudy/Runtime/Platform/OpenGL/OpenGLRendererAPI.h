@@ -1,14 +1,8 @@
 #pragma once
-
-#include "Runtime/Components/Renderer/Camera.h"
-#include "Runtime/Components/Renderer/RendererAPI.h"
-
 // cpp
 #include "RudyPCH.h"
 
-#include "Runtime/Components/Renderer/Renderer.h"
-
-#include <glad/glad.h>
+#include "Runtime/Renderer/RendererAPI.h"
 
 namespace Rudy
 {

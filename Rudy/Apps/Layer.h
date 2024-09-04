@@ -2,8 +2,7 @@
 #include "RudyPCH.h"
 
 #include "Runtime/Core/Window.h"
-#include "Runtime/Components/Renderer/Camera.h"
-#include "Runtime/Components/Renderer/RendererAPI.h"
+#include "Runtime/Renderer/RendererAPI.h"
 
 namespace Rudy
 {
@@ -55,8 +54,6 @@ public:
 
     SharedPtr<Window> GetWindow() { return m_window; }
     void              SetWindow(SharedPtr<Window> window) { m_window = window; }
-    SharedPtr<Camera> GetMainCamera() { return m_mainCamera; }
-    void              SetMainCamera(SharedPtr<Camera> camera) { m_mainCamera = camera; }
 
     // new:  width/height
     float GetAspectRatio()
@@ -73,12 +70,6 @@ public:
     {
         m_window->OnUpdate();
     }
-
-    void CameraOnUpdate(float ts)
-    {
-        m_mainCamera->OnUpdate(ts);
-    }
-
     void OnWindowResize(uint32_t width, uint32_t height);
 
     // static void Render(const SharedPtr<Scene>& scene);
@@ -86,14 +77,11 @@ public:
 
 protected:
     static SharedPtr<RendererAPI> s_rendererAPI;
-    SharedPtr<Camera>             m_mainCamera = nullptr;
-    SharedPtr<Window>             m_window     = nullptr;
+    SharedPtr<Window>             m_window = nullptr;
 
 public:
     // default values
     std::string m_windowTitle = "Rudy Engine Default";
-
-    glm::vec3 MAIN_CAMERA_POS = glm::vec3(0.0f, 1.5f, 5.0f);
 
     // 2560:1440 = 16:9
     uint32_t SCR_WIDTH  = 2560;

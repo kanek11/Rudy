@@ -32,9 +32,6 @@ void Application::PopLayer(Layer* layer)
 
 void Application::Init()
 {
-    Rudy::Log::Init();
-    RD_CORE_WARN("test:Initialized Log!");
-
     //========================================
     m_viewportLayer->Init();
 
@@ -95,7 +92,6 @@ void Application::Run()
         this->m_imguiLayer->EndUpdate();
 
         m_viewportLayer->WindowOnUpdate();
-        m_viewportLayer->CameraOnUpdate(deltaTime);
     }
 }
 

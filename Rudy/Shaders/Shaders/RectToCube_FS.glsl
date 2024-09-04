@@ -1,11 +1,11 @@
 #version 460 core
 out vec4 FragColor;
-in vec3 WorldPos;
+in vec4  FragPos;
 
 uniform sampler2D u_EnvironmentMap;
 
 const vec2 invAtan = vec2(0.1591, 0.3183);
-vec2 SampleSphericalMap(vec3 v)
+vec2       SampleSphericalMap(vec3 v)
 {
     vec2 uv = vec2(atan(v.z, v.x), asin(v.y));
     uv *= invAtan;
@@ -15,10 +15,10 @@ vec2 SampleSphericalMap(vec3 v)
 
 void main()
 {
-    vec2 uv = SampleSphericalMap(normalize(WorldPos));
+    vec2 uv    = SampleSphericalMap(normalize(FragPos.xyz));
     vec3 color = texture(u_EnvironmentMap, uv).rgb;
 
-    FragColor = vec4(color, 1.0); 
-    //FragColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);
-    //FragColor = vec4(uv.x, uv.y, 0.0f, 1.0f);
+    FragColor = vec4(color, 1.0);
+    // FragColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);
+    // FragColor = vec4(uv.x, uv.y, 0.0f, 1.0f);
 }

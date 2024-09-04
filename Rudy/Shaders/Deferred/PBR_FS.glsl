@@ -33,11 +33,6 @@ struct DirLight
     float intensity;
 };
 
-//layout(std140) uniform DirectionalLight_t
-//{
-//    DirLight u_DirLight[];
-//};
-
 uniform DirLight u_DirLight;
 uniform mat4     u_LightSpaceMatrix; // for shadow map
 
@@ -57,9 +52,11 @@ float ShadowCalculation(vec4 WorldFragPos, float NdotL)
     vec4 lightSpaceFragPos = u_LightSpaceMatrix * WorldFragPos;
     vec3 projCoords        = lightSpaceFragPos.xyz / lightSpaceFragPos.w; // perspective division
     projCoords             = projCoords * 0.5 + 0.5;
-    // robust check eg: outof range, return 0 means not in shadow;
+
+    // robust check eg: out of range of frustum , return 0 means not in shadow;
+    // it's a brutal way; it might mean the frustum is too small;  we keep it in shadow to be aware of the problem;
     if (projCoords.z < 0.0 || projCoords.z > 1.0)
-        return 0.0;
+        return 1.0;
 
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
     float closestDepth = texture(u_DepthTexture, projCoords.xy).r;
@@ -67,16 +64,16 @@ float ShadowCalculation(vec4 WorldFragPos, float NdotL)
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
 
-    // check whether current frag pos is in shadow
+    float shadow = 0.0;
 
-    // bias = u_shadow_bias;
+    // shadow = currentDepth > closestDepth ? 1.0 : 0.0;
+    // bias       = u_shadow_bias;
+
     // tolerate some bias
     float bias = max(u_max_shadow_bias * (1.0 - NdotL), u_min_shadow_bias); // todo: tune it better;
 
-    // float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
     // simple 3x3 PCF for AA
-    float shadow    = 0.0;
-    vec2  texelSize = 1.0 / textureSize(u_DepthTexture, 0);
+    vec2 texelSize = 1.0 / textureSize(u_DepthTexture, 0);
     for (int x = -1; x <= 1; ++x)
         for (int y = -1; y <= 1; ++y)
         {
@@ -86,6 +83,8 @@ float ShadowCalculation(vec4 WorldFragPos, float NdotL)
     shadow /= 9.0; // 9 samples
 
     return shadow;
+    // return currentDepth;
+    //  return closestDepth;
 }
 
 // ----------------------------------------------------------------------------
@@ -169,7 +168,7 @@ void main()
     vec3 H        = normalize(L + V);
 
     // shadow  //disable for now
-    float shadow = 0.0;
+    float shadow = 0.5;
     // if(true)
     shadow = ShadowCalculation(vec4(worldPos, 1.0), dot(N, L));
 
@@ -223,11 +222,11 @@ void main()
 
     // HDR tonemapping
     vec3 FragColor_LDR = FragColor_HDR / (FragColor_HDR + vec3(1.0)); // Reinhard
-    // color = vec3(1.0) - exp(-color * 1.0);   //in exposure
+                                                                      // color = vec3(1.0) - exp(-color * 1.0);   //in exposure
 
     out_FragColor = vec4(FragColor_LDR, 1.0);
-    // out_FragColor = vec4(1.0, 0.0, 0.0, 1.0);  //debug
-    // FragColor = vec4(vec3(shadow), 1.0);
+    //  out_FragColor = vec4(1.0, 0.0, 0.0, 1.0);  //debug
+    // out_FragColor = vec4(vec3(shadow), 1.0); // debug for shadow
 
     // FragColor = vec4(V*0.5 +0.5, 1.0);
     // FragColor = vec4(vec3(dot(N, V)), 1.0);

@@ -38,7 +38,7 @@ void ImGuiLayer::Init()
     ImGui::SetNextWindowSize(ImVec2(500, 400)); // 设置窗口大小为 500x400
 
     // initial position on the right top corner;
-    ImGui::SetNextWindowPos(ImVec2(_viewport->SCR_WIDTH - 500, 0)); // 设置窗口位置为 (SCR_WIDTH - 500, 0)
+    ImGui::SetNextWindowPos(ImVec2(static_cast<float>(_viewport->SCR_WIDTH - 500), 0)); // 设置窗口位置为 (SCR_WIDTH - 500, 0)
 
     ImGui::CreateContext();
     ImGuiIO&     io = ImGui::GetIO();
@@ -80,15 +80,11 @@ void ViewportLayer::Init()
     auto _rendererAPI = RendererAPI::Create();
     ViewportLayer::SetRendererAPI(_rendererAPI);
 
-    // window
+    // window  fix: the context binding is unclear
     auto _window = Window::Create(WindowProps { SCR_WIDTH, SCR_HEIGHT, m_windowTitle });
-    ViewportLayer::SetWindow(_window);
+    ViewportLayer::SetWindow(_window); // fix , this is not static:
     Input::SetWindowContext(_window->GetNativeWindow());
     _window->SetVSync(false);
-
-    // camera
-    auto _camera = Camera::Create(MAIN_CAMERA_POS);
-    ViewportLayer::SetMainCamera(_camera);
 }
 
 void ViewportLayer::ShutDown()
