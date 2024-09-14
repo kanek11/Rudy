@@ -11,12 +11,7 @@ namespace Rudy
 {
 SharedPtr<RendererAPI> ViewportLayer::s_rendererAPI = nullptr;
 
-ImGuiLayer::ImGuiLayer()
-{
-    this->m_BlockEvents = true;
-}
-
-void ImGuiLayer::Init()
+void ImGuiLayer::OnInit()
 {
     RD_CORE_WARN("imguiLayer: Init");
 
@@ -31,14 +26,14 @@ void ImGuiLayer::Init()
     ImGui::StyleColorsDark();
 
     // backends
-    ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)_viewport->GetWindow()->GetNativeWindow(), true);
+    ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)(_viewport->GetWindow()->GetNativeWindow()), true);
     ImGui_ImplOpenGL3_Init("#version 130");
 
     // other settings
-    ImGui::SetNextWindowSize(ImVec2(500, 400)); // 设置窗口大小为 500x400
+    ImGui::SetNextWindowSize(ImVec2(500, 400));
 
     // initial position on the right top corner;
-    ImGui::SetNextWindowPos(ImVec2(static_cast<float>(_viewport->SCR_WIDTH - 500), 0)); // 设置窗口位置为 (SCR_WIDTH - 500, 0)
+    ImGui::SetNextWindowPos(ImVec2(static_cast<float>(_viewport->SCR_WIDTH - 500), 0));
 
     ImGui::CreateContext();
     ImGuiIO&     io = ImGui::GetIO();
@@ -47,7 +42,7 @@ void ImGuiLayer::Init()
     io.Fonts->AddFontDefault(&fontConfig);
 }
 
-void ImGuiLayer::ShutDown()
+void ImGuiLayer::OnShutDown()
 {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -69,8 +64,17 @@ void ImGuiLayer::EndUpdate()
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
+void ImGuiLayer::OnImGuiRender()
+{
+    ImGuiIO& io = ImGui::GetIO();
+    // dock to right top corner
+    float width = 500, height = 400;
+    ImGui::SetNextWindowPos(ImVec2(static_cast<float>(Application::GetInstance()->GetViewportLayer()->SCR_WIDTH - 500), 0));
+    ImGui::SetNextWindowSize(ImVec2(width, io.DisplaySize.y));
+}
+
 //================================================================================================
-void ViewportLayer::Init()
+void ViewportLayer::OnInit()
 {
     RD_CORE_WARN("ViewportLayer: Init");
 
@@ -81,55 +85,25 @@ void ViewportLayer::Init()
     ViewportLayer::SetRendererAPI(_rendererAPI);
 
     // window  fix: the context binding is unclear
-    auto _window = Window::Create(WindowProps { SCR_WIDTH, SCR_HEIGHT, m_windowTitle });
+    auto _window = Window::CreateAndSetGLContext(WindowCreateInfo { SCR_WIDTH, SCR_HEIGHT, m_windowTitle });
     ViewportLayer::SetWindow(_window); // fix , this is not static:
-    Input::SetWindowContext(_window->GetNativeWindow());
+    InputManager::SetWindowContext(_window->GetNativeWindow());
     _window->SetVSync(false);
+
+    // new:
+    _window->windowData.windowEventCallbackFn.Add(BIND_MEM_FN(ViewportLayer::OnWindowEvent));
 }
 
-void ViewportLayer::ShutDown()
+void ViewportLayer::OnShutDown()
 {
     RD_CORE_WARN("ViewportLayer: shutdown");
 }
 
 void ViewportLayer::OnWindowResize(uint32_t width, uint32_t height)
 {
-    // RenderCommand::SetViewport(0, 0, width, height);
+    SCR_HEIGHT = height;
+    SCR_WIDTH  = width;
+
+    RD_CORE_INFO("ViewportLayer: OnWindowResize: {0}, {1}", width, height);
 }
-
-// void ViewportLayer::Render(const SharedPtr<Scene>& scene)
-//{
-//  RD_PROFILE_FUNCTION();
-
-// s_SceneData->ViewProjectionMatrix = camera->GetViewProjectionMatrix();
-
-// loop objects in the scene
-// auto group = scene->m_Registry.group<TransformComponent>(entt::get<MeshComponent>);
-
-// for (auto obj : scene->Objects)
-//{
-//	//todo:  only for renderable objects
-//	//obj->Draw();
-//
-// }
-
-// auto view = scene->m_Registry.view<TransformComponent, MeshComponent>();
-// for (auto entity : view)
-//{
-//	auto [transform, mesh] = view.get<TransformComponent, MeshComponent>(entity);
-
-//	Renderer3D::Submit(mesh.mesh, transform.GetTransform());
-//}
-//}
-
-// void Renderer::Submit(const SharedPtr<Shader>& shader, const SharedPtr<VertexArray>& vertexArray, const glm::mat4& transform)
-//{
-//	shader->Bind();
-//	shader->SetMat4("u_viewProjection", s_SceneData->ViewProjectionMatrix);
-//	shader->SetMat4("u_Transform", transform);
-
-//	vertexArray->Bind();
-//	RenderCommand::DrawIndexed(vertexArray);
-//}
-
 } // namespace Rudy

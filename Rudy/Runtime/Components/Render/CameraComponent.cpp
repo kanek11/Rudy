@@ -89,9 +89,9 @@ void UCameraComponent::SetRenderState(SharedPtr<Shader> _shader)
 
 void UCameraComponent::HandleUserInput()
 {
-    glm::vec2 _currMousePos = Input::GetMousePosition();
+    glm::vec2 _currMousePos = InputManager::GetMousePosition();
 
-    if (!Input::IsKeyPressed(Key::LeftAlt))
+    if (!InputManager::IsKeyPressed(Key::LeftAlt))
     {
         m_AltPressedLastFrame = false;
         return;
@@ -111,11 +111,11 @@ void UCameraComponent::HandleUserInput()
 
         // RD_CORE_INFO("camera: the delta is {0}, {1}", delta.x, delta.y);
 
-        if (Input::IsMouseButtonPressed(Mouse::ButtonLeft))
+        if (InputManager::IsMouseButtonPressed(Mouse::ButtonLeft))
             MouseRotate(delta);
-        else if (Input::IsMouseButtonPressed(Mouse::ButtonRight))
+        else if (InputManager::IsMouseButtonPressed(Mouse::ButtonRight))
             MouseZoom(delta);
-        else if (Input::IsMouseButtonPressed(Mouse::ButtonMiddle))
+        else if (InputManager::IsMouseButtonPressed(Mouse::ButtonMiddle))
             MousePan(delta);
     }
 

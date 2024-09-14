@@ -8,20 +8,12 @@
 
 using namespace Rudy;
 
-ViewportLayer* CreateLayer(const std::string& appName)
+ViewportLayer* CreateLayer(const std::string& appName, uint32_t width, uint32_t height)
 {
     if (appName == "DeferredPBR")
     {
-        return new DeferredPBR();
+        return new DeferredPBR(width, height);
     }
-    // else if (appName == "NPR")
-    // {
-    //     return new NPR();
-    // }
-    // else if (appName == "Phys")
-    // {
-    //     return new Phys();
-    // }
     else
     {
         std::cerr << "Unknown app: " << appName << std::endl;
@@ -61,7 +53,10 @@ int main(int argc, char** argv)
         }
     }
 
-    auto viewport_layer = CreateLayer(appName);
+    uint32_t APP_WIDTH  = 2560;
+    uint32_t APP_HEIGHT = 1600;
+
+    auto viewport_layer = CreateLayer(appName, APP_WIDTH, APP_HEIGHT);
     if (!viewport_layer)
     {
         RD_CORE_ERROR("Failed to create layer: {0}", appName);
@@ -72,21 +67,13 @@ int main(int argc, char** argv)
     // app->PushLayer(scene_layer);
     app->m_viewportLayer = viewport_layer;
 
-    // PBR 4K
-    viewport_layer->SCR_WIDTH  = 2560;
-    viewport_layer->SCR_HEIGHT = 1440;
-
-    // phys
-    //  viewport_layer->SCR_HEIGHT = 1080;
-    //  viewport_layer->SCR_WIDTH  = 1920;
-
     // gui
     auto gui_layer    = new ImGuiLayer();
     app->m_imguiLayer = gui_layer;
 
-    app->Init();
+    app->OnInit();
     app->Run();
-    app->ShutDown();
+    app->OnShutDown();
 
     return 0;
 }

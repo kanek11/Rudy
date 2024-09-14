@@ -64,7 +64,7 @@ SharedPtr<UTextureCube> PrecomputeCubemapPass::RecToCube(const SharedPtr<UTextur
     }
 
     glClearColor(1.0f, 0.01f, 0.5f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
     glViewport(0, 0, output_height, output_height);
 
@@ -79,7 +79,7 @@ SharedPtr<UTextureCube> PrecomputeCubemapPass::RecToCube(const SharedPtr<UTextur
 
 SharedPtr<UTextureCube> PrecomputeCubemapPass::SpecularPrefilter(const SharedPtr<UTextureCube>& envMap)
 {
-    uint32_t mipLevels = 5;
+    uint32_t mipLevels = 4;
 
     // the output prefilter Cube map;
     auto out_cubemap = NewObject<UTextureCube>(
@@ -149,13 +149,16 @@ SharedPtr<UTextureCube> PrecomputeCubemapPass::SpecularPrefilter(const SharedPtr
         }
 
         glClearColor(1.0f, 0.01f, 0.5f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
         glDisable(GL_DEPTH_TEST);
 
         _captureCube->StaticMeshComponent->SetGeometryState(prefilterShader);
         _captureCube->StaticMeshComponent->SetMaterialState(prefilterShader);
         _captureCube->StaticMeshComponent->Draw();
     }
+
+    // generateMipmaps
+    // glGenerateTextureMipmap(out_cubemap->GetID());
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

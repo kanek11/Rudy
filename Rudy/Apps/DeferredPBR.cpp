@@ -8,27 +8,23 @@
 namespace Rudy
 {
 
-DeferredPBR::DeferredPBR() :
-    ViewportLayer()
-{
-}
-
-void DeferredPBR::ShutDown()
+void DeferredPBR::OnShutDown()
 {
     // all lifetime management is done by the smart pointers;
 }
 
-void DeferredPBR::Init()
+void DeferredPBR::OnInit()
 {
-    // impose: init base class;
-    ViewportLayer::Init();
+    // enforce: init base class;
+    ViewportLayer::OnInit();
 
     //=============================
     //=== initialize resources
 
     // camera
-    main_camera       = CreateActor<ACameraActor>();
-    main_camera->Name = "Main Camera";
+    main_camera                               = CreateActor<ACameraActor>();
+    main_camera->Name                         = "Main Camera";
+    main_camera->CameraComponent->aspectRatio = (float)SCR_WIDTH / (float)SCR_HEIGHT;
 
     // lighting
     sunlight       = CreateActor<ASunlightActor>();
@@ -234,13 +230,14 @@ void DeferredPBR::Init()
     // draw five spheres each with different roughness
     if (true)
     {
-        for (int i = 0; i < 6; i++)
+        int num = 4;
+        for (int i = 0; i < num; i++)
         {
             auto sphere_gMaterial = PBRMaterial::Create("gBufferPassMaterial");
 
             sphere_gMaterial->SetVec3("u_Albedo", gold_color);
             sphere_gMaterial->SetFloat("u_Metallic", 1.0f);
-            sphere_gMaterial->SetFloat("u_Roughness", (float)i / 5.0f);
+            sphere_gMaterial->SetFloat("u_Roughness", (float)i / (float)(2 * num));
 
             auto sphere  = CreateActor<Sphere>(20);
             sphere->Name = "sphere" + std::to_string(i);
@@ -332,7 +329,7 @@ void DeferredPBR::Init()
 
     auto skyboxMaterial = Material::Create("skyboxMaterial");
     skyboxMaterial->SetTexture(TexType::SkyboxTexture, origin_envMap);
-    // skyboxMaterial->SetTexture(TexType::SkyboxTexture, diffuseEnvMap);
+    // skyboxMaterial->SetTexture(TexType::SkyboxTexture, specular_envMap);
 
     skybox       = CreateActor<Cube>();
     skybox->Name = "skybox";
@@ -510,7 +507,7 @@ void DeferredPBR::OnUpdate(float deltaTime)
     // this is final pass of scene rendering;
     // compare the depth with gbuffer;  make sure enable the depth test;
 
-    if (enableSkyBox)
+    if (true)
     {
         glEnable(GL_DEPTH_TEST);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, gBufferFBO->GetFrameBufferID());
@@ -527,6 +524,8 @@ void DeferredPBR::OnUpdate(float deltaTime)
 
         _skyboxShader->SetMat4("u_view", _view);
         _skyboxShader->SetMat4("u_projection", main_camera->CameraComponent->GetProjectionMatrix());
+
+        //_skyboxShader->SetFloat("u_mipLevel", 0.0f);
 
         skybox->StaticMeshComponent->SetGeometryState(_skyboxShader);
         skybox->StaticMeshComponent->SetMaterialState(_skyboxShader);

@@ -3,15 +3,15 @@
 #include "Window.h"
 
 #ifdef RD_PLATFORM_WINDOWS
-#    include "Runtime/Platform/Windows/WindowsWindow.h"
+#    include "Runtime/Platform/Windows/GLFWWindow.h"
 #endif
 
 namespace Rudy
 {
-SharedPtr<Window> Window::Create(const WindowProps& props)
+SharedPtr<Window> Window::CreateAndSetGLContext(const WindowCreateInfo& props)
 {
 #ifdef RD_PLATFORM_WINDOWS
-    return CreateUnique<WindowsWindow>(props);
+    return CreateUnique<UWindowsWindow>(props);
 #else
     RD_CORE_ASSERT(false, "Unknown platform!");
     return nullptr;

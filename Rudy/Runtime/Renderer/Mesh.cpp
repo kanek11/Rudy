@@ -43,7 +43,7 @@ std::vector<Vertex> UMesh::AssembleVertices()
 
 void UMesh::InitRenderData()
 {
-    this->renderData = CreateShared<FMeshRenderData>();
+    this->renderData = CreateShared<FStaticMeshRenderData>();
 }
 
 void UMesh::SetupRenderData()

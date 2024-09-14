@@ -5,19 +5,19 @@
 namespace Rudy
 {
 
-//<<abstract>
+//<<singleton>>
 class Application
 {
 public:
     virtual ~Application() = default;
     Application();
 
-    virtual void Init();
+    virtual void OnInit();
+    virtual void OnShutDown();
+
     virtual void Run();
-    virtual void ShutDown();
 
 public:
-    //<<singleton>>
     static Application* s_instance; // to access application;
     static Application* GetInstance();
 

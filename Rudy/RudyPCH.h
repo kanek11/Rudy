@@ -4,9 +4,6 @@
 //  assert -> log-> base
 //  assert -> platform detection
 
-// usually independent of other files,but many depend on it
-#include "Runtime/Core/PlatformDetection.h"
-
 // standard library
 #include <vector>
 #include <string>
@@ -25,8 +22,15 @@
 
 #include <random>
 
+// C++17 above
 #include <filesystem>
 #include <source_location>
+
+#include <variant>
+#include <optional>4
+
+// usually independent of other files,but many depend on it
+#include "Runtime/Core/PlatformDetection.h"
 
 // third party
 #include <glad/glad.h> //before glfw3.h

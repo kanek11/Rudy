@@ -64,10 +64,11 @@ class DeferredPBR : public ViewportLayer
     // app common=======================
 public:
     ~DeferredPBR() = default;
-    DeferredPBR();
+    DeferredPBR(uint32_t w, uint32_t h) :
+        ViewportLayer(w, h) { }
 
-    void Init() override;
-    void ShutDown() override;
+    void OnInit() override;
+    void OnShutDown() override;
 
     virtual void OnUpdate(float ts) override;
     virtual void OnImGuiRender() override;

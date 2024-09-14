@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-#include "Runtime/Events/Input.h"
+#include "Runtime/Events/InputManager.h"
 #include "Runtime/CoreFramework/SceneComponent.h"
 #include "Runtime/Renderer/Shader.h"
 

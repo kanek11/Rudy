@@ -30,18 +30,18 @@ void Application::PopLayer(Layer* layer)
     }
 }
 
-void Application::Init()
+void Application::OnInit()
 {
     //========================================
-    m_viewportLayer->Init();
+    m_viewportLayer->OnInit();
 
     for (Layer* layer : this->m_layers)
     {
-        layer->Init();
+        layer->OnInit();
     }
 
     // after opengl and glfw is initialized
-    m_imguiLayer->Init();
+    m_imguiLayer->OnInit();
 }
 
 //======the loop
@@ -83,27 +83,26 @@ void Application::Run()
 
         m_viewportLayer->OnUpdate(deltaTime);
 
-        this->m_imguiLayer->BeginUpdate();
+        m_imguiLayer->BeginUpdate();
         for (Layer* layer : this->m_layers)
         {
             layer->OnImGuiRender();
         }
+        m_imguiLayer->OnImGuiRender();
         m_viewportLayer->OnImGuiRender();
-        this->m_imguiLayer->EndUpdate();
+        m_imguiLayer->EndUpdate();
 
         m_viewportLayer->WindowOnUpdate();
     }
 }
 
-void Application::ShutDown()
+void Application::OnShutDown()
 {
     for (Layer* layer : this->m_layers)
     {
-        layer->ShutDown();
+        layer->OnShutDown();
     }
-    m_imguiLayer->ShutDown();
-
-    // RendererApp::Shutdown();
+    m_imguiLayer->OnShutDown();
     glfwTerminate();
 }
 

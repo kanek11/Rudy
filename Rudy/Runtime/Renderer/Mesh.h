@@ -68,10 +68,15 @@ struct Vertex
         BoneIndices(boneIndices), BoneWeights(boneWeights) { }
 };
 
-class FMeshRenderData
+class FRHIMeshRenderData
+{
+};
+
+class FStaticMeshRenderData : public FRHIMeshRenderData
+
 {
 public:
-    FMeshRenderData()
+    FStaticMeshRenderData()
     {
         m_vertexArray  = FRHIVertexArray::Create();
         m_vertexBuffer = FRHIVertexBuffer::Create();
@@ -138,9 +143,9 @@ public:
     std::vector<uint32_t> indices;
 
 public:
-    void                       InitRenderData();
-    void                       SetupRenderData();
-    SharedPtr<FMeshRenderData> renderData;
+    virtual void                     InitRenderData();
+    void                             SetupRenderData();
+    SharedPtr<FStaticMeshRenderData> renderData;
 };
 
 } // namespace Rudy

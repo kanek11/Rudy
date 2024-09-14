@@ -1,7 +1,8 @@
 #pragma once
 #include "RudyPCH.h"
 
-#include "Runtime/Events/Event.h"
+#include "Runtime/Events/Delegate.h"
+#include "Runtime/Events/Eventhub.h"
 
 // user-defined Event callback function, like a delegate in C#.
 // a void function that takes an Event& as a parameter.
@@ -11,15 +12,15 @@
 namespace Rudy
 {
 
-struct WindowProps
+struct WindowCreateInfo
 {
     uint32_t    Width;
     uint32_t    Height;
     std::string Title;
 
-    WindowProps(uint32_t           width  = 1600,
-                uint32_t           height = 900,
-                const std::string& title  = "Rudy Engine") :
+    WindowCreateInfo(uint32_t           width  = 1600,
+                     uint32_t           height = 900,
+                     const std::string& title  = "Rudy Engine") :
         Width(width),
         Height(height), Title(title)
     {
@@ -30,10 +31,6 @@ struct WindowProps
 class Window
 {
 public:
-    // event
-    using EventCallbackFn                                          = std::function<void(Event&)>;
-    virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
-
     // update
     virtual void OnUpdate()    = 0;
     virtual bool ShouldClose() = 0;
@@ -49,7 +46,20 @@ public:
     virtual bool IsVSync() const        = 0;
 
     //
-    static SharedPtr<Window> Create(const WindowProps& props = WindowProps());
+    static SharedPtr<Window> CreateAndSetGLContext(const WindowCreateInfo& props = WindowCreateInfo());
+
+public:
+    struct WindowData
+    {
+        uint32_t    width, height;
+        std::string Title;
+
+        FDelegate<void(WindowEvent)> windowEventCallbackFn;
+        FDelegate<void(InputEvent)>  inputEventCallbackFn;
+    };
+
+    WindowData windowData;
+    bool       m_VSync;
 };
 
 } // namespace Rudy

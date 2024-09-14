@@ -10,7 +10,7 @@ class PrecomputeCubemapPass
 {
 public:
     ~PrecomputeCubemapPass() = default;
-    PrecomputeCubemapPass(uint32_t m_width = 512, uint32_t m_height = 512) {};
+    PrecomputeCubemapPass() {};
 
     SharedPtr<UTextureCube> RecToCube(const SharedPtr<UTexture2D>& recTex);
 

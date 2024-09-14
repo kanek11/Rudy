@@ -12,40 +12,30 @@ class Layer
 {
 public:
     virtual ~Layer() = default;
-    Layer() {};
 
     // virtual void OnEvent(Event& event) { }
-    virtual void Init() { }
-    virtual void ShutDown() { }
+    virtual void OnInit() { }
+    virtual void OnShutDown() { }
 
     virtual void OnUpdate(float ts) { }
     virtual void OnImGuiRender() { } // customize for specific layer
 
-    // const std::string& GetName() const { return m_DebugName; }
-    // std::string m_DebugName;
+    // new:
+    virtual void OnWindowEvent(const WindowEvent& event) {};
+    virtual void OnInputEvent(const InputEvent& event) { }
 };
-
-// not optional for now;
-// enum class RenderingEngine
-//{
-
-//    Renderer2D = 0,
-//    Renderer3D = 1,
-//    RayTracer  = 2,
-//};
-//
 
 //<<base>>
 class ViewportLayer : public Layer
 {
 public:
     virtual ~ViewportLayer() = default;
-    ViewportLayer() :
-        Layer() {};
+    ViewportLayer(uint32_t width = 2560, uint32_t height = 1440) :
+        SCR_WIDTH(width), SCR_HEIGHT(height) { }
 
     // inherted
-    void Init() override;
-    void ShutDown() override;
+    void OnInit() override;
+    void OnShutDown() override;
 
     // get/set
     static RendererAPI::API       GetAPI() { return RendererAPI::GetAPI(); }
@@ -54,12 +44,6 @@ public:
 
     SharedPtr<Window> GetWindow() { return m_window; }
     void              SetWindow(SharedPtr<Window> window) { m_window = window; }
-
-    // new:  width/height
-    float GetAspectRatio()
-    {
-        return m_window->GetWidth() / (float)m_window->GetHeight();
-    }
 
     bool ShouldClose()
     {
@@ -70,6 +54,19 @@ public:
     {
         m_window->OnUpdate();
     }
+
+    virtual void OnWindowEvent(const WindowEvent& event) override
+    {
+        std::visit([this](auto&& e)
+                   {
+			using T = std::decay_t<decltype(e)>;
+            if constexpr (std::is_same_v<T, WEWindowResize>)
+            {
+                this->OnWindowResize(e.width, e.height);
+			} },
+                   event);
+    }
+
     void OnWindowResize(uint32_t width, uint32_t height);
 
     // static void Render(const SharedPtr<Scene>& scene);
@@ -91,23 +88,18 @@ public:
 class ImGuiLayer : public Layer
 {
 public:
-    ImGuiLayer();
     ~ImGuiLayer() = default;
 
     // virtual void OnEvent(Event& e) override;
 
-    virtual void Init() override;
-    virtual void ShutDown() override;
+    virtual void OnInit() override;
+    virtual void OnShutDown() override;
+
+    virtual void OnImGuiRender() override;
 
     // update in stages:  gui->begin; foreach layer->GuiRender ; gui->end
     void BeginUpdate();
     void EndUpdate();
-
-    // optionally to block events
-    void BlockEvents(bool block) { m_BlockEvents = block; }
-
-private:
-    bool m_BlockEvents = true;
 };
 
 } // namespace Rudy
